@@ -3,7 +3,7 @@
 readonly BASE_DIR=$(cd $(dirname $0); pwd)
 readonly BASENAME="$(basename $0)"
 
-readonly MD_GEN=$(cd $BASE_DIR/../../md_gen/export/; pwd)
+readonly MD_GEN=$(cd $BASE_DIR/../md_gen/export/; pwd)
 
 readonly EXEC_DIR=$1
 readonly EXEC_BASENAME=$2
