@@ -1,8 +1,7 @@
 #import TARGET
 MD_SC:=sample_code.md
 
-MDS_DEPS:=$(addprefix o/,$(notdir $(MDS)))
-MDS_DEPS:=$(MDS_DEPS:.md=.d)
+MDS_DEPS:=$(addprefix o/c/,$(MDS:.md=.d))
 
 MDS_C:=$(addprefix o/c/,$(MDS) $(MD_SC))
 MDS_DB:=o/db.json
@@ -30,7 +29,7 @@ pu_html: $(TARGET_PU_HTML)
 
 CLEANS:=$(patsubst clean%,clean, $(MAKECMDGOALS))
 ifneq ($(CLEANS), clean)
--include $(MDS_DEPS)
+include $(MDS_DEPS)
 endif
 
 VERSION_TXT=version.txt
@@ -63,6 +62,9 @@ o/c/$(MD_SC): $(MDS) md/$(MD_SC)
 
 o/c/%.md: %.md
 	$(MD_GEN)/md_compile.py -o $@ $< -p $(VPATH) --mds $(MDS)
+
+o/c/%.d : %.md
+	$(MD_GEN)/md_compile.py -D $(@:.d=.md) -o $@ $<
 
 $(MDS_DB) : $(MDS_C)
 	$(MD_GEN)/md_make_db.py $@ --mds $^
@@ -98,3 +100,5 @@ help:
 
 echo:
 	-echo MDS_C=$(MDS_C)
+	-echo MDS_DEPS=$(MDS_DEPS)
+
