@@ -2456,6 +2456,156 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
 ファイルの読み書き等のI/O実行、等がある。
 
 
+### is-a
+「is-a」の関係は、オブジェクト指向プログラミング（OOP）
+においてクラス間の継承関係を説明する際に使われる概念である。
+クラスDerivedとBaseが「is-a」の関係である場合、
+DerivedがBaseの派生クラスであり、Baseの特性をDerivedが引き継いでいることを意味する。
+C++でのOOPでは、DerivedはBaseのpublic継承として定義される。
+通常DerivedやBaseは以下の条件を満たす必要がある。
+
+* Baseはvirtualメンバ関数(Base::f)を持つ。
+* DerivedはBase::fのオーバーライド関数を持つ。
+* DerivedはBaseに対して
+  [リスコフの置換原則](https://ja.wikipedia.org/wiki/%E3%83%AA%E3%82%B9%E3%82%B3%E3%83%95%E3%81%AE%E7%BD%AE%E6%8F%9B%E5%8E%9F%E5%89%87)
+  を守る必要がある。
+  この原則を簡単にに説明すると、
+  「派生クラスのオブジェクトは、
+  いつでもその基底クラスのオブジェクトと置き換えても、
+  プログラムの動作に悪影響を与えずに問題が発生してはならない」という設計の制約である。
+
+ 「is-a」の関係とは「一種の～」と言い換えることができることが多い.
+ペンギンや九官鳥 は一種の鳥であるため、この関係を使用したコード例を次に示す。
+
+```cpp
+    // @@@ example/term_explanation/class_relation_ut.cpp #0:0 begin
+```
+
+bird::flyのオーバーライド(penguin::fly)について、 リスコフの置換原則に反した例を下記する。
+
+```cpp
+    // @@@ example/term_explanation/class_relation_ut.cpp #0:1 begin
+    // @@@ example/term_explanation/class_relation_ut.cpp #0:2 begin -1
+```
+
+birdからpenguinへの派生がリスコフ置換の原則に反してしまった原因は以下のように考えることができる。
+
+* bird::flyの事前条件penguin::flyが強めた
+* bird::flyの事後条件をpenguin::flyが弱めた
+
+penguinとbirdの関係はis-aの関係ではあるが、
+上記コードの問題によって不適切なis-aの関係と言わざるを得ない。
+
+上記の例では鳥全般と鳥の種類のis-a関係をpublic継承を使用して表した(一部不適切であるもの)。
+さらにis-aの誤った適用例を示す。
+自身が飼っている九官鳥に"キューちゃん"と名付けることははよくあることである。
+キューちゃんという名前の九官鳥は一種の九官鳥であることは間違いのないことであるが、
+このis-aの関係を表すためにpublic継承を使用するのは、is-aの関係の誤用になることが多い。
+実際のコード例を以下に示す。この場合、型とインスタンスの概念の混乱が原因だと思われる。
+
+```cpp
+    // @@@ example/term_explanation/class_relation_ut.cpp #1:0 begin
+```
+
+この誤用を改めた例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/class_relation_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/class_relation_ut.cpp #2:1 begin -1
+```
+
+修正されたKyukancho はstd::string インスタンスをメンバ変数として持ち、
+kyukanchoとstd::stringの関係を[has-a](---)の関係と呼ぶ。
+
+
+### has-a
+「has-a」の関係は、
+あるクラスのインスタンスが別のクラスのインスタンスを構成要素として含む関係を指す。
+つまり、あるクラスのオブジェクトが別のクラスのオブジェクトを保持している関係である。
+
+例えば、CarクラスとEngineクラスがあるとする。CarクラスはEngineクラスのインスタンスを含むので、
+CarはEngineを「has-a」の関係にあると言える。
+通常、has-aの関係はクラス内でメンバ変数またはメンバオブジェクトとして実装される。
+Carクラスの例ではCarクラスにはEngine型のメンバ変数が存在する。
+
+```cpp
+    // @@@ example/term_explanation/class_relation_ut.cpp #3:0 begin
+```
+
+### is-implemented-in-terms-of
+「is-implemented-in-terms-of」の関係は、
+オブジェクト指向プログラミング（OOP）において、
+あるクラスが別のクラスの機能を内部的に利用して実装されていることを示す概念である。
+これは、あるクラスが他のクラスのインターフェースやメソッドを用いて、
+自身の機能を提供する場合に使われる。
+[has-a](---)の関係は、is-implemented-in-terms-of の関係の一種である。
+
+is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
+
+*手段1.* [public継承によるis-implemented-in-terms-of](---)  
+*手段2.* [private継承によるis-implemented-in-terms-of](---)  
+*手段3.* [コンポジションによる(has-a)is-implemented-in-terms-of](---)  
+
+手段1-3にはそれぞれ、長所、短所があるため、必要に応じて手段を選択する必要がある。
+以下の議論を単純にするため、下記のようにクラスS、C、CCを定める。
+
+* S(サーバー): 実装を提供するクラス
+* C(クライアント): Sの実装を利用するクラス
+* CC(クライアントのクライアント): Cのメンバをを使用するクラス
+
+コード量の観点から考えた場合、手段1が最も優れていることが多い。
+依存関係の複雑さから考えた場合、CはSに強く依存する。
+場合によっては、この依存はCCからSへの依存間にも影響をあたえる。
+従って、手段3が依存関係を単純にしやすい。
+手段1は[is-a](---)に見え、以下に示すような問題も考慮する必要があるため、
+可読性、保守性を劣化させる可能性がある。
+
+```cpp
+    // @@@ example/term_explanation/class_relation_ut.cpp #6:0 begin
+    // @@@ example/term_explanation/class_relation_ut.cpp #6:1 begin -1
+```
+
+以上述べたように問題の多い手段1であるが、実践的には有用なパターンであり、
+[CRTP(curiously recurring template pattern)](https://ja.wikibooks.org/wiki/More_C%2B%2B_Idioms/%E5%A5%87%E5%A6%99%E3%81%AB%E5%86%8D%E5%B8%B0%E3%81%97%E3%81%9F%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3(Curiously_Recurring_Template_Pattern)
+の実現手段でもあるため、一概にコーディング規約などで排除することもできない。
+
+
+#### public継承によるis-implemented-in-terms-of
+public継承によるis-implemented-in-terms-ofの実装例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/class_relation_ut.cpp #7:0 begin
+    // @@@ example/term_explanation/class_relation_ut.cpp #7:1 begin -1
+```
+
+すでに述べたようにこの方法は、
+[private継承によるis-implemented-in-terms-of](---)や、
+[コンポジションによる(has-a)is-implemented-in-terms-of](---)
+と比べコードがシンプルになる。 
+
+#### private継承によるis-implemented-in-terms-of
+private継承によるis-implemented-in-terms-ofの実装例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/class_relation_ut.cpp #4:0 begin
+    // @@@ example/term_explanation/class_relation_ut.cpp #4:1 begin -1
+```
+
+この方法は、[public継承によるis-implemented-in-terms-of](---)が持つデストラクタ問題は発生せす、
+[is-a](---)と誤解してしまう問題も発生しない。
+
+
+#### コンポジションによる(has-a)is-implemented-in-terms-of
+コンポジションによる(has-a)is-implemented-in-terms-ofの実装例を示す。
+
+```cpp
+    // @@@ example/term_explanation/class_relation_ut.cpp #5:0 begin
+    // @@@ example/term_explanation/class_relation_ut.cpp #5:1 begin -1
+```
+
+この方は実装を利用するクラストの依存関係を他の2つに比べるとシンプルにできるが、
+逆に実装例から昭なとおり、コード量が増えてしまう。
+
 
 ## 非ソフトウェア用語
 ### 割れ窓理論

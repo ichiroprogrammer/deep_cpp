@@ -20,7 +20,7 @@ EXE2_DONE:=$(addsuffix .done,$(EXE2))
 GTEST_DIR ?=
 
 ifeq ($(GTEST_DIR),)
-GTEST_DIR:=../../../googletest/googletest/
+GTEST_DIR:=../../googletest/googletest/
 endif
 
 GTEST_DIR_ABSOLUTE=$(shell cd $(GTEST_DIR); pwd)

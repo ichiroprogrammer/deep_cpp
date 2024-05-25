@@ -1,16 +1,14 @@
 #import TARGET
-MDS:=$(addprefix md/,$(MDS))
-MD_SC:=md/sample_code.md
+MD_SC:=sample_code.md
 
-MDS_DEPS:=$(addprefix md/o/,$(notdir $(MDS)))
+MDS_DEPS:=$(addprefix o/,$(notdir $(MDS)))
 MDS_DEPS:=$(MDS_DEPS:.md=.d)
 
-MDS_C:=$(addprefix md/o/,$(notdir $(MDS)))
-MDS_C_ALL:=$(MDS_C) $(addprefix md/o/,$(notdir $(MD_SC)))
-MDS_DB:=md/o/db.json
+MDS_C:=$(addprefix o/c/,$(MDS) $(MD_SC))
+MDS_DB:=o/db.json
 
 MD_IND:=o/index.md
-MDS_FINAL:=$(MD_IND) $(addprefix o/,$(notdir $(MDS_C_ALL)))
+MDS_FINAL:=$(MD_IND) $(addprefix o/,$(notdir $(MDS_C)))
 HTMLS:=$(MDS_FINAL:.md=.html)
 
 TARGET_HTML:=$(TARGET:.md=.html)
@@ -32,7 +30,7 @@ pu_html: $(TARGET_PU_HTML)
 
 CLEANS:=$(patsubst clean%,clean, $(MAKECMDGOALS))
 ifneq ($(CLEANS), clean)
-include $(MDS_DEPS)
+-include $(MDS_DEPS)
 endif
 
 VERSION_TXT=version.txt
@@ -44,7 +42,6 @@ MD_GEN ?=
 ifeq ($(MD_GEN),)
 MD_GEN:=../md_gen/export/py
 endif
-
 
 $(TARGET): $(MDS_FINAL)
 	$(MD_GEN)/md_join.py -o $@ $^
@@ -58,40 +55,19 @@ $(TARGET_PU) : $(TARGET)
 $(MD_IND) : $(MDS_DB)
 	$(MD_GEN)/md_make_index.py $(MD_SEC_NUM) -o $@ $< $(INDEX_OPT)
 
-$(MD_SC) : $(MAKEFILE) $(MDS)
-	$(MD_GEN)/md_sample_section.py -o $@ $(MDS)
+md/$(MD_SC) : $(MAKEFILE) $(MDS)
+	$(MD_GEN)/md_sample_section.py -p $(VPATH) -o md/$(MD_SC) $(MDS)
 
-md/o/%.md : md/%.md
-	$(MD_GEN)/md_compile.py -o $@ $< --mds $(MDS)
+o/c/$(MD_SC): $(MDS) md/$(MD_SC)
+	$(MD_GEN)/md_compile.py -o $@ md/$(MD_SC) -p $(VPATH) --mds $(MDS) $(MD_SC)
 
-md/o/%.md: $(AUTOSAR)%.md
-	$(MD_GEN)/md_compile.py -o $@ $< --mds $(MDS)
+o/c/%.md: %.md
+	$(MD_GEN)/md_compile.py -o $@ $< -p $(VPATH) --mds $(MDS)
 
-md/o/%.md: $(SHARED)%.md
-	$(MD_GEN)/md_compile.py -o $@ $< --mds $(MDS)
-
-md/o/%.md: $(ORG)%.md
-	$(MD_GEN)/md_compile.py -o $@ $< --mds $(MDS)
-
-md/o/sample_code.md : $(MD_SC)
-	$(MD_GEN)/md_compile.py -o $@ $< --mds $(MDS) $<
-
-md/o/%.d : md/%.md
-	$(MD_GEN)/md_compile.py -D $(@:.d=.md) -o $@ $<
-
-md/o/%.d: $(AUTOSAR)%.md
-	$(MD_GEN)/md_compile.py -D $(@:.d=.md) -o $@ $< --mds $(MDS)
-
-md/o/%.d: $(SHARED)%.md
-	$(MD_GEN)/md_compile.py -D $(@:.d=.md) -o $@ $<
-
-md/o/%.d: $(ORG)%.md
-	$(MD_GEN)/md_compile.py -D $(@:.d=.md) -o $@ $<
-
-$(MDS_DB) : $(MDS_C_ALL)
+$(MDS_DB) : $(MDS_C)
 	$(MD_GEN)/md_make_db.py $@ --mds $^
 
-o/%.md : md/o/%.md $(MDS_DB)
+o/%.md : o/c/%.md $(MDS_DB)
 	$(MD_GEN)/md_link.py $(MD_SEC_NUM) -o $@ --db $(MDS_DB) $<
 
 o/%.html: o/%.md $(VERSION_TXT)
@@ -106,7 +82,6 @@ o/%.html: o/%.md $(VERSION_TXT)
 clean:
 	rm -f $(MDS_DEPS)
 	rm -f $(MD_SC) $(MD_IND) $(MDS_DB)
-	rm -f $(MDS_C_ALL)
 	rm -f $(MDS_FINAL)
 	rm -f $(HTMLS)
 	rm -f $(TARGET) $(TARGET_HTML) $(TARGET_PDF)
@@ -121,3 +96,5 @@ help:
 	@echo "make clean               :generated files are deleted"
 	@echo "make help                :show this message"
 
+echo:
+	-echo MDS_C=$(MDS_C)
