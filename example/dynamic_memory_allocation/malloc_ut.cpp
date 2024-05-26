@@ -6,6 +6,7 @@
 
 #include "gtest_wrapper.h"
 
+#include "dynamic_memory_allocation_ut.h"
 #include "spin_lock.h"
 #include "utils.h"
 
@@ -162,7 +163,7 @@ void* malloc(size_t size) noexcept
 // @@@ sample end
 
 namespace {
-TEST(NewDelete, malloc)
+TEST(NewDelete_Opt, malloc)
 {
     {
         void* mem = malloc(1024);

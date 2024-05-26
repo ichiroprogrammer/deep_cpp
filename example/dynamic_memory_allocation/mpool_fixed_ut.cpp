@@ -1,10 +1,11 @@
 #include "gtest_wrapper.h"
 
+#include "dynamic_memory_allocation_ut.h"
 #include "mpool_fixed.h"
 #include "suppress_warning.h"
 
 namespace {
-TEST(NewDelete, chunk)
+TEST(NewDelete_Opt, chunk)
 {
     // @@@ sample begin 0:0
 
@@ -92,7 +93,7 @@ void test_mpf_5_3(MPoolFixed<5, 3>& mpf, bool first) noexcept
     ASSERT_EQ(0, mpf.GetCountMin());
 }
 
-TEST(NewDelete, mpool_alloc_free)
+TEST(NewDelete_Opt, mpool_alloc_free)
 {
     {
         auto mpf = MPoolFixed<5, 3>{};

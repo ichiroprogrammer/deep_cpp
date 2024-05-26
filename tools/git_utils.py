@@ -131,10 +131,10 @@ def assert_no_durty(dir = None):
         else:
             cmd = ["git", "diff", "--quiet", "--exit-code"]
 
-        subprocess.run(cmd, check=True)     # $BHs(B0$B=*N;$J$iNc30(B
+        subprocess.run(cmd, check=True)     # 非0終了なら例外
 
         cmd.append("--cached")
-        subprocess.run(cmd, check=True)     # $BHs(B0$B=*N;$J$iNc30(B
+        subprocess.run(cmd, check=True)     # 非0終了なら例外
 
         if dir != None:
             cmd = ["git", "-C", dir, "ls-files", "--exclude-standard", "--others"]

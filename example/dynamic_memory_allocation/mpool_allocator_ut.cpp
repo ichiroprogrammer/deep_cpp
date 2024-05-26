@@ -1,5 +1,9 @@
+#include <iomanip>
+#include <iostream>
+
 #include "gtest_wrapper.h"
 
+#include "dynamic_memory_allocation_ut.h"
 #include "mpool_allocator.h"
 #include "mpool_variable.h"
 #include "op_new.h"
@@ -15,7 +19,7 @@ MPool& MPoolBasedAllocator<char>::mpool_ = mpv_allocator;
 // @@@ sample end
 
 namespace {
-TEST(NewDelete, string_with_allocator)
+TEST(NewDelete_Opt, string_with_allocator)
 {
     // @@@ sample begin 0:1
 
@@ -33,7 +37,7 @@ using mpv_string = std::basic_string<char, std::char_traits<char>, MPoolBasedAll
 // @@@ sample end
 
 namespace {
-TEST(NewDelete, string_with_allocator2)
+TEST(NewDelete_Opt, string_with_allocator2)
 {
     auto rest = mpv_allocator.GetCount();
     auto str  = std::basic_string<char, std::char_traits<char>, MPoolBasedAllocator<char>>{"hehe"};
@@ -52,7 +56,7 @@ using mpv_vector_int = std::vector<int, MPoolBasedAllocator<int>>;
 // @@@ sample end
 
 namespace {
-TEST(NewDelete, vector_int_with_allocator)
+TEST(NewDelete_Opt, vector_int_with_allocator)
 {
     // @@@ sample begin 1:1
 
@@ -74,7 +78,7 @@ MPool& MPoolBasedAllocator<mpv_string>::mpool_ = mpv_allocator;
 // @@@ sample end
 
 namespace {
-TEST(NewDelete, allocator)
+TEST(NewDelete_Opt, allocator)
 {
     auto rest = mpv_allocator.GetCount();
 
@@ -112,7 +116,7 @@ MPool& OpNew<mpv_string_op_new>::mpool_ = mpv_allocator;
 // @@@ sample end
 
 namespace {
-TEST(NewDelete, allocator2)
+TEST(NewDelete_Opt, allocator2)
 {
     // @@@ sample begin 3:1
 
@@ -174,7 +178,7 @@ TEST(NewDelete, allocator2)
     }
 }
 
-TEST(NewDelete, allocator_itor)
+TEST(NewDelete_Opt, allocator_itor)
 {
     constexpr auto vec_len = 10U;
 

@@ -4,6 +4,7 @@
 
 #include "gtest_wrapper.h"
 
+#include "dynamic_memory_allocation_ut.h"
 #include "mpool_fixed.h"
 
 #ifndef __CYGWIN__  // この実装は、cygwinでは動作しない
@@ -94,7 +95,7 @@ void __cxa_free_exception(void* thrown_exception)
 }
 
 namespace {
-TEST(NewOverload, exception_allocator)
+TEST(NewDelete_Opt, exception_allocator)
 {
     // @@@ sample begin 1:0
 

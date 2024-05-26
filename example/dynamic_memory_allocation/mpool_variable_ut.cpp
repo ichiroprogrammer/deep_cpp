@@ -1,9 +1,10 @@
 #include "gtest_wrapper.h"
 
+#include "dynamic_memory_allocation_ut.h"
 #include "mpool_variable.h"
 
 namespace {
-TEST(NewDelete, buffer)
+TEST(NewDelete_Opt, buffer)
 {
     static_assert(0 == sizeof(Inner_::buffer_t<0>));
     static_assert(16 == sizeof(Inner_::buffer_t<1>));
@@ -11,7 +12,7 @@ TEST(NewDelete, buffer)
     static_assert(96 == sizeof(Inner_::buffer_t<96>));
 }
 
-TEST(NewDelete, sprit0)
+TEST(NewDelete_Opt, sprit0)
 {
     using Inner_::header_t;
     using Inner_::sprit;
@@ -85,7 +86,7 @@ TEST(NewDelete, sprit0)
     }
 }
 
-TEST(NewDelete, sprit1)
+TEST(NewDelete_Opt, sprit1)
 {
     using Inner_::header_t;
     using Inner_::sprit;
@@ -177,7 +178,7 @@ TEST(NewDelete, sprit1)
     }
 }
 
-TEST(NewDelete, concat)
+TEST(NewDelete_Opt, concat)
 {
     using Inner_::concat;
     using Inner_::header_t;
@@ -221,7 +222,7 @@ TEST(NewDelete, concat)
     }
 }
 
-TEST(NewDelete, itor)
+TEST(NewDelete_Opt, itor)
 {
     constexpr auto mem_size = 256U;
     auto           mpv      = MPoolVariable<mem_size>{};

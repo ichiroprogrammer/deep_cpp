@@ -1,6 +1,7 @@
 #include <cassert>
 #include <new>
 
+#include "dynamic_memory_allocation_ut.h"
 #include "global_new_delete.h"
 #include "mpool_fixed.h"
 

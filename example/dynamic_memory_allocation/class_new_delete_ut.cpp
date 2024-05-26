@@ -2,6 +2,7 @@
 
 #include "gtest_wrapper.h"
 
+#include "dynamic_memory_allocation_ut.h"
 #include "mpool_fixed.h"
 #include "mpool_variable.h"
 #include "op_new.h"
@@ -37,7 +38,7 @@ void A::operator delete(void* mem, std::size_t) noexcept { mpf_A.Free(mem); }
 // @@@ sample end
 
 namespace {
-TEST(NewDelete, class_new_delete_fixed_not_derived)
+TEST(NewDelete_Opt, class_new_delete_fixed_not_derived)
 {
     // @@@ sample begin 1:0
 
@@ -102,7 +103,7 @@ MPool& OpNew<A>::mpool_ = mpf_ABCD;
 // @@@ sample end
 
 namespace {
-TEST(NewDelete, class_new_delete_fixed_derived)
+TEST(NewDelete_Opt, class_new_delete_fixed_derived)
 {
     ASSERT_EQ(10, mpf_ABCD.GetCount());
     {
@@ -137,7 +138,7 @@ struct Large : A {
     uint8_t buff[1024];  // mpf_ABCDのメモリブロックのサイズを超える
 };
 
-TEST(NewDelete, class_new_delete_fixed_derived_large)
+TEST(NewDelete_Opt, class_new_delete_fixed_derived_large)
 {
     ASSERT_EQ(10, mpf_ABCD.GetCount());
     ASSERT_THROW(auto large = std::make_unique<Large>(), MPoolBadAlloc);  // サイズが大きすぎる

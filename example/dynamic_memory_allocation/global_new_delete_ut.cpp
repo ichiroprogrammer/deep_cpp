@@ -1,19 +1,16 @@
 #include <algorithm>
+#include <iomanip>
+#include <iostream>
 #include <memory>
 
 #include "gtest_wrapper.h"
 
+#include "dynamic_memory_allocation_ut.h"
 #include "global_new_delete.h"
 #include "utils.h"
 
-#ifdef SANITIZER  // sanitizerはnew/deleteオーバーロードのテストは誤動作する
-#define NewDelete_Opt DISABLED_NewDelete
-#else
-#define NewDelete_Opt NewDelete
-#endif
-
 namespace {
-TEST(NewDelete, global_new_delete_32)
+TEST(NewDelete_Opt, global_new_delete_32)
 {
     auto gnd = GlobalNewDeleteMonitor{};
 
@@ -47,7 +44,7 @@ TEST(NewDelete_Opt, global_new_delete_64)
     ASSERT_EQ(count, (*mp64)->GetCount());
 }
 
-TEST(NewDelete, global_new_delete_empty_0)
+TEST(NewDelete_Opt, global_new_delete_empty_0)
 {
     auto gnd = GlobalNewDeleteMonitor{};
 
@@ -122,7 +119,7 @@ TEST(NewDelete_Opt, global_new_delete_empty_1)
     }
 }
 
-TEST(NewDelete, global_new_delete_show)
+TEST(NewDelete_Opt, global_new_delete_show)
 {
     // @@@ sample begin 0:0
 
