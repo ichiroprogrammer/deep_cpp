@@ -23,12 +23,12 @@ def _push_process():
     docs = git_utils.get_git_docs_dir()
     branch_name = git_utils.get_current_branch(docs)
 
-    if branch_name != "release":
+    if branch_name != "master":
         print("must be on release in docs !!!")
         sys.exit(1)
 
-    _subprocess_run(["git",  "-C", docs, "push", "--follow-tags"])
-    _subprocess_run(["git", "push", "--follow-tags"])
+    _subprocess_run(["git",  "-C", docs, "push", "HEAD:master", "--follow-tags"])
+    _subprocess_run(["git", "push", "HEAD:master", "--follow-tags"])
 
 
 def _main():

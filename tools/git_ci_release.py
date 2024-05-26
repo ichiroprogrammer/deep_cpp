@@ -32,7 +32,7 @@ def _copy_files_to_docs(dst_dir):
 
 def _subprocess_run(cmd_line):
     print("executing ", " ".join(cmd_line))
-    # subprocess.run(cmd_line, check=True)
+    subprocess.run(cmd_line, check=True)
 
 def _assert_on_root():
     top_level_dir = git_utils.get_git_root()
