@@ -18,7 +18,7 @@ def _gen_tag():
 def _copy_files_to_docs(dst_dir):
     src_dir = 'o'
     
-    file_extensions = ['html', 'md']
+    file_extensions = ['html', 'pdf', 'md']
     for ext in file_extensions:
         files_to_copy = glob.glob(os.path.join(src_dir, f'*.{ext}'))
         if len(files_to_copy) == 0 :
@@ -47,13 +47,18 @@ def _process_on_master():
     docs = git_utils.get_git_docs_dir()
 
     # git_utils.assert_no_durty()
+    _subprocess_run(["git", "submodule", "update", "--init", "--recursive"])
     _copy_files_to_docs(docs)
 
     tag = _gen_tag()
     ci_msg = f"release {tag}"
 
+    _subprocess_run(["git", "-C", docs, "add", "."])
+    _subprocess_run(["git", "-C", docs, "commit", "-m", ci_msg])
+
     _subprocess_run(["git", "add", docs])
     _subprocess_run(["git", "commit", "-m", ci_msg])
+    _subprocess_run(["git", "-C", docs, "tag", "-a", tag, "-m", ci_msg])
     _subprocess_run(["git", "tag", "-a", tag, "-m", ci_msg])
 
 
