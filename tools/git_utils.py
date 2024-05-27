@@ -133,19 +133,16 @@ def assert_no_durty(dir = None):
 
         subprocess.run(cmd, check=True)     # 非0終了なら例外
 
-        cmd.append("--cached")
-        subprocess.run(cmd, check=True)     # 非0終了なら例外
-
         if dir != None:
             cmd = ["git", "-C", dir, "ls-files", "--exclude-standard", "--others"]
         else:
             cmd = ["git", "ls-files", "--exclude-standard", "--others"]
     
     except Exception as e:
-        raise f"Error: repository is not clean."
+        raise Exception(f"Error: repository is not clean.")
 
     others = subprocess.check_output(cmd, text=True).strip()
 
     if len(others) != 0 :
-        raise f"Error: repository is not clean."
+        raise Exception(f"Error: repository is not clean.")
 

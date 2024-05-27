@@ -22,7 +22,7 @@ def _copy_files_to_docs(dst_dir):
     for ext in file_extensions:
         files_to_copy = glob.glob(os.path.join(src_dir, f'*.{ext}'))
         if len(files_to_copy) == 0 :
-            raise f"There is no *.{ext} !!!"
+            raise Exception(f"There is no *.{ext} !!:")
 
         dst_dir_ext =  os.path.join(dst_dir, ext)
         for file in files_to_copy:
@@ -46,14 +46,19 @@ def _assert_on_root():
 def _process_on_master():
     docs = git_utils.get_git_docs_dir()
 
-    # git_utils.assert_no_durty()
+    git_utils.assert_no_durty()
+    #_subprocess_run(["git", "submodule", "update", "--init", "--recursive"])
     _copy_files_to_docs(docs)
 
     tag = _gen_tag()
     ci_msg = f"release {tag}"
 
+    #_subprocess_run(["git", "-C", docs, "add", "."])
+    #_subprocess_run(["git", "-C", docs, "commit", "-m", ci_msg])
+
     _subprocess_run(["git", "add", docs])
     _subprocess_run(["git", "commit", "-m", ci_msg])
+    #_subprocess_run(["git", "-C", docs, "tag", "-a", tag, "-m", ci_msg])
     _subprocess_run(["git", "tag", "-a", tag, "-m", ci_msg])
 
 

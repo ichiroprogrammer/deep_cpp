@@ -27,8 +27,8 @@ def _push_process():
         print("must be on release in docs !!!")
         sys.exit(1)
 
-    _subprocess_run(["git",  "-C", docs, "push", "HEAD:master", "--follow-tags"])
-    _subprocess_run(["git", "push", "HEAD:master", "--follow-tags"])
+    #_subprocess_run(["git",  "-C", docs, "push", "HEAD:master", "--follow-tags"])
+    _subprocess_run(["git", "push", "--follow-tags"])
 
 
 def _main():
