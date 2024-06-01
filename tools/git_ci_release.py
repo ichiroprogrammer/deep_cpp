@@ -59,7 +59,7 @@ def _process_on_master():
     _subprocess_run(["git", "add", docs])
     _subprocess_run(["git", "commit", "-m", ci_msg])
     #_subprocess_run(["git", "-C", docs, "tag", "-a", tag, "-m", ci_msg])
-    _subprocess_run(["git", "tag", "-a", tag, "-m", ci_msg])
+    #_subprocess_run(["git", "tag", "-a", tag, "-m", ci_msg])
 
 
 def _release_process():

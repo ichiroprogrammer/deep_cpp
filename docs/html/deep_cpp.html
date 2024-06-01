@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Deep C++(V17.01)</title>
+  <title>Deep C++(V17.02)</title>
   <style>
     html {
       color: #1a1a1a;
@@ -263,7 +263,7 @@
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">Deep C++(V17.01)</h1>
+<h1 class="title">Deep C++(V17.02)</h1>
 <p class="author">autor:ichiroprogrammer</p>
 </header>
 <h1 id="インデックス">インデックス</h1>
@@ -17691,8 +17691,9 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb751-1"><a href="
 <span id="cb751-11"><a href="#cb751-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// この問題はリソースリークを発生させる場合がある。</span></span>
 <span id="cb751-12"><a href="#cb751-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">delete</span> <span class="va">m_str</span><span class="op">;</span></span></code></pre></div>
 <p>以上述べたように問題の多い手段1であるが、実践的には有用なパターンであり、
-[CRTP(curiously recurring template
-pattern)](https://ja.wikibooks.org/wiki/More_C%2B%2B_Idioms/%E5%A5%87%E5%A6%99%E3%81%AB%E5%86%8D%E5%B8%B0%E3%81%97%E3%81%9F%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3(Curiously_Recurring_Template_Pattern)
+<a
+href="https://ja.wikibooks.org/wiki/More_C%2B%2B_Idioms/%E5%A5%87%E5%A6%99%E3%81%AB%E5%86%8D%E5%B8%B0%E3%81%97%E3%81%9F%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3(Curiously_Recurring_Template_Pattern)">CRTP(curiously
+recurring template pattern)</a>
 の実現手段でもあるため、一概にコーディング規約などで排除することもできない。</p>
 <h4
 id="public継承によるis-implemented-in-terms-of">public継承によるis-implemented-in-terms-of
