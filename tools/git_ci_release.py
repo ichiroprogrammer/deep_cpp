@@ -48,7 +48,7 @@ def _process_on_master():
 
     git_utils.assert_no_durty()
     #_subprocess_run(["git", "submodule", "update", "--init", "--recursive"])
-    _copy_files_to_docs(docs)
+    #_copy_files_to_docs(docs)
 
     tag = _gen_tag()
     ci_msg = f"release {tag}"
@@ -56,7 +56,7 @@ def _process_on_master():
     #_subprocess_run(["git", "-C", docs, "add", "."])
     #_subprocess_run(["git", "-C", docs, "commit", "-m", ci_msg])
 
-    _subprocess_run(["git", "add", docs])
+    _subprocess_run(["git", "add", "."])
     _subprocess_run(["git", "commit", "-m", ci_msg])
     #_subprocess_run(["git", "-C", docs, "tag", "-a", tag, "-m", ci_msg])
     #_subprocess_run(["git", "tag", "-a", tag, "-m", ci_msg])
@@ -68,16 +68,11 @@ def _release_process():
     branch_name = git_utils.get_current_branch()
 
     if branch_name != "master":
-        print("must be on master !!!")
-        sys.exit(1)
+        raise Exception("must be on master !!!")
 
-    docs = git_utils.get_git_docs_dir()
+    #docs = git_utils.get_git_docs_dir()
 
-    branch_name = git_utils.get_current_branch(docs)
-
-    if branch_name != "master":
-        print("must be on release in docs !!!")
-        sys.exit(1)
+    #branch_name = git_utils.get_current_branch(docs)
 
     _process_on_master()
 

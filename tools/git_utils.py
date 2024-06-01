@@ -25,7 +25,7 @@ def get_git_docs_dir():
     root = get_git_root()
     return os.path.join(root, 'docs')
 
-def get_current_branch(dir = None) :
+def get_current_branch(dir = '.') :
     if dir :
         output = subprocess.check_output(["git", "-C", dir, "branch", "--show-current"]).decode(
             "utf-8"
