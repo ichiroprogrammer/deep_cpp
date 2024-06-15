@@ -8,13 +8,12 @@ MDS_DB:=o/db.json
 
 MD_IND:=o/index.md
 MDS_FINAL:=$(MD_IND) $(addprefix o/,$(notdir $(MDS_C)))
+MDS_PU:=$(addprefix o/pu/,$(notdir $(MDS_FINAL)))
 HTMLS:=$(MDS_FINAL:.md=.html)
 
 TARGET_HTML:=$(TARGET:.md=.html)
 TARGET_PDF:=$(TARGET:.md=.pdf)
-
-TARGET_PU:=$(TARGET:.md=_pu.md)
-TARGET_PU_HTML:=$(TARGET_PU:.md=.html)
+TARGET_PU:=$(addprefix o/pu/,$(notdir $(TARGET)))
 
 
 .PHONY: md html pdf all
@@ -23,9 +22,8 @@ html: $(TARGET_HTML) $(HTMLS)
 pdf: html $(TARGET_PDF)
 all: md html pdf
 
-.PHONY: pu_md pu_html
-pu_md: $(TARGET_PU)
-pu_html: $(TARGET_PU_HTML)
+.PHONY: mds_pu
+mds_pu: $(MDS_PU) $(TARGET_PU)
 
 CLEANS:=$(patsubst clean%,clean, $(MAKECMDGOALS))
 ifneq ($(CLEANS), clean)
@@ -48,9 +46,6 @@ $(TARGET): $(MDS_FINAL)
 $(TARGET_PDF) : $(TARGET_HTML)
 	$(MD_GEN)/../sh/to_pdf.sh $<
 
-$(TARGET_PU) : $(TARGET)
-	$(MD_GEN)/md_enable_pu.py -o $@ $^
-
 $(MD_IND) : $(MDS_DB)
 	$(MD_GEN)/md_make_index.py $(MD_SEC_NUM) -o $@ $< $(INDEX_OPT)
 
@@ -65,6 +60,9 @@ o/c/%.md: %.md
 
 o/c/%.d : %.md
 	$(MD_GEN)/md_compile.py -D $(@:.d=.md) -o $@ $<
+
+o/pu/%.md : o/%.md
+	$(MD_GEN)/md_inject_pu.py $< -o $@
 
 $(MDS_DB) : $(MDS_C)
 	$(MD_GEN)/md_make_db.py $@ --mds $^
@@ -84,7 +82,7 @@ o/%.html: o/%.md $(VERSION_TXT)
 clean:
 	rm -f $(MDS_DEPS)
 	rm -f $(MD_SC) $(MD_IND) $(MDS_DB)
-	rm -f $(MDS_FINAL)
+	rm -f $(MDS_FINAL) $(MDS_C)
 	rm -f $(HTMLS)
 	rm -f $(TARGET) $(TARGET_HTML) $(TARGET_PDF)
 
@@ -93,12 +91,13 @@ help:
 	@echo "make md MD_SEC_NUM=      :generate $(TARGET) without section number"
 	@echo "make html                :generate $(TARGET_HTML)"
 	@echo "make pdf                 :generate $(TARGET_PDF)"
-	@echo "make pu_md               :generate $(TARGET_PU)"
-	@echo "make pu_html             :generate $(TARGET_PU_HTML)"
+	@echo "make mds_pu              :generate $(TARGET_PU)"
 	@echo "make clean               :generated files are deleted"
 	@echo "make help                :show this message"
 
 echo:
+	-echo MDS_FINAL=$(MDS_FINAL)
+	-echo MDS_PU=$(MDS_PU)
 	-echo MDS_C=$(MDS_C)
 	-echo MDS_DEPS=$(MDS_DEPS)
 
