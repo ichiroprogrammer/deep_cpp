@@ -6,7 +6,7 @@ MDS_DEPS:=$(addprefix o/c/,$(MDS:.md=.d))
 MDS_C:=$(addprefix o/c/,$(MDS) $(MD_SC))
 MDS_DB:=o/db.json
 
-MD_IND:=o/index.md
+MD_IND:=
 MDS_FINAL:=$(MD_IND) $(addprefix o/,$(notdir $(MDS_C)))
 MDS_PU:=$(addprefix o/pu/,$(notdir $(MDS_FINAL)))
 HTMLS:=$(MDS_FINAL:.md=.html)
