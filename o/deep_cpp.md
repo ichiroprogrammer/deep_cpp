@@ -778,6 +778,35 @@ ServerNGとClientNGの双方向依存関係は、ClientOKからServerOKへの単
 猿になり不要に複雑なソースコードを書かないために、デザインパターン、イデオム等を使用する場合、
 本当にそれが必要か吟味し、不要な場所への適用を避けなければならない。
 
+---
+__この章の構成__
+
+&emsp;&emsp; [ガード節](#SS_2_1)  
+&emsp;&emsp; [BitmaskType](#SS_2_2)  
+&emsp;&emsp; [Pimpl](#SS_2_3)  
+&emsp;&emsp; [Accessor](#SS_2_4)  
+&emsp;&emsp; [Copy-And-Swap](#SS_2_5)  
+&emsp;&emsp; [Immutable](#SS_2_6)  
+&emsp;&emsp; [Clone(仮想コンストラクタ)](#SS_2_7)  
+&emsp;&emsp; [NVI(non virtual interface)](#SS_2_8)  
+&emsp;&emsp; [RAII(scoped guard)](#SS_2_9)  
+&emsp;&emsp; [Future](#SS_2_10)  
+&emsp;&emsp; [DI(dependency injection)](#SS_2_11)  
+&emsp;&emsp; [Singleton](#SS_2_12)  
+&emsp;&emsp; [State](#SS_2_13)  
+&emsp;&emsp; [Null Object](#SS_2_14)  
+&emsp;&emsp; [Templateメソッド](#SS_2_15)  
+&emsp;&emsp; [Factory](#SS_2_16)  
+&emsp;&emsp; [Named Constructor](#SS_2_17)  
+&emsp;&emsp; [Proxy](#SS_2_18)  
+&emsp;&emsp; [Strategy](#SS_2_19)  
+&emsp;&emsp; [Visitor](#SS_2_20)  
+&emsp;&emsp; [CRTP(curiously recurring template pattern)](#SS_2_21)  
+&emsp;&emsp; [Observer](#SS_2_22)  
+&emsp;&emsp; [MVC](#SS_2_23)  
+&emsp;&emsp; [Cでのクラス表現](#SS_2_24)  
+  
+  
 
 ## ガード節 <a id="SS_2_1"></a>
 ガード節とは、
@@ -5610,6 +5639,51 @@ C言語のqsort()のように強引なキャストを使い、この増加をあ
 本章では、これらをまとめた概念であるテンプレートメタプログラミングとして扱い、
 ログ取得ライブラリやSTLを応用したNstdライブラリの実装を通して、
 これらのテクニックや、使用上の注意点について解説する。
+
+---
+__この章の構成__
+
+&emsp;&emsp; [ログ取得ライブラリの開発](#SS_3_1)  
+&emsp;&emsp;&emsp; [要件](#SS_3_1_1)  
+&emsp;&emsp;&emsp; [ログ取得ライブラリのインターフェース](#SS_3_1_2)  
+&emsp;&emsp;&emsp; [パラメータパック](#SS_3_1_3)  
+&emsp;&emsp;&emsp; [Loggerの実装](#SS_3_1_4)  
+&emsp;&emsp;&emsp; [ユーザ定義型とそのoperator\<\<のname lookup](#SS_3_1_5)  
+&emsp;&emsp;&emsp; [Ints_tのログ登録](#SS_3_1_6)  
+
+&emsp;&emsp; [Nstdライブラリの開発](#SS_3_2)  
+&emsp;&emsp;&emsp; [Nstdライブラリを使用したリファクタリング](#SS_3_2_1)  
+&emsp;&emsp;&emsp; [安全なvector](#SS_3_2_2)  
+&emsp;&emsp;&emsp; [安全な配列型コンテナ](#SS_3_2_3)  
+&emsp;&emsp;&emsp; [初期化子リストの副作用](#SS_3_2_4)  
+
+&emsp;&emsp; [メタ関数のテクニック](#SS_3_3)  
+&emsp;&emsp;&emsp; [STLのtype_traits](#SS_3_3_1)  
+&emsp;&emsp;&emsp; [is_void_xxxの実装](#SS_3_3_2)  
+&emsp;&emsp;&emsp; [is_same_xxxの実装](#SS_3_3_3)  
+&emsp;&emsp;&emsp; [AreConvertibleXxxの実装](#SS_3_3_4)  
+&emsp;&emsp;&emsp; [関数の存在の診断](#SS_3_3_5)  
+
+&emsp;&emsp; [Nstdライブラリの開発2](#SS_3_4)  
+&emsp;&emsp;&emsp; [SafeArray2の開発](#SS_3_4_1)  
+&emsp;&emsp;&emsp; [Nstd::SafeIndexの開発](#SS_3_4_2)  
+&emsp;&emsp;&emsp; [Nstd::SafeIndexのoperator\<\<の開発](#SS_3_4_3)  
+&emsp;&emsp;&emsp; [コンテナ用Nstd::operator\<\<の開発](#SS_3_4_4)  
+
+&emsp;&emsp; [ログ取得ライブラリの開発2](#SS_3_5)  
+&emsp;&emsp; [その他のテンプレートテクニック](#SS_3_6)  
+&emsp;&emsp;&emsp; [ユニバーサルリファレンスとstd::forward](#SS_3_6_1)  
+&emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_3_6_2)  
+&emsp;&emsp;&emsp; [クラステンプレートと継承の再帰構造](#SS_3_6_3)  
+&emsp;&emsp;&emsp; [constexpr if文](#SS_3_6_4)  
+&emsp;&emsp;&emsp; [意図しないname lookupの防止](#SS_3_6_5)  
+&emsp;&emsp;&emsp; [Nstd::Type2Strの開発](#SS_3_6_6)  
+&emsp;&emsp;&emsp; [静的な文字列オブジェクト](#SS_3_6_7)  
+&emsp;&emsp;&emsp; [関数型をテンプレートパラメータで使う](#SS_3_6_8)  
+
+&emsp;&emsp; [注意点まとめ](#SS_3_7)  
+  
+  
 
 ## ログ取得ライブラリの開発 <a id="SS_3_1"></a>
 ここではログ取得ライブラリの開発を行う。
@@ -12475,6 +12549,24 @@ new/deleteは通常malloc/freeを使って実装されているため同じ問�
 
 本章では、この問題を回避するための技法を紹介する。
 
+---
+__この章の構成__
+
+&emsp;&emsp; [malloc/freeの問題点](#SS_4_1)  
+&emsp;&emsp; [グローバルnew/deleteのオーバーロード](#SS_4_2)  
+&emsp;&emsp;&emsp; [固定長メモリプール](#SS_4_2_1)  
+&emsp;&emsp;&emsp; [グローバルnew/deleteのオーバーロードの実装](#SS_4_2_2)  
+&emsp;&emsp;&emsp; [プレースメントnew](#SS_4_2_3)  
+&emsp;&emsp;&emsp; [デバッグ用イテレータ](#SS_4_2_4)  
+
+&emsp;&emsp; [クラスnew/deleteのオーバーロード](#SS_4_3)  
+&emsp;&emsp; [STLコンテナのアロケーター](#SS_4_4)  
+&emsp;&emsp;&emsp; [STLコンテナ用アロケータ](#SS_4_4_1)  
+&emsp;&emsp;&emsp; [可変長メモリプール](#SS_4_4_2)  
+&emsp;&emsp;&emsp; [デバッグ用イテレータ](#SS_4_4_3)  
+&emsp;&emsp;&emsp; [エクセプション処理機構の変更](#SS_4_4_4)  
+  
+  
 
 ## malloc/freeの問題点 <a id="SS_4_1"></a>
 UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
@@ -13853,6 +13945,129 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 
 この章では、このドキュメントで使用する用語の解説をする。
 
+---
+__この章の構成__
+
+&emsp;&emsp; [型とインスタンス](#SS_5_1)  
+&emsp;&emsp;&emsp; [算術型](#SS_5_1_1)  
+&emsp;&emsp;&emsp; [汎整数型](#SS_5_1_2)  
+&emsp;&emsp;&emsp; [整数型](#SS_5_1_3)  
+&emsp;&emsp;&emsp; [算術変換](#SS_5_1_4)  
+&emsp;&emsp;&emsp; [汎整数拡張](#SS_5_1_5)  
+&emsp;&emsp;&emsp; [POD](#SS_5_1_6)  
+&emsp;&emsp;&emsp; [標準レイアウト型](#SS_5_1_7)  
+&emsp;&emsp;&emsp; [トリビアル型](#SS_5_1_8)  
+&emsp;&emsp;&emsp; [underlying type](#SS_5_1_9)  
+&emsp;&emsp;&emsp; [不完全型](#SS_5_1_10)  
+&emsp;&emsp;&emsp; [完全型](#SS_5_1_11)  
+&emsp;&emsp;&emsp; [ポリモーフィックなクラス](#SS_5_1_12)  
+&emsp;&emsp;&emsp; [インターフェースクラス](#SS_5_1_13)  
+&emsp;&emsp;&emsp; [constインスタンス](#SS_5_1_14)  
+&emsp;&emsp;&emsp; [constexprインスタンスと関数](#SS_5_1_15)  
+&emsp;&emsp;&emsp; [ユーザ定義リテラル演算子](#SS_5_1_16)  
+&emsp;&emsp;&emsp; [std::string型リテラル](#SS_5_1_17)  
+
+&emsp;&emsp; [オブジェクトと生成](#SS_5_2)  
+&emsp;&emsp;&emsp; [特殊メンバ関数](#SS_5_2_1)  
+&emsp;&emsp;&emsp; [初期化子リストコンストラクタ](#SS_5_2_2)  
+&emsp;&emsp;&emsp; [継承コンストラクタ](#SS_5_2_3)  
+&emsp;&emsp;&emsp; [委譲コンストラクタ](#SS_5_2_4)  
+&emsp;&emsp;&emsp; [非explitなコンストラクタによる暗黙の型変換](#SS_5_2_5)  
+&emsp;&emsp;&emsp; [NSDMI](#SS_5_2_6)  
+&emsp;&emsp;&emsp; [一様初期化](#SS_5_2_7)  
+&emsp;&emsp;&emsp; [AAAスタイル](#SS_5_2_8)  
+&emsp;&emsp;&emsp; [オブジェクトの所有権](#SS_5_2_9)  
+&emsp;&emsp;&emsp; [オブジェクトのライフタイム](#SS_5_2_10)  
+&emsp;&emsp;&emsp; [クラスのレイアウト](#SS_5_2_11)  
+
+&emsp;&emsp; [オブジェクトのコピー](#SS_5_3)  
+&emsp;&emsp;&emsp; [シャローコピー](#SS_5_3_1)  
+&emsp;&emsp;&emsp; [ディープコピー](#SS_5_3_2)  
+&emsp;&emsp;&emsp; [スライシング](#SS_5_3_3)  
+
+&emsp;&emsp; [name lookupと名前空間](#SS_5_4)  
+&emsp;&emsp;&emsp; [ルックアップ](#SS_5_4_1)  
+&emsp;&emsp;&emsp; [name lookup](#SS_5_4_2)  
+&emsp;&emsp;&emsp; [two phase name lookup](#SS_5_4_3)  
+&emsp;&emsp;&emsp; [実引数依存探索](#SS_5_4_4)  
+&emsp;&emsp;&emsp; [ADL](#SS_5_4_5)  
+&emsp;&emsp;&emsp; [関連名前空間](#SS_5_4_6)  
+&emsp;&emsp;&emsp; [SFINAE](#SS_5_4_7)  
+&emsp;&emsp;&emsp; [name-hiding](#SS_5_4_8)  
+&emsp;&emsp;&emsp; [ドミナンス](#SS_5_4_9)  
+&emsp;&emsp;&emsp; [ダイヤモンド継承](#SS_5_4_10)  
+&emsp;&emsp;&emsp; [仮想継承](#SS_5_4_11)  
+&emsp;&emsp;&emsp; [仮想基底](#SS_5_4_12)  
+&emsp;&emsp;&emsp; [using宣言](#SS_5_4_13)  
+&emsp;&emsp;&emsp; [usingディレクティブ](#SS_5_4_14)  
+
+&emsp;&emsp; [expressionと値カテゴリ](#SS_5_5)  
+&emsp;&emsp;&emsp; [expression](#SS_5_5_1)  
+&emsp;&emsp;&emsp; [lvalue](#SS_5_5_2)  
+&emsp;&emsp;&emsp; [rvalue](#SS_5_5_3)  
+&emsp;&emsp;&emsp; [rvalue修飾](#SS_5_5_4)  
+&emsp;&emsp;&emsp; [lvalue修飾](#SS_5_5_5)  
+&emsp;&emsp;&emsp; [リファレンス修飾](#SS_5_5_6)  
+&emsp;&emsp;&emsp; [decltype](#SS_5_5_7)  
+
+&emsp;&emsp; [リファレンス](#SS_5_6)  
+&emsp;&emsp;&emsp; [ユニバーサルリファレンス](#SS_5_6_1)  
+&emsp;&emsp;&emsp; [forwardingリファレンス](#SS_5_6_2)  
+&emsp;&emsp;&emsp; [perfect forwarding](#SS_5_6_3)  
+&emsp;&emsp;&emsp; [リファレンスcollapsing](#SS_5_6_4)  
+&emsp;&emsp;&emsp; [danglingリファレンス](#SS_5_6_5)  
+&emsp;&emsp;&emsp; [danglingポインタ](#SS_5_6_6)  
+
+&emsp;&emsp; [エクセプション安全性の保証](#SS_5_7)  
+&emsp;&emsp;&emsp; [no-fail保証](#SS_5_7_1)  
+&emsp;&emsp;&emsp; [強い保証](#SS_5_7_2)  
+&emsp;&emsp;&emsp; [基本保証](#SS_5_7_3)  
+
+&emsp;&emsp; [シンタックス、セマンティクス](#SS_5_8)  
+&emsp;&emsp;&emsp; [等価性のセマンティクス](#SS_5_8_1)  
+&emsp;&emsp;&emsp; [copyセマンティクス](#SS_5_8_2)  
+&emsp;&emsp;&emsp; [moveセマンティクス](#SS_5_8_3)  
+
+&emsp;&emsp; [C++コンパイラ](#SS_5_9)  
+&emsp;&emsp;&emsp; [g++](#SS_5_9_1)  
+&emsp;&emsp;&emsp; [clang++](#SS_5_9_2)  
+
+&emsp;&emsp; [C++その他](#SS_5_10)  
+&emsp;&emsp;&emsp; [オーバーライドとオーバーロードの違い](#SS_5_10_1)  
+&emsp;&emsp;&emsp; [実引数/仮引数](#SS_5_10_2)  
+&emsp;&emsp;&emsp; [範囲for文](#SS_5_10_3)  
+&emsp;&emsp;&emsp; [ラムダ式](#SS_5_10_4)  
+&emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_5_10_5)  
+&emsp;&emsp;&emsp; [関数tryブロック](#SS_5_10_6)  
+&emsp;&emsp;&emsp; [単純代入](#SS_5_10_7)  
+&emsp;&emsp;&emsp; [ill-formed](#SS_5_10_8)  
+&emsp;&emsp;&emsp; [well-formed](#SS_5_10_9)  
+&emsp;&emsp;&emsp; [one-definition rule](#SS_5_10_10)  
+&emsp;&emsp;&emsp; [ODR](#SS_5_10_11)  
+&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_5_10_12)  
+&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_5_10_13)  
+&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_5_10_14)  
+&emsp;&emsp;&emsp; [RTTI](#SS_5_10_15)  
+&emsp;&emsp;&emsp; [Run-time Type Information](#SS_5_10_16)  
+&emsp;&emsp;&emsp; [simple-declaration](#SS_5_10_17)  
+&emsp;&emsp;&emsp; [typeid](#SS_5_10_18)  
+&emsp;&emsp;&emsp; [トライグラフ](#SS_5_10_19)  
+&emsp;&emsp;&emsp; [フリースタンディング環境](#SS_5_10_20)  
+
+&emsp;&emsp; [ソフトウェア一般](#SS_5_11)  
+&emsp;&emsp;&emsp; [凝集度](#SS_5_11_1)  
+&emsp;&emsp;&emsp; [サイクロマティック複雑度](#SS_5_11_2)  
+&emsp;&emsp;&emsp; [Spurious Wakeup](#SS_5_11_3)  
+&emsp;&emsp;&emsp; [副作用](#SS_5_11_4)  
+&emsp;&emsp;&emsp; [is-a](#SS_5_11_5)  
+&emsp;&emsp;&emsp; [has-a](#SS_5_11_6)  
+&emsp;&emsp;&emsp; [is-implemented-in-terms-of](#SS_5_11_7)  
+
+&emsp;&emsp; [非ソフトウェア用語](#SS_5_12)  
+&emsp;&emsp;&emsp; [割れ窓理論](#SS_5_12_1)  
+&emsp;&emsp;&emsp; [車輪の再発明](#SS_5_12_2)  
+  
+  
 
 ## 型とインスタンス <a id="SS_5_1"></a>
 
