@@ -18,6 +18,7 @@ new/deleteは通常malloc/freeを使って実装されているため同じ問�
 
 本章では、この問題を回避するための技法を紹介する。
 
+
 ## malloc/freeの問題点
 UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 (この実装は長いため、全体は巻末の"[example/dynamic_memory_allocation/malloc_ut.cpp](---)"に掲載する)。
