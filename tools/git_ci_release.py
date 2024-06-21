@@ -43,7 +43,7 @@ def _assert_on_root():
         sys.exit(1)
 
 
-def _process_on_master():
+def _process_on_main():
     docs = git_utils.get_git_docs_dir()
 
     git_utils.assert_no_durty()
@@ -67,14 +67,14 @@ def _release_process():
 
     branch_name = git_utils.get_current_branch()
 
-    if branch_name != "master":
-        raise Exception("must be on master !!!")
+    if branch_name != "main":
+        raise Exception("must be on main !!!")
 
     #docs = git_utils.get_git_docs_dir()
 
     #branch_name = git_utils.get_current_branch(docs)
 
-    _process_on_master()
+    _process_on_main()
 
 
 def _main():
