@@ -25,7 +25,8 @@ __この章の構成__
 
 ## malloc/freeの問題点
 UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
-(この実装は長いため、全体は巻末の"[example/dynamic_memory_allocation/malloc_ut.cpp](---)"に掲載する)。
+(この実装は長いため、
+全体は巻末の「"[example/dynamic_memory_allocation/malloc_ut.cpp](---)"」に掲載する)。
 
 ```cpp
     // @@@ example/dynamic_memory_allocation/malloc_ut.cpp #1:0 begin
@@ -439,7 +440,7 @@ STLコンテナはこういった状況に備えて、ユーザ定義のアロ�
 
 ### 可変長メモリプール
 可変長メモリプールを生成するMPoolVariableの実装は下記のようになる
-(全体は巻末の"[example/dynamic_memory_allocation/mpool_variable.h](---)"に掲載する)。
+(全体は巻末の「"[example/dynamic_memory_allocation/mpool_variable.h](---)"」に掲載する)。
 
 ```cpp
     // @@@ example/dynamic_memory_allocation/mpool_variable.h #0:0 begin
