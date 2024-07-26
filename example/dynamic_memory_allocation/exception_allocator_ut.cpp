@@ -6,9 +6,12 @@
 
 #include "dynamic_memory_allocation_ut.h"
 #include "mpool_fixed.h"
+#include "suppress_warning.h"
 
 #ifndef __CYGWIN__  // この実装は、cygwinでは動作しない
 
+SUPPRESS_WARN_BEGIN;
+SUPPRESS_WARN_CLANG_DEPRECATED_DECL;
 // @@@ sample begin 0:0
 
 // https://github.com/hjl-tools/gcc/blob/master/libstdc%2B%2B-v3/libsupc%2B%2B/unwind-cxx.h
@@ -59,6 +62,7 @@ struct __cxa_exception {
     _Unwind_Exception unwindHeader;
     // @@@ ignore end
 };
+SUPPRESS_WARN_END;
 }  // namespace __cxxabiv1
 
 namespace {

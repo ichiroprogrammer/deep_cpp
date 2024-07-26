@@ -13885,7 +13885,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 下記に示すような、これまで使用したMPoolFixedによる単純な実装を使うこともできる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/exception_allocator_ut.cpp 12
+    // @@@ example/dynamic_memory_allocation/exception_allocator_ut.cpp 15
 
     // https://github.com/hjl-tools/gcc/blob/master/libstdc%2B%2B-v3/libsupc%2B%2B/unwind-cxx.h
     // の抜粋
@@ -13893,6 +13893,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
     struct __cxa_exception {
         ...
     };
+    SUPPRESS_WARN_END;
     }  // namespace __cxxabiv1
 
     namespace {
@@ -13930,7 +13931,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 以下に単体テストを示す。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/exception_allocator_ut.cpp 100
+    // @@@ example/dynamic_memory_allocation/exception_allocator_ut.cpp 104
 
     auto count             = mpf_exception.GetCount();
     auto exception_occured = false;
