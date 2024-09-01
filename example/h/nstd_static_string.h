@@ -11,12 +11,18 @@ template <size_t N>
 class StaticString {
 public:
     constexpr StaticString(char const (&str)[N]) noexcept
-        : StaticString{str, std::make_index_sequence<N - 1>{}}
+        : StaticString{0, str, std::make_index_sequence<N - 1>{}}
+    {
+    }
+
+    template <size_t M>
+    constexpr StaticString(size_t offset, StaticString<M> ss) noexcept
+        : StaticString{offset, ss.string_, std::make_index_sequence<N - 1>{}}
     {
     }
 
     constexpr StaticString(std::initializer_list<char> args) noexcept
-        : StaticString{args, std::make_index_sequence<N - 1>{}}
+        : StaticString{0, args, std::make_index_sequence<N - 1>{}}
     {
     }
 
@@ -27,12 +33,14 @@ private:
     char const string_[N];
 
     template <typename T, size_t... I>
-    constexpr StaticString(T& t, std::index_sequence<I...>) noexcept : string_{std::begin(t)[I]...}
+    // offsetは部分StaticString切り出しのため(TopStr, BottomStr)
+    constexpr StaticString(size_t offset, T& t, std::index_sequence<I...>) noexcept
+        : string_{std::begin(t)[I + offset]...}
     {
-        static_assert(
-            std::is_same_v<T, std::initializer_list<char>> || std::is_same_v<T, char const[N]>);
-        static_assert(N - 1 == sizeof...(I));
     }
+
+    template <size_t M>
+    friend class StaticString;
 };
 // @@@ sample end
 // @@@ sample begin 0:1
@@ -128,5 +136,18 @@ constexpr auto operator+(char const (&lhs)[N1], StaticString<N2> const& rhs) noe
 {
     return StaticString{lhs} + rhs;
 }
+
+template <size_t SIZE, size_t N>  // StaticString<SiZE>の部分文字列生成
+constexpr auto TopStr(StaticString<N> ss) noexcept
+{
+    return StaticString<SIZE>{0, ss};
+}
+
+template <size_t OFFSET, size_t N>  // StaticStringの字列の先頭からOFFSETの部分文字列
+constexpr auto BottomStr(StaticString<N> ss) noexcept
+{
+    return StaticString<N - OFFSET>{OFFSET, ss};
+}
+
 // @@@ sample end
 }  // namespace Nstd

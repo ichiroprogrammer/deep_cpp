@@ -1,6 +1,7 @@
 #include "gtest_wrapper.h"
 
 #include "nstd_static_string.h"
+#include "nstd_static_string_path.h"
 #include "nstd_type2str.h"
 
 namespace Nstd {
@@ -30,6 +31,35 @@ TEST(Template, static_string_construct)
         // 文字列不足であるため、下記はコンパイルさせない
         // constexpr StaticString<4> fs2{'a', 'b'};
         // @@@ sample end
+    }
+}
+
+TEST(Template, TopStr_BottomStr)
+{
+    constexpr const char path[]{"0123456789"};
+    {
+        constexpr auto ss0 = StaticString{path};
+        auto           ss3 = BottomStr<3>(ss0);
+
+        static_assert(8 == ss3.Size());
+        ASSERT_STREQ("3456789", ss3.String());
+
+        auto ss8 = BottomStr<8>(ss0);
+
+        static_assert(3 == ss8.Size());
+        ASSERT_STREQ("89", ss8.String());
+    }
+    {
+        constexpr auto ss0 = StaticString{path};
+        auto           ss3 = TopStr<3>(ss0);
+
+        static_assert(3 == ss3.Size());
+        ASSERT_STREQ("01", ss3.String());
+
+        auto ss8 = TopStr<8>(ss0);
+
+        static_assert(8 == ss8.Size());
+        ASSERT_STREQ("0123456", ss8.String());
     }
 }
 
