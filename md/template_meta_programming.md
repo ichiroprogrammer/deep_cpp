@@ -3020,6 +3020,18 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
     // @@@ example/template/nstd_static_string_ut.cpp #2:0 begin -1
 ```
 
+以上でstd::stringのように=、==、+などの演算が可能となった。
+さらに下記の関数を追加することで、任意の位置、
+任意のサイズの文字列を切り出せるようにすることでStaticStringはより便利に使用できるようになる。
+
+```cpp
+    // @@@ example/h/nstd_static_string.h #0:3 begin
+```
+
+```cpp
+    // @@@ example/template/nstd_static_string_ut.cpp #0:2 begin -1
+```
+
 #### 整数をStaticStringに変換する関数の開発
 コンパイル時に__LINE__をStaticStringに変換できれば、
 ファイル位置をStaticStringで表現できるため、

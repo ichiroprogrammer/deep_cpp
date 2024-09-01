@@ -8,6 +8,11 @@
 [テンプレートメタプログラミング](#SS_4)、[ダイナミックメモリアロケーション](#SS_5)について、
 十分な知識を提供するドキュメントは上記と同様にきわめて珍しいと思われる。
 
+
+## 改訂履歴 <a id="SS_1_1"></a>
+* V18.07
+    * 静的な文字列オブジェクトの強化
+
 ___
 __このドキュメントの構成__
 
@@ -11740,12 +11745,18 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     class StaticString {
     public:
         constexpr StaticString(char const (&str)[N]) noexcept
-            : StaticString{str, std::make_index_sequence<N - 1>{}}
+            : StaticString{0, str, std::make_index_sequence<N - 1>{}}
+        {
+        }
+
+        template <size_t M>
+        constexpr StaticString(size_t offset, StaticString<M> ss) noexcept
+            : StaticString{offset, ss.string_, std::make_index_sequence<N - 1>{}}
         {
         }
 
         constexpr StaticString(std::initializer_list<char> args) noexcept
-            : StaticString{args, std::make_index_sequence<N - 1>{}}
+            : StaticString{0, args, std::make_index_sequence<N - 1>{}}
         {
         }
 
@@ -11756,19 +11767,21 @@ StaticStringはすでに示したテクニックを使い、下記のように�
         char const string_[N];
 
         template <typename T, size_t... I>
-        constexpr StaticString(T& t, std::index_sequence<I...>) noexcept : string_{std::begin(t)[I]...}
+        // offsetは部分StaticString切り出しのため(TopStr, BottomStr)
+        constexpr StaticString(size_t offset, T& t, std::index_sequence<I...>) noexcept
+            : string_{std::begin(t)[I + offset]...}
         {
-            static_assert(
-                std::is_same_v<T, std::initializer_list<char>> || std::is_same_v<T, char const[N]>);
-            static_assert(N - 1 == sizeof...(I));
         }
+
+        template <size_t M>
+        friend class StaticString;
     };
 ```
 
 文字列リテラルからStaticStringを生成する単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp 11
+    // @@@ example/template/nstd_static_string_ut.cpp 12
 
     const auto fs = StaticString{"abc"};  // C++17からのNの指定は不要
 
@@ -11782,7 +11795,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 また、std::initializer_list\<char>による初期化の単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp 23
+    // @@@ example/template/nstd_static_string_ut.cpp 24
 
     const auto fs = StaticString<4>{'a', 'b', 'c'};  // C++17でもNの指定は必要
 
@@ -11796,7 +11809,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 次にこのクラスにoperator == を追加する。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 38
+    // @@@ example/h/nstd_static_string.h 46
 
     namespace Inner_ {
     template <size_t N>
@@ -11863,7 +11876,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp 38
+    // @@@ example/template/nstd_static_string_ut.cpp 70
 
     static_assert(StaticString{"123"} == StaticString{"123"});
     static_assert(StaticString{"123"} != StaticString{"1234"});
@@ -11880,7 +11893,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 同様にoperator + を追加する。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 101
+    // @@@ example/h/nstd_static_string.h 109
 
     namespace Inner_ {
     template <size_t N1, size_t... I1, size_t N2, size_t... I2>
@@ -11913,7 +11926,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 ```
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp 51
+    // @@@ example/template/nstd_static_string_ut.cpp 83
 
     constexpr auto fs0 = StaticString{"1234"} + StaticString{"567"};
     static_assert(std::is_same_v<StaticString<fs0.Size()> const, decltype(fs0)>);
@@ -11930,6 +11943,41 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
     constexpr auto fs3 = StaticString{"1234"} + ":" + StaticString{"567"};
     static_assert(std::is_same_v<StaticString<fs3.Size()> const, decltype(fs3)>);
     static_assert("1234:567" == fs3);
+```
+
+以上でstd::stringのように=、==、+などの演算が可能となった。
+さらに下記の関数を追加することで、任意の位置、
+任意のサイズの文字列を切り出せるようにすることでStaticStringはより便利に使用できるようになる。
+
+```cpp
+    // @@@ example/h/nstd_static_string.h 140
+
+    template <size_t SIZE, size_t N>  // StaticString<SiZE>の部分文字列生成
+    constexpr auto TopStr(StaticString<N> ss) noexcept
+    {
+        return StaticString<SIZE + 1>{0, ss};  // SIZE文字 + 終端文字
+    }
+
+    template <size_t OFFSET, size_t N>  // 先頭からオフセット2文字～終端文字まで
+    constexpr auto BottomStr(StaticString<N> ss) noexcept
+    {
+        return StaticString<N - OFFSET>{OFFSET, ss};
+    }
+```
+
+```cpp
+    // @@@ example/template/nstd_static_string_ut.cpp 53
+
+    constexpr auto ss  = StaticString{"0123456789"};
+    auto           ss2 = TopStr<2>(ss);  // 先頭2文字
+    static_assert(3 == ss2.Size());      // 先頭2文字 + 終端文字
+    ASSERT_STREQ("01", ss2.String());
+
+    auto ss8 = BottomStr<2>(ss);  // 先頭からオフセット2文字～終端文字まで
+    static_assert(9 == ss8.Size());  // 先頭からオフセット2文字～終端文字までは結果的に9文字
+    ASSERT_STREQ("23456789", ss8.String());
+
+    ASSERT_EQ(ss2 + ss8, ss);  // 元に戻す。+、= が使用される。
 ```
 
 #### 整数をStaticStringに変換する関数の開発 <a id="SS_4_6_7_3"></a>

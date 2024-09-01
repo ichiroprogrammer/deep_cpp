@@ -36,10 +36,10 @@ TEST(Template, static_string_construct)
 
 TEST(Template, TopStr_BottomStr)
 {
-    constexpr const char path[]{"0123456789"};
     {
-        constexpr auto ss0 = StaticString{path};
-        auto           ss3 = BottomStr<3>(ss0);
+        constexpr const char str[]{"0123456789"};
+        constexpr auto       ss0 = StaticString{str};
+        auto                 ss3 = BottomStr<3>(ss0);
 
         static_assert(8 == ss3.Size());
         ASSERT_STREQ("3456789", ss3.String());
@@ -49,18 +49,20 @@ TEST(Template, TopStr_BottomStr)
         static_assert(3 == ss8.Size());
         ASSERT_STREQ("89", ss8.String());
     }
-    {
-        constexpr auto ss0 = StaticString{path};
-        auto           ss3 = TopStr<3>(ss0);
 
-        static_assert(3 == ss3.Size());
-        ASSERT_STREQ("01", ss3.String());
+    // @@@ sample begin 0:2
 
-        auto ss8 = TopStr<8>(ss0);
+    constexpr auto ss  = StaticString{"0123456789"};
+    auto           ss2 = TopStr<2>(ss);  // 先頭2文字
+    static_assert(3 == ss2.Size());      // 先頭2文字 + 終端文字
+    ASSERT_STREQ("01", ss2.String());
 
-        static_assert(8 == ss8.Size());
-        ASSERT_STREQ("0123456", ss8.String());
-    }
+    auto ss8 = BottomStr<2>(ss);  // 先頭からオフセット2文字～終端文字まで
+    static_assert(9 == ss8.Size());  // 先頭からオフセット2文字～終端文字までは結果的に9文字
+    ASSERT_STREQ("23456789", ss8.String());
+
+    ASSERT_EQ(ss2 + ss8, ss);  // 元に戻す。+、= が使用される。
+    // @@@ sample end
 }
 
 TEST(Template, static_string_eq)

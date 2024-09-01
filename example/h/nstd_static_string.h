@@ -136,18 +136,19 @@ constexpr auto operator+(char const (&lhs)[N1], StaticString<N2> const& rhs) noe
 {
     return StaticString{lhs} + rhs;
 }
+// @@@ sample end
+// @@@ sample begin 0:3
 
 template <size_t SIZE, size_t N>  // StaticString<SiZE>の部分文字列生成
 constexpr auto TopStr(StaticString<N> ss) noexcept
 {
-    return StaticString<SIZE>{0, ss};
+    return StaticString<SIZE + 1>{0, ss};  // SIZE文字 + 終端文字
 }
 
-template <size_t OFFSET, size_t N>  // StaticStringの字列の先頭からOFFSETの部分文字列
+template <size_t OFFSET, size_t N>  // 先頭からオフセット2文字～終端文字まで
 constexpr auto BottomStr(StaticString<N> ss) noexcept
 {
     return StaticString<N - OFFSET>{OFFSET, ss};
 }
-
 // @@@ sample end
 }  // namespace Nstd
