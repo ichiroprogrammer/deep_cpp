@@ -12757,7 +12757,7 @@ sbrkは
 によるメモリ確保のトリガーとなる。
 これはOSのファイルシステムの動作を含む処理であるため、やはりリアルタイム性の保証は困難である。
 
-[フリースタンディング環境](#SS_6_10_20)では、sbrkのようなシステムコールは存在しないため、
+[フリースタンディング環境](#SS_6_10_21)では、sbrkのようなシステムコールは存在しないため、
 アプリケーションの未使用領域や静的に確保した領域を上記コードで示したようなリスト構造で管理し、
 mallocで使用することになる。
 このような環境では、sbrkによるリアルタイム性の阻害は発生しないものの、
@@ -14108,13 +14108,14 @@ __この章の構成__
 &emsp;&emsp;&emsp; [ODR](#SS_6_10_11)  
 &emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_10_12)  
 &emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_10_13)  
-&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_10_14)  
-&emsp;&emsp;&emsp; [RTTI](#SS_6_10_15)  
-&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_10_16)  
-&emsp;&emsp;&emsp; [simple-declaration](#SS_6_10_17)  
-&emsp;&emsp;&emsp; [typeid](#SS_6_10_18)  
-&emsp;&emsp;&emsp; [トライグラフ](#SS_6_10_19)  
-&emsp;&emsp;&emsp; [フリースタンディング環境](#SS_6_10_20)  
+&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_10_14)  
+&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_10_15)  
+&emsp;&emsp;&emsp; [RTTI](#SS_6_10_16)  
+&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_10_17)  
+&emsp;&emsp;&emsp; [simple-declaration](#SS_6_10_18)  
+&emsp;&emsp;&emsp; [typeid](#SS_6_10_19)  
+&emsp;&emsp;&emsp; [トライグラフ](#SS_6_10_20)  
+&emsp;&emsp;&emsp; [フリースタンディング環境](#SS_6_10_21)  
 
 &emsp;&emsp; [ソフトウェア一般](#SS_6_11)  
 &emsp;&emsp;&emsp; [凝集度](#SS_6_11_1)  
@@ -15862,7 +15863,7 @@ sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24で�
 g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
 
 ```cpp
-    // @@@ example/term_explanation/Makefile 19
+    // @@@ example/term_explanation/Makefile 20
 
     CCFLAGS_ADD:=-fdump-lang-class
 ```
@@ -18260,7 +18261,7 @@ Derived用のoperator==を
     ASSERT_TRUE(d0_b_ref == d1);  // NG d0_b_refの実態はd0なのでd1と等価でない
 ```
 
-この問題は、[RTTI](#SS_6_10_15)を使った下記のようなコードで対処できる。
+この問題は、[RTTI](#SS_6_10_16)を使った下記のようなコードで対処できる。
 
 ```cpp
     // @@@ example/term_explanation/semantics_ut.cpp 202
@@ -18850,7 +18851,55 @@ std::stringで保持する文字列が終端の'\0'も含め8バイト以下で�
 
 SOOとはこのような最適化を指す。
 
-### Most Vexing Parse <a id="SS_6_10_14"></a>
+### heap allocation elision <a id="SS_6_10_14"></a>
+C++11までの仕様では、new式によるダイナミックメモリアロケーションはコードに書かれた通りに、
+実行されなければならず、ひとまとめにしたり省略したりすることはできなかった。
+つまり、ヒープ割り当てに対する最適化は認められなかった。
+ダイナミックメモリアロケーションの最適化のため、この制限は緩和され、
+new/deleteの呼び出しをまとめたり省略したりすることができるようになった。
+
+```cpp
+    // @@@ example/term_explanation/heap_allocation_elision_ut.cpp 4
+
+    void lump()  // 実装によっては、ダイナミックメモリアロケーションをまとめらる場合がある
+    {
+        int* p1 = new int{1};
+        int* p2 = new int{2};
+        int* p3 = new int{3};
+
+        // 何らかの処理
+
+        delete p1;
+        delete p2;
+        delete p3;
+
+        // 上記のメモリアロケーションは、実装によっては下記のように最適化される場合がある
+
+        int* p = new int[3]{1, 2, 3};
+        // 何らかの処理
+
+        delete[] p;
+    }
+
+    int emit()  // ダイナミックメモリアロケーションの省略
+    {
+        int* p = new int{10};
+        delete p;
+
+        // 上記のメモリアロケーションは、下記の用にスタックの変数に置き換える最適化が許される
+
+        int n = 10;
+
+        return n;
+    }
+```
+
+この最適化により、std::make_sharedのようにstd::shared_ptrの参照カウントを管理するメモリブロックと、
+オブジェクトの実体を1つのヒープ領域に割り当てることができ、
+ダイナミックメモリアロケーションが1回に抑えられるため、メモリアクセスが高速化される。
+
+
+### Most Vexing Parse <a id="SS_6_10_15"></a>
 Most Vexing Parse(最も困惑させる構文解析)とは、C++の文法に関連する問題で、
 Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつけたことに由来する。
 
@@ -18882,7 +18931,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 このような問題を回避できる。
 
 
-### RTTI <a id="SS_6_10_15"></a>
+### RTTI <a id="SS_6_10_16"></a>
 RTTI(Run-time Type Information)とは、プログラム実行中のオブジェクトの型を導出するための機能であり、
 具体的には下記の3つの要素を指す。
 
@@ -18970,10 +19019,10 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     // ASSERT_THROW(dynamic_cast<NonPolymorphic_Derived&>(b_ref_b), std::bad_cast);
 ```
 
-### Run-time Type Information <a id="SS_6_10_16"></a>
-「[RTTI](#SS_6_10_15)」を参照せよ。
+### Run-time Type Information <a id="SS_6_10_17"></a>
+「[RTTI](#SS_6_10_16)」を参照せよ。
 
-### simple-declaration <a id="SS_6_10_17"></a>
+### simple-declaration <a id="SS_6_10_18"></a>
 このための記述が
 [simple-declaration](https://cpprefjp.github.io/lang/cpp17/selection_statements_with_initializer.html)
 とは、C++17から導入された
@@ -19007,17 +19056,17 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     }
 ```
 
-### typeid <a id="SS_6_10_18"></a>
-「[RTTI](#SS_6_10_15)」を参照せよ。
+### typeid <a id="SS_6_10_19"></a>
+「[RTTI](#SS_6_10_16)」を参照せよ。
 
-### トライグラフ <a id="SS_6_10_19"></a>
+### トライグラフ <a id="SS_6_10_20"></a>
 トライグラフとは、2つの疑問符とその後に続く1文字によって表される、下記の文字列である。
 
 ```
     ??=  ??/  ??'  ??(  ??)  ??!  ??<  ??>  ??-
 ```
 
-### フリースタンディング環境 <a id="SS_6_10_20"></a>
+### フリースタンディング環境 <a id="SS_6_10_21"></a>
 [フリースタンディング環境](https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%AA%E3%83%BC%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E7%92%B0%E5%A2%83)
 とは、組み込みソフトウェアやOSのように、その実行にOSの補助を受けられないソフトウエアを指す。
 
