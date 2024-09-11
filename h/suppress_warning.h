@@ -124,7 +124,7 @@
 
 #ifdef __cplusplus
 template <typename... ARGS>
-inline void IGNORE_UNUSED_VAR(ARGS&...) noexcept
+inline void IGNORE_UNUSED_VAR(ARGS&&...) noexcept
 {
 }
 #else

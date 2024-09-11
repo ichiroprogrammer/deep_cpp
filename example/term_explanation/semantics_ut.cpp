@@ -1,4 +1,5 @@
 #include <memory>
+#include <tuple>
 
 #include "gtest_wrapper.h"
 
@@ -51,7 +52,7 @@ namespace BadEquality {
 
 inline bool operator==(A const& lhs, A const& rhs) noexcept
 {
-    return lhs.GetNum() == rhs.GetNum() && lhs.GetName() == rhs.GetName();
+    return std::tuple(lhs.GetNum(), lhs.GetName()) == std::tuple(rhs.GetNum(), rhs.GetName());
 }
 // @@@ sample end
 
@@ -91,8 +92,8 @@ namespace GoodEquality {
 
 inline bool operator==(A const& lhs, A const& rhs) noexcept
 {
-    return lhs.GetNum() == rhs.GetNum()
-           && std::string_view{lhs.GetName()} == std::string_view{rhs.GetName()};
+    return std::tuple(lhs.GetNum(), std::string_view{lhs.GetName()})
+           == std::tuple(rhs.GetNum(), std::string_view{rhs.GetName()});
 }
 // @@@ sample end
 
@@ -177,7 +178,7 @@ TEST(Semantics, bad_equality_D)
 
 bool operator==(Derived const& lhs, Derived const& rhs) noexcept
 {
-    return lhs.GetB() == rhs.GetB() && lhs.GetD() == rhs.GetD();
+    return std::tuple(lhs.GetB(), lhs.GetD()) == std::tuple(rhs.GetB(), rhs.GetD());
 }
 // @@@ sample end
 

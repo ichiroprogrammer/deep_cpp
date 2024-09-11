@@ -1,3 +1,5 @@
+#include <tuple>
+
 #include "gtest_wrapper.h"
 
 #include "suppress_warning.h"
@@ -19,10 +21,21 @@ private:
     uint32_t    age_;
 };
 
+#if __cplusplus == 201703L
 bool operator==(Person const& lhs, Person const& rhs) noexcept
 {
-    return (lhs.GetName() == rhs.GetName()) && (lhs.GetAge() == rhs.GetAge());
+    return std::tuple(lhs.GetName(), lhs.GetAge()) == std::tuple(rhs.GetName(), rhs.GetAge());
 }
+#elif __cplusplus == 202002L
+auto operator<=>(Person const& lhs, Person const& rhs) noexcept
+{
+    return std::tuple(lhs.GetName(), lhs.GetAge()) <=> std::tuple(rhs.GetName(), rhs.GetAge());
+}
+// C++20では、<=>から自動的に==が生成されないため、明示的に定義する必要がある
+bool operator==(Person const& lhs, Person const& rhs) noexcept { return (lhs <=> rhs) == 0; }
+#else
+static_assert(false, "C++ version not supported!");
+#endif
 // @@@ sample end
 // @@@ sample begin 0:1
 

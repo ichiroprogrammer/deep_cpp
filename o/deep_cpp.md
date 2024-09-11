@@ -10,6 +10,10 @@
 
 
 ## 改訂履歴 <a id="SS_1_1"></a>
+* V20.xx
+    * 比較演算子の解説
+    * <=>の導入
+
 * V18.07
     * 静的な文字列オブジェクトの強化
 
@@ -11806,10 +11810,18 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     // constexpr StaticString<4> fs2{'a', 'b'};
 ```
 
-次にこのクラスにoperator == を追加する。
+次にこのクラスにc++17用に`operator==`とc++20用に`operator<=>`を追加する。
 
 ```cpp
     // @@@ example/h/nstd_static_string.h 46
+    // operator==の実装のソースコードの、C++のバージョンごとに以下のように分かれている
+    #if __cplusplus == 201703L
+    // for C++17
+    #elif __cplusplus == 202002L
+    // for C++20
+    #else
+    static_assert(false, "C++ version not supported!");
+    #endif
 
     namespace Inner_ {
     template <size_t N>
@@ -11824,6 +11836,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     }
     }  // namespace Inner_
 
+    #if __cplusplus == 201703L
     template <size_t N1, size_t N2>
     constexpr bool operator==(StaticString<N1> const&, StaticString<N2> const&) noexcept
     {
@@ -11871,6 +11884,54 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     {
         return !(lhs == rhs);
     }
+    #elif __cplusplus == 202002L
+
+    // 以下、operator==とoperator!=を<=>に置き換え
+    template <size_t N1, size_t N2>
+    constexpr auto operator<=>(StaticString<N1> const& lhs, StaticString<N2> const& rhs) noexcept
+    {
+        if constexpr (N1 != N2) {
+            return N1 <=> N2;  // サイズが異なる場合は直接サイズを比較
+        }
+        else {
+            return std::lexicographical_compare_three_way(lhs.String(), lhs.String() + N1 - 1,
+                                                          rhs.String(), rhs.String() + N2 - 1);
+        }
+    }
+
+    template <size_t N1, size_t N2>
+    constexpr auto operator<=>(StaticString<N1> const& lhs, char const (&rhs)[N2]) noexcept
+    {
+        return lhs <=> StaticString{rhs};
+    }
+
+    template <size_t N1, size_t N2>
+    constexpr auto operator<=>(char const (&lhs)[N1], StaticString<N2> const& rhs) noexcept
+    {
+        return StaticString{lhs} <=> rhs;
+    }
+
+    // operator==は明示的に定義する必要がある（<=>からは自動生成されない）
+    template <size_t N1, size_t N2>
+    constexpr bool operator==(StaticString<N1> const& lhs, StaticString<N2> const& rhs) noexcept
+    {
+        return (lhs <=> rhs) == 0;
+    }
+
+    template <size_t N1, size_t N2>
+    constexpr bool operator==(StaticString<N1> const& lhs, char const (&rhs)[N2]) noexcept
+    {
+        return lhs == StaticString{rhs};
+    }
+
+    template <size_t N1, size_t N2>
+    constexpr bool operator==(char const (&lhs)[N1], StaticString<N2> const& rhs) noexcept
+    {
+        return StaticString{lhs} == rhs;
+    }
+    #else
+    static_assert(false, "C++ version not supported!");
+    #endif
 ```
 
 単体テストは下記のようになる。
@@ -11893,7 +11954,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 同様にoperator + を追加する。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 109
+    // @@@ example/h/nstd_static_string.h 166
 
     namespace Inner_ {
     template <size_t N1, size_t... I1, size_t N2, size_t... I2>
@@ -11950,7 +12011,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 任意のサイズの文字列を切り出せるようにすることでStaticStringはより便利に使用できるようになる。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 140
+    // @@@ example/h/nstd_static_string.h 197
 
     template <size_t SIZE, size_t N>  // StaticString<SiZE>の部分文字列生成
     constexpr auto TopStr(StaticString<N> ss) noexcept
@@ -13867,8 +13928,15 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
             }
 
             Inner_::header_t const* operator*() noexcept { return header_; }
+
+        #if __cplusplus == 201703L
             bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
             bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
+        #elif __cplusplus == 202002L
+            auto operator<=>(const const_iterator&) const = default;
+        #else
+            static_assert(false, "C++ version not supported!");
+        #endif
 
         private:
             Inner_::header_t const* header_;
@@ -14028,6 +14096,7 @@ __この章の構成__
 &emsp;&emsp;&emsp; [constexprインスタンスと関数](#SS_6_1_15)  
 &emsp;&emsp;&emsp; [ユーザ定義リテラル演算子](#SS_6_1_16)  
 &emsp;&emsp;&emsp; [std::string型リテラル](#SS_6_1_17)  
+&emsp;&emsp;&emsp; [比較演算子](#SS_6_1_18)  
 
 &emsp;&emsp; [オブジェクトと生成](#SS_6_2)  
 &emsp;&emsp;&emsp; [特殊メンバ関数](#SS_6_2_1)  
@@ -14308,37 +14377,46 @@ PODとは、 Plain Old Dataの略語であり、
     std::is_pod<T>::value
 ```
 
-がtrueとなる型Tを指す。下記のコードはその使用例である。
+がtrueとなる型Tを指す。
+「型が[トリビアル型](#SS_6_1_8)且つ[標準レイアウト型](#SS_6_1_7)であること」と
+「型が[POD](#SS_6_1_6)であること」は等価であるため、C++20では、
+[PODという用語は非推奨](https://cpprefjp.github.io/lang/cpp20/deprecate_pod.html)となった。
+従って、std::is_pod_vは以下のように置き換えられるべきである。
 
 ```cpp
-    // @@@ example/term_explanation/pod_ut.cpp 7
+    // @@@ example/term_explanation/pod_ut.cpp 9
 
-    static_assert(std::is_pod<int>::value, "");
-    static_assert(std::is_pod<int const>::value, "");
-    static_assert(std::is_pod<int*>::value, "");
-    static_assert(std::is_pod<int[3]>::value, "");
-    static_assert(!std::is_pod<int&>::value, "");  // リファレンスはPODではない
+    template <typename T>  // std::is_povはC++20から非推奨
+    constexpr bool is_pod_v = std::is_trivial_v<T>&& std::is_standard_layout_v<T>;
+```
+
+下記のコードは置き換えられたstd::is_pod_vの使用例である。
+
+```cpp
+    // @@@ example/term_explanation/pod_ut.cpp 18
+
+    static_assert(is_pod_v<int>);
+    static_assert(is_pod_v<int const>);
+    static_assert(is_pod_v<int*>);
+    static_assert(is_pod_v<int[3]>);
+    static_assert(!is_pod_v<int&>);  // リファレンスはPODではない
 
     struct Pod {};
 
-    static_assert(std::is_pod<Pod>::value, "");
-    static_assert(std::is_pod<Pod const>::value, "");
-    static_assert(std::is_pod<Pod*>::value, "");
-    static_assert(std::is_pod<Pod[3]>::value, "");
-    static_assert(!std::is_pod<Pod&>::value, "");
+    static_assert(is_pod_v<Pod>);
+    static_assert(is_pod_v<Pod const>);
+    static_assert(is_pod_v<Pod*>);
+    static_assert(is_pod_v<Pod[3]>);
+    static_assert(!is_pod_v<Pod&>);
 
     struct NonPod {  // コンストラクタがあるためPODではない
         NonPod();
     };
 
-    static_assert(!std::is_pod<NonPod>::value, "");
+    static_assert(!is_pod_v<NonPod>);
 ```
 
-概ね、C言語と互換性のある型を指すと思って良い。
-
-「型が[トリビアル型](#SS_6_1_8)且つ[標準レイアウト型](#SS_6_1_7)であること」と
-「型が[POD](#SS_6_1_6)であること」は等価であるため、C++20では、
-[PODという用語は非推奨](https://cpprefjp.github.io/lang/cpp20/deprecate_pod.html)となった。
+上記からわかる通り、POD型とは概ね、C言語と互換性のある型を指すと思って良い。
 
 ### 標準レイアウト型 <a id="SS_6_1_7"></a>
 標準レイアウト型とは、
@@ -14350,12 +14428,12 @@ PODとは、 Plain Old Dataの略語であり、
 がtrueとなる型Tを指す。下記のコードはその使用例である。
 
 ```cpp
-    // @@@ example/term_explanation/pod_ut.cpp 31
+    // @@@ example/term_explanation/pod_ut.cpp 42
 
-    static_assert(std::is_standard_layout<int>::value, "");
-    static_assert(std::is_standard_layout<int*>::value, "");
-    static_assert(std::is_standard_layout<int[1]>::value, "");
-    static_assert(!std::is_standard_layout<int&>::value, "");
+    static_assert(std::is_standard_layout_v<int>);
+    static_assert(std::is_standard_layout_v<int*>);
+    static_assert(std::is_standard_layout_v<int[1]>);
+    static_assert(!std::is_standard_layout_v<int&>);
 
     enum class SizeUndefined { su_0, su_1 };
 
@@ -14365,9 +14443,9 @@ PODとは、 Plain Old Dataの略語であり、
         SizeUndefined b;
     };
 
-    static_assert(std::is_standard_layout<StanderdLayout>::value, "");
-    static_assert(!std::is_trivial<StanderdLayout>::value, "");
-    static_assert(!std::is_pod<StanderdLayout>::value, "");
+    static_assert(std::is_standard_layout_v<StanderdLayout>);
+    static_assert(!std::is_trivial_v<StanderdLayout>);
+    static_assert(!is_pod_v<StanderdLayout>);
 ```
 
 型がPODである場合、その型は標準レイアウト型である。
@@ -14382,12 +14460,12 @@ PODとは、 Plain Old Dataの略語であり、
 がtrueとなる型Tを指す。下記のコードはその使用例である。
 
 ```cpp
-    // @@@ example/term_explanation/pod_ut.cpp 52
+    // @@@ example/term_explanation/pod_ut.cpp 63
 
-    static_assert(std::is_trivial<int>::value, "");
-    static_assert(std::is_trivial<int*>::value, "");
-    static_assert(std::is_trivial<int[1]>::value, "");
-    static_assert(!std::is_trivial<int&>::value, "");
+    static_assert(std::is_trivial_v<int>);
+    static_assert(std::is_trivial_v<int*>);
+    static_assert(std::is_trivial_v<int[1]>);
+    static_assert(!std::is_trivial_v<int&>);
 
     enum class SizeUndefined { su_0, su_1 };
 
@@ -14396,9 +14474,9 @@ PODとは、 Plain Old Dataの略語であり、
         SizeUndefined b;
     };
 
-    static_assert(!std::is_standard_layout<Trivial>::value, "");
-    static_assert(std::is_trivial<Trivial>::value, "");
-    static_assert(!std::is_pod<Trivial>::value, "");
+    static_assert(!std::is_standard_layout_v<Trivial>);
+    static_assert(std::is_trivial_v<Trivial>);
+    static_assert(!is_pod_v<Trivial>);
 ```
 
 型がPODである場合、その型はトリビアル型である。
@@ -14676,6 +14754,230 @@ constexprとして宣言された関数の戻り値がコンパイル時に確�
     ASSERT_STREQ("str", b);
 ```
 
+### 比較演算子 <a id="SS_6_1_18"></a>
+クラスの比較演算子の実装方法には、
+[メンバ比較演算子](#SS_6_1_18_1)、[非メンバ比較演算子](#SS_6_1_18_3)の2つの方法がある。
+
+#### メンバ比較演算子 <a id="SS_6_1_18_1"></a>
+メンバ比較演算子には、[非メンバ比較演算子](#SS_6_1_18_3)に比べ、下記のようなメリットがある。
+
+* メンバ変数へのアクセスが容易であるため、より実装が単純になりやすい。
+* メンバ変数へのアクセスが容易であるため、パフォーマンスが向上する。
+* インライン化し易い。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 16
+
+    class Integer {
+    public:
+        Integer(int x) noexcept : x_{x} {}
+
+        // operator==とoperator<だけを定義
+        int get() const noexcept { return x_; }
+
+        // メンバ関数の比較演算子
+        bool operator==(const Integer& other) const noexcept { return x_ == other.x_; }
+        bool operator<(const Integer& other) const noexcept { return x_ < other.x_; }
+
+    private:
+        int x_;
+    };
+```
+
+#### メンバ比較演算子とstd::rel_ops <a id="SS_6_1_18_2"></a>
+クラスに`operator==`と`operator<`の2つの演算子が定義されていれば、
+他の比較演算子 !=、<=、>、>= はこれらを基に自動的に導出できる。
+std::rel_opsでは`operator==`と`operator<=` を基に、
+他の比較演算子を機械的に生成する仕組みが提供されている。
+
+次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 36
+
+    using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
+
+    auto a = Integer{5};
+    auto b = Integer{10};
+    auto c = Integer{5};
+
+    // std::rel_opsとは無関係に直接定義
+    ASSERT_EQ(a, c);      // a == c
+    ASSERT_NE(a, b);      // a != c
+    ASSERT_TRUE(a < b);   // aはbより小さい
+    ASSERT_FALSE(b < a);  // bはaより小さくない
+
+    // std::rel_ops による!=, <=, >, >=の定義
+    ASSERT_TRUE(a != b);   // aとbは異なる
+    ASSERT_TRUE(a <= b);   // aはb以下
+    ASSERT_TRUE(b > a);    // bはaより大きい
+    ASSERT_FALSE(a >= b);  // aはb以上ではない
+```
+
+なお、std::rel_opsはC++20から導入された[三方比較演算子](#SS_6_1_18_6)により不要になったため、
+非推奨とされた。
+
+#### 非メンバ比較演算子 <a id="SS_6_1_18_3"></a>
+非メンバ比較演算子には、[メンバ比較演算子](#SS_6_1_18_1)に比べ、下記のようなメリットがある。
+
+* クラスをよりコンパクトに記述できるが、その副作用として、
+  アクセッサやfriend宣言が必要になることがある。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 60
+
+    class Integer {
+    public:
+        Integer(int x) noexcept : x_{x} {}
+
+        // operator==とoperator<だけを定義
+        int get() const noexcept { return x_; }
+
+        // メンバ関数の比較演算子に見えるが、非メンバ関数
+        friend bool operator==(const Integer& lhs, const Integer& rhs) noexcept
+        {
+            return lhs.x_ == rhs.x_;
+        }
+
+        friend bool operator<(const Integer& lhs, const Integer& rhs) noexcept
+        {
+            return lhs.x_ < rhs.x_;
+        }
+
+    private:
+        int x_;
+    };
+```
+
+* 暗黙の型変換を利用した以下に示すようなシンプルな記述ができる場合がある。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 88
+
+    auto a = Integer{5};
+
+    ASSERT_TRUE(5 == a);  // 5がInteger{5}に型型変換される
+```
+
+#### 非メンバ比較演算子とstd::rel_ops <a id="SS_6_1_18_4"></a>
+下記に示す通り、
+非メンバ比較演算子とstd::rel_opsを組み合わせることにより、
+「[メンバ比較演算子とstd::rel_ops](#SS_6_1_18_2)」で紹介したことと同等のことが実現できる。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 96
+
+    using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
+
+    auto a = Integer{5};
+    auto b = Integer{10};
+    auto c = Integer{5};
+
+    // std::rel_opsとは無関係に直接定義
+    ASSERT_EQ(a, c);      // a == c
+    ASSERT_NE(a, b);      // a != c
+    ASSERT_TRUE(a < b);   // aはbより小さい
+    ASSERT_FALSE(b < a);  // bはaより小さくない
+
+    // std::rel_ops による!=, <=, >, >=の定義
+    ASSERT_TRUE(a != b);   // aとbは異なる
+    ASSERT_TRUE(a <= b);   // aはb以下
+    ASSERT_TRUE(b > a);    // bはaより大きい
+    ASSERT_FALSE(a >= b);  // aはb以上ではない
+```
+
+#### std::tuppleを使用した比較演算子の実装方法 <a id="SS_6_1_18_5"></a>
+クラスのメンバが多い場合、[メンバ比較演算子](#SS_6_1_18_1)で示したような方法は、
+可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 120
+
+    struct Point {
+        int x;
+        int y;
+
+        bool operator==(const Point& other) const noexcept
+        {
+            return std::tie(x, y) == std::tie(other.x, other.y);
+        }
+
+        bool operator<(const Point& other) const noexcept
+        {
+            return std::tie(x, y) < std::tie(other.x, other.y);
+        }
+    };
+```
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 140
+
+        auto a = Point{1, 2};
+        auto b = Point{1, 3};
+        auto c = Point{1, 2};
+
+        using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
+
+        ASSERT_TRUE(a == c);
+        ASSERT_TRUE(a != b);
+        ASSERT_TRUE(a < b);
+        ASSERT_FALSE(a > b);
+```
+
+#### 三方比較演算子 <a id="SS_6_1_18_6"></a>
+「[std::tuppleを使用した比較演算子の実装方法](#SS_6_1_18_5)」
+で示した定型のコードはコンパイラが自動生成するのがC++規格のセオリーである。
+このためC++20から導入されたのが三方比較演算子`<=>`である。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 157
+
+    struct Point {
+        int x;
+        int y;
+
+        auto operator<=>(const Point& other) const noexcept = default;  // 三方比較演算子 (C++20)
+    };
+```
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 169
+
+    auto p1 = Point{1, 2};
+    auto p2 = Point{1, 2};
+    auto p3 = Point{2, 3};
+
+    ASSERT_EQ(p1, p2);  // p1 == p2
+    ASSERT_NE(p1, p3);  // p1 != p3
+    ASSERT_TRUE(p1 < p3);
+    ASSERT_FALSE(p1 > p3);
+```
+
+定型の比較演算子では不十分である場合、三方比較演算子を実装する必要が出てくる。
+そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 184
+
+    struct Point {
+        int x;
+        int y;
+
+        std::strong_ordering operator<=>(const Point& other) const noexcept
+        {
+            return std::tie(x, y) <=> std::tie(other.x, other.y);
+        }
+
+        bool operator==(const Point& other) const noexcept
+        {
+            return std::tie(x, y) == std::tie(other.x, other.y);
+        }
+    };
+```
+
+#### spaceship operator <a id="SS_6_1_18_7"></a>
+spaceship operatorとは[三方比較演算子](#SS_6_1_18_6)を指す。
+この名前は`<=>`が宇宙船に見えることに由来としている。
+
+
 ## オブジェクトと生成 <a id="SS_6_2"></a>
 
 ### 特殊メンバ関数 <a id="SS_6_2_1"></a>
@@ -14844,7 +15146,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 非explitなコンストラクタによる暗黙の型変換とは、
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp 6
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp 8
 
     class Person {
     public:
@@ -14860,16 +15162,27 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
         uint32_t    age_;
     };
 
+    #if __cplusplus == 201703L
     bool operator==(Person const& lhs, Person const& rhs) noexcept
     {
-        return (lhs.GetName() == rhs.GetName()) && (lhs.GetAge() == rhs.GetAge());
+        return std::tuple(lhs.GetName(), lhs.GetAge()) == std::tuple(rhs.GetName(), rhs.GetAge());
     }
+    #elif __cplusplus == 202002L
+    auto operator<=>(Person const& lhs, Person const& rhs) noexcept
+    {
+        return std::tuple(lhs.GetName(), lhs.GetAge()) <=> std::tuple(rhs.GetName(), rhs.GetAge());
+    }
+    // C++20では、<=>から自動的に==が生成されないため、明示的に定義する必要がある
+    bool operator==(Person const& lhs, Person const& rhs) noexcept { return (lhs <=> rhs) == 0; }
+    #else
+    static_assert(false, "C++ version not supported!");
+    #endif
 ```
 
 上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp 27
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp 40
 
     void f(Person const& person) noexcept
     {
@@ -14885,7 +15198,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp 41
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp 54
 
     void not_using_implicit_coversion()
     {
@@ -14896,7 +15209,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp 53
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp 66
 
     auto otani = std::string{"Ohtani"};
 
@@ -14910,7 +15223,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp 67
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp 80
 
     auto otani = Person{"Ohtani", 26};
 
@@ -14924,7 +15237,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp 94
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp 107
 
     class Person {
     public:
@@ -18063,7 +18376,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 下記のコードは、その性質を表している。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 12
+    // @@@ example/term_explanation/semantics_ut.cpp 13
 
     auto  a = 0;
     auto& b = a;
@@ -18076,7 +18389,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 アドレスが異なるため同一のオブジェクトではないにもかかわらず、組み込みの==の値はtrueとなる。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 22
+    // @@@ example/term_explanation/semantics_ut.cpp 23
 
     auto a = 0;
     auto b = 0;
@@ -18096,7 +18409,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 クラスAを下記のように定義し、
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 33
+    // @@@ example/term_explanation/semantics_ut.cpp 34
 
     class A {
     public:
@@ -18114,18 +18427,18 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 そのoperator==を下記のように定義した場合、
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 50
+    // @@@ example/term_explanation/semantics_ut.cpp 51
 
     inline bool operator==(A const& lhs, A const& rhs) noexcept
     {
-        return lhs.GetNum() == rhs.GetNum() && lhs.GetName() == rhs.GetName();
+        return std::tuple(lhs.GetNum(), lhs.GetName()) == std::tuple(rhs.GetNum(), rhs.GetName());
     }
 ```
 
 単体テストは下記のように書けるだろう。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 61
+    // @@@ example/term_explanation/semantics_ut.cpp 62
 
     auto a0 = A{0, "a"};
     auto a1 = A{0, "a"};
@@ -18137,7 +18450,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 下記のようにすると、パスしなくなる。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 71
+    // @@@ example/term_explanation/semantics_ut.cpp 72
 
     char a0_name[] = "a";
     auto a0        = A{0, a0_name};
@@ -18155,12 +18468,12 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 次に、これを修正した例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 90
+    // @@@ example/term_explanation/semantics_ut.cpp 91
 
     inline bool operator==(A const& lhs, A const& rhs) noexcept
     {
-        return lhs.GetNum() == rhs.GetNum()
-               && std::string_view{lhs.GetName()} == std::string_view{rhs.GetName()};
+        return std::tuple(lhs.GetNum(), std::string_view{lhs.GetName()})
+               == std::tuple(rhs.GetNum(), std::string_view{rhs.GetName()});
     }
 ```
 
@@ -18169,7 +18482,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 次に示す例は、基底クラスBaseとそのoperator==である。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 113
+    // @@@ example/term_explanation/semantics_ut.cpp 114
 
     class Base {
     public:
@@ -18190,7 +18503,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 次の単体テストが示す通り、これ自体には問題がないように見える。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 133
+    // @@@ example/term_explanation/semantics_ut.cpp 134
 
     auto b0 = Base{0};
     auto b1 = Base{0};
@@ -18204,7 +18517,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 しかし、Baseから派生したクラスDerivedを
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 145
+    // @@@ example/term_explanation/semantics_ut.cpp 146
 
     class Derived : public Base {
     public:
@@ -18219,7 +18532,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 のように定義すると、下記の単体テストで示す通り、等価性のセマンティクスが破壊される。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 159
+    // @@@ example/term_explanation/semantics_ut.cpp 160
 
     {
         auto b = Base{0};
@@ -18238,18 +18551,18 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 Derived用のoperator==を
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 176
+    // @@@ example/term_explanation/semantics_ut.cpp 177
 
     bool operator==(Derived const& lhs, Derived const& rhs) noexcept
     {
-        return lhs.GetB() == rhs.GetB() && lhs.GetD() == rhs.GetD();
+        return std::tuple(lhs.GetB(), lhs.GetD()) == std::tuple(rhs.GetB(), rhs.GetD());
     }
 ```
 
 と定義しても、下記に示す通り部分的な効果しかない。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 186
+    // @@@ example/term_explanation/semantics_ut.cpp 187
 
     auto d0 = Derived{0};
     auto d1 = Derived{1};
@@ -18264,7 +18577,7 @@ Derived用のoperator==を
 この問題は、[RTTI](#SS_6_10_16)を使った下記のようなコードで対処できる。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 202
+    // @@@ example/term_explanation/semantics_ut.cpp 203
 
     class Base {
     public:
@@ -18311,7 +18624,7 @@ Derived用のoperator==を
 [オープン・クローズドの原則(OCP)](#SS_2_2)にも対応した柔軟な構造を実現している。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 269
+    // @@@ example/term_explanation/semantics_ut.cpp 270
 
     class DerivedDerived : public Derived {
     public:
@@ -18339,7 +18652,7 @@ Derived用のoperator==を
 等価性のセマンティクスを満たしている例である。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 319
+    // @@@ example/term_explanation/semantics_ut.cpp 320
 
     auto abc = std::string{"abc"};
 
@@ -18369,7 +18682,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 下記に示す通り、std::stringはcopyセマンティクスを満たしている。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 333
+    // @@@ example/term_explanation/semantics_ut.cpp 334
 
     auto c_str = "string";
     auto str   = std::string{};
@@ -18382,7 +18695,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 一方で、std::auto_ptrはcopyセマンティクスを満たしていない。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 346
+    // @@@ example/term_explanation/semantics_ut.cpp 347
 
     std::auto_ptr<std::string> str0{new std::string{"string"}};
     std::auto_ptr<std::string> str0_pre{new std::string{"string"}};
@@ -18406,7 +18719,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 「[等価性のセマンティクス](#SS_6_8_1)」で示した最後の例も、copyセマンティクスを満たしていない。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 366
+    // @@@ example/term_explanation/semantics_ut.cpp 367
 
     auto b = Base{1};
     auto d = Derived{1};
@@ -18437,7 +18750,7 @@ moveセマンティクスはcopy代入後に使用されなくなるオブジェ
 下記のようなコードは推奨されない。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 381
+    // @@@ example/term_explanation/semantics_ut.cpp 382
 
     class NotRecommended {
     public:
@@ -18480,7 +18793,7 @@ moveセマンティクスはcopy代入後に使用されなくなるオブジェ
 パフォーマンスの良い代入ができる。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp 419
+    // @@@ example/term_explanation/semantics_ut.cpp 420
 
     class Recommended {
     public:
@@ -19917,118 +20230,127 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
          86         }
          87 
          88         Inner_::header_t const* operator*() noexcept { return header_; }
-         89         bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
-         90         bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
-         91 
-         92     private:
-         93         Inner_::header_t const* header_;
-         94     };
-         95 
-         96     const_iterator begin() const noexcept { return const_iterator{header_}; }
-         97     const_iterator end() const noexcept { return const_iterator{nullptr}; }
-         98     const_iterator cbegin() const noexcept { return const_iterator{header_}; }
-         99     const_iterator cend() const noexcept { return const_iterator{nullptr}; }
-        100     // @@@ sample end
-        101     // @@@ sample begin 0:3
-        102 
-        103 private:
-        104     using header_t = Inner_::header_t;
-        105 
-        106     Inner_::buffer_t<MEM_SIZE> buff_{};
-        107     header_t*                  header_{reinterpret_cast<header_t*>(buff_.buffer)};
-        108     mutable SpinLock           spin_lock_{};
-        109     size_t                     unit_count_{sizeof(buff_) / Inner_::unit_size};
-        110     size_t                     unit_count_min_{sizeof(buff_) / Inner_::unit_size};
+         89 
+         90         // clang-format off
+         91     #if __cplusplus == 201703L
+         92         bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
+         93         bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
+         94     #elif __cplusplus == 202002L
+         95         auto operator<=>(const const_iterator&) const = default;
+         96     #else
+         97         static_assert(false, "C++ version not supported!");
+         98     #endif
+         99         // clang-format on
+        100 
+        101     private:
+        102         Inner_::header_t const* header_;
+        103     };
+        104 
+        105     const_iterator begin() const noexcept { return const_iterator{header_}; }
+        106     const_iterator end() const noexcept { return const_iterator{nullptr}; }
+        107     const_iterator cbegin() const noexcept { return const_iterator{header_}; }
+        108     const_iterator cend() const noexcept { return const_iterator{nullptr}; }
+        109     // @@@ sample end
+        110     // @@@ sample begin 0:3
         111 
-        112     virtual void* alloc(size_t size) noexcept override
-        113     {
-        114         // @@@ ignore begin
-        115         // size分のメモリとヘッダ
-        116         auto n_nuits = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
-        117 
-        118         auto lock = std::lock_guard{spin_lock_};
-        119 
-        120         auto curr = header_;
-        121 
-        122         for (header_t* prev{nullptr}; curr != nullptr; prev = curr, curr = curr->next) {
-        123             auto opt_next = std::optional<header_t*>{sprit(curr, n_nuits)};
-        124 
-        125             if (!opt_next) {
-        126                 continue;
-        127             }
+        112 private:
+        113     using header_t = Inner_::header_t;
+        114 
+        115     Inner_::buffer_t<MEM_SIZE> buff_{};
+        116     header_t*                  header_{reinterpret_cast<header_t*>(buff_.buffer)};
+        117     mutable SpinLock           spin_lock_{};
+        118     size_t                     unit_count_{sizeof(buff_) / Inner_::unit_size};
+        119     size_t                     unit_count_min_{sizeof(buff_) / Inner_::unit_size};
+        120 
+        121     virtual void* alloc(size_t size) noexcept override
+        122     {
+        123         // @@@ ignore begin
+        124         // size分のメモリとヘッダ
+        125         auto n_nuits = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
+        126 
+        127         auto lock = std::lock_guard{spin_lock_};
         128 
-        129             auto next = *opt_next;
-        130             if (prev == nullptr) {
-        131                 header_ = next;
-        132             }
-        133             else {
-        134                 prev->next = next;
-        135             }
-        136             break;
-        137         }
-        138 
-        139         if (curr != nullptr) {
-        140             unit_count_ -= curr->n_nuits;
-        141             unit_count_min_ = std::min(unit_count_, unit_count_min_);
-        142             ++curr;
-        143         }
-        144 
-        145         return curr;
-        146         // @@@ ignore end
-        147     }
-        148 
-        149     virtual void free(void* mem) noexcept override
-        150     {
-        151         // @@@ ignore begin
-        152         header_t* to_free = Inner_::set_back(mem);
+        129         auto curr = header_;
+        130 
+        131         for (header_t* prev{nullptr}; curr != nullptr; prev = curr, curr = curr->next) {
+        132             auto opt_next = std::optional<header_t*>{sprit(curr, n_nuits)};
+        133 
+        134             if (!opt_next) {
+        135                 continue;
+        136             }
+        137 
+        138             auto next = *opt_next;
+        139             if (prev == nullptr) {
+        140                 header_ = next;
+        141             }
+        142             else {
+        143                 prev->next = next;
+        144             }
+        145             break;
+        146         }
+        147 
+        148         if (curr != nullptr) {
+        149             unit_count_ -= curr->n_nuits;
+        150             unit_count_min_ = std::min(unit_count_, unit_count_min_);
+        151             ++curr;
+        152         }
         153 
-        154         to_free->next = nullptr;
-        155 
-        156         auto lock = std::lock_guard{spin_lock_};
+        154         return curr;
+        155         // @@@ ignore end
+        156     }
         157 
-        158         unit_count_ += to_free->n_nuits;
-        159         unit_count_min_ = std::min(unit_count_, unit_count_min_);
-        160 
-        161         if (header_ == nullptr) {
-        162             header_ = to_free;
-        163             return;
-        164         }
-        165 
-        166         if (to_free < header_) {
-        167             concat(to_free, header_);
-        168             header_ = to_free;
-        169             return;
-        170         }
-        171 
-        172         header_t* curr = header_;
-        173 
-        174         for (; curr->next != nullptr; curr = curr->next) {
-        175             if (to_free < curr->next) {  // 常に curr < to_free
-        176                 concat(to_free, curr->next);
-        177                 concat(curr, to_free);
-        178                 return;
-        179             }
-        180         }
-        181 
-        182         concat(curr, to_free);
-        183         // @@@ ignore end
-        184     }
-        185 
-        186     virtual size_t get_size() const noexcept override { return 1; }
-        187     virtual size_t get_count() const noexcept override { return unit_count_ * Inner_::unit_size; }
-        188     virtual size_t get_count_min() const noexcept override
-        189     {
-        190         return unit_count_min_ * Inner_::unit_size;
-        191     }
-        192 
-        193     virtual bool is_valid(void const* mem) const noexcept override
-        194     {
-        195         return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
-        196     }
-        197     // @@@ sample end
-        198     // @@@ sample begin 0:4
-        199 };
-        200 // @@@ sample end
+        158     virtual void free(void* mem) noexcept override
+        159     {
+        160         // @@@ ignore begin
+        161         header_t* to_free = Inner_::set_back(mem);
+        162 
+        163         to_free->next = nullptr;
+        164 
+        165         auto lock = std::lock_guard{spin_lock_};
+        166 
+        167         unit_count_ += to_free->n_nuits;
+        168         unit_count_min_ = std::min(unit_count_, unit_count_min_);
+        169 
+        170         if (header_ == nullptr) {
+        171             header_ = to_free;
+        172             return;
+        173         }
+        174 
+        175         if (to_free < header_) {
+        176             concat(to_free, header_);
+        177             header_ = to_free;
+        178             return;
+        179         }
+        180 
+        181         header_t* curr = header_;
+        182 
+        183         for (; curr->next != nullptr; curr = curr->next) {
+        184             if (to_free < curr->next) {  // 常に curr < to_free
+        185                 concat(to_free, curr->next);
+        186                 concat(curr, to_free);
+        187                 return;
+        188             }
+        189         }
+        190 
+        191         concat(curr, to_free);
+        192         // @@@ ignore end
+        193     }
+        194 
+        195     virtual size_t get_size() const noexcept override { return 1; }
+        196     virtual size_t get_count() const noexcept override { return unit_count_ * Inner_::unit_size; }
+        197     virtual size_t get_count_min() const noexcept override
+        198     {
+        199         return unit_count_min_ * Inner_::unit_size;
+        200     }
+        201 
+        202     virtual bool is_valid(void const* mem) const noexcept override
+        203     {
+        204         return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
+        205     }
+        206     // @@@ sample end
+        207     // @@@ sample begin 0:4
+        208 };
+        209 // @@@ sample end
 ```
 
 

@@ -88,6 +88,6 @@ $CLEAN && cmd_launcher make clean
 
 cmd_launcher make $PARA 
 
-$FULL && cmd_launcher make $PARA all
+$FULL && cmd_launcher make $PARA html
 
 exit 0

@@ -93,17 +93,23 @@ PODとは、 Plain Old Dataの略語であり、
     std::is_pod<T>::value
 ```
 
-がtrueとなる型Tを指す。下記のコードはその使用例である。
-
-```cpp
-    // @@@ example/term_explanation/pod_ut.cpp #0:0 begin -2
-```
-
-概ね、C言語と互換性のある型を指すと思って良い。
-
+がtrueとなる型Tを指す。
 「型が[トリビアル型](---)且つ[標準レイアウト型](---)であること」と
 「型が[POD](---)であること」は等価であるため、C++20では、
 [PODという用語は非推奨](https://cpprefjp.github.io/lang/cpp20/deprecate_pod.html)となった。
+従って、std::is_pod_vは以下のように置き換えられるべきである。
+
+```cpp
+    // @@@ example/term_explanation/pod_ut.cpp #0:0 begin
+```
+
+下記のコードは置き換えられたstd::is_pod_vの使用例である。
+
+```cpp
+    // @@@ example/term_explanation/pod_ut.cpp #0:1 begin -2
+```
+
+上記からわかる通り、POD型とは概ね、C言語と互換性のある型を指すと思って良い。
 
 ### 標準レイアウト型
 標準レイアウト型とは、
@@ -115,7 +121,7 @@ PODとは、 Plain Old Dataの略語であり、
 がtrueとなる型Tを指す。下記のコードはその使用例である。
 
 ```cpp
-    // @@@ example/term_explanation/pod_ut.cpp #0:1 begin -2
+    // @@@ example/term_explanation/pod_ut.cpp #0:2 begin -2
 ```
 
 型がPODである場合、その型は標準レイアウト型である。
@@ -130,7 +136,7 @@ PODとは、 Plain Old Dataの略語であり、
 がtrueとなる型Tを指す。下記のコードはその使用例である。
 
 ```cpp
-    // @@@ example/term_explanation/pod_ut.cpp #0:2 begin -2
+    // @@@ example/term_explanation/pod_ut.cpp #0:3 begin -2
 ```
 
 型がPODである場合、その型はトリビアル型である。
@@ -242,6 +248,96 @@ constexprとして宣言された関数の戻り値がコンパイル時に確�
 ```cpp
     // @@@ example/term_explanation/user_defined_literal_ut.cpp #1:0 begin -1
 ```
+
+### 比較演算子
+クラスの比較演算子の実装方法には、
+[メンバ比較演算子](---)、[非メンバ比較演算子](---)の2つの方法がある。
+
+#### メンバ比較演算子
+メンバ比較演算子には、[非メンバ比較演算子](---)に比べ、下記のようなメリットがある。
+
+* メンバ変数へのアクセスが容易であるため、より実装が単純になりやすい。
+* メンバ変数へのアクセスが容易であるため、パフォーマンスが向上する。
+* インライン化し易い。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:0 begin
+```
+
+#### メンバ比較演算子とstd::rel_ops
+クラスに`operator==`と`operator<`の2つの演算子が定義されていれば、
+他の比較演算子 !=、<=、>、>= はこれらを基に自動的に導出できる。
+std::rel_opsでは`operator==`と`operator<=` を基に、
+他の比較演算子を機械的に生成する仕組みが提供されている。
+
+次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:1 begin -1
+```
+
+なお、std::rel_opsはC++20から導入された[三方比較演算子](---)により不要になったため、
+非推奨とされた。
+
+#### 非メンバ比較演算子
+非メンバ比較演算子には、[メンバ比較演算子](---)に比べ、下記のようなメリットがある。
+
+* クラスをよりコンパクトに記述できるが、その副作用として、
+  アクセッサやfriend宣言が必要になることがある。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:0 begin
+```
+
+* 暗黙の型変換を利用した以下に示すようなシンプルな記述ができる場合がある。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:1 begin -2
+```
+
+#### 非メンバ比較演算子とstd::rel_ops
+下記に示す通り、
+非メンバ比較演算子とstd::rel_opsを組み合わせることにより、
+「[メンバ比較演算子とstd::rel_ops](---)」で紹介したことと同等のことが実現できる。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:2 begin -1
+```
+
+#### std::tuppleを使用した比較演算子の実装方法
+クラスのメンバが多い場合、[メンバ比較演算子](---)で示したような方法は、
+可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #2:1 begin
+```
+
+#### 三方比較演算子
+「[std::tuppleを使用した比較演算子の実装方法](---)」
+で示した定型のコードはコンパイラが自動生成するのがC++規格のセオリーである。
+このためC++20から導入されたのが三方比較演算子`<=>`である。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #3:1 begin -1
+```
+
+定型の比較演算子では不十分である場合、三方比較演算子を実装する必要が出てくる。
+そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #4:0 begin
+```
+
+#### spaceship operator
+spaceship operatorとは[三方比較演算子](---)を指す。
+この名前は`<=>`が宇宙船に見えることに由来としている。
+
 
 ## オブジェクトと生成
 

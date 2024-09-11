@@ -14,7 +14,7 @@ WARN_ERROR:=-Werror
 WARN:=-Wall -Wextra
 # @@@ sample end
 
-CCFLAGS:=-std=c++17 $(WARN) -Weffc++ $(WARN_ERROR) $(SUPPRESS_WARN) -g $(SANITIZER) \
+CCFLAGS:=-std=c++20 $(WARN) -Weffc++ $(WARN_ERROR) $(SUPPRESS_WARN) -g $(SANITIZER) \
 	     $(CCFLAGS_ADD) $(COVERAGE) -D_GLIBCXX_USE_CXX11_ABI=0
 
 CCFLAGS_C:=-std=c99 $(WARN) $(WARN_ERROR) $(SUPPRESS_WARN) -g $(SANITIZER) \

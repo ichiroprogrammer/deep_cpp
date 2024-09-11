@@ -2994,7 +2994,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     // @@@ example/template/nstd_static_string_ut.cpp #0:1 begin -2
 ```
 
-次にこのクラスにoperator == を追加する。
+次にこのクラスにc++17用に`operator==`とc++20用に`operator<=>`を追加する。
 
 ```cpp
     // @@@ example/h/nstd_static_string.h #0:1 begin

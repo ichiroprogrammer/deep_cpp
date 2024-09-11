@@ -44,6 +44,14 @@ private:
 };
 // @@@ sample end
 // @@@ sample begin 0:1
+// operator==の実装のソースコードの、C++のバージョンごとに以下のように分かれている
+#if __cplusplus == 201703L
+// for C++17
+#elif __cplusplus == 202002L
+// for C++20
+#else
+static_assert(false, "C++ version not supported!");
+#endif
 
 namespace Inner_ {
 template <size_t N>
@@ -58,6 +66,7 @@ constexpr bool equal_n(size_t n, StaticString<N> const& lhs, StaticString<N> con
 }
 }  // namespace Inner_
 
+#if __cplusplus == 201703L
 template <size_t N1, size_t N2>
 constexpr bool operator==(StaticString<N1> const&, StaticString<N2> const&) noexcept
 {
@@ -105,6 +114,54 @@ constexpr bool operator!=(char const (&lhs)[N1], StaticString<N2> const& rhs) no
 {
     return !(lhs == rhs);
 }
+#elif __cplusplus == 202002L
+
+// 以下、operator==とoperator!=を<=>に置き換え
+template <size_t N1, size_t N2>
+constexpr auto operator<=>(StaticString<N1> const& lhs, StaticString<N2> const& rhs) noexcept
+{
+    if constexpr (N1 != N2) {
+        return N1 <=> N2;  // サイズが異なる場合は直接サイズを比較
+    }
+    else {
+        return std::lexicographical_compare_three_way(lhs.String(), lhs.String() + N1 - 1,
+                                                      rhs.String(), rhs.String() + N2 - 1);
+    }
+}
+
+template <size_t N1, size_t N2>
+constexpr auto operator<=>(StaticString<N1> const& lhs, char const (&rhs)[N2]) noexcept
+{
+    return lhs <=> StaticString{rhs};
+}
+
+template <size_t N1, size_t N2>
+constexpr auto operator<=>(char const (&lhs)[N1], StaticString<N2> const& rhs) noexcept
+{
+    return StaticString{lhs} <=> rhs;
+}
+
+// operator==は明示的に定義する必要がある（<=>からは自動生成されない）
+template <size_t N1, size_t N2>
+constexpr bool operator==(StaticString<N1> const& lhs, StaticString<N2> const& rhs) noexcept
+{
+    return (lhs <=> rhs) == 0;
+}
+
+template <size_t N1, size_t N2>
+constexpr bool operator==(StaticString<N1> const& lhs, char const (&rhs)[N2]) noexcept
+{
+    return lhs == StaticString{rhs};
+}
+
+template <size_t N1, size_t N2>
+constexpr bool operator==(char const (&lhs)[N1], StaticString<N2> const& rhs) noexcept
+{
+    return StaticString{lhs} == rhs;
+}
+#else
+static_assert(false, "C++ version not supported!");
+#endif
 // @@@ sample end
 // @@@ sample begin 0:2
 

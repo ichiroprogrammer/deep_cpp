@@ -1,39 +1,50 @@
+#include <type_traits>
+
 #include "gtest_wrapper.h"
 
-namespace {
+#include "suppress_warning.h"
+
+namespace Nstd {
+
+// @@@ sample begin 0:0
+
+template <typename T>  // std::is_povはC++20から非推奨
+constexpr bool is_pod_v = std::is_trivial_v<T>&& std::is_standard_layout_v<T>;
+// @@@ sample end
+
 TEST(Pod, pod)
 {
     {
-        // @@@ sample begin 0:0
+        // @@@ sample begin 0:1
 
-        static_assert(std::is_pod<int>::value, "");
-        static_assert(std::is_pod<int const>::value, "");
-        static_assert(std::is_pod<int*>::value, "");
-        static_assert(std::is_pod<int[3]>::value, "");
-        static_assert(!std::is_pod<int&>::value, "");  // リファレンスはPODではない
+        static_assert(is_pod_v<int>);
+        static_assert(is_pod_v<int const>);
+        static_assert(is_pod_v<int*>);
+        static_assert(is_pod_v<int[3]>);
+        static_assert(!is_pod_v<int&>);  // リファレンスはPODではない
 
         struct Pod {};
 
-        static_assert(std::is_pod<Pod>::value, "");
-        static_assert(std::is_pod<Pod const>::value, "");
-        static_assert(std::is_pod<Pod*>::value, "");
-        static_assert(std::is_pod<Pod[3]>::value, "");
-        static_assert(!std::is_pod<Pod&>::value, "");
+        static_assert(is_pod_v<Pod>);
+        static_assert(is_pod_v<Pod const>);
+        static_assert(is_pod_v<Pod*>);
+        static_assert(is_pod_v<Pod[3]>);
+        static_assert(!is_pod_v<Pod&>);
 
         struct NonPod {  // コンストラクタがあるためPODではない
             NonPod();
         };
 
-        static_assert(!std::is_pod<NonPod>::value, "");
+        static_assert(!is_pod_v<NonPod>);
         // @@@ sample end
     }
     {
-        // @@@ sample begin 0:1
+        // @@@ sample begin 0:2
 
-        static_assert(std::is_standard_layout<int>::value, "");
-        static_assert(std::is_standard_layout<int*>::value, "");
-        static_assert(std::is_standard_layout<int[1]>::value, "");
-        static_assert(!std::is_standard_layout<int&>::value, "");
+        static_assert(std::is_standard_layout_v<int>);
+        static_assert(std::is_standard_layout_v<int*>);
+        static_assert(std::is_standard_layout_v<int[1]>);
+        static_assert(!std::is_standard_layout_v<int&>);
 
         enum class SizeUndefined { su_0, su_1 };
 
@@ -43,18 +54,18 @@ TEST(Pod, pod)
             SizeUndefined b;
         };
 
-        static_assert(std::is_standard_layout<StanderdLayout>::value, "");
-        static_assert(!std::is_trivial<StanderdLayout>::value, "");
-        static_assert(!std::is_pod<StanderdLayout>::value, "");
+        static_assert(std::is_standard_layout_v<StanderdLayout>);
+        static_assert(!std::is_trivial_v<StanderdLayout>);
+        static_assert(!is_pod_v<StanderdLayout>);
         // @@@ sample end
     }
     {
-        // @@@ sample begin 0:2
+        // @@@ sample begin 0:3
 
-        static_assert(std::is_trivial<int>::value, "");
-        static_assert(std::is_trivial<int*>::value, "");
-        static_assert(std::is_trivial<int[1]>::value, "");
-        static_assert(!std::is_trivial<int&>::value, "");
+        static_assert(std::is_trivial_v<int>);
+        static_assert(std::is_trivial_v<int*>);
+        static_assert(std::is_trivial_v<int[1]>);
+        static_assert(!std::is_trivial_v<int&>);
 
         enum class SizeUndefined { su_0, su_1 };
 
@@ -63,10 +74,10 @@ TEST(Pod, pod)
             SizeUndefined b;
         };
 
-        static_assert(!std::is_standard_layout<Trivial>::value, "");
-        static_assert(std::is_trivial<Trivial>::value, "");
-        static_assert(!std::is_pod<Trivial>::value, "");
+        static_assert(!std::is_standard_layout_v<Trivial>);
+        static_assert(std::is_trivial_v<Trivial>);
+        static_assert(!is_pod_v<Trivial>);
         // @@@ sample end
     }
 }
-}  // namespace
+}  // namespace Nstd
