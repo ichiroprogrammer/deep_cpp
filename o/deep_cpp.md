@@ -10,7 +10,9 @@
 
 
 ## 改訂履歴 <a id="SS_1_1"></a>
-* V20.xx
+* V20.01
+    * explicitの解説
+    * コンセプトの解説
     * 比較演算子の解説
     * <=>の導入
 
@@ -12818,7 +12820,7 @@ sbrkは
 によるメモリ確保のトリガーとなる。
 これはOSのファイルシステムの動作を含む処理であるため、やはりリアルタイム性の保証は困難である。
 
-[フリースタンディング環境](#SS_6_10_21)では、sbrkのようなシステムコールは存在しないため、
+[フリースタンディング環境](#SS_6_11_1)では、sbrkのようなシステムコールは存在しないため、
 アプリケーションの未使用領域や静的に確保した領域を上記コードで示したようなリスト構造で管理し、
 mallocで使用することになる。
 このような環境では、sbrkによるリアルタイム性の阻害は発生しないものの、
@@ -14124,13 +14126,15 @@ __この章の構成__
 &emsp;&emsp;&emsp; [ADL](#SS_6_4_5)  
 &emsp;&emsp;&emsp; [関連名前空間](#SS_6_4_6)  
 &emsp;&emsp;&emsp; [SFINAE](#SS_6_4_7)  
-&emsp;&emsp;&emsp; [name-hiding](#SS_6_4_8)  
-&emsp;&emsp;&emsp; [ドミナンス](#SS_6_4_9)  
-&emsp;&emsp;&emsp; [ダイヤモンド継承](#SS_6_4_10)  
-&emsp;&emsp;&emsp; [仮想継承](#SS_6_4_11)  
-&emsp;&emsp;&emsp; [仮想基底](#SS_6_4_12)  
-&emsp;&emsp;&emsp; [using宣言](#SS_6_4_13)  
-&emsp;&emsp;&emsp; [usingディレクティブ](#SS_6_4_14)  
+&emsp;&emsp;&emsp; [コンセプト](#SS_6_4_8)  
+&emsp;&emsp;&emsp; [explicit](#SS_6_4_9)  
+&emsp;&emsp;&emsp; [name-hiding](#SS_6_4_10)  
+&emsp;&emsp;&emsp; [ドミナンス](#SS_6_4_11)  
+&emsp;&emsp;&emsp; [ダイヤモンド継承](#SS_6_4_12)  
+&emsp;&emsp;&emsp; [仮想継承](#SS_6_4_13)  
+&emsp;&emsp;&emsp; [仮想基底](#SS_6_4_14)  
+&emsp;&emsp;&emsp; [using宣言](#SS_6_4_15)  
+&emsp;&emsp;&emsp; [usingディレクティブ](#SS_6_4_16)  
 
 &emsp;&emsp; [expressionと値カテゴリ](#SS_6_5)  
 &emsp;&emsp;&emsp; [expression](#SS_6_5_1)  
@@ -14184,16 +14188,16 @@ __この章の構成__
 &emsp;&emsp;&emsp; [simple-declaration](#SS_6_10_18)  
 &emsp;&emsp;&emsp; [typeid](#SS_6_10_19)  
 &emsp;&emsp;&emsp; [トライグラフ](#SS_6_10_20)  
-&emsp;&emsp;&emsp; [フリースタンディング環境](#SS_6_10_21)  
 
 &emsp;&emsp; [ソフトウェア一般](#SS_6_11)  
-&emsp;&emsp;&emsp; [凝集度](#SS_6_11_1)  
-&emsp;&emsp;&emsp; [サイクロマティック複雑度](#SS_6_11_2)  
-&emsp;&emsp;&emsp; [Spurious Wakeup](#SS_6_11_3)  
-&emsp;&emsp;&emsp; [副作用](#SS_6_11_4)  
-&emsp;&emsp;&emsp; [is-a](#SS_6_11_5)  
-&emsp;&emsp;&emsp; [has-a](#SS_6_11_6)  
-&emsp;&emsp;&emsp; [is-implemented-in-terms-of](#SS_6_11_7)  
+&emsp;&emsp;&emsp; [フリースタンディング環境](#SS_6_11_1)  
+&emsp;&emsp;&emsp; [凝集度](#SS_6_11_2)  
+&emsp;&emsp;&emsp; [サイクロマティック複雑度](#SS_6_11_3)  
+&emsp;&emsp;&emsp; [Spurious Wakeup](#SS_6_11_4)  
+&emsp;&emsp;&emsp; [副作用](#SS_6_11_5)  
+&emsp;&emsp;&emsp; [is-a](#SS_6_11_6)  
+&emsp;&emsp;&emsp; [has-a](#SS_6_11_7)  
+&emsp;&emsp;&emsp; [is-implemented-in-terms-of](#SS_6_11_8)  
 
 &emsp;&emsp; [非ソフトウェア用語](#SS_6_12)  
 &emsp;&emsp;&emsp; [割れ窓理論](#SS_6_12_1)  
@@ -14766,7 +14770,7 @@ constexprとして宣言された関数の戻り値がコンパイル時に確�
 * インライン化し易い。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 16
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 12
 
     class Integer {
     public:
@@ -14793,7 +14797,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
 次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 36
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 32
 
     using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
 
@@ -14824,7 +14828,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 60
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 56
 
     class Integer {
     public:
@@ -14852,7 +14856,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
 * 暗黙の型変換を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 88
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 84
 
     auto a = Integer{5};
 
@@ -14865,7 +14869,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
 「[メンバ比較演算子とstd::rel_ops](#SS_6_1_18_2)」で紹介したことと同等のことが実現できる。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 96
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 92
 
     using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
 
@@ -14891,7 +14895,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 120
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 116
 
     struct Point {
         int x;
@@ -14909,7 +14913,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
     };
 ```
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 140
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 136
 
         auto a = Point{1, 2};
         auto b = Point{1, 3};
@@ -14929,7 +14933,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
 このためC++20から導入されたのが三方比較演算子`<=>`である。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 157
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 153
 
     struct Point {
         int x;
@@ -14939,7 +14943,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
     };
 ```
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 169
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 165
 
     auto p1 = Point{1, 2};
     auto p2 = Point{1, 2};
@@ -14955,7 +14959,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp 184
+    // @@@ example/term_explanation/comparison_operator_ut.cpp 180
 
     struct Point {
         int x;
@@ -16708,7 +16712,7 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
        このためTypeName定義より前方で宣言されたグローバル名前空間と、
        tの型がNS_TPLU::Xであるため[関連名前空間](#SS_6_4_6)となったNS_TPLUがname lookupの対象となるが、
        グローバル名前空間内のToTypeは、
-       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](#SS_6_4_8)が起こり、
+       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](#SS_6_4_10)が起こり、
        TypeNameからは非可視となるためname lookupの対象から外れる。
        このため、ToType(t)の呼び出しは、NS_TPLU::ToType(X const&)の宣言と関連付けられる。
 
@@ -16732,7 +16736,7 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
        tの型がintであるためNS_TPLUは[関連名前空間](#SS_6_4_6)とならず、通常のname lookupと同様に
        ToType(t)の呼び出し前方のグローバル名前空間とNS_TPLUがname lookupの対象になるが、
        グローバル名前空間内のToTypeは、
-       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](#SS_6_4_8)が起こり、
+       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](#SS_6_4_10)が起こり、
        TypeNameからは非可視となるためname lookupの対象から外れる。
        また、ToType(int const&)は、TypeNameの定義より後方で宣言されているため、
        name lookupの対象外となり、
@@ -17031,7 +17035,355 @@ ADLは思わぬname lookupによるバグを誘発することもあるが、
 [name lookup](#SS_6_4_2)の候補から除外する」
 という言語機能である。
 
-### name-hiding <a id="SS_6_4_8"></a>
+### コンセプト <a id="SS_6_4_8"></a>
+C++17までのテンプレートには以下のような問題があった。
+
+* [SFINAE](#SS_6_4_7)による制約が複雑  
+  テンプレートの制約を行うために、
+  std::enable_ifやの仕組みを使う必要があり、コードが非常に複雑で難読になりがちだった。
+* エラーメッセージが不明瞭  
+  テンプレートのパラメータが不適切な型だった場合に、
+  コンパイルエラーのメッセージが非常にわかりにくく、問題の原因を特定するのが困難だった。
+* テンプレートの適用範囲が不明確  
+  テンプレートの使用可能な型の範囲がドキュメントやコメントでしか表現されず、
+  明確な制約がコードに反映されていなかったため、コードの意図が伝わりずらい。
+* 部分特殊化やオーバーロードによる冗長性  
+  特定の型に対するテンプレートの処理を制限するために、
+  部分特殊化やテンプレートオーバーロードを行うことが多く、コードが冗長になりがちだった。
+
+C++20から導入された「コンセプト(concepts)」は、
+テンプレートパラメータを制約する機能である。
+この機能を使用することで、以下のようなプログラミングでのメリットが得られる。
+
+* テンプレートの制約を明確に定義できる  
+  コンセプトを使うことで、テンプレートパラメータが満たすべき条件を宣言的に記述できるため、
+  コードの意図が明確にできる。
+* コンパイルエラーがわかりやすくなる  
+  コンセプトを使用すると、テンプレートの適用範囲外の型に対して、
+  より具体的でわかりやすいエラーメッセージが表示される。
+* コードの可読性が向上する  
+  コンセプトを利用することで、
+  テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp 11
+
+    // SFINAEを使用したC++17スタイル
+    template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+    T add(T a, T b)
+    {
+        return a + b;
+    }
+
+    // @@@ example/term_explanation/concept_ut.cpp 23
+
+    ASSERT_EQ(add(10, 20), 30);     // int型
+    ASSERT_EQ(add(1.5, 2.5), 4.0);  // double型
+
+    auto str1 = std::string{"Hello, "};
+    auto str2 = std::string{"World!"};
+    // add(str1, str2);  // これを試すとコンパイルエラー
+    // concept_ut.cpp:10:3: note: candidate: ‘template<class T, class> T
+    // {anonymous}::old_style::add(T, T)’
+    //    10 | T add(T a, T b) {
+    //       |   ^~~
+    // concept_ut.cpp:10:3: note:   template argument deduction/substitution failed:
+    // concept_ut.cpp:9:22: error: no type named ‘type’ in ‘struct std::enable_if<false, void>’
+    //     9 | template<typename T, typename = typename
+    //     std::enable_if<std::is_arithmetic<T>::value>::type>
+    //       |                      ^~~~~~~~
+    // エラーメッセージがわかりずらい
+```
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp 47
+
+    // コンセプトを使用したC++20スタイル
+    template <typename T>
+    concept Arithmetic = std::is_arithmetic_v<T>;
+
+    template <Arithmetic T>
+    T add(T a, T b)
+    {
+        return a + b;
+    }
+
+    // @@@ example/term_explanation/concept_ut.cpp 62
+
+    ASSERT_EQ(add(10, 20), 30);     // int型
+    ASSERT_EQ(add(1.5, 2.5), 4.0);  // double型
+
+    auto str1 = std::string{"Hello, "};
+    auto str2 = std::string{"World!"};
+    // add(str1, str2);  // これを試すとコンパイルエラー
+    // concept_ut.cpp:36:27: note: the expression ‘is_arithmetic_v<T> [with T =
+    // std::basic_string<char, std
+    // ::char_traits<char>, std::allocator<char> >]’ evaluated to ‘false’
+    //    36 | concept Arithmetic = std::is_arithmetic_v<T>;
+    //       |                      ~~~~~^~~~~~~~~~~~~~~~~~
+    // ↑  エラーメッセージがわかりよい。テンプレートTがコンセプトfalseとなる
+```
+
+以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp 81
+
+    // 制約のためにstatic_assertを使用したC++17スタイル
+    template <typename FLOAT_0, typename FLOAT_1>
+    bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
+    {
+        static_assert(std::is_floating_point_v<FLOAT_0>, "FLOAT_0 shoud be float or double.");
+        static_assert(std::is_same_v<FLOAT_0, FLOAT_1>, "FLOAT_0 and FLOAT_1 shoud be a same type.");
+
+        return std::abs(lhs - rhs) <= std::numeric_limits<FLOAT_0>::epsilon();
+    }
+```
+
+以上の関数テンプレートをコンセプトを使用して改善した例である。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp 108
+
+    // 標準コンセプト std::floating_point と std::same_as を使用
+    template <std::floating_point FLOAT_0, std::same_as<FLOAT_0> FLOAT_1>
+    bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
+    {
+        return std::abs(lhs - rhs) <= std::numeric_limits<FLOAT_0>::epsilon();
+    }
+```
+
+フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp 132
+
+    // requiresを使った関数テンプレートの制約
+    template <typename FLOAT_0, typename FLOAT_1>
+    requires std::floating_point<FLOAT_0> && std::same_as<FLOAT_0, FLOAT_1>
+    bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
+    {
+        return std::abs(lhs - rhs) <= std::numeric_limits<FLOAT_0>::epsilon();
+    }
+
+```
+
+### explicit <a id="SS_6_4_9"></a>
+explicitは、コンストラクタに対して付与することで、
+コンストラクタによる暗黙の型変換を禁止するためのキーワードである。
+暗黙の型変換とは、ある型の値を別の型の値に自動的に変換する言語機能を指す。
+explicitキーワードを付けることで、意図しない型変換を防ぎ、コードの堅牢性を高めることがでできる。
+
+この節で説明するexplicitの機能は下記のような項目に渡って説明を行う。
+
+- [単一引数のコンストラクタを持つクラスの暗黙の型変換抑止](#SS_6_4_9_1)
+- [暗黙の型変換抑止](#SS_6_4_9_2)
+- [型変換演算子のオーバーロードの型変換の抑止](#SS_6_4_9_3)
+- [explicit(COND)](#SS_6_4_9_4)
+
+#### 単一引数のコンストラクタを持つクラスの暗黙の型変換抑止 <a id="SS_6_4_9_1"></a>
+explicit宣言されていないコンストラクタを持つクラスは、
+下記のコードのように暗黙のの型変換が起こる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 10
+
+    struct A {
+        A(int a) : x{a} {}
+        int x;
+    };
+
+    A f(A a) { return a; };
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 21
+
+    A a = 1;  // A::Aがexplicitでないため、iはA{1}に変換される
+    ASSERT_EQ(a.x, 1);
+
+    auto b = f(2);  // A::Aがexplicitでないため、2はA{2}に変換される
+    ASSERT_EQ(b.x, 2);
+```
+
+暗黙の型変換はわかりずらいバグを生み出してしまうことがあるため、
+下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 34
+
+    struct A {
+        explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
+        int x;
+    };
+
+    A f(A a) { return a; };
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 45
+
+    // A a = 1;    // A::Aがexplicitであるため、コンパイルエラー
+    // auto b = f(2);  // A::Aがexplicitであるため、コンパイルエラー
+```
+
+C++03までは、[一様初期化](#SS_6_2_7)がサポートされていなかったため、
+explicitは単一引数のコンストラクタに使用されることが一般的であった。
+
+#### 暗黙の型変換抑止 <a id="SS_6_4_9_2"></a>
+C++11からサポートされた[一様初期化](#SS_6_2_7)を下記のように使用することで、
+暗黙の型変換を使用できる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 56
+
+    struct A {
+        A(int a, int b) : x{a}, y{b} {}
+        int x;
+        int y;
+    };
+
+    A    f(A a) { return a; };
+    bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 70
+
+    A a = {1, 2};  // A::Aがexplicitでないため、iはA{1, 2}に変換される
+    ASSERT_EQ(a, (A{1, 2}));
+
+    auto b = f({2, 1});  // A::Aがexplicitでないため、2はA{2,1}に変換される
+    ASSERT_EQ(b, (A{2, 1}));
+```
+
+以下に示す通り、コンストラクタの引数の数によらず、
+C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 82
+
+    struct A {
+        explicit A(int a, int b) : x{a}, y{b} {}
+        int x;
+        int y;
+    };
+
+    A    f(A a) { return a; };
+    bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 96
+
+    // A a = {1, 2};  // A::Aがexplicitであるため、コンパイルエラー
+    // auto b = f({2, 1});  // A::Aがexplicitであるため、コンパイルエラー
+```
+
+#### 型変換演算子のオーバーロードの型変換の抑止 <a id="SS_6_4_9_3"></a>
+型変換演算子のオーバーロードの戻り値をさらに別の型に変換すると、
+きわめてわかりずらいバグを生み出してしまうことがある。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 110
+
+    struct A {
+        explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
+        operator bool() const noexcept { return x; }
+        int x;
+    };
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 123
+
+    auto a = A{2};
+
+    ASSERT_TRUE(a);
+    ASSERT_EQ(1, a);  // aをboolに変換するとtrue、trueをintに変換すると1
+
+    int b = a + 1;  // aをboolに変換するとtrue、trueをintに変換すると1であるため、bは2
+    ASSERT_EQ(b, 2);
+
+```
+
+以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 137
+
+    struct A {
+        explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
+        explicit operator bool() const noexcept { return x; }// 暗黙の型変換の抑止
+        int x;
+    };
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 150
+
+    auto a = A{2};
+
+    // ASSERT_EQ(1, a);  // operator boolがexplicitであるため、コンパイルエラー
+    // int b = a + 1;  // operator boolがexplicitであるため、コンパイルエラー
+```
+
+#### explicit(COND) <a id="SS_6_4_9_4"></a>
+C++20から導入されたexplicit(COND)は、
+コンストラクタや変換演算子に対して、
+特定の条件下で暗黙の型変換を許可または禁止する機能である。
+CONDには、型特性や定数式などの任意のconstexprな条件式を指定できる。
+以下にこのシンタックスの単純な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 161
+
+    template <typename T>
+    struct S {
+        explicit(!std::is_integral_v<T>) S(T x) : value{x} {}  // Tが整数型の場合、暗黙の型変換を許可
+        T value;
+    };
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 172
+
+    S s = 1;      // Tがintであるため、explicit宣言されていない
+    // S t = 1.0; // Tが整数型でないため、コンパイルエラー
+    S t{1.0};     // Tが整数型でないが、明示的な初期化は問題ない
+
+    ASSERT_EQ(s.value, 1);
+```
+
+テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 184
+
+    template <typename T>
+    struct Optional {
+        // Tの型がnullptr_tの場合、explicit
+        explicit(std::is_same_v<T, std::nullptr_t>) Optional(const T& value)
+            : has_value_(!std::is_same_v<T, std::nullptr_t>), value_(value) { }
+
+        explicit operator bool() const noexcept { return has_value_; } // bool型への変換
+        operator T() const noexcept { return value_; } // T型への変換
+
+    private:
+        bool has_value_;
+        T    value_;
+    };
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp 205
+
+    Optional a = 2;   // T == intであるため、暗黙の型変換を許可
+    ASSERT_TRUE(a);   // has_value_がtrueであるため
+    ASSERT_EQ(a, 2);  // T型への暗黙的変換をチェック
+
+    // Optional n = nullptr; // T == std::nullptr_tのため暗黙の型変換抑止により、コンパイルエラー
+    Optional n{nullptr};  // 通常の初期化
+    ASSERT_FALSE(n);
+```
+
+こういった工夫により、コードの過度な柔軟性を適度に保つことができ、
+可読性の向上につながる。
+
+
+### name-hiding <a id="SS_6_4_10"></a>
 name-hidingとは
 「前方の識別子が、その後方に同一の名前をもつ識別子があるために、
 [name lookup](#SS_6_4_2)の対象外になる」現象一般をを指す通称である
@@ -17072,7 +17424,7 @@ Base::f()には、修飾しない形式でのDerivedクラス経由のアクセ�
 Base::fがその後方にあるDerived::f(int)によりname-hidingされたために起こる現象である
 (name lookupによる探索には識別子が使われるため、シグネチャの違いはname-hidingに影響しない)。
 
-下記のように[using宣言](#SS_6_4_13)を使用することで、
+下記のように[using宣言](#SS_6_4_15)を使用することで、
 修飾しない形式でのDerivedクラス経由のBase::f()へのアクセスが可能となる。
 
 ```cpp
@@ -17204,23 +17556,23 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 全チームメンバがこういったname lookupを正しく扱えると確信できないのであれば、
 前述の通り、デフォルトでは名前空間を使用して修飾を行うのが良いだろう。
 
-### ドミナンス <a id="SS_6_4_9"></a>
+### ドミナンス <a id="SS_6_4_11"></a>
 [ドミナンス(Dominance、支配性)](https://en.wikipedia.org/wiki/Dominance_(C%2B%2B))とは、
 「探索対称の名前が継承の中にも存在するような場合の[name lookup](#SS_6_4_2)の仕様の一部」
 を指す慣用句である。
 
 以下に
 
-* [ダイヤモンド継承を含まない場合](#SS_6_4_9_1)
-* [ダイヤモンド継承かつそれが仮想継承でない場合](#SS_6_4_9_2)
-* [ダイヤモンド継承かつそれが仮想継承である場合](#SS_6_4_9_3)
+* [ダイヤモンド継承を含まない場合](#SS_6_4_11_1)
+* [ダイヤモンド継承かつそれが仮想継承でない場合](#SS_6_4_11_2)
+* [ダイヤモンド継承かつそれが仮想継承である場合](#SS_6_4_11_3)
 
 のドミナンスについてのコードを例示する。
 
-この例で示したように、[ダイヤモンド継承](#SS_6_4_10)を通常の継承で行うか、
-[仮想継承](#SS_6_4_11)で行うかでは結果が全く異なるため、注意が必要である。
+この例で示したように、[ダイヤモンド継承](#SS_6_4_12)を通常の継承で行うか、
+[仮想継承](#SS_6_4_13)で行うかでは結果が全く異なるため、注意が必要である。
 
-#### ダイヤモンド継承を含まない場合 <a id="SS_6_4_9_1"></a>
+#### ダイヤモンド継承を含まない場合 <a id="SS_6_4_11_1"></a>
 
 ```cpp
     // @@@ example/term_explanation/dominance_ut.cpp 9
@@ -17254,9 +17606,9 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
     ASSERT_EQ(3, dd.g());
 ```
 
-この[name lookup](#SS_6_4_2)については、[name-hiding](#SS_6_4_8)で説明した通りである。
+この[name lookup](#SS_6_4_2)については、[name-hiding](#SS_6_4_10)で説明した通りである。
 
-#### ダイヤモンド継承かつそれが仮想継承でない場合 <a id="SS_6_4_9_2"></a>
+#### ダイヤモンド継承かつそれが仮想継承でない場合 <a id="SS_6_4_11_2"></a>
 
 ```cpp
     // @@@ example/term_explanation/dominance_ut.cpp 45
@@ -17288,7 +17640,7 @@ Derived_0のドミナンスにより、DerivedDerived::gはDerived_0::fを呼び
 Derived_1によるドミナンスも働き、その結果として、呼び出しが曖昧(ambiguous)になることで、
 このような結果となる。
 
-#### ダイヤモンド継承かつそれが仮想継承である場合 <a id="SS_6_4_9_3"></a>
+#### ダイヤモンド継承かつそれが仮想継承である場合 <a id="SS_6_4_11_3"></a>
 
 ```cpp
     // @@@ example/term_explanation/dominance_ut.cpp 71
@@ -17319,13 +17671,13 @@ Derived_1によるドミナンスも働き、その結果として、呼び出�
     ASSERT_EQ(3, dd.g());
 ```
 
-これまでと同様にDerived_0のドミナンスによりBase::fは[name-hiding](#SS_6_4_8)されることになる。
-この時、Derived_0、Derived_1がBaseから[仮想継承](#SS_6_4_11)した効果により、
+これまでと同様にDerived_0のドミナンスによりBase::fは[name-hiding](#SS_6_4_10)されることになる。
+この時、Derived_0、Derived_1がBaseから[仮想継承](#SS_6_4_13)した効果により、
 この継承ヒエラルキーの中でBaseは１つのみ存在することになるため、
-Derived_1により導入されたBase::fも併せて[name-hiding](#SS_6_4_8)される。
+Derived_1により導入されたBase::fも併せて[name-hiding](#SS_6_4_10)される。
 結果として、曖昧性は排除され、コンパイルエラーにはならず、このような結果となる。
 
-### ダイヤモンド継承 <a id="SS_6_4_10"></a>
+### ダイヤモンド継承 <a id="SS_6_4_12"></a>
 ダイヤモンド継承(Diamond Inheritance)とは、以下のような構造のクラス継承を指す。
 
 * 基底クラス(Base)が一つ存在し、その基底クラスから二つのクラス(Derived_0、Derived_1)が派生する。
@@ -17338,9 +17690,9 @@ Derived_1により導入されたBase::fも併せて[name-hiding](#SS_6_4_8)さ�
 <!-- pu:plant_uml/diamond_inheritance.pu--><p><img src="data:image/png;base64,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" /></p>
 
 ダイヤモンド継承は、
-[仮想継承](#SS_6_4_11)(virtual inheritance)を使ったものと、使わないものに分類できる。
+[仮想継承](#SS_6_4_13)(virtual inheritance)を使ったものと、使わないものに分類できる。
 
-[仮想継承](#SS_6_4_11)を使わないダイヤモンド継承のコードを以下に示す。
+[仮想継承](#SS_6_4_13)を使わないダイヤモンド継承のコードを以下に示す。
 
 ```cpp
     // @@@ example/term_explanation/diamond_inheritance_ut.cpp 6
@@ -17409,7 +17761,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     ASSERT_EQ(2, dd.Derived_1::get());  // Derived_1::Base::x_は2に変更
 ```
 
-次に示すのは、[仮想継承](#SS_6_4_11)を使用したダイヤモンド継承の例である。
+次に示すのは、[仮想継承](#SS_6_4_13)を使用したダイヤモンド継承の例である。
 
 ```cpp
     // @@@ example/term_explanation/diamond_inheritance_ut.cpp 70
@@ -17442,7 +17794,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 
 仮想継承の効果で、DerivedDerivedインスタンスの中に存在するBaseインスタンスは1つになるため、
 上で示した仮想継承を使わないダイヤモンド継承での問題は解消される
-(が、[仮想継承](#SS_6_4_11)による別の問題が発生する)。
+(が、[仮想継承](#SS_6_4_13)による別の問題が発生する)。
 
 ```cpp
     // @@@ example/term_explanation/diamond_inheritance_ut.cpp 99
@@ -17458,7 +17810,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     ASSERT_EQ(2, dd.get());
 ```
 
-### 仮想継承 <a id="SS_6_4_11"></a>
+### 仮想継承 <a id="SS_6_4_13"></a>
 下記に示した継承方法を仮想継承、仮想継承の基底クラスを仮想基底クラスと呼ぶ。
 
 ```cpp
@@ -17479,7 +17831,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     };
 ```
 
-仮想継承は、[ダイヤモンド継承](#SS_6_4_10)の基底クラスのインスタンスを、
+仮想継承は、[ダイヤモンド継承](#SS_6_4_12)の基底クラスのインスタンスを、
 その継承ヒエラルキーの中で1つのみにするための言語機能である。
 
 仮想継承の独特の動作を示すため、
@@ -17556,7 +17908,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     ASSERT_EQ(1, ddn.get());
 ```
 「仮想継承のコンストラクタ呼び出し」仕様は、
-[ダイヤモンド継承](#SS_6_4_10)での基底クラスのコンストラクタ呼び出しを一度にするために存在する。
+[ダイヤモンド継承](#SS_6_4_12)での基底クラスのコンストラクタ呼び出しを一度にするために存在する。
 
 もし、この機能がなければ、下記のコードでの基底クラスのコンストラクタ呼び出しは2度になるため、
 デバッグ困難なバグが発生してしまうことは容易に想像できるだろう。
@@ -17639,10 +17991,10 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     };
 ```
 
-### 仮想基底 <a id="SS_6_4_12"></a>
-仮想基底(クラス)とは、[仮想継承](#SS_6_4_11)の基底クラス指す。
+### 仮想基底 <a id="SS_6_4_14"></a>
+仮想基底(クラス)とは、[仮想継承](#SS_6_4_13)の基底クラス指す。
 
-### using宣言 <a id="SS_6_4_13"></a>
+### using宣言 <a id="SS_6_4_15"></a>
 using宣言とは、"using XXX::func"のような記述である。
 この記述が行われたスコープでは、この記述後の行から名前空間XXXでの修飾をすることなく、
 funcが使用できる。
@@ -17668,7 +18020,7 @@ funcが使用できる。
 
 ```
 
-### usingディレクティブ <a id="SS_6_4_14"></a>
+### usingディレクティブ <a id="SS_6_4_16"></a>
 usingディレクティブとは、"using namespace XXX"のような記述である。
 この記述が行われたスコープでは、下記例のように、この記述後から名前空間XXXでの修飾をすることなく、
 XXXの識別子が使用できる。
@@ -17694,8 +18046,8 @@ XXXの識別子が使用できる。
 ```
 
 より多くの識別子が名前空間の修飾無しで使えるようになる点において、
-[using宣言](#SS_6_4_13)よりも危険であり、また、
-下記のように[name-hiding](#SS_6_4_8)された識別子の導入には効果がない。
+[using宣言](#SS_6_4_15)よりも危険であり、また、
+下記のように[name-hiding](#SS_6_4_10)された識別子の導入には効果がない。
 
 ```cpp
     // @@@ example/term_explanation/namespace_ut.cpp 6
@@ -18854,7 +19206,7 @@ moveセマンティクスはcopy代入後に使用されなくなるオブジェ
 ## C++その他 <a id="SS_6_10"></a>
 ### オーバーライドとオーバーロードの違い <a id="SS_6_10_1"></a>
 下記例では、Base::g()がオーバーロードで、Derived::f()がオーバーライドである
-(Derived::g()はオーバーロードでもオーバーライドでもない(「[name-hiding](#SS_6_4_8)」参照))。
+(Derived::g()はオーバーロードでもオーバーライドでもない(「[name-hiding](#SS_6_4_10)」参照))。
 
 
 ```cpp
@@ -19379,12 +19731,12 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     ??=  ??/  ??'  ??(  ??)  ??!  ??<  ??>  ??-
 ```
 
-### フリースタンディング環境 <a id="SS_6_10_21"></a>
+## ソフトウェア一般 <a id="SS_6_11"></a>
+### フリースタンディング環境 <a id="SS_6_11_1"></a>
 [フリースタンディング環境](https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%AA%E3%83%BC%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E7%92%B0%E5%A2%83)
 とは、組み込みソフトウェアやOSのように、その実行にOSの補助を受けられないソフトウエアを指す。
 
-## ソフトウェア一般 <a id="SS_6_11"></a>
-### 凝集度 <a id="SS_6_11_1"></a>
+### 凝集度 <a id="SS_6_11_2"></a>
 [凝集度](https://ja.wikipedia.org/wiki/%E5%87%9D%E9%9B%86%E5%BA%A6)
 とはクラス設計の妥当性を表す尺度の一種であり、
 Lack of Cohesion in Methodsというメトリクスで計測される。
@@ -19465,7 +19817,7 @@ Lack of Cohesion in Methodsというメトリクスで計測される。
 ```
 
 
-### サイクロマティック複雑度 <a id="SS_6_11_2"></a>
+### サイクロマティック複雑度 <a id="SS_6_11_3"></a>
 [サイクロマティック複雑度](https://ja.wikipedia.org/wiki/%E5%BE%AA%E7%92%B0%E7%9A%84%E8%A4%87%E9%9B%91%E5%BA%A6)
 とは関数の複雑さを表すメトリクスである。
 このメトリクスの解釈は諸説あるものの、概ね以下のテーブルのようなものである。
@@ -19478,7 +19830,7 @@ Lack of Cohesion in Methodsというメトリクスで計測される。
 |      51 < CC               |テスト不可能、デグレードリスクが非常に高い|
 
 
-### Spurious Wakeup <a id="SS_6_11_3"></a>
+### Spurious Wakeup <a id="SS_6_11_4"></a>
 [Spurious Wakeup](https://en.wikipedia.org/wiki/Spurious_wakeup)とは、
 条件変数に対する通知待ちの状態であるスレッドが、その通知がされていないにもかかわらず、
 起き上がってしまう現象のことを指す。
@@ -19544,7 +19896,7 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
     }
 ```
 
-### 副作用 <a id="SS_6_11_4"></a>
+### 副作用 <a id="SS_6_11_5"></a>
 プログラミングにおいて、式の評価による作用には、
 主たる作用とそれ以外の
 [副作用](https://ja.wikipedia.org/wiki/%E5%89%AF%E4%BD%9C%E7%94%A8_(%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0))
@@ -19555,7 +19907,7 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
 ファイルの読み書き等のI/O実行、等がある。
 
 
-### is-a <a id="SS_6_11_5"></a>
+### is-a <a id="SS_6_11_6"></a>
 「is-a」の関係は、オブジェクト指向プログラミング（OOP）
 においてクラス間の継承関係を説明する際に使われる概念である。
 クラスDerivedとBaseが「is-a」の関係である場合、
@@ -19708,10 +20060,10 @@ penguinとbirdの関係はis-aの関係ではあるが、
 ```
 
 修正されたKyukancho はstd::string インスタンスをメンバ変数として持ち、
-kyukanchoとstd::stringの関係を[has-a](#SS_6_11_6)の関係と呼ぶ。
+kyukanchoとstd::stringの関係を[has-a](#SS_6_11_7)の関係と呼ぶ。
 
 
-### has-a <a id="SS_6_11_6"></a>
+### has-a <a id="SS_6_11_7"></a>
 「has-a」の関係は、
 あるクラスのインスタンスが別のクラスのインスタンスを構成要素として含む関係を指す。
 つまり、あるクラスのオブジェクトが別のクラスのオブジェクトを保持している関係である。
@@ -19744,19 +20096,19 @@ Carクラスの例ではCarクラスにはEngine型のメンバ変数が存在�
     };
 ```
 
-### is-implemented-in-terms-of <a id="SS_6_11_7"></a>
+### is-implemented-in-terms-of <a id="SS_6_11_8"></a>
 「is-implemented-in-terms-of」の関係は、
 オブジェクト指向プログラミング（OOP）において、
 あるクラスが別のクラスの機能を内部的に利用して実装されていることを示す概念である。
 これは、あるクラスが他のクラスのインターフェースやメソッドを用いて、
 自身の機能を提供する場合に使われる。
-[has-a](#SS_6_11_6)の関係は、is-implemented-in-terms-of の関係の一種である。
+[has-a](#SS_6_11_7)の関係は、is-implemented-in-terms-of の関係の一種である。
 
 is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 
-*手段1.* [public継承によるis-implemented-in-terms-of](#SS_6_11_7_1)  
-*手段2.* [private継承によるis-implemented-in-terms-of](#SS_6_11_7_2)  
-*手段3.* [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_11_7_3)  
+*手段1.* [public継承によるis-implemented-in-terms-of](#SS_6_11_8_1)  
+*手段2.* [private継承によるis-implemented-in-terms-of](#SS_6_11_8_2)  
+*手段3.* [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_11_8_3)  
 
 手段1-3にはそれぞれ、長所、短所があるため、必要に応じて手段を選択する必要がある。
 以下の議論を単純にするため、下記のようにクラスS、C、CCを定める。
@@ -19769,7 +20121,7 @@ is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 依存関係の複雑さから考えた場合、CはSに強く依存する。
 場合によっては、この依存はCCからSへの依存間にも影響をあたえる。
 従って、手段3が依存関係を単純にしやすい。
-手段1は[is-a](#SS_6_11_5)に見え、以下に示すような問題も考慮する必要があるため、
+手段1は[is-a](#SS_6_11_6)に見え、以下に示すような問題も考慮する必要があるため、
 可読性、保守性を劣化させる可能性がある。
 
 ```cpp
@@ -19792,7 +20144,7 @@ is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 の実現手段でもあるため、一概にコーディング規約などで排除することもできない。
 
 
-#### public継承によるis-implemented-in-terms-of <a id="SS_6_11_7_1"></a>
+#### public継承によるis-implemented-in-terms-of <a id="SS_6_11_8_1"></a>
 public継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 
 ```cpp
@@ -19811,11 +20163,11 @@ public継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 ```
 
 すでに述べたようにこの方法は、
-[private継承によるis-implemented-in-terms-of](#SS_6_11_7_2)や、
-[コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_11_7_3)
+[private継承によるis-implemented-in-terms-of](#SS_6_11_8_2)や、
+[コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_11_8_3)
 と比べコードがシンプルになる。 
 
-#### private継承によるis-implemented-in-terms-of <a id="SS_6_11_7_2"></a>
+#### private継承によるis-implemented-in-terms-of <a id="SS_6_11_8_2"></a>
 private継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 
 ```cpp
@@ -19840,11 +20192,11 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
     ASSERT_EQ(str.size(), 0);
 ```
 
-この方法は、[public継承によるis-implemented-in-terms-of](#SS_6_11_7_1)が持つデストラクタ問題は発生せす、
-[is-a](#SS_6_11_5)と誤解してしまう問題も発生しない。
+この方法は、[public継承によるis-implemented-in-terms-of](#SS_6_11_8_1)が持つデストラクタ問題は発生せす、
+[is-a](#SS_6_11_6)と誤解してしまう問題も発生しない。
 
 
-#### コンポジションによる(has-a)is-implemented-in-terms-of <a id="SS_6_11_7_3"></a>
+#### コンポジションによる(has-a)is-implemented-in-terms-of <a id="SS_6_11_8_3"></a>
 コンポジションによる(has-a)is-implemented-in-terms-ofの実装例を示す。
 
 ```cpp

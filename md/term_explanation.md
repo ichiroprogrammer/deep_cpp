@@ -1355,6 +1355,171 @@ ADLは思わぬname lookupによるバグを誘発することもあるが、
 [name lookup](---)の候補から除外する」
 という言語機能である。
 
+### コンセプト
+C++17までのテンプレートには以下のような問題があった。
+
+* [SFINAE](---)による制約が複雑  
+  テンプレートの制約を行うために、
+  std::enable_ifやの仕組みを使う必要があり、コードが非常に複雑で難読になりがちだった。
+* エラーメッセージが不明瞭  
+  テンプレートのパラメータが不適切な型だった場合に、
+  コンパイルエラーのメッセージが非常にわかりにくく、問題の原因を特定するのが困難だった。
+* テンプレートの適用範囲が不明確  
+  テンプレートの使用可能な型の範囲がドキュメントやコメントでしか表現されず、
+  明確な制約がコードに反映されていなかったため、コードの意図が伝わりずらい。
+* 部分特殊化やオーバーロードによる冗長性  
+  特定の型に対するテンプレートの処理を制限するために、
+  部分特殊化やテンプレートオーバーロードを行うことが多く、コードが冗長になりがちだった。
+
+C++20から導入された「コンセプト(concepts)」は、
+テンプレートパラメータを制約する機能である。
+この機能を使用することで、以下のようなプログラミングでのメリットが得られる。
+
+* テンプレートの制約を明確に定義できる  
+  コンセプトを使うことで、テンプレートパラメータが満たすべき条件を宣言的に記述できるため、
+  コードの意図が明確にできる。
+* コンパイルエラーがわかりやすくなる  
+  コンセプトを使用すると、テンプレートの適用範囲外の型に対して、
+  より具体的でわかりやすいエラーメッセージが表示される。
+* コードの可読性が向上する  
+  コンセプトを利用することで、
+  テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #0:0 begin
+
+    // @@@ example/term_explanation/concept_ut.cpp #0:1 begin -1
+```
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #1:0 begin
+
+    // @@@ example/term_explanation/concept_ut.cpp #1:1 begin -1
+```
+
+以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #2:0 begin
+```
+
+以上の関数テンプレートをコンセプトを使用して改善した例である。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #3:0 begin
+```
+
+フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #4:0 begin
+```
+
+### explicit
+explicitは、コンストラクタに対して付与することで、
+コンストラクタによる暗黙の型変換を禁止するためのキーワードである。
+暗黙の型変換とは、ある型の値を別の型の値に自動的に変換する言語機能を指す。
+explicitキーワードを付けることで、意図しない型変換を防ぎ、コードの堅牢性を高めることがでできる。
+
+この節で説明するexplicitの機能は下記のような項目に渡って説明を行う。
+
+- [単一引数のコンストラクタを持つクラスの暗黙の型変換抑止](---)
+- [暗黙の型変換抑止](---)
+- [型変換演算子のオーバーロードの型変換の抑止](---)
+- [explicit(COND)](---)
+
+#### 単一引数のコンストラクタを持つクラスの暗黙の型変換抑止
+explicit宣言されていないコンストラクタを持つクラスは、
+下記のコードのように暗黙のの型変換が起こる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #0:1 begin -1
+```
+
+暗黙の型変換はわかりずらいバグを生み出してしまうことがあるため、
+下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #1:1 begin -1
+```
+
+C++03までは、[一様初期化](---)がサポートされていなかったため、
+explicitは単一引数のコンストラクタに使用されることが一般的であった。
+
+#### 暗黙の型変換抑止
+C++11からサポートされた[一様初期化](---)を下記のように使用することで、
+暗黙の型変換を使用できる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #2:1 begin -1
+```
+
+以下に示す通り、コンストラクタの引数の数によらず、
+C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #3:1 begin -1
+```
+
+#### 型変換演算子のオーバーロードの型変換の抑止
+型変換演算子のオーバーロードの戻り値をさらに別の型に変換すると、
+きわめてわかりずらいバグを生み出してしまうことがある。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #4:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #4:1 begin -1
+```
+
+以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #5:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #5:1 begin -1
+```
+
+#### explicit(COND)
+C++20から導入されたexplicit(COND)は、
+コンストラクタや変換演算子に対して、
+特定の条件下で暗黙の型変換を許可または禁止する機能である。
+CONDには、型特性や定数式などの任意のconstexprな条件式を指定できる。
+以下にこのシンタックスの単純な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #6:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #6:1 begin -1
+```
+
+テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #7:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #7:1 begin -1
+```
+
+こういった工夫により、コードの過度な柔軟性を適度に保つことができ、
+可読性の向上につながる。
+
+
 ### name-hiding
 name-hidingとは
 「前方の識別子が、その後方に同一の名前をもつ識別子があるために、
@@ -2501,11 +2666,11 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     ??=  ??/  ??'  ??(  ??)  ??!  ??<  ??>  ??-
 ```
 
+## ソフトウェア一般
 ### フリースタンディング環境
 [フリースタンディング環境](https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%AA%E3%83%BC%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E7%92%B0%E5%A2%83)
 とは、組み込みソフトウェアやOSのように、その実行にOSの補助を受けられないソフトウエアを指す。
 
-## ソフトウェア一般
 ### 凝集度
 [凝集度](https://ja.wikipedia.org/wiki/%E5%87%9D%E9%9B%86%E5%BA%A6)
 とはクラス設計の妥当性を表す尺度の一種であり、

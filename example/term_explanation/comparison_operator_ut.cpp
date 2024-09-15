@@ -7,10 +7,6 @@
 
 #include "suppress_warning.h"
 
-// @@@ sample begin 0:1
-
-// @@@ sample end
-
 namespace Use_rel_ops {
 
 // @@@ sample begin 0:0
