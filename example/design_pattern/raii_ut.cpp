@@ -10,8 +10,9 @@
 #include "gtest_wrapper.h"
 
 #include "scoped_guard.h"
+#include "suppress_warning.h"
 
-namespace {
+namespace Nstd {
 
 class A* a_ptr;
 
@@ -154,6 +155,7 @@ void use_RAII_for_socket()
     }
     // @@@ ignore begin
     // @@@ ignore end
+    IGNORE_UNUSED_VAR(fd);
 }
 // @@@ sample end
 
@@ -162,4 +164,4 @@ TEST_F(RAII, scoped_guard)
     not_use_RAII_for_socket();
     use_RAII_for_socket();
 }
-}  // namespace
+}  // namespace Nstd

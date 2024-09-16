@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include "nstd_concepts.h"
 // @@@ sample begin 0:0
 
 namespace Logging {
@@ -31,7 +32,7 @@ public:
 private:
     void set_inner() { oss_ << std::endl; }
 
-    template <typename HEAD, typename... TAIL>
+    template <Nstd::Printable HEAD, Nstd::Printable... TAIL>
     void set_inner(HEAD const& head, TAIL const&... tails)
     {
         oss_ << ":" << head;

@@ -2074,18 +2074,21 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 このような場合には、下記するようなリソース解放用クラス
 
 ```cpp
-    // @@@ h/scoped_guard.h 4
+    // @@@ h/scoped_guard.h 7
 
     /// @class ScopedGuard
-    /// @brief RAIIのためのクラス。
-    ///        コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す。
-    template <typename F>
+    /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
+    template <std::invocable F>  // Fが呼び出し可能であることを制約
     class ScopedGuard {
     public:
         explicit ScopedGuard(F&& f) noexcept : f_{f}
         {
-            // f()がill-formedにならず、その戻りがvoidでなければならない
-            static_assert(std::is_invocable_r_v<void, F>, "F must be callable and return void");
+
+    template <typename F>
+    ScopedGuard<F> MakeScopedGuard(F&& f) noexcept
+    {
+        return ScopedGuard<F>(std::move(f));
+    }
         }
 
         ~ScopedGuard() { f_(); }
@@ -6078,7 +6081,7 @@ HEAD、TAILに加えHEAD2を導入することで、前からの演算を実装�
 パラメータパックを使用したログ取得コードは以下のようになる。
 
 ```cpp
-    // @@@ example/template/logger_0.h 47
+    // @@@ example/template/logger_0.h 53
 
     #define LOGGER_P(...) Logging::Logger::Inst().Set(__FILE__, __LINE__)
     #define LOGGER(...) Logging::Logger::Inst().Set(__FILE__, __LINE__, __VA_ARGS__)
@@ -6095,6 +6098,12 @@ Loggerクラスの実装は、下記のようになる。
     // @@@ example/template/logger_0.h 5
 
     namespace Logging {
+
+    template <typename T>
+    concept Printable = requires(T t, std::ostream& os) {
+        { os << t } -> std::same_as<std::ostream&>;
+    };
+
     class Logger {
     public:
         static Logger&       Inst();
@@ -6121,7 +6130,7 @@ Loggerクラスの実装は、下記のようになる。
     private:
         void set_inner() { oss_ << std::endl; }
 
-        template <typename HEAD, typename... TAIL>
+        template <Printable HEAD, Printable... TAIL>
         void set_inner(HEAD const& head, TAIL const&... tails)
         {
             oss_ << ":" << head;
@@ -11745,7 +11754,7 @@ utilityで定義されているため、以下ではこれらを使用する。
 StaticStringはすでに示したテクニックを使い、下記のように定義できる。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 8
+    // @@@ example/h/nstd_static_string.h 10
 
     template <size_t N>
     class StaticString {
@@ -11772,7 +11781,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     private:
         char const string_[N];
 
-        template <typename T, size_t... I>
+        template <Beginable T, size_t... I>
         // offsetは部分StaticString切り出しのため(TopStr, BottomStr)
         constexpr StaticString(size_t offset, T& t, std::index_sequence<I...>) noexcept
             : string_{std::begin(t)[I + offset]...}
@@ -11815,7 +11824,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 次にこのクラスにc++17用に`operator==`とc++20用に`operator<=>`を追加する。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 46
+    // @@@ example/h/nstd_static_string.h 48
     // operator==の実装のソースコードの、C++のバージョンごとに以下のように分かれている
     #if __cplusplus == 201703L
     // for C++17
@@ -11956,7 +11965,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 同様にoperator + を追加する。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 166
+    // @@@ example/h/nstd_static_string.h 168
 
     namespace Inner_ {
     template <size_t N1, size_t... I1, size_t N2, size_t... I2>
@@ -12013,7 +12022,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 任意のサイズの文字列を切り出せるようにすることでStaticStringはより便利に使用できるようになる。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 197
+    // @@@ example/h/nstd_static_string.h 199
 
     template <size_t SIZE, size_t N>  // StaticString<SiZE>の部分文字列生成
     constexpr auto TopStr(StaticString<N> ss) noexcept
@@ -12128,14 +12137,15 @@ Int2StaticString\<>()が得られる。
 ここでは、その問題を解決するためのExceptionクラスの実装を示す。
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 10
+    // @@@ example/h/nstd_exception.h 11
 
     /// @class Exception
     /// @brief StaticString<>を使ったエクセプションクラス
     ///        下記のMAKE_EXCEPTIONを使い生成
     /// @tparam E   std::exceptionから派生したエクセプションクラス
     /// @tparam N   StaticString<N>
-    template <class E, size_t N>
+    template <typename E, size_t N>
+    requires std::derived_from<E, std::exception>
     class Exception : public E {
     public:
         static_assert(std::is_base_of_v<std::exception, E>);
@@ -12151,17 +12161,16 @@ Int2StaticString\<>()が得られる。
 StaticStringと同様に、このままでは不便であるため、下記の関数を定義する。
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 29
+    // @@@ example/h/nstd_exception.h 31
 
     namespace Inner_ {
-    template <class E, template <size_t> class STATIC_STR, size_t N>
-    auto make_exception(STATIC_STR<N> exception_str) noexcept
-    {
-        return Exception<E, N>{exception_str};
-    }
+    template <typename E, template <size_t> class STATIC_STR, size_t N>
+    requires std::derived_from<E, std::exception>
+    auto make_exception(STATIC_STR<N> exception_str) noexcept { return Exception<E, N>{exception_str}; }
     }  // namespace Inner_
 
-    template <class E, size_t LINE_NUM, size_t F_N, size_t M_N>
+    template <typename E, size_t LINE_NUM, size_t F_N, size_t M_N>
+    requires std::derived_from<E, std::exception>
     auto MakeException(char const (&filename)[F_N], char const (&msg)[M_N]) noexcept
     {
         return Inner_::make_exception<E>(StaticString{filename} + ":" + Int2StaticString<LINE_NUM>()
@@ -12193,7 +12202,7 @@ StaticStringと同様に、このままでは不便であるため、下記の�
 Exceptionクラスの利便性をさらに高めるため、下記の定義を行う。
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 48
+    // @@@ example/h/nstd_exception.h 49
 
     #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
 ```
@@ -12275,7 +12284,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 まずは、std::unique_ptrの動作を確かめるためのクラスを下記のように定義する。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 10
+    // @@@ example/template/func_type_ut.cpp 8
 
     // デストラクタが呼び出された時に、外部から渡されたフラグをtrueにする
     struct A {
@@ -12290,7 +12299,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 テスト用クラスAの動作確認ができるはずである。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 27
+    // @@@ example/template/func_type_ut.cpp 25
 
     {  // 第2パラメータに何も指定しない
         auto is_called = false;
@@ -12305,7 +12314,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 次に示すのは、
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 20
+    // @@@ example/template/func_type_ut.cpp 18
 
     void delete_func(A* a) noexcept { delete a; }
 ```
@@ -12313,7 +12322,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 のポインタをstd::unique_ptrの第2パラメータに与えた例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 38
+    // @@@ example/template/func_type_ut.cpp 36
 
     {  // 第2パラメータに関数ポインタを与える
         auto is_called = false;
@@ -12328,7 +12337,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 次に示すのは、std::unique_ptrの第2パラメータにラムダを与えた例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 49
+    // @@@ example/template/func_type_ut.cpp 47
 
     {  // 第2パラメータにラムダを与える
         auto is_called = false;
@@ -12348,7 +12357,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::function)を与えた例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 64
+    // @@@ example/template/func_type_ut.cpp 62
 
     {  // 第2パラメータにstd::function型オブジェクトを与える
         auto is_called = false;
@@ -12370,18 +12379,21 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 やや意外だが、このようなテンプレートパラメータに特別な記法はなく、以下のようにすれば良い。
 
 ```cpp
-    // @@@ h/scoped_guard.h 4
+    // @@@ h/scoped_guard.h 7
 
     /// @class ScopedGuard
-    /// @brief RAIIのためのクラス。
-    ///        コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す。
-    template <typename F>
+    /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
+    template <std::invocable F>  // Fが呼び出し可能であることを制約
     class ScopedGuard {
     public:
         explicit ScopedGuard(F&& f) noexcept : f_{f}
         {
-            // f()がill-formedにならず、その戻りがvoidでなければならない
-            static_assert(std::is_invocable_r_v<void, F>, "F must be callable and return void");
+
+    template <typename F>
+    ScopedGuard<F> MakeScopedGuard(F&& f) noexcept
+    {
+        return ScopedGuard<F>(std::move(f));
+    }
         }
 
         ~ScopedGuard() { f_(); }
@@ -12396,10 +12408,14 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 上記コードの抜粋である下記は、テンプレートパラメータである関数型を規定するものである。
 
 ```cpp
-    // @@@ h/scoped_guard.h 15
+    // @@@ h/scoped_guard.h 32
 
-    // f()がill-formedにならず、その戻りがvoidでなければならない
-    static_assert(std::is_invocable_r_v<void, F>, "F must be callable and return void");
+
+ F>
+ept
+{
+));
+}
 ```
 
 これがなければ、誤った型の関数型をテンプレートパラメータに指定できてしまう。
@@ -12409,7 +12425,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 まずは、以下の関数と静的変数の組み合わせ
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 80
+    // @@@ example/template/func_type_ut.cpp 78
 
     bool is_caleded_in_static{false};
     void caleded_by_destructor() noexcept { is_caleded_in_static = true; }
@@ -12418,7 +12434,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 を使った例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 88
+    // @@@ example/template/func_type_ut.cpp 86
 
     {  // Fに関数ポインタを与える
         is_caleded_in_static = false;
@@ -12433,7 +12449,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 次に示すのは、それぞれにラムダ式とstd::functionを使った2例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 103
+    // @@@ example/template/func_type_ut.cpp 101
 
     {  // Fにラムダ式を与える
         auto is_called = false;
@@ -12457,7 +12473,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 次に示すのは関数型オブジェクト
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 125
+    // @@@ example/template/func_type_ut.cpp 123
 
     struct TestFunctor {
         explicit TestFunctor(bool& is_called) : is_called_{is_called} {}
@@ -12469,7 +12485,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 を使った例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 136
+    // @@@ example/template/func_type_ut.cpp 134
 
     {  // Fに関数型オブジェクトを与える
         auto is_called = false;
@@ -12486,7 +12502,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 下記に示すようにScopedGuardのテンプレートラメータ型を指定しなければならない煩雑さがある。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 148
+    // @@@ example/template/func_type_ut.cpp 146
     {  // Fに関数型オブジェクトを与える
         auto is_called = false;
         auto tf        = TestFunctor{is_called};
@@ -12501,7 +12517,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 これを回避するためには下記のような関数テンプレートを用意すればよい。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 161
+    // @@@ h/scoped_guard.h 32
 
     template <typename F>
     ScopedGuard<F> MakeScopedGuard(F&& f) noexcept
@@ -12514,7 +12530,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 テンプレートパラメータを指定する必要がなくなる。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 172
+    // @@@ example/template/func_type_ut.cpp 161
 
     {  // Fに関数ポインタを与える
         is_caleded_in_static = false;
@@ -13148,14 +13164,15 @@ MPoolFixedの単体テストは、下記のようになる。
 (「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_6_7_4)」参照)、
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 10
+    // @@@ example/h/nstd_exception.h 11
 
     /// @class Exception
     /// @brief StaticString<>を使ったエクセプションクラス
     ///        下記のMAKE_EXCEPTIONを使い生成
     /// @tparam E   std::exceptionから派生したエクセプションクラス
     /// @tparam N   StaticString<N>
-    template <class E, size_t N>
+    template <typename E, size_t N>
+    requires std::derived_from<E, std::exception>
     class Exception : public E {
     public:
         static_assert(std::is_base_of_v<std::exception, E>);

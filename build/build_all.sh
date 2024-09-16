@@ -3,11 +3,12 @@
 readonly BASE_DIR=$(cd $(dirname $0); pwd)
 readonly BASENAME="$(basename $0)"
 
-readonly MD_GEN=$(cd $BASE_DIR/../md_gen/export/; pwd)
-
 readonly EXEC_DIR=$1
 readonly EXEC_BASENAME=$2
 shift 2
+
+
+readonly MD_GEN=$(cd $EXEC_DIR/../md_gen/export/; pwd)
 
 function help(){
     echo "$EXEC_BASENAME [option]"

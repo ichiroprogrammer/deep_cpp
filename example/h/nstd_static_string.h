@@ -3,6 +3,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "nstd_concepts.h"
+
 namespace Nstd {
 
 // @@@ sample begin 0:0
@@ -32,7 +34,7 @@ public:
 private:
     char const string_[N];
 
-    template <typename T, size_t... I>
+    template <Beginable T, size_t... I>
     // offsetは部分StaticString切り出しのため(TopStr, BottomStr)
     constexpr StaticString(size_t offset, T& t, std::index_sequence<I...>) noexcept
         : string_{std::begin(t)[I + offset]...}

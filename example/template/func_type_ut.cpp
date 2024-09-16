@@ -5,8 +5,6 @@
 
 #include "scoped_guard.h"
 
-namespace {
-
 // @@@ sample begin 0:0
 
 // デストラクタが呼び出された時に、外部から渡されたフラグをtrueにする
@@ -75,7 +73,7 @@ TEST(Template, function)
     // @@@ sample end
 }
 
-namespace SG_Template {
+namespace Nstd {
 // for test
 // @@@ sample begin 2:0
 
@@ -158,15 +156,6 @@ TEST(Template, scoped_guard_2)
     // @@@ sample end
 }
 
-// @@@ sample begin 4:0
-
-template <typename F>
-ScopedGuard<F> MakeScopedGuard(F&& f) noexcept
-{
-    return ScopedGuard<F>(std::move(f));
-}
-// @@@ sample end
-
 TEST(Template, scoped_guard2)
 {
     // @@@ sample begin 4:1
@@ -207,5 +196,4 @@ TEST(Template, scoped_guard2)
     }
     // @@@ sample end
 }
-}  // namespace SG_Template
-}  // namespace
+}  // namespace Nstd

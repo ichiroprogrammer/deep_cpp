@@ -1,4 +1,5 @@
 #pragma once
+#include <concepts>
 #include <cstdint>
 #include <exception>
 #include <type_traits>
@@ -14,7 +15,8 @@ namespace Nstd {
 ///        下記のMAKE_EXCEPTIONを使い生成
 /// @tparam E   std::exceptionから派生したエクセプションクラス
 /// @tparam N   StaticString<N>
-template <class E, size_t N>
+template <typename E, size_t N>
+requires std::derived_from<E, std::exception>
 class Exception : public E {
 public:
     static_assert(std::is_base_of_v<std::exception, E>);
@@ -29,14 +31,13 @@ private:
 // @@@ sample begin 0:1
 
 namespace Inner_ {
-template <class E, template <size_t> class STATIC_STR, size_t N>
-auto make_exception(STATIC_STR<N> exception_str) noexcept
-{
-    return Exception<E, N>{exception_str};
-}
+template <typename E, template <size_t> class STATIC_STR, size_t N>
+requires std::derived_from<E, std::exception>
+auto make_exception(STATIC_STR<N> exception_str) noexcept { return Exception<E, N>{exception_str}; }
 }  // namespace Inner_
 
-template <class E, size_t LINE_NUM, size_t F_N, size_t M_N>
+template <typename E, size_t LINE_NUM, size_t F_N, size_t M_N>
+requires std::derived_from<E, std::exception>
 auto MakeException(char const (&filename)[F_N], char const (&msg)[M_N]) noexcept
 {
     return Inner_::make_exception<E>(StaticString{filename} + ":" + Int2StaticString<LINE_NUM>()
