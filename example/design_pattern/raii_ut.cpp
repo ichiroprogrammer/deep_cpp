@@ -153,9 +153,9 @@ void use_RAII_for_socket()
 
         return;
     }
-    // @@@ ignore begin
-    // @@@ ignore end
-    IGNORE_UNUSED_VAR(fd);
+
+    // Do something
+    IGNORE_UNUSED_VAR(fd); // @@@ delete
 }
 // @@@ sample end
 

@@ -1959,7 +1959,7 @@ RAIIに従わないとメモリリークを防ぐことは困難である。
 下記は、関数終了付近でdeleteする素朴なコードである。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 18
+    // @@@ example/design_pattern/raii_ut.cpp 19
 
     // Aは外部の変数をリファレンスcounter_として保持し、
     //  * コンストラクタ呼び出し時に++counter_
@@ -1993,7 +1993,7 @@ RAIIに従わないとメモリリークを防ぐことは困難である。
 エクセプションが発生しメモリリークしてしまう。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 71
+    // @@@ example/design_pattern/raii_ut.cpp 72
 
     auto object_counter = 0U;
 
@@ -2007,7 +2007,7 @@ RAIIに従わないとメモリリークを防ぐことは困難である。
 以下は、std::unique_ptrによってRAIIを導入し、この問題に対処した例である。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 83
+    // @@@ example/design_pattern/raii_ut.cpp 84
 
     char use_RAII_for_memory(size_t index, uint32_t& object_counter)
     {
@@ -2026,7 +2026,7 @@ RAIIに従わないとメモリリークを防ぐことは困難である。
 エクセプション発生時にもstd::unique_ptrによる自動解放によりメモリリークは発生しない。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 100
+    // @@@ example/design_pattern/raii_ut.cpp 101
 
     auto object_counter = 0U;
 
@@ -2043,7 +2043,7 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 下記は、生成したソケットを関数終了付近でcloseする素朴なコードである。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 111
+    // @@@ example/design_pattern/raii_ut.cpp 112
 
     // RAIIをしない例
     // 複数のclose()を書くような関数は、リソースリークを起こしやすい。
@@ -2103,7 +2103,7 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 を使用し、下記のようにすることで安全なコードをすっきりと書くことができる。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 138
+    // @@@ example/design_pattern/raii_ut.cpp 139
 
     // RAIIをScopedGuardで行った例。
     // close()が自動実行されるためにリソース解放を忘れない。
@@ -2120,7 +2120,8 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 
             return;
         }
-        ...
+
+        // Do something
     }
 ```
 
@@ -6081,7 +6082,7 @@ HEAD、TAILに加えHEAD2を導入することで、前からの演算を実装�
 パラメータパックを使用したログ取得コードは以下のようになる。
 
 ```cpp
-    // @@@ example/template/logger_0.h 53
+    // @@@ example/template/logger_0.h 48
 
     #define LOGGER_P(...) Logging::Logger::Inst().Set(__FILE__, __LINE__)
     #define LOGGER(...) Logging::Logger::Inst().Set(__FILE__, __LINE__, __VA_ARGS__)
@@ -6095,15 +6096,9 @@ gcc拡張を使えば、LOGGER_PとLOGGERを統一できるが、そのような
 Loggerクラスの実装は、下記のようになる。
 
 ```cpp
-    // @@@ example/template/logger_0.h 5
+    // @@@ example/template/logger_0.h 6
 
     namespace Logging {
-
-    template <typename T>
-    concept Printable = requires(T t, std::ostream& os) {
-        { os << t } -> std::same_as<std::ostream&>;
-    };
-
     class Logger {
     public:
         static Logger&       Inst();
@@ -6130,7 +6125,7 @@ Loggerクラスの実装は、下記のようになる。
     private:
         void set_inner() { oss_ << std::endl; }
 
-        template <Printable HEAD, Printable... TAIL>
+        template <Nstd::Printable HEAD, Nstd::Printable... TAIL>
         void set_inner(HEAD const& head, TAIL const&... tails)
         {
             oss_ << ":" << head;
@@ -8157,7 +8152,7 @@ IsSameSomeOfはこれまでの例とは少々異なり、
 このようなIsSameSomeOfをパラメータパックと再帰を使用して実装すると以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 10
+    // @@@ example/template/nstd_type_traits.h 12
 
     namespace Nstd {
     namespace Inner_ {
@@ -8234,7 +8229,7 @@ std::is_convertible\<FROM, TO>は、
 AreConvertibleの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 42
+    // @@@ example/template/nstd_type_traits.h 44
 
     namespace Nstd {
     namespace Inner_ {
@@ -8296,7 +8291,7 @@ AreConvertibleWithoutNarrowConvに対しis_convertible_without_narrow_convが必
 SFINAEと関数テンプレート/関数のオーバーライドを使用し以下のように実装できる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 75
+    // @@@ example/template/nstd_type_traits.h 78
 
     namespace Nstd {
     namespace Inner_ {
@@ -8333,7 +8328,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 ことをSFINAEに利用している。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 85
+    // @@@ example/template/nstd_type_traits.h 88
 
     // 縮小無しでFROMからTOへ変換可能な場合、*t = T{*u}はwell-formed
     // 上記ではない場合、*t = T{*u}はill-formed
@@ -8356,7 +8351,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 の実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 108
+    // @@@ example/template/nstd_type_traits.h 111
 
     namespace Nstd {
     namespace Inner_ {
@@ -8713,7 +8708,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 と考えれば下記のような実装を思いつくだろう。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 150
+    // @@@ example/template/nstd_type_traits.h 154
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8730,7 +8725,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 十分にシンプルなのでこれを採用し、exists_endも同様に実装する。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 163
+    // @@@ example/template/nstd_type_traits.h 167
 
     template <typename, typename = void>
     struct exists_end : std::false_type {
@@ -8774,7 +8769,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 IsRangeの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 177
+    // @@@ example/template/nstd_type_traits.h 181
 
     template <typename T>
     struct IsRange : std::conditional_t<Inner_::exists_begin_v<T> && Inner_::exists_end_v<T>,
@@ -8917,7 +8912,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 下記のように、もっとシンプルに実装できることに気づくだろう。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 192
+    // @@@ example/template/nstd_type_traits.h 196
 
     namespace Nstd {
 
@@ -9328,7 +9323,7 @@ ValueTypeの開発はまだ終わらない。静的ディスパッチは最初�
 また、合わせてTが配列かどうかを示すための定数IsBuiltinArrayも追加すると下記のようなコードになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 213
+    // @@@ example/template/nstd_type_traits.h 217
 
     namespace Nstd {
 
@@ -9347,6 +9342,7 @@ ValueTypeの開発はまだ終わらない。静的ディスパッチは最初�
 
     namespace Inner_ {
 
+    #if 0  // C++17スタイル
     template <typename T, size_t N>
     struct conditional_value_type_n {
         using type = typename std::conditional_t<
@@ -9358,31 +9354,55 @@ ValueTypeの開発はまだ終わらない。静的ディスパッチは最初�
     struct conditional_value_type_n<T, 0> {
         using type = T;
     };
+    #else  // C++20スタイル
+
+    template <typename T>
+    concept NonZeroNest = ValueType<T>::Nest != 0;
+
+    template <NonZeroNest T, size_t N>
+    struct conditional_value_type_n {
+        using type = typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>;
+    };
+
+    template <typename T>  // コンセプトの効果でSFINAEの回避
+    struct conditional_value_type_n<T, 0> {
+        using type = T;
+    };
+    #endif
+
+    // エイリアステンプレート
+    template <typename T, size_t N>
+    using ConditionalValueTypeT_n = typename conditional_value_type_n<T, N>::type;
 
     template <typename T, typename = void>
     struct array_or_container : std::false_type {
     };
 
-    template <typename T>
-    struct array_or_container<T, typename std::enable_if_t<std::is_array_v<T>>> : std::true_type {
+    template <Array T>
+    struct array_or_container<T> : std::true_type {
         using type = typename std::remove_extent_t<T>;
     };
 
-    // Tが配列でなく、且つT型インスタンスに範囲for文が適用できるならばstdコンテナと診断する
-    template <typename T>
-    constexpr bool is_container_v{Nstd::IsRange<T>::value && !std::is_array_v<T>};
-
-    template <typename T>
-    struct array_or_container<T, typename std::enable_if_t<is_container_v<T>>> : std::true_type {
+    template <Container T>
+    struct array_or_container<T> : std::true_type {
         using type = typename T::value_type;
     };
 
     template <typename T>
     constexpr bool array_or_container_v{array_or_container<T>::value};
+
+    template <typename T>
+    concept ArrayOrContainer = array_or_container_v<T>;
     }  // namespace Inner_
 
-    template <typename T>  // ValueTypeの特殊化
+    #if 0  // C++17スタイル
+    template <typename T>       // ValueTypeの特殊化
     struct ValueType<T, typename std::enable_if_t<Inner_::array_or_container_v<T>>> {
+    #else  // C++20スタイル
+    template <Inner_::ArrayOrContainer T>  // ValueTypeの特殊化
+    struct ValueType<T> {                  // コンセプトによるSFINAEの回避
+    #endif
+
         using type_direct = typename Inner_::array_or_container<T>::type;
 
         static constexpr bool   IsBuiltinArray{std::is_array_v<T>};
