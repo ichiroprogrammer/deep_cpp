@@ -155,7 +155,7 @@ void use_RAII_for_socket()
     }
 
     // Do something
-    IGNORE_UNUSED_VAR(fd); // @@@ delete
+    IGNORE_UNUSED_VAR(fd);  // @@@ delete
 }
 // @@@ sample end
 

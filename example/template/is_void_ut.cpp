@@ -1,3 +1,4 @@
+#include <concepts>
 #include <type_traits>
 
 #include "gtest_wrapper.h"
@@ -189,6 +190,53 @@ TEST(Template, type_traits_is_void_sfinae_s)
     // @@@ sample end
 }
 
+// @@@ sample begin 4:4
+
+template <typename T>
+struct is_void_concept_s : std::false_type {
+};
+
+template <typename T>
+requires std::same_as<T, void>  // コンセプトによるTの制約
+struct is_void_concept_s<T> : std::true_type {
+};
+// @@@ sample end
+
+TEST(Template, is_void_concept_s)
+{
+    // @@@ sample begin 4:5
+
+    static_assert(!is_void_concept_s<int>::value);
+    static_assert(std::is_base_of_v<std::false_type, is_void_concept_s<int>>);
+
+    static_assert(!is_void_concept_s<std::string>::value);
+    static_assert(std::is_base_of_v<std::false_type, is_void_concept_s<std::string>>);
+
+    static_assert(is_void_concept_s<void>::value);
+    static_assert(std::is_base_of_v<std::true_type, is_void_concept_s<void>>);
+    // @@@ sample end
+}
+
+// @@@ sample begin 4:6
+
+template <typename T>
+constexpr bool is_void_concept_s_v = false;
+
+template <typename T>
+requires std::same_as<T, void>
+constexpr bool is_void_concept_s_v<T> = true;
+// @@@ sample end
+
+TEST(Template, is_void_concept_s_v)
+{
+    // @@@ sample begin 4:7
+
+    static_assert(!is_void_concept_s_v<int>);
+    static_assert(!is_void_concept_s_v<std::string>);
+    static_assert(is_void_concept_s_v<void>);
+    // @@@ sample end
+}
+// @@@ sample end
 // @@@ sample begin 5:0
 template <typename T, typename = void>
 struct is_void_ena_s : std::false_type {

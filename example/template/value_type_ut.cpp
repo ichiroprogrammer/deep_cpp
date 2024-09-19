@@ -3,6 +3,7 @@
 
 #include "gtest_wrapper.h"
 
+#include "nstd_concepts.h"
 #include "nstd_type_traits.h"
 #include "suppress_warning.h"
 
@@ -10,6 +11,7 @@ namespace {
 
 namespace ValueTypeNotRecursive {
 
+using namespace Nstd;
 // リカーシブでないValueType
 // @@@ sample begin 0:0
 
@@ -18,10 +20,17 @@ struct ValueType {
     using type = void;
 };
 
+#if 0  // C++17
 template <typename T>
 struct ValueType<T, typename std::enable_if_t<std::is_array_v<T>>> {
     using type = typename std::remove_extent_t<T>;
 };
+#else  // C++20
+template <Array T>  // 制約によりSFINAEの回避
+struct ValueType<T> {
+    using type = typename std::remove_extent_t<T>;
+};
+#endif
 
 template <typename T>
 using ValueTypeT = typename ValueType<T>::type;
@@ -40,6 +49,7 @@ TEST(Template, value_type_not_recursive)
 
 namespace ValueTypeNest {
 
+using namespace Nstd;
 // Nestのサポート
 // @@@ sample begin 1:0
 
@@ -49,11 +59,16 @@ struct ValueType {
     static constexpr size_t Nest{0};
 };
 
+#if 0
 template <typename T>
 struct ValueType<T, typename std::enable_if_t<std::is_array_v<T>>> {
-    using type = typename std::remove_extent_t<T>;
+#else  // C++20
+template <Array T>  // 制約によりSFINAEの回避
+struct ValueType<T> {
+#endif
+using type = typename std::remove_extent_t<T>;
 
-    static constexpr size_t Nest{ValueType<type>::Nest + 1};
+static constexpr size_t Nest{ValueType<type>::Nest + 1};
 };
 
 template <typename T>
@@ -79,9 +94,11 @@ TEST(Template, value_type_recursive)
 
 namespace ValueTypeN_NS {
 
+using namespace Nstd;
+
 // @@@ sample begin 2:0
 
-template <typename T, typename = void>
+template <typename T>
 struct ValueType {
     using type = void;
     static constexpr size_t Nest{0};
@@ -89,37 +106,30 @@ struct ValueType {
     template <size_t N>
     using type_n = typename std::conditional_t<N == 0, T, void>;
 };
-
 // @@@ sample end
 // @@@ sample begin 2:1
 
-template <typename T, size_t N>
-struct ConditionalValueTypeN {
-    using type = typename std::conditional_t<
-        ValueType<T>::Nest != 0,
-        typename ValueType<typename ValueType<T>::type>::template type_n<N - 1>, T>;
+template <Array T>  // 配列に対する特殊化
+struct ValueType<T> {
+    using type = typename std::remove_extent_t<T>;
+    static constexpr size_t Nest{ValueType<type>::Nest + 1};
+
+    template <size_t N>
+    using type_n =
+        typename std::conditional_t<N != 0, typename ValueType<type>::template type_n<N - 1>, T>;
 };
 
+// Nのインデックスに応じた型を取得するための構造体
+template <typename T, size_t N>
+struct ConditionalValueTypeN {
+    using type = typename ValueType<T>::template type_n<N>;
+};
+
+// 0のケースに対する特殊化（型がそのまま返される）
 template <typename T>
 struct ConditionalValueTypeN<T, 0> {
     using type = T;
 };
-
-template <typename T>
-struct ValueType<T, typename std::enable_if_t<std::is_array_v<T>>> {
-    using type = typename std::remove_extent_t<T>;
-
-    static constexpr size_t Nest{ValueType<type>::Nest + 1};
-
-    template <size_t N>
-    using type_n = typename ConditionalValueTypeN<T, N>::type;
-};
-
-template <typename T>
-using ValueTypeT = typename ValueType<T>::type;
-
-template <typename T, size_t N>
-using ValueTypeT_n = typename ValueType<T>::template type_n<N>;
 // @@@ sample end
 
 TEST(Template, type_n)

@@ -81,13 +81,11 @@ TEST(Template, type_traits_is_same_v)
 // @@@ sample begin 2:0
 
 template <class T, class U>
-struct is_same_s {
-    static constexpr bool value{false};
+struct is_same_s : std::false_type {
 };
 
 template <class T>
-struct is_same_s<T, T> {
-    static constexpr bool value{true};
+struct is_same_s<T, T> : std::true_type {
 };
 
 template <typename T, typename U>
@@ -143,7 +141,6 @@ TEST(Template, type_traits_is_same_sfinae_f)
     static_assert(is_same_sfinae_f_v<std::string, std::basic_string<char>>);
     // @@@ sample end
 }
-
 // @@@ sample begin 4:0
 
 namespace Inner_ {
@@ -170,7 +167,6 @@ struct is_same_sfinae_s<
 template <typename T, typename U>
 constexpr bool is_same_sfinae_s_v{is_same_sfinae_s<T, U>::value};
 // @@@ sample end
-
 TEST(Template, type_traits_is_same_sfinae_s)
 {
     // @@@ sample begin 4:1
@@ -179,6 +175,44 @@ TEST(Template, type_traits_is_same_sfinae_s)
     static_assert(is_same_sfinae_s_v<int, int>);
     static_assert(!is_same_sfinae_s_v<int, uint32_t>);
     static_assert(is_same_sfinae_s_v<std::string, std::basic_string<char>>);
+    // @@@ sample end
+}
+
+// @@@ sample begin 4:2
+
+template <typename T, typename U>
+concept same_as = requires(T const* t, U const* u)
+{
+    {t = u, u = t};
+};
+// @@@ sample end
+// @@@ sample begin 4:3
+
+template <typename T, typename U>
+struct is_same_concept_s : std::false_type {
+};
+
+template <typename T, typename U>
+requires same_as<T, U>
+struct is_same_concept_s<T, U> : std::true_type {
+};
+// @@@ sample end
+
+TEST(Template, same_as)
+{
+    // @@@ sample begin 4:4
+
+    static_assert(!same_as<int, void>);
+    static_assert(same_as<int, int>);
+    static_assert(!same_as<int, uint32_t>);
+    static_assert(same_as<std::string, std::basic_string<char>>);
+    // @@@ sample end
+    // @@@ sample begin 4:5
+
+    static_assert(!is_same_concept_s<int, void>::value);
+    static_assert(is_same_concept_s<int, int>::value);
+    static_assert(!is_same_concept_s<int, uint32_t>::value);
+    static_assert(is_same_concept_s<std::string, std::basic_string<char>>::value);
     // @@@ sample end
 }
 

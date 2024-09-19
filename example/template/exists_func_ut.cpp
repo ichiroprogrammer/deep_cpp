@@ -134,6 +134,27 @@ TEST(Template, exists_void_func_sfinae_s2)
     static_assert(!exists_void_func_sfinae_s2_v<Z>);
     // @@@ sample end
 }
+
+// @@@ sample begin 2:4
+
+template <typename T>  // C++20スタイル。concept/requiresによるSFINAEの回避
+concept exists_void_func_concept = requires(T& t)
+{
+    {
+        t.func()
+        } -> std::same_as<void>;
+};
+// @@@ sample end
+
+TEST(Template, exists_void_func_concept)
+{
+    // @@@ sample begin 2:5
+    static_assert(!exists_void_func_concept<decltype(int{})>);
+    static_assert(exists_void_func_concept<decltype(X{})>);
+    static_assert(!exists_void_func_concept<decltype(Y{})>);  // Y::funcの戻りはint
+    static_assert(!exists_void_func_concept<decltype(Z{})>);  // Z::funcは呼び出せない
+    // @@@ sample end
+}
 }  // namespace ExistsMemberFunc
 
 namespace IsRange_C0 {

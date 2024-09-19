@@ -315,6 +315,54 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
     // @@@ example/term_explanation/comparison_operator_ut.cpp #2:1 begin
 ```
 
+#### 畳み込み式
+畳み式(fold expression)とは、C++17から導入された新機能であり、
+可変引数テンプレートのパラメータパックに対して二項演算を累積的に行うためのものである。
+
+畳み込み式のシンタックスの使用は下記のようなものである。
+```
+( pack op ... )          // (1) 単項右畳み込み
+( ... op pack )          // (2) 単項左畳み込み
+( pack op ... op init )  // (3) 二項右畳み込み
+( init op ... op pack )  // (4) 二項左畳み込み
+```
+
+1. 単項右畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:0 begin 
+```
+2. 単項左畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:1 begin 
+```
+3. 二項右畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:2 begin 
+```
+4. 二項左畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:3 begin 
+```
+
+上記したような単純な例では、畳み込み式の効果はわかりずらいため、
+もっと複雑なで読解が困難な再帰構造を持ったコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #1:0 begin 
+```
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #1:1 begin
+```
+
+畳み込み式を使うことで、この問題をある程度緩和したコードを下記する。
+
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #2:0 begin 
+```
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #2:1 begin
+```
+
 #### 三方比較演算子
 「[std::tuppleを使用した比較演算子の実装方法](---)」
 で示した定型のコードはコンパイラが自動生成するのがC++規格のセオリーである。

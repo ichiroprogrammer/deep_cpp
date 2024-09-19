@@ -11,6 +11,8 @@
 
 ## 改訂履歴 <a id="SS_1_1"></a>
 * V20.01
+    * 畳み込み式の解説
+    * テンプレートのテクニックに畳み込み式の使用
     * explicitの解説
     * コンセプトの解説
     * 比較演算子の解説
@@ -7426,14 +7428,15 @@ std::is_voidはテンプレートパラメータの型が
 
 それぞれのis_void_xxxは下記テーブルで示した言語機能を使用して実装する。
 
-|is_void_xxx      |実装方法                                               |
-|-----------------|-------------------------------------------------------|
-|is_void_f        |関数テンプレートの特殊化                               |
-|is_void_s        |クラステンプレートの特殊化                             |
-|is_void_sfinae_f |SFINAEと関数テンプレートのオーバーロード               |
-|is_void_sfinae_s |SFINAEとクラステンプレートの特殊化                     |
-|is_void_ena_s    |std::enable_ifによるSFINAEとクラステンプレートの特殊化 |
-|is_void_cond_s   |std::conditionalと関数テンプレートの特殊化             |
+|is_void_xxx                  |実装方法                                               |
+|-----------------------------|-------------------------------------------------------|
+|[is_void_f](#SS_4_3_2_1)             |関数テンプレートの特殊化                               |
+|[is_void_s](#SS_4_3_2_2)             |クラステンプレートの特殊化                             |
+|[is_void_sfinae_f](#SS_4_3_2_3)      |FINAEと関数テンプレートのオーバーロード                |
+|[is_void_sfinae_s](#SS_4_3_2_4)      |FINAEとクラステンプレートの特殊化                      |
+|[is_void_concept_s](#SS_4_3_2_5)     |コンセプトとクラステンプレートの特殊化                 |
+|[is_void_ena_s](#SS_4_3_2_6)         |std::enable_ifによるSFINAEとクラステンプレートの特殊化 |
+|[is_void_cond_s](#SS_4_3_2_7)        |std::conditionalと関数テンプレートの特殊化             |
 
 なお、実装例をシンプルに保つため、
 理解の妨げとなり得る下記のような正確性(例外条件の対応)等のためのコードを最低限に留めた。
@@ -7446,11 +7449,11 @@ std::is_voidはテンプレートパラメータの型が
 というここでの目的を見失わないための措置である。
 
 
-#### is_void_fの実装 <a id="SS_4_3_2_1"></a>
+#### is_void_f <a id="SS_4_3_2_1"></a>
 関数テンプレートの特殊化を使用したis_void_fの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 7
+    // @@@ example/template/is_void_ut.cpp 8
 
     template <typename T>
     constexpr bool is_void_f() noexcept
@@ -7471,7 +7474,7 @@ std::is_voidはテンプレートパラメータの型が
 単純なので解説は不要だろう。これらの単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 27
+    // @@@ example/template/is_void_ut.cpp 28
 
     static_assert(!is_void_f_v<int>);
     static_assert(!is_void_f_v<std::string>);
@@ -7487,11 +7490,11 @@ std::is_voidはテンプレートパラメータの型が
 のような制限があるため用途は限られるが、関数テンプレートはオーバーロードすることが可能である。
 
 
-#### is_void_sの実装 <a id="SS_4_3_2_2"></a>
+#### is_void_s <a id="SS_4_3_2_2"></a>
 クラステンプレートの特殊化を使用したis_void_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 35
+    // @@@ example/template/is_void_ut.cpp 36
 
     template <typename T>
     struct is_void_s {
@@ -7510,7 +7513,7 @@ std::is_voidはテンプレートパラメータの型が
 is_void_fと同様に単純なので解説は不要だろう。これらの単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 53
+    // @@@ example/template/is_void_ut.cpp 54
 
     static_assert(!is_void_s_v<int>);
     static_assert(!is_void_s_v<std::string>);
@@ -7518,11 +7521,11 @@ is_void_fと同様に単純なので解説は不要だろう。これらの単�
 ```
 
 
-#### is_void_sfinae_fの実装 <a id="SS_4_3_2_3"></a>
+#### is_void_sfinae_f <a id="SS_4_3_2_3"></a>
 [SFINAE](#SS_6_4_7)を使用した関数テンプレートis_void_sfinae_fの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 61
+    // @@@ example/template/is_void_ut.cpp 62
 
     namespace Inner_ {
 
@@ -7583,7 +7586,7 @@ is_void_sfinae_fはこの性質を利用し、
 となる。念のため単体テストを示すと下記のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 96
+    // @@@ example/template/is_void_ut.cpp 97
 
     static_assert(!is_void_sfinae_f_v<int>);
     static_assert(!is_void_sfinae_f_v<std::string>);
@@ -7603,7 +7606,7 @@ is_void_sfinae_f_detectorのようなテンプレートに関しては大変都�
 is_void_sfinae_fは下記のように実装することも可能である。この場合、名前空間Inner\_は不要になる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 105
+    // @@@ example/template/is_void_ut.cpp 106
 
     template <typename T>
     class is_void_sfinae_f {
@@ -7634,7 +7637,7 @@ is_void_sfinae_fは下記のように実装することも可能である。こ�
 ```
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 137
+    // @@@ example/template/is_void_ut.cpp 138
 
     static_assert(!is_void_sfinae_f_v<int>);
     static_assert(!is_void_sfinae_f_v<std::string>);
@@ -7642,11 +7645,11 @@ is_void_sfinae_fは下記のように実装することも可能である。こ�
 ```
 
 
-#### is_void_sfinae_sの実装 <a id="SS_4_3_2_4"></a>
+#### is_void_sfinae_s <a id="SS_4_3_2_4"></a>
 [SFINAE](#SS_6_4_7)を使用したクラステンプレートis_void_sfinae_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 146
+    // @@@ example/template/is_void_ut.cpp 147
 
     namespace Inner_ {
     template <typename T>
@@ -7678,7 +7681,7 @@ is_void_sfinae_sの特殊化が[name lookup](#SS_6_4_2)の対象の中に見つ�
 2つ目のis_void_sfinae_sは、上記を抜粋した下記のコード
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 162
+    // @@@ example/template/is_void_ut.cpp 163
 
     // T != voidの場合、ill-formed
     // T == voidの場合、well-formedでvoid*&生成
@@ -7718,7 +7721,7 @@ T != voidの場合、 2つ目のis_void_sfinae_sはill-formedになり、name lo
 となる。以下の単体テストによって、このことを確かめることができる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 179
+    // @@@ example/template/is_void_ut.cpp 180
 
     static_assert(!is_void_sfinae_s_v<int>);
     static_assert(std::is_base_of_v<std::false_type, is_void_sfinae_s<int>>);
@@ -7733,7 +7736,7 @@ T != voidの場合、 2つ目のis_void_sfinae_sはill-formedになり、name lo
 上記コードのように「プライマリテンプレートのデフォルトパラメータ」と、
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 162
+    // @@@ example/template/is_void_ut.cpp 163
 
     // T != voidの場合、ill-formed
     // T == voidの場合、well-formedでvoid*&生成
@@ -7743,15 +7746,68 @@ T != voidの場合、 2つ目のis_void_sfinae_sはill-formedになり、name lo
 が「well-formedであった場合に生成される型」が一致することを利用した静的ディスパッチは、
 SFINAEとクラステンプレートの特殊化を組み合わせたメタ関数の典型的な実装パターンである。
 ただし、一般にはill-formedを起こすためにst::enable_ifを使うことが多いため、
-「[is_void_ena_sの実装](#SS_4_3_2_5)」でその例を示す。
+「[is_void_ena_s](#SS_4_3_2_6)の実装」でその例を示す。
 
 
-#### is_void_ena_sの実装 <a id="SS_4_3_2_5"></a>
+#### is_void_concept_s <a id="SS_4_3_2_5"></a>
+[is_void_sfinae_s](#SS_4_3_2_4)の実装で使用したSFINAEを回避し、
+コンセプトを使用することで可読性の向上が見込める。
+以下の実装で使用した[same_as](#SS_4_3_3_6)は\<concepts>で定義されているコンセプトと同様のものである。
+
+```cpp
+    // @@@ example/template/is_void_ut.cpp 193
+
+    template <typename T>
+    struct is_void_concept_s : std::false_type {
+    };
+
+    template <typename T>
+    requires std::same_as<T, void>  // コンセプトによるTの制約
+    struct is_void_concept_s<T> : std::true_type {
+    };
+```
+```cpp
+    // @@@ example/template/is_void_ut.cpp 207
+
+    static_assert(!is_void_concept_s<int>::value);
+    static_assert(std::is_base_of_v<std::false_type, is_void_concept_s<int>>);
+
+    static_assert(!is_void_concept_s<std::string>::value);
+    static_assert(std::is_base_of_v<std::false_type, is_void_concept_s<std::string>>);
+
+    static_assert(is_void_concept_s<void>::value);
+    static_assert(std::is_base_of_v<std::true_type, is_void_concept_s<void>>);
+```
+
+下記に示した通り、テンプレート特殊化はクラスのみなく定数に対しても使用することができる。
+
+```cpp
+    // @@@ example/template/is_void_ut.cpp 220
+
+    template <typename T>
+    constexpr bool is_void_concept_s_v = false;
+
+    template <typename T>
+    requires std::same_as<T, void>
+    constexpr bool is_void_concept_s_v<T> = true;
+```
+
+以下に示した通り、[is_void_sfinae_s](#SS_4_3_2_4)の実装で示した定数テンプレートのテストと同様になっている。
+
+```cpp
+    // @@@ example/template/is_void_ut.cpp 232
+
+    static_assert(!is_void_concept_s_v<int>);
+    static_assert(!is_void_concept_s_v<std::string>);
+    static_assert(is_void_concept_s_v<void>);
+```
+
+#### is_void_ena_s <a id="SS_4_3_2_6"></a>
 [std::enable_if](#SS_4_3_1_4)による[SFINAE](#SS_6_4_7)とクラステンプレートの特殊化を使用した
 is_void_ena_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 192
+    // @@@ example/template/is_void_ut.cpp 240
     template <typename T, typename = void>
     struct is_void_ena_s : std::false_type {
     };
@@ -7767,10 +7823,10 @@ is_void_ena_sの実装は以下のようになる。
     constexpr bool is_void_ena_s_v{is_void_ena_s<T>::value};
 ```
 
-この例では、「[is_void_sfinae_sの実装](#SS_4_3_2_4)」の
+この例では、「[is_void_sfinae_s](#SS_4_3_2_4)の実装」の
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 162
+    // @@@ example/template/is_void_ut.cpp 163
 
     // T != voidの場合、ill-formed
     // T == voidの場合、well-formedでvoid*&生成
@@ -7780,18 +7836,18 @@ is_void_ena_sの実装は以下のようになる。
 で示したSFINAEの処理を上記を抜粋した下記のコード
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 202
+    // @@@ example/template/is_void_ut.cpp 250
 
     typename std::enable_if_t<is_void_f<T>()>
 ```
 
 で行っている。
-std::enable_ifの値パラメータis_void_f\<T>()は、「[is_void_fの実装](#SS_4_3_2_1)」で示したものである。
+std::enable_ifの値パラメータis_void_f\<T>()は、「[is_void_f](#SS_4_3_2_1)の実装」で示したものである。
 
-単体テストは、「[is_void_sfinae_sの実装](#SS_4_3_2_4)」で示したものとほぼ同様で、以下のようになる。
+単体テストは、「[is_void_sfinae_s](#SS_4_3_2_4)の実装」で示したものとほぼ同様で、以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 216
+    // @@@ example/template/is_void_ut.cpp 264
 
     static_assert(!is_void_ena_s_v<int>);
     static_assert(std::is_base_of_v<std::false_type, is_void_ena_s<int>>);
@@ -7804,11 +7860,11 @@ std::enable_ifの値パラメータis_void_f\<T>()は、「[is_void_fの実装](
 ```
 
 
-#### is_void_cond_sの実装 <a id="SS_4_3_2_6"></a>
+#### is_void_cond_s <a id="SS_4_3_2_7"></a>
 [std::conditional](#SS_4_3_1_5)と関数テンプレートの特殊化を使用したis_void_cond_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 229
+    // @@@ example/template/is_void_ut.cpp 277
     template <typename T>
     struct is_void_cond_s : std::conditional_t<is_void_f<T>(), std::true_type, std::false_type> {
     };
@@ -7817,12 +7873,12 @@ std::enable_ifの値パラメータis_void_f\<T>()は、「[is_void_fの実装](
     constexpr bool is_void_cond_s_v{is_void_cond_s<T>::value};
 ```
 
-std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_fの実装](#SS_4_3_2_1)」で示したものである。
+std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](#SS_4_3_2_1)の実装」で示したものである。
 この例では、SFINAEもクラステンプレートの特殊化も使用していないが、
-下記単体テストからわかる通り、「[is_void_sfinae_sの実装](#SS_4_3_2_4)」と同じ機能を備えている。
+下記単体テストからわかる通り、「[is_void_sfinae_s](#SS_4_3_2_4)の実装」と同じ機能を備えている。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 240
+    // @@@ example/template/is_void_ut.cpp 288
 
     static_assert(!is_void_cond_s_v<int>);
     static_assert(std::is_base_of_v<std::false_type, is_void_cond_s<int>>);
@@ -7846,17 +7902,18 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_fの実装
 
 それぞれのis_same_xxxは下記テーブルで示された言語機能を使用して実装する。
 
-|is_same_xxx      |実装方法                                               |
-|-----------------|-------------------------------------------------------|
-|is_same_f        |関数テンプレートのオーバーロード                       |
-|is_same_v        |定数テンプレートの特殊化                               |
-|is_same_s        |クラステンプレートの特殊化                             |
-|is_same_sfinae_f |SFINAEと関数テンプレート/関数のオーバーロード          |
-|is_same_sfinae_s |SFINAEとクラステンプレートの特殊化                     |
-|is_same_templ    |テンプレートテンプレートパラメータ                     |
-|IsSameSomeOf     |パラメータパックと再帰                                 |
+|is_same_xxx                   |実装方法                                               |
+|------------------------------|-------------------------------------------------------|
+|[is_same_f](#SS_4_3_3_1)              |関数テンプレートのオーバーロード                       |
+|[is_same_v](#SS_4_3_3_2)              |定数テンプレートの特殊化                               |
+|[is_same_s](#SS_4_3_3_3)              |クラステンプレートの特殊化                             |
+|[is_same_sfinae_fの実装](#SS_4_3_3_4) |SFINAEと関数テンプレート/関数のオーバーロード          |
+|[is_same_sfinae_s](#SS_4_3_3_5)       |SFINAEとクラステンプレートの特殊化                     |
+|[same_as](#SS_4_3_3_6)                |[コンセプト](#SS_6_4_8)よるis_same_sfinae_sと同一の機能      |
+|[is_same_templ](#SS_4_3_3_7)          |テンプレートテンプレートパラメータ                     |
+|[IsSameSomeOf](#SS_4_3_3_8)           |パラメータパックと再帰                                 |
 
-#### is_same_fの実装 <a id="SS_4_3_3_1"></a>
+#### is_same_f <a id="SS_4_3_3_1"></a>
 関数テンプレートのオーバーロードを用いたis_same_fの実装は以下のようになる。
 
 ```cpp
@@ -7928,7 +7985,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
     static_assert(is_same_f_v<std::string, std::basic_string<char>>);
 ```
 
-#### is_same_vの実装 <a id="SS_4_3_3_2"></a>
+#### is_same_v <a id="SS_4_3_3_2"></a>
 定数テンプレートの特殊化を用いたis_same_vの実装は以下のようになる。
 
 ```cpp
@@ -7953,30 +8010,28 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 ```
 
 
-#### is_same_sの実装 <a id="SS_4_3_3_3"></a>
+#### is_same_s <a id="SS_4_3_3_3"></a>
 クラステンプレートの特殊化を用いたis_same_sの実装は以下のようになる。
 
 ```cpp
     // @@@ example/template/is_same_ut.cpp 81
 
     template <class T, class U>
-    struct is_same_s {
-        static constexpr bool value{false};
+    struct is_same_s : std::false_type {
     };
 
     template <class T>
-    struct is_same_s<T, T> {
-        static constexpr bool value{true};
+    struct is_same_s<T, T> : std::true_type {
     };
 
     template <typename T, typename U>
     constexpr bool is_same_s_v{is_same_s<T, U>::value};
 ```
 
-「[is_same_vの実装](#SS_4_3_3_2)」と同様に単純であるため、解説は不要だろう。 単体テストは以下のようになる。
+「[is_same_v](#SS_4_3_3_2)の実装」と同様に単純であるため、解説は不要だろう。 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 99
+    // @@@ example/template/is_same_ut.cpp 97
 
     static_assert(!is_same_s_v<int, void>);
     static_assert(is_same_s_v<int, int>);
@@ -7989,7 +8044,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 SFINAEと関数テンプレート/関数のオーバーロードを用いたis_same_sfinae_f実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 108
+    // @@@ example/template/is_same_ut.cpp 106
 
     namespace Inner_ {
     template <typename T, typename U>
@@ -8016,7 +8071,7 @@ SFINAEと関数テンプレート/関数のオーバーロードを用いたis_s
 上記の抜粋である下記コードのコメントで示したように、
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 114
+    // @@@ example/template/is_same_ut.cpp 112
 
     -> decltype(t = u, u = t, bool{})  // T != Uの場合、t = u, u = tはill-formed
                                        // T == Uの場合、well-formedでbool型生成
@@ -8030,7 +8085,7 @@ T == Uの場合は、関数テンプレートis_same_sfinae_f_detectorが選択�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 138
+    // @@@ example/template/is_same_ut.cpp 136
 
     static_assert(!is_same_sfinae_f_v<int, void>);
     static_assert(is_same_sfinae_f_v<int, int>);
@@ -8038,12 +8093,11 @@ T == Uの場合は、関数テンプレートis_same_sfinae_f_detectorが選択�
     static_assert(is_same_sfinae_f_v<std::string, std::basic_string<char>>);
 ```
 
-
-#### is_same_sfinae_sの実装 <a id="SS_4_3_3_5"></a>
+#### is_same_sfinae_s <a id="SS_4_3_3_5"></a>
 SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 147
+    // @@@ example/template/is_same_ut.cpp 144
 
     namespace Inner_ {
     template <typename T>
@@ -8068,11 +8122,11 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
     constexpr bool is_same_sfinae_s_v{is_same_sfinae_s<T, U>::value};
 ```
 
-「[is_void_sfinae_sの実装](#SS_4_3_2_4)」とほぼ同様であるため、解説は不要だろう。 
+「[is_void_sfinae_s](#SS_4_3_2_4)の実装」とほぼ同様であるため、解説は不要だろう。 
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 176
+    // @@@ example/template/is_same_ut.cpp 172
 
     static_assert(!is_same_sfinae_s_v<int, void>);
     static_assert(is_same_sfinae_s_v<int, int>);
@@ -8080,13 +8134,61 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
     static_assert(is_same_sfinae_s_v<std::string, std::basic_string<char>>);
 ```
 
+#### same_as <a id="SS_4_3_3_6"></a>
+[SFINAE](#SS_6_4_7)による[is_same_sfinae_s](#SS_4_3_3_5)の難解なコードを[コンセプト](#SS_6_4_8)
+よりリファクタリングしたコードを以下に示す。
 
-#### is_same_templの実装 <a id="SS_4_3_3_6"></a>
+```cpp
+    // @@@ example/template/is_same_ut.cpp 181
+
+    template <typename T, typename U>
+    concept same_as = requires(T const* t, U const* u)
+    {
+        {t = u, u = t};
+    };
+```
+is_same_sfinae_sは定数テンプレートであり、same_asはコンセプトであるが、
+下記のテストから明らかな通り、ほぼ同様に同様に使用することができる。
+
+```cpp
+    // @@@ example/template/is_same_ut.cpp 203
+
+    static_assert(!same_as<int, void>);
+    static_assert(same_as<int, int>);
+    static_assert(!same_as<int, uint32_t>);
+    static_assert(same_as<std::string, std::basic_string<char>>);
+```
+
+「[is_same_s](#SS_4_3_3_3)」で紹介した特殊化のテクニックを下記のように使用することができる。
+
+```cpp
+    // @@@ example/template/is_same_ut.cpp 189
+
+    template <typename T, typename U>
+    struct is_same_concept_s : std::false_type {
+    };
+
+    template <typename T, typename U>
+    requires same_as<T, U>
+    struct is_same_concept_s<T, U> : std::true_type {
+    };
+```
+```cpp
+    // @@@ example/template/is_same_ut.cpp 210
+
+    static_assert(!is_same_concept_s<int, void>::value);
+    static_assert(is_same_concept_s<int, int>::value);
+    static_assert(!is_same_concept_s<int, uint32_t>::value);
+    static_assert(is_same_concept_s<std::string, std::basic_string<char>>::value);
+```
+
+
+#### is_same_templ <a id="SS_4_3_3_7"></a>
 例えば、std::stringとstd::basic_string\<T>が同じもしくは違う型であることを確認するためには、
 すでに示したis_same_sを使用し、
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 197
+    // @@@ example/template/is_same_ut.cpp 231
 
     static_assert(is_same_s_v<std::string, std::basic_string<char>>);
     static_assert(!is_same_s_v<std::string, std::basic_string<signed char>>);
@@ -8096,7 +8198,7 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
 以下に示したコードのようにテンプレートテンプレートパラメータを使うことでも実装できる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 185
+    // @@@ example/template/is_same_ut.cpp 219
 
     template <typename T, template <class...> class TEMPL, typename... ARGS>
     struct is_same_templ : is_same_sfinae_s<T, TEMPL<ARGS...>> {
@@ -8111,7 +8213,7 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
 使用例を兼ねた単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 202
+    // @@@ example/template/is_same_ut.cpp 236
 
     static_assert(is_same_templ_v<std::string, std::basic_string, char>);
     static_assert(!is_same_templ_v<std::string, std::basic_string, signed char>);
@@ -8120,7 +8222,7 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
 これを応用したエイリアステンプレート
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 209
+    // @@@ example/template/is_same_ut.cpp 243
 
     template <typename T>
     using gen_std_string = is_same_templ<std::string, std::basic_string, T>;
@@ -8132,68 +8234,46 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
 は与えられたテンプレートパラメータがstd::stringを生成するかどうかを判定することができる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 220
+    // @@@ example/template/is_same_ut.cpp 254
 
     static_assert(gen_std_string_v<char>);
     static_assert(!gen_std_string_v<signed char>);
 ```
 
 
-#### IsSameSomeOfの実装 <a id="SS_4_3_3_7"></a>
+#### IsSameSomeOf <a id="SS_4_3_3_8"></a>
 IsSameSomeOfはこれまでの例とは少々異なり、
 
-* 第1パラメータが第2パラメータ以降で指定された型の
-    * どれかと同じであれば、std::true_typeから派生する
-    * どれとも違えば、std::false_typeから派生する
-* 2つの型の同一性の判定にはstd::is_sameを使用する
-* 汎用性が高いため名前空間Nstdで定義し、命名はキャメルにする
+* 第1パラメータが第2パラメータ以降で指定された型のどれかと一致する
+  SameAsSomeOfという名前の[コンセプト](#SS_6_4_8)を[畳み込み式](#SS_6_1_18_6)を使用し定義する
+* SameAsSomeOfで制約したテンプレートパラメータをstd::bool_constantからIsSameSomeOfを派生させる
 
 のような特徴のを持つ。
-このようなIsSameSomeOfをパラメータパックと再帰を使用して実装すると以下のようになる。
+このようなIsSameSomeOfの実装はは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 12
+    // @@@ example/template/nstd_type_traits.h 13
 
     namespace Nstd {
-    namespace Inner_ {
-
+    // コンセプト: 複数の型のいずれかがTと同じかどうかをチェック
     template <typename T, typename U, typename... Us>
-    struct is_same_some_of {
-        static constexpr bool value{std::is_same_v<T, U> ? true : is_same_some_of<T, Us...>::value};
+    concept SameAsSomeOf = (std::same_as<T, U> || (std::same_as<T, Us> || ...));
+
+    // 型特性: TがUsのいずれかと同じ場合true_type、そうでない場合false_typeを継承
+    template <typename T, typename U, typename... Us>
+    struct IsSameSomeOf : std::bool_constant<SameAsSomeOf<T, U, Us...>> {
     };
 
-    template <typename T, typename U>
-    struct is_same_some_of<T, U> {
-        static constexpr bool value{std::is_same_v<T, U>};
-    };
-
-    template <typename T, typename... Us>
-    constexpr bool is_same_some_of_v{is_same_some_of<T, Us...>::value};
-    }  // namespace Inner_
-
-    template <typename T, typename... Us>
-    struct IsSameSomeOf
-        : std::conditional_t<Inner_::is_same_some_of_v<T, Us...>, std::true_type, std::false_type> {
-    };
-
-    template <typename T, typename... Us>
-    constexpr bool IsSameSomeOfV{IsSameSomeOf<T, Us...>::value};
+    // 便利な定数テンプレート
+    template <typename T, typename U, typename... Us>
+    constexpr bool IsSameSomeOfV = IsSameSomeOf<T, U, Us...>::value;
     }  // namespace Nstd
 ```
 
-IsSameSomeOfは、TがUsのいずれかと一致するかどうかの処理をInner\_::is_same_some_ofに移譲する。
+IsSameSomeOfは、TがUsのいずれかと一致するかどうかのほとんどの処理をSameAsSomeOfに移譲する。
 
-Usが1つだった場合、特殊化されたInner\_::is_same_some_ofのvalueがstd::is_same::valueで初期化される。
-Usが複数だった場合、 プライマリのInner\_::is_same_some_ofは、
-IsSameSomeOfから渡されたパラメータパックUsを、UとパラメータパックUsに分割後、
-TとUをstd::is_sameで比較し、
-
-* 同じ場合、valueはtrueで初期化される
-* 違う場合、valueは再帰的に読み出されたInner\_::is_same_some_of\<T, Us...>::valueで初期化される
-
-再帰的なInner\_::is_same_some_of::valueの読み出しは、
-IsSameSomeOfが受け取ったパラメータパックをひとつずつ左シフトしながら、
-それが1つになるまで(特殊化されたInner\_::is_same_some_ofが使われるまで)、続けられる。
+Usが1つだった場合、SameAsSomeOfは処理をstd::same_as(「[same_as](#SS_4_3_3_6)」参照)に委譲する。
+Usが複数だった場合、[畳み込み式](--)を使用し上記の処理をその数分、繰り返す。
 
 単体テストは以下のようになる。
 
@@ -8229,7 +8309,7 @@ std::is_convertible\<FROM, TO>は、
 AreConvertibleの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 44
+    // @@@ example/template/nstd_type_traits.h 34
 
     namespace Nstd {
     namespace Inner_ {
@@ -8260,7 +8340,7 @@ AreConvertibleの実装は以下のようになる。
 ```
 
 
-「[IsSameSomeOfの実装](#SS_4_3_3_7)」のコードパターンとほぼ同様であるため、解説は不要だろうが、
+「[IsSameSomeOf](#SS_4_3_3_8)の実装」のコードパターンとほぼ同様であるため、解説は不要だろうが、
 
 * パラメータパックの都合上、TOとFROMのパラメータの位置がstd::is_convertibleとは逆になる
 * IsSameSomeOfでは条件の一つがtrueであればIsSameSomeOf::valueがtrueとなるが、
@@ -8291,7 +8371,7 @@ AreConvertibleWithoutNarrowConvに対しis_convertible_without_narrow_convが必
 SFINAEと関数テンプレート/関数のオーバーライドを使用し以下のように実装できる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 78
+    // @@@ example/template/nstd_type_traits.h 68
 
     namespace Nstd {
     namespace Inner_ {
@@ -8328,7 +8408,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 ことをSFINAEに利用している。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 88
+    // @@@ example/template/nstd_type_traits.h 78
 
     // 縮小無しでFROMからTOへ変換可能な場合、*t = T{*u}はwell-formed
     // 上記ではない場合、*t = T{*u}はill-formed
@@ -8351,7 +8431,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 の実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 111
+    // @@@ example/template/nstd_type_traits.h 101
 
     namespace Nstd {
     namespace Inner_ {
@@ -8415,36 +8495,37 @@ Nstdライブラリの開発には関数の存在の診断が欠かせない。
 * テンプレートパラメータである型が、メンバ関数void func()を持つかどうかの診断について、
   次の表のように実装を示す。
 
-|メタ関数名                |メタ関数の目的                                          |
-|--------------------------|--------------------------------------------------------|
-|exists_void_func_sfinae_f |メンバ関数void func()を持つかどうかの判断               |
-|exists_void_func_sfinae_s |同上                                                    |
-|exists_void_func_sfinae_s2|同上                                                    |
+|メタ関数名                              |メタ関数の目的                                    |
+|----------------------------------------|--------------------------------------------------|
+|[exists_void_func_sfinae_f](#SS_4_3_5_1)        |メンバ関数void func()を持つかどうかの判断         |
+|[exists_void_func_sfinae_s](#SS_4_3_5_2)        |同上                                              |
+|[exists_void_func_sfinae_s2](#SS_4_3_5_3)       |同上                                              |
+|[exists_void_func_concept](#SS_4_3_5_4)         |同上。コンセプトによるSFINAEの回避                |
 
 * テンプレートパラメータに範囲for文ができるかどうかの診断について、
   次の表のように実装を示す。
 
-|メタ関数名                 |メタ関数の目的                                               |
-|---------------------------|-------------------------------------------------------------|
-|exists_begin               |std::begin(T)が存在するか否かの診断                          |
-|exists_end                 |std::end(T)が存在するか否かの診断                            |
-|IsRange                    |T const& tの時に、for(auto const& : t)ができるかどうかの診断 |
+|メタ関数名                            |メタ関数の目的                                                     |
+|--------------------------------------|-------------------------------------------------------------------|
+|[exists_begin/exsits_end](#SS_4_3_5_5)        |SFINAEを使用したstd::begin(T)/std::end(T)が存在するか否かの診断    |
+|[IsRange](#SS_4_3_5_6)                        |exists_begin/exsits_endを使し、範囲forのオペランドになれるか?の判断|
+|[Ranged](#SS_4_3_5_7)                         |機能はIsRangeと同一だが、[コンセプト](#SS_6_4_8)を使用しSFINAEの回避     |
 
 * テンプレートパラメータにoperator<<(put toと発音する)ができるかどうかの診断について、
   次の表のように実装を示す。
 
-|メタ関数名                 |メタ関数の目的                                         |
-|---------------------------|-------------------------------------------------------|
-|exists_put_to_as_member    |std::ostream::operator<<(T)が存在するか否かの診断      |
-|exists_put_to_as_non_member|operator<<(std::ostream&, T)が存在するか否かの診断     |
-|ExistsPutTo                |std::ostream& << Tができるかどうかの診断               |
+|メタ関数名                            |メタ関数の目的                                         |
+|--------------------------------------|-------------------------------------------------------|
+|[exists_put_to_as_member](#SS_4_3_5_8)        |std::ostream::operator<<(T)が存在するか否かの診断      |
+|[exists_put_to_as_non_member](#SS_4_3_5_9)    |operator<<(std::ostream&, T)が存在するか否かの診断     |
+|[ExistsPutTo](#SS_4_3_5_10)                    |std::ostream& << Tができるかどうかの診断               |
 
 * テンプレートパラメータがT[N]やC\<T>の形式である時のTに、
   operator<<が適用できるかの診断については、Tの型を取り出す必要がある。
   そのようなメタ関数ValueTypeの実装を示す。
 
 
-#### exists_void_func_sfinae_fの実装 <a id="SS_4_3_5_1"></a>
+#### exists_void_func_sfinae_f <a id="SS_4_3_5_1"></a>
 「テンプレートパラメータである型が、メンバ関数void func()を持つかどうかを診断する」
 exists_void_func_sfinae_f
 のSFINAEと関数テンプレート/関数のオーバーロードを用いた実装は以下のようになる。
@@ -8511,7 +8592,7 @@ decltypeの中での関数呼び出しは、実際には呼び出されず関数
 ```
 
 
-#### exists_void_func_sfinae_sの実装 <a id="SS_4_3_5_2"></a>
+#### exists_void_func_sfinae_s <a id="SS_4_3_5_2"></a>
 「テンプレートパラメータである型が、メンバ関数void func()を持つかどうかを診断」する
 exists_void_func_sfinae_s
 のSFINAEとクラステンプレートの特殊化を用いた実装は以下のようになる。
@@ -8550,7 +8631,7 @@ exists_void_func_sfinae_fとほぼ等しいSFINAEを利用したクラステン�
 ```
 
 
-#### exists_void_func_sfinae_s2の実装 <a id="SS_4_3_5_3"></a>
+#### exists_void_func_sfinae_s2 <a id="SS_4_3_5_3"></a>
 exists_void_func_sfinae_sとほぼ同様の仕様を持つexists_void_func_sfinae_s2の
 
 * SFINAE
@@ -8613,13 +8694,41 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
 ```
 
 
-#### exists_begin/exsits_endの実装 <a id="SS_4_3_5_4"></a>
-「テンプレートパラメータTに対して、std::begin(T)が存在するか否かの診断」をするexists_beginの実装は、
-「[exists_void_func_sfinae_sの実装](#SS_4_3_5_2)」
+#### exists_void_func_concept <a id="SS_4_3_5_4"></a>
+[exists_void_func_sfinae_s](#SS_4_3_5_2)や[exists_void_func_sfinae_s2](#SS_4_3_5_3)
+の実装で見たようなSFINAEによるテンプレートの特殊化は難解なコードを生み出す。
+また、シンタックスエラー時、ほぼ理解できない大量のコンパイラのメッセージを生成する。
+このため、このようなテクニックはきわめて有用である一方で、開発に多くの時間を消費する、
+保守員を選んでしまう、といった問題があった。
+以下に示すように、C++20から導入された[コンセプト](#SS_6_4_8)はこのような問題の軽減につながる。
+
+```cpp
+    // @@@ example/template/exists_func_ut.cpp 138
+
+    template <typename T>  // C++20スタイル。concept/requiresによるSFINAEの回避
+    concept exists_void_func_concept = requires(T& t)
+    {
+        {
+            t.func()
+            } -> std::same_as<void>;
+    };
+```
+```cpp
+    // @@@ example/template/exists_func_ut.cpp 151
+    static_assert(!exists_void_func_concept<decltype(int{})>);
+    static_assert(exists_void_func_concept<decltype(X{})>);
+    static_assert(!exists_void_func_concept<decltype(Y{})>);  // Y::funcの戻りはint
+    static_assert(!exists_void_func_concept<decltype(Z{})>);  // Z::funcは呼び出せない
+```
+
+#### exists_begin/exsits_end <a id="SS_4_3_5_5"></a>
+「テンプレートパラメータTに対して、
+std::begin(T)が存在するか否かの診断」をするexists_beginの実装は、
+「[exists_void_func_sfinae_s](#SS_4_3_5_2)」
 で用いたパターンのメンバ関数を非メンバ関数に置き換えて使えば以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 140
+    // @@@ example/template/exists_func_ut.cpp 161
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8643,7 +8752,7 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
 下記単体テストでは問題ないように見えるが、
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 156
+    // @@@ example/template/exists_func_ut.cpp 177
 
     static_assert(exists_begin_v<std::string>);
     static_assert(!exists_begin_v<int>);
@@ -8653,7 +8762,7 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
 下記の単体テストはstatic_assertがフェールするためコンパイルできない。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 166
+    // @@@ example/template/exists_func_ut.cpp 187
 
     // 以下が問題
     static_assert(exists_begin_v<int[3]>);
@@ -8674,7 +8783,7 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
 下記のように実装できることにも気付けるだろう。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 183
+    // @@@ example/template/exists_func_ut.cpp 204
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8708,7 +8817,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 と考えれば下記のような実装を思いつくだろう。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 154
+    // @@@ example/template/nstd_type_traits.h 144
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8725,7 +8834,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 十分にシンプルなのでこれを採用し、exists_endも同様に実装する。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 167
+    // @@@ example/template/nstd_type_traits.h 157
 
     template <typename, typename = void>
     struct exists_end : std::false_type {
@@ -8755,7 +8864,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 ```
 
 
-#### IsRangeの実装 <a id="SS_4_3_5_5"></a>
+#### IsRange <a id="SS_4_3_5_6"></a>
 [範囲for文](https://cpprefjp.github.io/lang/cpp11/range_based_for.html)
 文の":"の後ろにT型オブジェクトが指定できる要件は、
 
@@ -8769,7 +8878,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 IsRangeの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 181
+    // @@@ example/template/nstd_type_traits.h 171
 
     template <typename T>
     struct IsRange : std::conditional_t<Inner_::exists_begin_v<T> && Inner_::exists_end_v<T>,
@@ -8793,12 +8902,58 @@ IsRangeの実装は以下のようになる。
 ```
 
 
-#### exists_put_to_as_memberの実装 <a id="SS_4_3_5_6"></a>
+#### Ranged <a id="SS_4_3_5_7"></a>
+Rangedの機能はIsRangedと同一であるが、下記のようにSFINAEの回避したため、
+コードの可読性はIsRangedに比べ改善している。
+
+```cpp
+    // @@@ h/nstd_concepts.h 9
+
+    template <typename T>
+    concept Array = std::is_array_v<T>;
+
+    template <typename T>
+    concept Beginable = Array<T> || requires(T& t)
+    {
+        {
+            std::begin(t)
+            } -> std::same_as<typename T::iterator>;
+    };
+
+    template <typename T>
+    concept Endable = Array<T> || requires(T& t)
+    {
+        {
+            std::end(t)
+            } -> std::same_as<typename T::iterator>;
+    };
+
+    template <typename T>
+    concept Ranged = Beginable<T> && Endable<T>;
+```
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp 58
+
+        int a{3};
+
+        static_assert(Printable<decltype(a)>);
+        static_assert(!Printable<X>);
+
+        Y                  y;
+        std::ostringstream oss;
+
+        oss << y;
+        ASSERT_EQ("", oss.str());
+
+        static_assert(Printable<decltype(y)>);
+```
+
+#### exists_put_to_as_member <a id="SS_4_3_5_8"></a>
 std::ostreamのメンバ関数operator<<の戻り型はstd::ostream&であるため、
 exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put to"と発音する)。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 219
+    // @@@ example/template/exists_func_ut.cpp 240
 
     template <typename, typename = std::ostream&>
     struct exists_put_to_as_member : std::false_type {
@@ -8813,7 +8968,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
     constexpr bool exists_put_to_as_member_v{exists_put_to_as_member<T>::value};
 ```
 
-「[exists_void_func_sfinae_fの実装](#SS_4_3_5_1)」と同様のパターンを使用したので解説は不要だろう。
+「[exists_void_func_sfinae_f](#SS_4_3_5_1)の実装」と同様のパターンを使用したので解説は不要だろう。
 
 単体テストは以下のようになる。
 
@@ -8838,7 +8993,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 ```
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 236
+    // @@@ example/template/exists_func_ut.cpp 257
 
     static_assert(exists_put_to_as_member_v<bool>);
     static_assert(!exists_put_to_as_member_v<std::string>);
@@ -8852,7 +9007,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 やや驚きなのは、上記の抜粋である下記コードがコンパイルできることである。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 245
+    // @@@ example/template/exists_func_ut.cpp 266
 
     static_assert(exists_put_to_as_member_v<test_class_not_exits_put_to[3]>);  // 驚き!
 ```
@@ -8866,11 +9021,11 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 が定義されているため、配列がポインタに変換されてこのメンバ関数にバインドした結果である。
 
 
-#### exists_put_to_as_non_memberの実装 <a id="SS_4_3_5_7"></a>
+#### exists_put_to_as_non_member <a id="SS_4_3_5_9"></a>
 exists_put_to_as_non_memberの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 254
+    // @@@ example/template/exists_func_ut.cpp 275
 
     template <typename, typename = std::ostream&>
     struct exists_put_to_as_non_member : std::false_type {
@@ -8885,16 +9040,16 @@ exists_put_to_as_non_memberの実装は以下のようになる。
     constexpr bool exists_put_to_as_non_member_v{exists_put_to_as_non_member<T>::value};
 ```
 
-「[exists_begin/exsits_endの実装](#SS_4_3_5_4)」と「[exists_put_to_as_memberの実装](#SS_4_3_5_6)」
+「[exists_begin/exsits_end](#SS_4_3_5_5)や[exists_put_to_as_member](#SS_4_3_5_8)の実装」
 で使用したパターンを混合しただけなので解説や単体テストは省略する。
 
 
-#### ExistsPutToの実装 <a id="SS_4_3_5_8"></a>
+#### ExistsPutTo <a id="SS_4_3_5_10"></a>
 テンプレートパラメータT、T型オブジェクトtに対して、
 std::ostream << tができるかどうかを判断するExistsPutToの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 283
+    // @@@ example/template/exists_func_ut.cpp 304
 
     template <typename T>
     struct ExistsPutTo
@@ -8907,12 +9062,12 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
     constexpr bool ExistsPutToV{ExistsPutTo<T>::value};
 ```
 
-「[IsRangeの実装](#SS_4_3_5_5)」に影響されて、一旦このように実装したが、先に書いた通り、
+「[IsRange](#SS_4_3_5_6)の実装」に影響されて、一旦このように実装したが、先に書いた通り、
 そもそものExistsPutToの役割はstd::ostream << tができるかどうかの診断であることを思い出せば、
 下記のように、もっとシンプルに実装できることに気づくだろう。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 196
+    // @@@ example/template/nstd_type_traits.h 186
 
     namespace Nstd {
 
@@ -8944,7 +9099,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
     static_assert(Nstd::ExistsPutToV<test_class_not_exits_put_to[3]>);
 ```
 
-#### ValueTypeの実装 <a id="SS_4_3_5_9"></a>
+#### ValueTypeの実装 <a id="SS_4_3_5_11"></a>
 下記で示す通り、
 
 ```cpp
@@ -8990,17 +9145,24 @@ XからTを導出することが必要になる。ここでは、そのような
 その次元を一つだけ除去するメタ関数である)。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 14
+    // @@@ example/template/value_type_ut.cpp 16
 
     template <typename T, typename = void>
     struct ValueType {
         using type = void;
     };
 
+    #if 0  // C++17
     template <typename T>
     struct ValueType<T, typename std::enable_if_t<std::is_array_v<T>>> {
         using type = typename std::remove_extent_t<T>;
     };
+    #else  // C++20
+    template <Array T>  // 制約によりSFINAEの回避
+    struct ValueType<T> {
+        using type = typename std::remove_extent_t<T>;
+    };
+    #endif
 
     template <typename T>
     using ValueTypeT = typename ValueType<T>::type;
@@ -9009,7 +9171,7 @@ XからTを導出することが必要になる。ここでは、そのような
 このコードは問題なく動作するが、下記の通り、2次元配列に対するValueType::typeは1次元配列となる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 32
+    // @@@ example/template/value_type_ut.cpp 41
 
     static_assert(std::is_same_v<int, ValueTypeT<int[1]>>);
     static_assert(std::is_same_v<void, ValueTypeT<int>>);
@@ -9020,7 +9182,7 @@ XからTを導出することが必要になる。ここでは、そのような
 コードは下記のようになるだろう。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 44
+    // @@@ example/template/value_type_ut.cpp 54
 
     template <typename T, typename = void>
     struct ValueType {
@@ -9028,11 +9190,16 @@ XからTを導出することが必要になる。ここでは、そのような
         static constexpr size_t Nest{0};
     };
 
+    #if 0
     template <typename T>
     struct ValueType<T, typename std::enable_if_t<std::is_array_v<T>>> {
-        using type = typename std::remove_extent_t<T>;
+    #else  // C++20
+    template <Array T>  // 制約によりSFINAEの回避
+    struct ValueType<T> {
+    #endif
+    using type = typename std::remove_extent_t<T>;
 
-        static constexpr size_t Nest{ValueType<type>::Nest + 1};
+    static constexpr size_t Nest{ValueType<type>::Nest + 1};
     };
 
     template <typename T>
@@ -9042,7 +9209,7 @@ XからTを導出することが必要になる。ここでは、そのような
 動作は下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 69
+    // @@@ example/template/value_type_ut.cpp 84
 
     static_assert(0 == ValueType<int>::Nest);
     static_assert(1 == ValueType<int[1]>::Nest);
@@ -9062,9 +9229,9 @@ ValueType::type_n\<N>は玉ねぎの皮を一枚ずつむくようなメンバ�
 プライマリの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 82
+    // @@@ example/template/value_type_ut.cpp 99
 
-    template <typename T, typename = void>
+    template <typename T>
     struct ValueType {
         using type = void;
         static constexpr size_t Nest{0};
@@ -9072,7 +9239,6 @@ ValueType::type_n\<N>は玉ねぎの皮を一枚ずつむくようなメンバ�
         template <size_t N>
         using type_n = typename std::conditional_t<N == 0, T, void>;
     };
-
 ```
 
 Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
@@ -9080,41 +9246,35 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
 配列に対する特殊化は以下のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 94
+    // @@@ example/template/value_type_ut.cpp 110
 
-    template <typename T, size_t N>
-    struct ConditionalValueTypeN {
-        using type = typename std::conditional_t<
-            ValueType<T>::Nest != 0,
-            typename ValueType<typename ValueType<T>::type>::template type_n<N - 1>, T>;
+    template <Array T>  // 配列に対する特殊化
+    struct ValueType<T> {
+        using type = typename std::remove_extent_t<T>;
+        static constexpr size_t Nest{ValueType<type>::Nest + 1};
+
+        template <size_t N>
+        using type_n =
+            typename std::conditional_t<N != 0, typename ValueType<type>::template type_n<N - 1>, T>;
     };
 
+    // Nのインデックスに応じた型を取得するための構造体
+    template <typename T, size_t N>
+    struct ConditionalValueTypeN {
+        using type = typename ValueType<T>::template type_n<N>;
+    };
+
+    // 0のケースに対する特殊化（型がそのまま返される）
     template <typename T>
     struct ConditionalValueTypeN<T, 0> {
         using type = T;
     };
-
-    template <typename T>
-    struct ValueType<T, typename std::enable_if_t<std::is_array_v<T>>> {
-        using type = typename std::remove_extent_t<T>;
-
-        static constexpr size_t Nest{ValueType<type>::Nest + 1};
-
-        template <size_t N>
-        using type_n = typename ConditionalValueTypeN<T, N>::type;
-    };
-
-    template <typename T>
-    using ValueTypeT = typename ValueType<T>::type;
-
-    template <typename T, size_t N>
-    using ValueTypeT_n = typename ValueType<T>::template type_n<N>;
 ```
 
 下記コードのコンパイル時の展開を説明することで、上記の解説を行う。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 128
+    // @@@ example/template/value_type_ut.cpp 138
 
     using T = ValueTypeT_n<int[1][2][3], 3>;
 ```
@@ -9178,7 +9338,7 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 136
+    // @@@ example/template/value_type_ut.cpp 146
 
     using T = int[1][2][3];
 
@@ -9195,7 +9355,7 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
 上記エイリアスTに対して下記が成立する。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 148
+    // @@@ example/template/value_type_ut.cpp 158
 
     static_assert(std::is_same_v<int, ValueTypeT_n<T, ValueType<T>::Nest>>);
 ```
@@ -9215,7 +9375,7 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
 これによりValueTypeは下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 182
+    // @@@ example/template/value_type_ut.cpp 192
 
     template <typename T, typename = void>
     struct ValueType {
@@ -9266,7 +9426,7 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
 準備は整ったので上記のValueTypeに下記のようなコンテナ用特殊化を追加する。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 276
+    // @@@ example/template/value_type_ut.cpp 286
 
     namespace Inner_ {
 
@@ -9297,7 +9457,7 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 307
+    // @@@ example/template/value_type_ut.cpp 317
 
     using T = std::vector<std::list<int*>[3]>;
 
@@ -9323,7 +9483,7 @@ ValueTypeの開発はまだ終わらない。静的ディスパッチは最初�
 また、合わせてTが配列かどうかを示すための定数IsBuiltinArrayも追加すると下記のようなコードになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 217
+    // @@@ example/template/nstd_type_traits.h 207
 
     namespace Nstd {
 
@@ -9605,7 +9765,7 @@ std::stringは、実際にはstd::basic_string\<char>のエイリアスである
 Nstd::SafeStringの基底クラスはstd::basic_string\<char>であることがわかる。
 この形式は、std::vector\<T>と同形であるため、
 Nstd::SafeVectorとNstd::SafeStringの共通コードはテンプレートテンプレートパラメータ
-(「[is_same_templの実装](#SS_4_3_3_6)」参照)を使用し下記のように書ける。
+(「[is_same_templ](#SS_4_3_3_7)」参照)を使用し下記のように書ける。
 
 
 ```cpp
@@ -12616,7 +12776,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 * テンプレートのインターフェースではないが、実装の都合上ヘッダファイルに記述する定義は、
   "namespace Inner\_"を使用し、非公開であることを明示する。
   また、"namespace Inner\_"で宣言、定義されている宣言、定義は単体テストを除き、
-  外部から参照しない(「[is_void_sfinae_fの実装](#SS_4_3_2_3)」参照)。
+  外部から参照しない(「[is_void_sfinae_f](#SS_4_3_2_3)の実装」参照)。
 
 * ユニバーサルリファレンスの実際の型がlvalueリファレンスであるならば、
   constなlvalueリファレンスとして扱う
@@ -12677,9 +12837,8 @@ C++17からサポートされた「クラステンプレートのテンプレー
   参照)。
 
 * 意図しないテンプレートパラメータによるインスタンス化の防止や、
-  コンパイルエラーを解読しやすくするために、
-  適切にstatic_assert(「[exists_begin/exsits_endの実装](#SS_4_3_5_4)」
-  参照)を使う。
+  コンパイルエラーを解読しやすくするために、適切にstatic_assert使うことは重要であるが、
+  static_assertによるテンプレートパラメータの制約よりも、[コンセプト](#SS_6_4_8)による制約を優先する。
 
 * ランタイム時の処理を削減する、static_assertを適切に用いる等の目的のために、
   関数テンプレートには適切にconstexprを付けて宣言する
@@ -14855,7 +15014,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
     ASSERT_FALSE(a >= b);  // aはb以上ではない
 ```
 
-なお、std::rel_opsはC++20から導入された[三方比較演算子](#SS_6_1_18_6)により不要になったため、
+なお、std::rel_opsはC++20から導入された[三方比較演算子](#SS_6_1_18_7)により不要になったため、
 非推奨とされた。
 
 #### 非メンバ比較演算子 <a id="SS_6_1_18_3"></a>
@@ -14964,7 +15123,171 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
         ASSERT_FALSE(a > b);
 ```
 
-#### 三方比較演算子 <a id="SS_6_1_18_6"></a>
+#### 畳み込み式 <a id="SS_6_1_18_6"></a>
+畳み式(fold expression)とは、C++17から導入された新機能であり、
+可変引数テンプレートのパラメータパックに対して二項演算を累積的に行うためのものである。
+
+畳み込み式のシンタックスの使用は下記のようなものである。
+```
+( pack op ... )          // (1) 単項右畳み込み
+( ... op pack )          // (2) 単項左畳み込み
+( pack op ... op init )  // (3) 二項右畳み込み
+( init op ... op pack )  // (4) 二項左畳み込み
+```
+
+1. 単項右畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp 9
+
+    namespace cpp14_style {  // c++14までのスタイル
+    template <typename T>
+    constexpr bool all_true(T arg)
+    {
+        return arg;
+    }
+    template <typename T, typename... Args>
+    constexpr bool all_true(T arg, Args... args)
+    {
+        return arg && all_true(args...);
+    }
+    }  // namespace cpp14_style
+
+    namespace cpp17_style {  // 畳み込み式を使用したスタイル
+    template <typename... Ts>
+    constexpr bool all_true(Ts... args)
+    {
+        return (args && ...);  // 単項右畳み込み
+    }
+    }  // namespace cpp17_style
+
+    static_assert(cpp14_style::all_true(true, true, true));
+    static_assert(cpp17_style::all_true(true, true, true));
+```
+2. 単項左畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp 36
+    namespace cpp14_style {  // c++14までのスタイル
+    template <typename T>
+    constexpr bool any_true(T arg)
+    {
+        return arg;
+    }
+    template <typename T, typename... Args>
+    constexpr bool any_true(T arg, Args... args)
+    {
+        return arg || any_true(args...);
+    }
+    }  // namespace cpp14_style
+
+    namespace cpp17_style {  // 畳み込み式を使用したスタイル
+    template <typename... Ts>
+    constexpr bool any_true(Ts... args)
+    {
+        return (... || args);  // 単項左畳み込み
+    }
+    }  // namespace cpp17_style
+    static_assert(cpp14_style::any_true(false, false, true));
+    static_assert(cpp17_style::any_true(false, false, true));
+```
+3. 二項右畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp 61
+
+    namespace cpp14_style {  // c++14までのスタイル
+    template <typename T>
+    constexpr int sum(T arg)
+    {
+        return arg;
+    }
+    template <typename T, typename... Args>
+    constexpr int sum(T arg, Args... args)
+    {
+        return arg + sum(args...);
+    }
+
+    }  // namespace cpp14_style
+
+    namespace cpp17_style {  // 畳み込み式を使用したスタイル
+    template <typename... Ts>
+    constexpr int sum(Ts... args)
+    {
+        return (args + ... + 0);  // 二項右畳み込み (初期値: 0)
+    }
+    }  // namespace cpp17_style
+
+    static_assert(cpp14_style::sum(1, 2, 3));
+    static_assert(cpp17_style::sum(1, 2, 3));
+```
+4. 二項左畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp 89
+
+    namespace cpp14_style {  // c++14までのスタイル
+    template <typename T>
+    constexpr int product(T arg)
+    {
+        return arg;
+    }
+    template <typename T, typename... Args>
+    constexpr int product(T arg, Args... args)
+    {
+        return arg * product(args...);
+    }
+    }  // namespace cpp14_style
+
+    namespace cpp17_style {  // 畳み込み式を使用したスタイル
+    template <typename... Ts>
+    constexpr int product(Ts... args)
+    {
+        return (1 * ... * args);  // 二項左畳み込み (初期値: 1)
+    }
+    }  // namespace cpp17_style
+
+    static_assert(cpp14_style::product(2, 3, 4));
+    static_assert(cpp17_style::product(2, 3, 4));
+```
+
+上記したような単純な例では、畳み込み式の効果はわかりずらいため、
+もっと複雑なで読解が困難な再帰構造を持ったコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp 117
+    template <typename T, typename U, typename... Us>
+    struct is_same_some_of {
+        static constexpr bool value{std::is_same_v<T, U> ? true : is_same_some_of<T, Us...>::value};
+    };
+
+    template <typename T, typename U>
+    struct is_same_some_of<T, U> {
+        static constexpr bool value{std::is_same_v<T, U>};
+    };
+```
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp 128
+
+    static_assert(is_same_some_of<int, int, double, char>::value);
+    static_assert(!is_same_some_of<int, double, char>::value);
+    static_assert(is_same_some_of<std::string, std::string, int>::value);
+```
+
+畳み込み式を使うことで、この問題をある程度緩和したコードを下記する。
+
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp 140
+    template <typename T, typename U, typename... Us>
+    struct is_same_some_of {
+        static constexpr bool value = (std::is_same_v<T, U> || ... || std::is_same_v<T, Us>);
+    };
+```
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp 146
+
+    static_assert(is_same_some_of<int, int, double, char>::value);
+    static_assert(!is_same_some_of<int, double, char>::value);
+    static_assert(is_same_some_of<std::string, std::string, int>::value);
+```
+
+#### 三方比較演算子 <a id="SS_6_1_18_7"></a>
 「[std::tuppleを使用した比較演算子の実装方法](#SS_6_1_18_5)」
 で示した定型のコードはコンパイラが自動生成するのがC++規格のセオリーである。
 このためC++20から導入されたのが三方比較演算子`<=>`である。
@@ -15014,8 +15337,8 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
     };
 ```
 
-#### spaceship operator <a id="SS_6_1_18_7"></a>
-spaceship operatorとは[三方比較演算子](#SS_6_1_18_6)を指す。
+#### spaceship operator <a id="SS_6_1_18_8"></a>
+spaceship operatorとは[三方比較演算子](#SS_6_1_18_7)を指す。
 この名前は`<=>`が宇宙船に見えることに由来としている。
 
 

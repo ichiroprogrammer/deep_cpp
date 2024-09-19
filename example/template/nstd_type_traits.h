@@ -1,4 +1,5 @@
 #pragma once
+#include <concepts>
 #include <ostream>
 #include <type_traits>
 
@@ -12,29 +13,18 @@
 // @@@ sample begin 0:0
 
 namespace Nstd {
-namespace Inner_ {
-
+// コンセプト: 複数の型のいずれかがTと同じかどうかをチェック
 template <typename T, typename U, typename... Us>
-struct is_same_some_of {
-    static constexpr bool value{std::is_same_v<T, U> ? true : is_same_some_of<T, Us...>::value};
+concept SameAsSomeOf = (std::same_as<T, U> || (std::same_as<T, Us> || ...));
+
+// 型特性: TがUsのいずれかと同じ場合true_type、そうでない場合false_typeを継承
+template <typename T, typename U, typename... Us>
+struct IsSameSomeOf : std::bool_constant<SameAsSomeOf<T, U, Us...>> {
 };
 
-template <typename T, typename U>
-struct is_same_some_of<T, U> {
-    static constexpr bool value{std::is_same_v<T, U>};
-};
-
-template <typename T, typename... Us>
-constexpr bool is_same_some_of_v{is_same_some_of<T, Us...>::value};
-}  // namespace Inner_
-
-template <typename T, typename... Us>
-struct IsSameSomeOf
-    : std::conditional_t<Inner_::is_same_some_of_v<T, Us...>, std::true_type, std::false_type> {
-};
-
-template <typename T, typename... Us>
-constexpr bool IsSameSomeOfV{IsSameSomeOf<T, Us...>::value};
+// 便利な定数テンプレート
+template <typename T, typename U, typename... Us>
+constexpr bool IsSameSomeOfV = IsSameSomeOf<T, U, Us...>::value;
 }  // namespace Nstd
 // @@@ sample end
 // replace IsSameSomeOfV -> OneOf

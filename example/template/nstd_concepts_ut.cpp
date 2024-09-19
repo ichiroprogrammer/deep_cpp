@@ -1,4 +1,5 @@
 #include <concepts>
+#include <span>
 #include <sstream>
 #include <vector>
 
@@ -20,18 +21,17 @@ TEST(Template, Beginable)
     auto v = std::vector{1, 2, 3};
 
     static_assert(Array<decltype(a)>);
-    static_assert(Container<decltype(v)>);
 
     static_assert(Beginable<decltype(a)>);
     static_assert(!Beginable<decltype(ptr)>);
     static_assert(Beginable<decltype(v)>);
 
-    static_assert(Endable<decltype(a)>);
-    static_assert(!Endable<decltype(ptr)>);
-    static_assert(Endable<decltype(v)>);
-
+    static_assert(Ranged<decltype(a)>);
+    static_assert(!Ranged<decltype(ptr)>);
+    static_assert(Ranged<decltype(v)>);
     // @@@ sample end
     IGNORE_UNUSED_VAR(ptr);
+    static_assert(Container<decltype(v)>);
 }
 
 TEST(Template, Ranged)
@@ -133,3 +133,46 @@ TEST(Template, are_convertible_without_narrow_conv)
 }
 }  // namespace
 }  // namespace Nstd
+
+namespace {
+template <class T, std::size_t Extent>
+void print(std::span<T, Extent> s, std::ostream& os)
+{
+    const char* delimiter = "";
+
+    os << '{';
+    for (const T& x : s) {
+        os << std::exchange(delimiter, ",") << x;
+    }
+    os << '}';
+}
+
+TEST(Template, span)
+{
+    std::vector<int> v{1, 2, 3, 4, 5};
+    int              ar[]{1, 2, 3, 4, 5};
+
+    {
+        std::ostringstream oss;
+
+        print(std::span{v}, oss);
+
+        ASSERT_EQ("{1,2,3,4,5}", oss.str());
+    }
+    {
+        std::ostringstream oss;
+
+        print(std::span{ar}, oss);
+
+        ASSERT_EQ("{1,2,3,4,5}", oss.str());
+    }
+
+    ASSERT_EQ("__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >",
+              Nstd::Type2Str<decltype(std::begin(v))>());
+    ASSERT_EQ("__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >",
+              Nstd::Type2Str<decltype(std::end(v))>());
+
+    ASSERT_EQ("int*", Nstd::Type2Str<decltype(std::begin(ar))>());
+    ASSERT_EQ("int*", Nstd::Type2Str<decltype(std::end(ar))>());
+}
+}  // namespace

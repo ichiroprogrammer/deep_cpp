@@ -6,25 +6,29 @@
 
 namespace Nstd {
 
-template <typename T>
-concept Array = std::is_array_v<T>;
-
 // @@@ sample begin 0:0
 
 template <typename T>
-concept Beginable = requires(T& t)
+concept Array = std::is_array_v<T>;
+
+template <typename T>
+concept Beginable = Array<T> || requires(T& t)
 {
-    {std::begin(t)};  // std::beginが呼び出せることを制約
+    {
+        std::begin(t)
+        } -> std::same_as<typename T::iterator>;
 };
 
 template <typename T>
-concept Endable = requires(T& t)
+concept Endable = Array<T> || requires(T& t)
 {
-    {std::end(t)};  // std::endが呼び出せることを制約
+    {
+        std::end(t)
+        } -> std::same_as<typename T::iterator>;
 };
 
 template <typename T>
-concept Ranged = Beginable<T> && Endable<T>;  // <- IsRangeV
+concept Ranged = Beginable<T> && Endable<T>;
 // @@@ sample end
 
 template <typename T>

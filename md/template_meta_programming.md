@@ -1033,14 +1033,15 @@ std::is_voidはテンプレートパラメータの型が
 
 それぞれのis_void_xxxは下記テーブルで示した言語機能を使用して実装する。
 
-|is_void_xxx      |実装方法                                               |
-|-----------------|-------------------------------------------------------|
-|is_void_f        |関数テンプレートの特殊化                               |
-|is_void_s        |クラステンプレートの特殊化                             |
-|is_void_sfinae_f |SFINAEと関数テンプレートのオーバーロード               |
-|is_void_sfinae_s |SFINAEとクラステンプレートの特殊化                     |
-|is_void_ena_s    |std::enable_ifによるSFINAEとクラステンプレートの特殊化 |
-|is_void_cond_s   |std::conditionalと関数テンプレートの特殊化             |
+|is_void_xxx                  |実装方法                                               |
+|-----------------------------|-------------------------------------------------------|
+|[is_void_f](---)             |関数テンプレートの特殊化                               |
+|[is_void_s](---)             |クラステンプレートの特殊化                             |
+|[is_void_sfinae_f](---)      |FINAEと関数テンプレートのオーバーロード                |
+|[is_void_sfinae_s](---)      |FINAEとクラステンプレートの特殊化                      |
+|[is_void_concept_s](---)     |コンセプトとクラステンプレートの特殊化                 |
+|[is_void_ena_s](---)         |std::enable_ifによるSFINAEとクラステンプレートの特殊化 |
+|[is_void_cond_s](---)        |std::conditionalと関数テンプレートの特殊化             |
 
 なお、実装例をシンプルに保つため、
 理解の妨げとなり得る下記のような正確性(例外条件の対応)等のためのコードを最低限に留めた。
@@ -1053,7 +1054,7 @@ std::is_voidはテンプレートパラメータの型が
 というここでの目的を見失わないための措置である。
 
 
-#### is_void_fの実装
+#### is_void_f
 関数テンプレートの特殊化を使用したis_void_fの実装は以下のようになる。
 
 ```cpp
@@ -1076,7 +1077,7 @@ std::is_voidはテンプレートパラメータの型が
 
 [演習-SFINAEを利用しない関数テンプレートの特殊化によるis_void](~~~)
 
-#### is_void_sの実装
+#### is_void_s
 クラステンプレートの特殊化を使用したis_void_sの実装は以下のようになる。
 
 ```cpp
@@ -1091,7 +1092,7 @@ is_void_fと同様に単純なので解説は不要だろう。これらの単�
 
 [演習-SFINAEを利用しないクラステンプレートの特殊化によるis_void](~~~)
 
-#### is_void_sfinae_fの実装
+#### is_void_sfinae_f
 [SFINAE](---)を使用した関数テンプレートis_void_sfinae_fの実装は以下のようになる。
 
 ```cpp
@@ -1152,7 +1153,7 @@ is_void_sfinae_fは下記のように実装することも可能である。こ�
 
 [演習-SFINAEを利用した関数テンプレートの特殊化によるis_void](~~~)
 
-#### is_void_sfinae_sの実装
+#### is_void_sfinae_s
 [SFINAE](---)を使用したクラステンプレートis_void_sfinae_sの実装は以下のようになる。
 
 ```cpp
@@ -1216,11 +1217,35 @@ T != voidの場合、 2つ目のis_void_sfinae_sはill-formedになり、name lo
 が「well-formedであった場合に生成される型」が一致することを利用した静的ディスパッチは、
 SFINAEとクラステンプレートの特殊化を組み合わせたメタ関数の典型的な実装パターンである。
 ただし、一般にはill-formedを起こすためにst::enable_ifを使うことが多いため、
-「[is_void_ena_sの実装](---)」でその例を示す。
+「[is_void_ena_s](---)の実装」でその例を示す。
 
 [演習-SFINAEを利用したクラステンプレートの特殊化によるis_void](~~~)
 
-#### is_void_ena_sの実装
+#### is_void_concept_s
+[is_void_sfinae_s](---)の実装で使用したSFINAEを回避し、
+コンセプトを使用することで可読性の向上が見込める。
+以下の実装で使用した[same_as](---)は\<concepts>で定義されているコンセプトと同様のものである。
+
+```cpp
+    // @@@ example/template/is_void_ut.cpp #4:4 begin
+```
+```cpp
+    // @@@ example/template/is_void_ut.cpp #4:5 begin -1
+```
+
+下記に示した通り、テンプレート特殊化はクラスのみなく定数に対しても使用することができる。
+
+```cpp
+    // @@@ example/template/is_void_ut.cpp #4:6 begin
+```
+
+以下に示した通り、[is_void_sfinae_s](---)の実装で示した定数テンプレートのテストと同様になっている。
+
+```cpp
+    // @@@ example/template/is_void_ut.cpp #4:7 begin -1
+```
+
+#### is_void_ena_s
 [std::enable_if](---)による[SFINAE](---)とクラステンプレートの特殊化を使用した
 is_void_ena_sの実装は以下のようになる。
 
@@ -1230,7 +1255,7 @@ is_void_ena_sの実装は以下のようになる。
     // @@@ example/template/is_void_ut.cpp #5:2 begin
 ```
 
-この例では、「[is_void_sfinae_sの実装](---)」の
+この例では、「[is_void_sfinae_s](---)の実装」の
 
 ```cpp
     // @@@ example/template/is_void_ut.cpp #4:1 begin -1 1
@@ -1243,25 +1268,25 @@ is_void_ena_sの実装は以下のようになる。
 ```
 
 で行っている。
-std::enable_ifの値パラメータis_void_f\<T>()は、「[is_void_fの実装](---)」で示したものである。
+std::enable_ifの値パラメータis_void_f\<T>()は、「[is_void_f](---)の実装」で示したものである。
 
-単体テストは、「[is_void_sfinae_sの実装](---)」で示したものとほぼ同様で、以下のようになる。
+単体テストは、「[is_void_sfinae_s](---)の実装」で示したものとほぼ同様で、以下のようになる。
 
 ```cpp
     // @@@ example/template/is_void_ut.cpp #5:3 begin -1
 ```
 
 
-#### is_void_cond_sの実装
+#### is_void_cond_s
 [std::conditional](---)と関数テンプレートの特殊化を使用したis_void_cond_sの実装は以下のようになる。
 
 ```cpp
     // @@@ example/template/is_void_ut.cpp #6:0 begin
 ```
 
-std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_fの実装](---)」で示したものである。
+std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](---)の実装」で示したものである。
 この例では、SFINAEもクラステンプレートの特殊化も使用していないが、
-下記単体テストからわかる通り、「[is_void_sfinae_sの実装](---)」と同じ機能を備えている。
+下記単体テストからわかる通り、「[is_void_sfinae_s](---)の実装」と同じ機能を備えている。
 
 ```cpp
     // @@@ example/template/is_void_ut.cpp #6:1 begin -1
@@ -1279,17 +1304,18 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_fの実装
 
 それぞれのis_same_xxxは下記テーブルで示された言語機能を使用して実装する。
 
-|is_same_xxx      |実装方法                                               |
-|-----------------|-------------------------------------------------------|
-|is_same_f        |関数テンプレートのオーバーロード                       |
-|is_same_v        |定数テンプレートの特殊化                               |
-|is_same_s        |クラステンプレートの特殊化                             |
-|is_same_sfinae_f |SFINAEと関数テンプレート/関数のオーバーロード          |
-|is_same_sfinae_s |SFINAEとクラステンプレートの特殊化                     |
-|is_same_templ    |テンプレートテンプレートパラメータ                     |
-|IsSameSomeOf     |パラメータパックと再帰                                 |
+|is_same_xxx                   |実装方法                                               |
+|------------------------------|-------------------------------------------------------|
+|[is_same_f](---)              |関数テンプレートのオーバーロード                       |
+|[is_same_v](---)              |定数テンプレートの特殊化                               |
+|[is_same_s](---)              |クラステンプレートの特殊化                             |
+|[is_same_sfinae_fの実装](---) |SFINAEと関数テンプレート/関数のオーバーロード          |
+|[is_same_sfinae_s](---)       |SFINAEとクラステンプレートの特殊化                     |
+|[same_as](---)                |[コンセプト](---)よるis_same_sfinae_sと同一の機能      |
+|[is_same_templ](---)          |テンプレートテンプレートパラメータ                     |
+|[IsSameSomeOf](---)           |パラメータパックと再帰                                 |
 
-#### is_same_fの実装
+#### is_same_f
 関数テンプレートのオーバーロードを用いたis_same_fの実装は以下のようになる。
 
 ```cpp
@@ -1323,7 +1349,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
     // @@@ example/template/is_same_ut.cpp #0:2 begin -1
 ```
 
-#### is_same_vの実装
+#### is_same_v
 定数テンプレートの特殊化を用いたis_same_vの実装は以下のようになる。
 
 ```cpp
@@ -1337,14 +1363,14 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 ```
 
 
-#### is_same_sの実装
+#### is_same_s
 クラステンプレートの特殊化を用いたis_same_sの実装は以下のようになる。
 
 ```cpp
     // @@@ example/template/is_same_ut.cpp #2:0 begin
 ```
 
-「[is_same_vの実装](---)」と同様に単純であるため、解説は不要だろう。 単体テストは以下のようになる。
+「[is_same_v](---)の実装」と同様に単純であるため、解説は不要だろう。 単体テストは以下のようになる。
 
 ```cpp
     // @@@ example/template/is_same_ut.cpp #2:1 begin -1
@@ -1377,23 +1403,45 @@ T == Uの場合は、関数テンプレートis_same_sfinae_f_detectorが選択�
     // @@@ example/template/is_same_ut.cpp #3:3 begin -1
 ```
 
-
-#### is_same_sfinae_sの実装
+#### is_same_sfinae_s
 SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの実装は以下のようになる。
 
 ```cpp
     // @@@ example/template/is_same_ut.cpp #4:0 begin
 ```
 
-「[is_void_sfinae_sの実装](---)」とほぼ同様であるため、解説は不要だろう。 
+「[is_void_sfinae_s](---)の実装」とほぼ同様であるため、解説は不要だろう。 
 単体テストは以下のようになる。
 
 ```cpp
     // @@@ example/template/is_same_ut.cpp #4:1 begin -1
 ```
 
+#### same_as
+[SFINAE](---)による[is_same_sfinae_s](---)の難解なコードを[コンセプト](---)
+よりリファクタリングしたコードを以下に示す。
 
-#### is_same_templの実装
+```cpp
+    // @@@ example/template/is_same_ut.cpp #4:2 begin
+```
+is_same_sfinae_sは定数テンプレートであり、same_asはコンセプトであるが、
+下記のテストから明らかな通り、ほぼ同様に同様に使用することができる。
+
+```cpp
+    // @@@ example/template/is_same_ut.cpp #4:4 begin -1
+```
+
+「[is_same_s](---)」で紹介した特殊化のテクニックを下記のように使用することができる。
+
+```cpp
+    // @@@ example/template/is_same_ut.cpp #4:3 begin
+```
+```cpp
+    // @@@ example/template/is_same_ut.cpp #4:5 begin -1
+```
+
+
+#### is_same_templ
 例えば、std::stringとstd::basic_string\<T>が同じもしくは違う型であることを確認するためには、
 すでに示したis_same_sを使用し、
 
@@ -1430,35 +1478,24 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
 
 [演習-テンプレートテンプレートパラメータ](~~~)
 
-#### IsSameSomeOfの実装
+#### IsSameSomeOf
 IsSameSomeOfはこれまでの例とは少々異なり、
 
-* 第1パラメータが第2パラメータ以降で指定された型の
-    * どれかと同じであれば、std::true_typeから派生する
-    * どれとも違えば、std::false_typeから派生する
-* 2つの型の同一性の判定にはstd::is_sameを使用する
-* 汎用性が高いため名前空間Nstdで定義し、命名はキャメルにする
+* 第1パラメータが第2パラメータ以降で指定された型のどれかと一致する
+  SameAsSomeOfという名前の[コンセプト](---)を[畳み込み式](---)を使用し定義する
+* SameAsSomeOfで制約したテンプレートパラメータをstd::bool_constantからIsSameSomeOfを派生させる
 
 のような特徴のを持つ。
-このようなIsSameSomeOfをパラメータパックと再帰を使用して実装すると以下のようになる。
+このようなIsSameSomeOfの実装はは以下のようになる。
 
 ```cpp
     // @@@ example/template/nstd_type_traits.h #0:0 begin
 ```
 
-IsSameSomeOfは、TがUsのいずれかと一致するかどうかの処理をInner\_::is_same_some_ofに移譲する。
+IsSameSomeOfは、TがUsのいずれかと一致するかどうかのほとんどの処理をSameAsSomeOfに移譲する。
 
-Usが1つだった場合、特殊化されたInner\_::is_same_some_ofのvalueがstd::is_same::valueで初期化される。
-Usが複数だった場合、 プライマリのInner\_::is_same_some_ofは、
-IsSameSomeOfから渡されたパラメータパックUsを、UとパラメータパックUsに分割後、
-TとUをstd::is_sameで比較し、
-
-* 同じ場合、valueはtrueで初期化される
-* 違う場合、valueは再帰的に読み出されたInner\_::is_same_some_of\<T, Us...>::valueで初期化される
-
-再帰的なInner\_::is_same_some_of::valueの読み出しは、
-IsSameSomeOfが受け取ったパラメータパックをひとつずつ左シフトしながら、
-それが1つになるまで(特殊化されたInner\_::is_same_some_ofが使われるまで)、続けられる。
+Usが1つだった場合、SameAsSomeOfは処理をstd::same_as(「[same_as](---)」参照)に委譲する。
+Usが複数だった場合、[畳み込み式](--)を使用し上記の処理をその数分、繰り返す。
 
 単体テストは以下のようになる。
 
@@ -1492,7 +1529,7 @@ AreConvertibleの実装は以下のようになる。
 ```
 
 
-「[IsSameSomeOfの実装](---)」のコードパターンとほぼ同様であるため、解説は不要だろうが、
+「[IsSameSomeOf](---)の実装」のコードパターンとほぼ同様であるため、解説は不要だろうが、
 
 * パラメータパックの都合上、TOとFROMのパラメータの位置がstd::is_convertibleとは逆になる
 * IsSameSomeOfでは条件の一つがtrueであればIsSameSomeOf::valueがtrueとなるが、
@@ -1567,36 +1604,37 @@ Nstdライブラリの開発には関数の存在の診断が欠かせない。
 * テンプレートパラメータである型が、メンバ関数void func()を持つかどうかの診断について、
   次の表のように実装を示す。
 
-|メタ関数名                |メタ関数の目的                                          |
-|--------------------------|--------------------------------------------------------|
-|exists_void_func_sfinae_f |メンバ関数void func()を持つかどうかの判断               |
-|exists_void_func_sfinae_s |同上                                                    |
-|exists_void_func_sfinae_s2|同上                                                    |
+|メタ関数名                              |メタ関数の目的                                    |
+|----------------------------------------|--------------------------------------------------|
+|[exists_void_func_sfinae_f](---)        |メンバ関数void func()を持つかどうかの判断         |
+|[exists_void_func_sfinae_s](---)        |同上                                              |
+|[exists_void_func_sfinae_s2](---)       |同上                                              |
+|[exists_void_func_concept](---)         |同上。コンセプトによるSFINAEの回避                |
 
 * テンプレートパラメータに範囲for文ができるかどうかの診断について、
   次の表のように実装を示す。
 
-|メタ関数名                 |メタ関数の目的                                               |
-|---------------------------|-------------------------------------------------------------|
-|exists_begin               |std::begin(T)が存在するか否かの診断                          |
-|exists_end                 |std::end(T)が存在するか否かの診断                            |
-|IsRange                    |T const& tの時に、for(auto const& : t)ができるかどうかの診断 |
+|メタ関数名                            |メタ関数の目的                                                     |
+|--------------------------------------|-------------------------------------------------------------------|
+|[exists_begin/exsits_end](---)        |SFINAEを使用したstd::begin(T)/std::end(T)が存在するか否かの診断    |
+|[IsRange](---)                        |exists_begin/exsits_endを使し、範囲forのオペランドになれるか?の判断|
+|[Ranged](---)                         |機能はIsRangeと同一だが、[コンセプト](---)を使用しSFINAEの回避     |
 
 * テンプレートパラメータにoperator<<(put toと発音する)ができるかどうかの診断について、
   次の表のように実装を示す。
 
-|メタ関数名                 |メタ関数の目的                                         |
-|---------------------------|-------------------------------------------------------|
-|exists_put_to_as_member    |std::ostream::operator<<(T)が存在するか否かの診断      |
-|exists_put_to_as_non_member|operator<<(std::ostream&, T)が存在するか否かの診断     |
-|ExistsPutTo                |std::ostream& << Tができるかどうかの診断               |
+|メタ関数名                            |メタ関数の目的                                         |
+|--------------------------------------|-------------------------------------------------------|
+|[exists_put_to_as_member](---)        |std::ostream::operator<<(T)が存在するか否かの診断      |
+|[exists_put_to_as_non_member](---)    |operator<<(std::ostream&, T)が存在するか否かの診断     |
+|[ExistsPutTo](---)                    |std::ostream& << Tができるかどうかの診断               |
 
 * テンプレートパラメータがT[N]やC\<T>の形式である時のTに、
   operator<<が適用できるかの診断については、Tの型を取り出す必要がある。
   そのようなメタ関数ValueTypeの実装を示す。
 
 
-#### exists_void_func_sfinae_fの実装
+#### exists_void_func_sfinae_f
 「テンプレートパラメータである型が、メンバ関数void func()を持つかどうかを診断する」
 exists_void_func_sfinae_f
 のSFINAEと関数テンプレート/関数のオーバーロードを用いた実装は以下のようになる。
@@ -1625,7 +1663,7 @@ decltypeの中での関数呼び出しは、実際には呼び出されず関数
 ```
 
 
-#### exists_void_func_sfinae_sの実装
+#### exists_void_func_sfinae_s
 「テンプレートパラメータである型が、メンバ関数void func()を持つかどうかを診断」する
 exists_void_func_sfinae_s
 のSFINAEとクラステンプレートの特殊化を用いた実装は以下のようになる。
@@ -1644,7 +1682,7 @@ exists_void_func_sfinae_fとほぼ等しいSFINAEを利用したクラステン�
 ```
 
 
-#### exists_void_func_sfinae_s2の実装
+#### exists_void_func_sfinae_s2
 exists_void_func_sfinae_sとほぼ同様の仕様を持つexists_void_func_sfinae_s2の
 
 * SFINAE
@@ -1677,9 +1715,25 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
 
 [演習-メンバ関数の存在の診断](~~~)
 
-#### exists_begin/exsits_endの実装
-「テンプレートパラメータTに対して、std::begin(T)が存在するか否かの診断」をするexists_beginの実装は、
-「[exists_void_func_sfinae_sの実装](---)」
+#### exists_void_func_concept
+[exists_void_func_sfinae_s](---)や[exists_void_func_sfinae_s2](---)
+の実装で見たようなSFINAEによるテンプレートの特殊化は難解なコードを生み出す。
+また、シンタックスエラー時、ほぼ理解できない大量のコンパイラのメッセージを生成する。
+このため、このようなテクニックはきわめて有用である一方で、開発に多くの時間を消費する、
+保守員を選んでしまう、といった問題があった。
+以下に示すように、C++20から導入された[コンセプト](---)はこのような問題の軽減につながる。
+
+```cpp
+    // @@@ example/template/exists_func_ut.cpp #2:4 begin
+```
+```cpp
+    // @@@ example/template/exists_func_ut.cpp #2:5 begin -1
+```
+
+#### exists_begin/exsits_end
+「テンプレートパラメータTに対して、
+std::begin(T)が存在するか否かの診断」をするexists_beginの実装は、
+「[exists_void_func_sfinae_s](---)」
 で用いたパターンのメンバ関数を非メンバ関数に置き換えて使えば以下のようになる。
 
 ```cpp
@@ -1750,7 +1804,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 ```
 
 
-#### IsRangeの実装
+#### IsRange
 [範囲for文](https://cpprefjp.github.io/lang/cpp11/range_based_for.html)
 文の":"の後ろにT型オブジェクトが指定できる要件は、
 
@@ -1776,7 +1830,18 @@ IsRangeの実装は以下のようになる。
 
 [演習-範囲for文のオペランドになれるかどうかの診断](~~~)
 
-#### exists_put_to_as_memberの実装
+#### Ranged
+Rangedの機能はIsRangedと同一であるが、下記のようにSFINAEの回避したため、
+コードの可読性はIsRangedに比べ改善している。
+
+```cpp
+    // @@@ h/nstd_concepts.h #0:0 begin
+```
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp #0:0 begin
+```
+
+#### exists_put_to_as_member
 std::ostreamのメンバ関数operator<<の戻り型はstd::ostream&であるため、
 exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put to"と発音する)。
 
@@ -1784,7 +1849,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
     // @@@ example/template/exists_func_ut.cpp #5:0 begin
 ```
 
-「[exists_void_func_sfinae_fの実装](---)」と同様のパターンを使用したので解説は不要だろう。
+「[exists_void_func_sfinae_f](---)の実装」と同様のパターンを使用したので解説は不要だろう。
 
 単体テストは以下のようになる。
 
@@ -1812,18 +1877,18 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 が定義されているため、配列がポインタに変換されてこのメンバ関数にバインドした結果である。
 
 
-#### exists_put_to_as_non_memberの実装
+#### exists_put_to_as_non_member
 exists_put_to_as_non_memberの実装は以下のようになる。
 
 ```cpp
     // @@@ example/template/exists_func_ut.cpp #5:3 begin
 ```
 
-「[exists_begin/exsits_endの実装](---)」と「[exists_put_to_as_memberの実装](---)」
+「[exists_begin/exsits_end](---)や[exists_put_to_as_member](---)の実装」
 で使用したパターンを混合しただけなので解説や単体テストは省略する。
 
 
-#### ExistsPutToの実装
+#### ExistsPutTo
 テンプレートパラメータT、T型オブジェクトtに対して、
 std::ostream << tができるかどうかを判断するExistsPutToの実装は以下のようになる。
 
@@ -1831,7 +1896,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
     // @@@ example/template/exists_func_ut.cpp #5:4 begin
 ```
 
-「[IsRangeの実装](---)」に影響されて、一旦このように実装したが、先に書いた通り、
+「[IsRange](---)の実装」に影響されて、一旦このように実装したが、先に書いた通り、
 そもそものExistsPutToの役割はstd::ostream << tができるかどうかの診断であることを思い出せば、
 下記のように、もっとシンプルに実装できることに気づくだろう。
 
@@ -2156,7 +2221,7 @@ std::stringは、実際にはstd::basic_string\<char>のエイリアスである
 Nstd::SafeStringの基底クラスはstd::basic_string\<char>であることがわかる。
 この形式は、std::vector\<T>と同形であるため、
 Nstd::SafeVectorとNstd::SafeStringの共通コードはテンプレートテンプレートパラメータ
-(「[is_same_templの実装](---)」参照)を使用し下記のように書ける。
+(「[is_same_templ](---)」参照)を使用し下記のように書ける。
 
 
 ```cpp
@@ -3276,7 +3341,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 * テンプレートのインターフェースではないが、実装の都合上ヘッダファイルに記述する定義は、
   "namespace Inner\_"を使用し、非公開であることを明示する。
   また、"namespace Inner\_"で宣言、定義されている宣言、定義は単体テストを除き、
-  外部から参照しない(「[is_void_sfinae_fの実装](---)」参照)。
+  外部から参照しない(「[is_void_sfinae_f](---)の実装」参照)。
 
 * ユニバーサルリファレンスの実際の型がlvalueリファレンスであるならば、
   constなlvalueリファレンスとして扱う
@@ -3322,10 +3387,8 @@ C++17からサポートされた「クラステンプレートのテンプレー
   参照)。
 
 * 意図しないテンプレートパラメータによるインスタンス化の防止や、
-  コンパイルエラーを解読しやすくするために、
-  適切にstatic_assert(「[exists_begin/exsits_endの実装](---)」
-  、「[assertion](~~~)」
-  参照)を使う。
+  コンパイルエラーを解読しやすくするために、適切にstatic_assert使うことは重要であるが、
+  static_assertによるテンプレートパラメータの制約よりも、[コンセプト](---)による制約を優先する。
 
 * ランタイム時の処理を削減する、static_assertを適切に用いる等の目的のために、
   関数テンプレートには適切にconstexprを付けて宣言する
