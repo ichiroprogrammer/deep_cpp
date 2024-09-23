@@ -137,13 +137,13 @@ TEST(Template, exists_void_func_sfinae_s2)
 
 // @@@ sample begin 2:4
 
+// clang-format off
 template <typename T>  // C++20スタイル。concept/requiresによるSFINAEの回避
 concept exists_void_func_concept = requires(T& t)
 {
-    {
-        t.func()
-        } -> std::same_as<void>;
+    { t.func() } -> std::same_as<void>;
 };
+// clang-format on
 // @@@ sample end
 
 TEST(Template, exists_void_func_concept)

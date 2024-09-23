@@ -5,42 +5,55 @@
 #pragma once
 
 namespace Nstd {
-
 // @@@ sample begin 0:0
 
 template <typename T>
 concept Array = std::is_array_v<T>;
+// @@@ sample end
+// @@@ sample begin 0:1
 
+// clang-format off
 template <typename T>
 concept Beginable = Array<T> || requires(T& t)
 {
-    {
-        std::begin(t)
-        } -> std::same_as<typename T::iterator>;
+    { std::begin(t) } -> std::same_as<typename T::iterator>;
 };
+// clang-format on
 
+// clang-format off
 template <typename T>
 concept Endable = Array<T> || requires(T& t)
 {
-    {
-        std::end(t)
-        } -> std::same_as<typename T::iterator>;
+    { std::end(t) } -> std::same_as<typename T::iterator>;
 };
+// clang-format on
+// @@@ sample end
+// @@@ sample begin 1:0
 
 template <typename T>
 concept Ranged = Beginable<T> && Endable<T>;
 // @@@ sample end
 
+// @@@ sample begin 1:0
+
 template <typename T>
-concept Container = Ranged<T> && !Array<T>;
+concept Container = (Ranged<T> && !Array<T>) || requires
+{
+    T::value_type;
+};
+// @@@ sample end
+
+// @@@ sample begin 2:0
 
 // clang-format off
 template <typename T>
-concept Printable = requires(T t, std::ostream& os) // <- ExistsPutToV
+concept Printable = requires(T t, std::ostream& os)
 {
     { os << t } -> std::same_as<std::ostream&>;
 };
+// @@@ sample end
 // clang-format on
+// <- ExistsPutToV
 
 template <typename T, typename... Us>
 concept OneOf = (std::same_as<T, Us> || ...);  // <-IsSameSomeOfV

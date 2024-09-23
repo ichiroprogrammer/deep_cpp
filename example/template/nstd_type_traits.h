@@ -207,7 +207,6 @@ constexpr bool ExistsPutToV{ExistsPutTo<T>::value};
 // @@@ sample begin 5:0
 
 namespace Nstd {
-
 template <typename T, typename = void>  // ValueTypeのプライマリ
 struct ValueType {
     using type_direct = void;
@@ -221,86 +220,35 @@ struct ValueType {
     using type = type_n<Nest>;
 };
 
-namespace Inner_ {
-
-#if 0  // C++17スタイル
 template <typename T, size_t N>
-struct conditional_value_type_n {
-    using type = typename std::conditional_t<
-        ValueType<T>::Nest != 0,
-        typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
-};
+struct ValueType<T[N]> {  // 配列型の特殊化
+    using type_direct = T;
 
-template <typename T>
-struct conditional_value_type_n<T, 0> {
-    using type = T;
-};
-#else  // C++20スタイル
-
-template <typename T>
-concept NonZeroNest = ValueType<T>::Nest != 0;
-
-template <NonZeroNest T, size_t N>
-struct conditional_value_type_n {
-    using type = typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>;
-};
-
-template <typename T>  // コンセプトの効果でSFINAEの回避
-struct conditional_value_type_n<T, 0> {
-    using type = T;
-};
-#endif
-
-// エイリアステンプレート
-template <typename T, size_t N>
-using ConditionalValueTypeT_n = typename conditional_value_type_n<T, N>::type;
-
-template <typename T, typename = void>
-struct array_or_container : std::false_type {
-};
-
-template <Array T>
-struct array_or_container<T> : std::true_type {
-    using type = typename std::remove_extent_t<T>;
-};
-
-template <Container T>
-struct array_or_container<T> : std::true_type {
-    using type = typename T::value_type;
-};
-
-template <typename T>
-constexpr bool array_or_container_v{array_or_container<T>::value};
-
-template <typename T>
-concept ArrayOrContainer = array_or_container_v<T>;
-}  // namespace Inner_
-
-#if 0  // C++17スタイル
-template <typename T>       // ValueTypeの特殊化
-struct ValueType<T, typename std::enable_if_t<Inner_::array_or_container_v<T>>> {
-#else  // C++20スタイル
-template <Inner_::ArrayOrContainer T>  // ValueTypeの特殊化
-struct ValueType<T> {                  // コンセプトによるSFINAEの回避
-#endif
-
-// clang-format off
-    using type_direct = typename Inner_::array_or_container<T>::type;
-
-    static constexpr bool   IsBuiltinArray{std::is_array_v<T>};
+    static constexpr bool   IsBuiltinArray{true};
     static constexpr size_t Nest{ValueType<type_direct>::Nest + 1};
 
-    template <size_t N>
-    using type_n = typename Inner_::conditional_value_type_n<T, N>::type;
+    template <size_t M>
+    using type_n = std::conditional_t<M == 0, T[N], typename ValueType<T>::template type_n<M - 1>>;
 
     using type = type_n<Nest>;
-// clang-format on
+};
+
+template <Container T>  // ValueTypeの特殊化
+struct ValueType<T> {   // コンセプトによるSFINAEの回避
+    using type_direct = typename T::value_type;
+
+    static constexpr bool   IsBuiltinArray{false};
+    static constexpr size_t Nest{ValueType<type_direct>::Nest + 1};
+
+    // clang-format off
+    template <size_t N>
+    using type_n = std::conditional_t<N == 0, T, typename ValueType<typename T::value_type>::template type_n<N - 1>>;
+    // clang-format on
+
+    using type = type_n<Nest>;
 };
 
 template <typename T>
 using ValueTypeT = typename ValueType<T>::type;
-
-template <typename T, size_t N>
-using ValueTypeT_n = typename ValueType<T>::template type_n<N>;
 }  // namespace Nstd
 // @@@ sample end

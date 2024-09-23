@@ -8508,17 +8508,21 @@ Nstdライブラリの開発には関数の存在の診断が欠かせない。
 |メタ関数名                            |メタ関数の目的                                                     |
 |--------------------------------------|-------------------------------------------------------------------|
 |[exists_begin/exsits_end](#SS_4_3_5_5)        |SFINAEを使用したstd::begin(T)/std::end(T)が存在するか否かの診断    |
+|[Array](#SS_4_3_5_7)                          |型が配列である制約を行うためのコンセプト                           |
+|[Beginable/Endable](#SS_4_3_5_8)              |[コンセプト](#SS_6_4_8)を使用したexists_begin/exsits_endを単純化した例   |
 |[IsRange](#SS_4_3_5_6)                        |exists_begin/exsits_endを使し、範囲forのオペランドになれるか?の判断|
-|[Ranged](#SS_4_3_5_7)                         |機能はIsRangeと同一だが、[コンセプト](#SS_6_4_8)を使用しSFINAEの回避     |
+|[Ranged](#SS_4_3_5_9)                         |機能はIsRangeと同一だが、[コンセプト](#SS_6_4_8)を使用しSFINAEの回避     |
+|[Container](#SS_4_3_5_10)                      |Ranged且つ!Arrayをコンテナと便宜的に決めつける                     |
 
 * テンプレートパラメータにoperator<<(put toと発音する)ができるかどうかの診断について、
   次の表のように実装を示す。
 
 |メタ関数名                            |メタ関数の目的                                         |
 |--------------------------------------|-------------------------------------------------------|
-|[exists_put_to_as_member](#SS_4_3_5_8)        |std::ostream::operator<<(T)が存在するか否かの診断      |
-|[exists_put_to_as_non_member](#SS_4_3_5_9)    |operator<<(std::ostream&, T)が存在するか否かの診断     |
-|[ExistsPutTo](#SS_4_3_5_10)                    |std::ostream& << Tができるかどうかの診断               |
+|[exists_put_to_as_member](#SS_4_3_5_11)        |std::ostream::operator<<(T)が存在するか否かの診断      |
+|[exists_put_to_as_non_member](#SS_4_3_5_12)    |operator<<(std::ostream&, T)が存在するか否かの診断     |
+|[ExistsPutTo](#SS_4_3_5_13)                    |std::ostream& << Tができるかどうかの診断               |
+|[Printable](#SS_4_3_5_14)                      |std::ostream& << Tができるかどうか制約コンセプト       |
 
 * テンプレートパラメータがT[N]やC\<T>の形式である時のTに、
   operator<<が適用できるかの診断については、Tの型を取り出す必要がある。
@@ -8708,9 +8712,7 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
     template <typename T>  // C++20スタイル。concept/requiresによるSFINAEの回避
     concept exists_void_func_concept = requires(T& t)
     {
-        {
-            t.func()
-            } -> std::same_as<void>;
+        { t.func() } -> std::same_as<void>;
     };
 ```
 ```cpp
@@ -8863,7 +8865,6 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
     static_assert(exists_end_v<int[3]>);
 ```
 
-
 #### IsRange <a id="SS_4_3_5_6"></a>
 [範囲for文](https://cpprefjp.github.io/lang/cpp11/range_based_for.html)
 文の":"の後ろにT型オブジェクトが指定できる要件は、
@@ -8902,53 +8903,125 @@ IsRangeの実装は以下のようになる。
 ```
 
 
-#### Ranged <a id="SS_4_3_5_7"></a>
-Rangedの機能はIsRangedと同一であるが、下記のようにSFINAEの回避したため、
-コードの可読性はIsRangedに比べ改善している。
+#### Array <a id="SS_4_3_5_7"></a>
+
+以降の節で使用するため、テンプレートパラメータが配列である制約を下記のように宣言する。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 9
+    // @@@ h/nstd_concepts.h 8
 
     template <typename T>
     concept Array = std::is_array_v<T>;
+```
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp 18
+
+    int  a[3];
+    int* ptr = a;
+    auto v   = std::vector{1, 2, 3};
+
+    static_assert(Array<decltype(a)>);
+
+    static_assert(Array<decltype(a)>);
+    static_assert(!Array<decltype(ptr)>);
+```
+
+#### Beginable/Endable <a id="SS_4_3_5_8"></a>
+コンセプトを使用し、[exists_begin/exsits_end](#SS_4_3_5_5)をリファクタリングした例を以下に示す。
+
+```cpp
+    // @@@ h/nstd_concepts.h 13
 
     template <typename T>
     concept Beginable = Array<T> || requires(T& t)
     {
-        {
-            std::begin(t)
-            } -> std::same_as<typename T::iterator>;
+        { std::begin(t) } -> std::same_as<typename T::iterator>;
     };
 
     template <typename T>
     concept Endable = Array<T> || requires(T& t)
     {
-        {
-            std::end(t)
-            } -> std::same_as<typename T::iterator>;
+        { std::end(t) } -> std::same_as<typename T::iterator>;
     };
-
-    template <typename T>
-    concept Ranged = Beginable<T> && Endable<T>;
 ```
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 58
+    // @@@ example/template/nstd_concepts_ut.cpp 33
 
-        int a{3};
+    int  a[3];
+    int* ptr = a;
+    auto v   = std::vector{1, 2, 3};
 
-        static_assert(Printable<decltype(a)>);
-        static_assert(!Printable<X>);
+    static_assert(Array<decltype(a)>);
 
-        Y                  y;
-        std::ostringstream oss;
-
-        oss << y;
-        ASSERT_EQ("", oss.str());
-
-        static_assert(Printable<decltype(y)>);
+    static_assert(Beginable<decltype(a)>);
+    static_assert(!Beginable<decltype(ptr)>);
+    static_assert(Beginable<decltype(v)>);
 ```
 
-#### exists_put_to_as_member <a id="SS_4_3_5_8"></a>
+
+#### Ranged <a id="SS_4_3_5_9"></a>
+IsRangeと同一の機能を持つコンセプトRangedを以下のように定義する。
+
+```cpp
+    // @@@ h/nstd_concepts.h 37
+
+    template <typename T>
+    concept Container = (Ranged<T> && !Array<T>) || requires
+    {
+        T::value_type;
+    };
+```
+
+単体テストは以下のようになる。
+
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp 52
+
+    static_assert(Ranged<std::string>);
+    static_assert(!Ranged<int>);
+    static_assert(Ranged<int const[3]>);
+    static_assert(Ranged<int[3]>);
+```
+
+すでにみたようにRangedは[exists_begin/exsits_end](#SS_4_3_5_5)の醜いコードを使用しないことで、
+Rangedの可読性はIsRangedに比べ格段に改善している。
+
+#### Container <a id="SS_4_3_5_10"></a>
+与えられた型をコンテナに制約するためのコンセプトを下記のように便宜的に宣言する。
+
+```cpp
+    // @@@ h/nstd_concepts.h 37
+
+    template <typename T>
+    concept Container = (Ranged<T> && !Array<T>) || requires
+    {
+        T::value_type;
+    };
+```
+
+単体テストには少々の工夫が必要になる。
+
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp 61
+
+    struct X {
+        std::vector<int> data{1, 2, 3, 4, 5};
+
+        auto begin() { return data.begin(); }  // std::begin
+        auto end() { return data.end(); }      // std::end
+    };
+
+    // @@@ example/template/nstd_concepts_ut.cpp 73
+
+    static_assert(Container<std::string>);
+    static_assert(!Container<int>);
+    static_assert(!Container<int const[3]>);
+
+    static_assert(!Ranged<X>);  // begin/endがあるが、value_typeをもっていない
+
+```
+
+#### exists_put_to_as_member <a id="SS_4_3_5_11"></a>
 std::ostreamのメンバ関数operator<<の戻り型はstd::ostream&であるため、
 exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put to"と発音する)。
 
@@ -9021,7 +9094,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 が定義されているため、配列がポインタに変換されてこのメンバ関数にバインドした結果である。
 
 
-#### exists_put_to_as_non_member <a id="SS_4_3_5_9"></a>
+#### exists_put_to_as_non_member <a id="SS_4_3_5_12"></a>
 exists_put_to_as_non_memberの実装は以下のようになる。
 
 ```cpp
@@ -9040,11 +9113,11 @@ exists_put_to_as_non_memberの実装は以下のようになる。
     constexpr bool exists_put_to_as_non_member_v{exists_put_to_as_non_member<T>::value};
 ```
 
-「[exists_begin/exsits_end](#SS_4_3_5_5)や[exists_put_to_as_member](#SS_4_3_5_8)の実装」
+「[exists_begin/exsits_end](#SS_4_3_5_5)や[exists_put_to_as_member](#SS_4_3_5_11)の実装」
 で使用したパターンを混合しただけなので解説や単体テストは省略する。
 
 
-#### ExistsPutTo <a id="SS_4_3_5_10"></a>
+#### ExistsPutTo <a id="SS_4_3_5_13"></a>
 テンプレートパラメータT、T型オブジェクトtに対して、
 std::ostream << tができるかどうかを判断するExistsPutToの実装は以下のようになる。
 
@@ -9099,7 +9172,45 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
     static_assert(Nstd::ExistsPutToV<test_class_not_exits_put_to[3]>);
 ```
 
-#### ValueTypeの実装 <a id="SS_4_3_5_11"></a>
+#### Printable <a id="SS_4_3_5_14"></a>
+これまでのパターンに従ってPrintableを以下のように作る。
+
+* [SFINAE](#SS_6_4_7)を利用した[ExistsPutTo](#SS_4_3_5_13)は複雑で醜いため、リファクタリングする。
+* リファクタリングに合わせてコンセプト化し、それらしい名称にする。
+
+```cpp
+    // @@@ h/nstd_concepts.h 46
+
+    template <typename T>
+    concept Printable = requires(T t, std::ostream& os)
+    {
+        { os << t } -> std::same_as<std::ostream&>;
+    };
+```
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp 85
+
+    struct X {};  // Non-pritable
+    struct Y {};  // Printable
+
+    std::ostream& operator<<(std::ostream& os, Y)
+    {
+        return os;  // 何もしない
+    }
+
+    // @@@ example/template/nstd_concepts_ut.cpp 98
+
+    static_assert(Printable<bool>);
+    static_assert(Printable<std::string>);
+    static_assert(!Printable<std::vector<int>>);
+    static_assert(Printable<std::vector<int>*>);
+    static_assert(!Printable<X>);
+    static_assert(Printable<Y>);
+```
+
+これ以降は、[ExistsPutTo](#SS_4_3_5_13)ではなくPrintableを使用する。
+
+#### ValueTypeの実装 <a id="SS_4_3_5_15"></a>
 下記で示す通り、
 
 ```cpp
@@ -9124,13 +9235,15 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 * クラステンプレートCとその型パラメータTにより、C\<T>
 * 型Tと定数整数Nにより、T[N]
 
-のような場合、ExistsPutToV\<X>がtrueであっても、ExistsPutToV\<T>の真偽はわからない。
-従って上記のようなTに対して、ExistsPutToV\<T>がtrueかどうかを診断するためには、
+のような場合、Printable\<X>がtrueであっても、Printable\<T>の真偽はわからない。
+従って上記のようなTに対して、Printable\<T>がtrueかどうかを診断するためには、
 XからTを導出することが必要になる。ここでは、そのようなメタ関数ValueTypeの実装を考える。
 このValueTypeは上記のX、Tに対して、
 
 ```cpp
-    std::is_same<ValueType<X>::type, T>::value == true
+    static_assert(std::is_same<ValueType<X>::type, T>);
+    // もしくは、
+    static_assert(std::is_same<ValueType<X, T>);
 ```
 
 となるような機能を持たなければならないことは明らかだろう。
@@ -9145,24 +9258,17 @@ XからTを導出することが必要になる。ここでは、そのような
 その次元を一つだけ除去するメタ関数である)。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 16
+    // @@@ example/template/value_type_ut.cpp 18
 
     template <typename T, typename = void>
     struct ValueType {
         using type = void;
     };
 
-    #if 0  // C++17
-    template <typename T>
-    struct ValueType<T, typename std::enable_if_t<std::is_array_v<T>>> {
-        using type = typename std::remove_extent_t<T>;
+    template <typename T, size_t N>
+    struct ValueType<T[N]> {  // 配列型の特殊化
+        using type = T;
     };
-    #else  // C++20
-    template <Array T>  // 制約によりSFINAEの回避
-    struct ValueType<T> {
-        using type = typename std::remove_extent_t<T>;
-    };
-    #endif
 
     template <typename T>
     using ValueTypeT = typename ValueType<T>::type;
@@ -9171,35 +9277,32 @@ XからTを導出することが必要になる。ここでは、そのような
 このコードは問題なく動作するが、下記の通り、2次元配列に対するValueType::typeは1次元配列となる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 41
+    // @@@ example/template/value_type_ut.cpp 36
 
     static_assert(std::is_same_v<int, ValueTypeT<int[1]>>);
     static_assert(std::is_same_v<void, ValueTypeT<int>>);
     static_assert(std::is_same_v<int[2], ValueTypeT<int[1][2]>>);
 ```
 
-これを多次元配列に拡張する前に、配列の次元をValueType::Nestで返す機能を追加することにすると、
+これを多次元配列に拡張する前に、配列の次元をで返すValueType::Nestや、extent、type_directを追加することにすると、
 コードは下記のようになるだろう。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 54
+    // @@@ example/template/value_type_ut.cpp 49
 
     template <typename T, typename = void>
     struct ValueType {
-        using type = void;
+        using type        = void;
+        using type_direct = T;
         static constexpr size_t Nest{0};
     };
 
-    #if 0
-    template <typename T>
-    struct ValueType<T, typename std::enable_if_t<std::is_array_v<T>>> {
-    #else  // C++20
-    template <Array T>  // 制約によりSFINAEの回避
-    struct ValueType<T> {
-    #endif
-    using type = typename std::remove_extent_t<T>;
-
-    static constexpr size_t Nest{ValueType<type>::Nest + 1};
+    template <typename T, size_t N>
+    struct ValueType<T[N]> {  // 配列型の特殊化
+        using type                     = T;
+        using type_direct              = T;  // T = S[N]の場合、Tを保存
+        static constexpr size_t extent = N;  // T = S[N]の場合、Nを保存
+        static constexpr size_t Nest{ValueType<type>::Nest + 1};
     };
 
     template <typename T>
@@ -9209,11 +9312,13 @@ XからTを導出することが必要になる。ここでは、そのような
 動作は下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 84
+    // @@@ example/template/value_type_ut.cpp 76
 
     static_assert(0 == ValueType<int>::Nest);
     static_assert(1 == ValueType<int[1]>::Nest);
     static_assert(2 == ValueType<int[1][2]>::Nest);
+    static_assert(1 == ValueType<int[1]>::extent);
+    static_assert(1 == ValueType<int[1][2]>::extent);  // int[1][2] == (int[1])[2]
 ```
 
 ここで、下記のような仕様をもつValueType::type_n\<N>を考える。
@@ -9225,19 +9330,21 @@ XからTを導出することが必要になる。ここでは、そのような
     ValueType<int[1][2][3]>::type_n<3>が表す型は、int
 ```
 
-ValueType::type_n\<N>は玉ねぎの皮を一枚ずつむくようなメンバエイリアステンプレートになる。
+ValueType::type_n\<N>は玉ねぎの皮を一枚ずつむくようなメンバテンプレートになる。
 プライマリの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 99
+    // @@@ example/template/value_type_ut.cpp 91
 
     template <typename T>
     struct ValueType {
-        using type = void;
-        static constexpr size_t Nest{0};
+        using type                     = T;
+        using type_direct              = T;
+        static constexpr size_t extent = 0;
+        static constexpr size_t Nest   = 0;
 
         template <size_t N>
-        using type_n = typename std::conditional_t<N == 0, T, void>;
+        using type_n = std::conditional_t<N == 0, T, void>;  // Nが0のときはT、それ以外はvoidを返す
     };
 ```
 
@@ -9246,247 +9353,183 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
 配列に対する特殊化は以下のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 110
+    // @@@ example/template/value_type_ut.cpp 104
 
-    template <Array T>  // 配列に対する特殊化
-    struct ValueType<T> {
-        using type = typename std::remove_extent_t<T>;
-        static constexpr size_t Nest{ValueType<type>::Nest + 1};
+    template <typename T, size_t N>  // Array Tを使わずに配列の一般的な表現を使用してNを取り出す
+    struct ValueType<T[N]> {  // 配列型の特殊化
+        using type                     = typename ValueType<T>::type;
+        using type_direct              = T;
+        static constexpr size_t extent = N;
+        static constexpr size_t Nest   = ValueType<T>::Nest + 1;
 
-        template <size_t N>
-        using type_n =
-            typename std::conditional_t<N != 0, typename ValueType<type>::template type_n<N - 1>, T>;
-    };
-
-    // Nのインデックスに応じた型を取得するための構造体
-    template <typename T, size_t N>
-    struct ConditionalValueTypeN {
-        using type = typename ValueType<T>::template type_n<N>;
-    };
-
-    // 0のケースに対する特殊化（型がそのまま返される）
-    template <typename T>
-    struct ConditionalValueTypeN<T, 0> {
-        using type = T;
+        template <size_t M>
+        using type_n = std::conditional_t<M == 0, T[N], typename ValueType<T>::template type_n<M - 1>>;
     };
 ```
 
-下記コードのコンパイル時の展開を説明することで、上記の解説を行う。
+Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しいので、
+読者の理解を確かめるため、以下のように順を追って一枚づつ配列の階層を剝ぎ取る様子を見ていく。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 138
+    // @@@ example/template/value_type_ut.cpp 126
 
-    using T = ValueTypeT_n<int[1][2][3], 3>;
-```
+    // ValueType<int[1][2][3]>の展開について、考えよう。
 
-1. ValueTypeのテンプレートパラメータが配列であるため、配列への特殊化であるValueTypeが選択され、
-   下記の疑似コードのように展開される。
+    // int[1][2][3]は == (int[2][3])[1]であるため、下記の式が成立する
+    static_assert(std::is_same_v<ValueType<int[1][2][3]>::type_direct, int[2][3]>);
+    static_assert(ValueType<int[1][2][3]>::extent == 1);
 
-```cpp
-    ValueType<int[1][2][3], void> {
-        using type = int[2][3];
-        static constexpr size_t Nest = ...
-        using type_n = ConditionalValueTypeN<int[1][2][3], 3>::type;
-    };
-```
+    // type_n<M>の仕様は、Mが1の時、配列から1階層を1枚剥ぎ取ることである
+    using T1 = ValueType<int[1][2][3]>::type_n<1>;  // 長い式は可読性が劣化するからT1を宣言
 
-2. ConditionalValueTypeNは下記のように展開される。
-   なお、下記のコードの中のtype_n前で使われているキーワードtemplateは、
-   「外部のクラステンプレートのメンバテンプレートにアクセスする」際に必要になる記法である。
+    // int[2][3] == (int[3])[2]であるため、下記の式が成立する
+    static_assert(std::is_same_v<T1, int[2][3]>);
+    static_assert(ValueType<T1>::extent == 2);
 
-```cpp
-    struct ConditionalValueTypeN<int[1][2][3], 3> {
-        using type = typename std::conditional<
-            true,   // ValueType<int[1][2][3]>::Nest == 3であるためtrue
-            ValueType<ValueType<int[1][2][3]>::type>::template type_n<3 - 1>,
-            int[1][2][3]>::type;
-    };
-```
+    // 上記T1と同様にT2を宣言する
+    using T2 = ValueType<T1>::type_n<1>;
 
-3.  ValueType\<int\[1]\[2]\[3]>::typeは一枚皮をむいたint\[2]\[3]なので、
-    上記はさらに下記のように展開される。
+    // int[2][3] == (int[3])[2]であるため、下記の式が成立する
+    static_assert(std::is_same_v<T2, int[3]>);
+    static_assert(ValueType<T2>::extent == 3);
 
-```cpp
-    struct ConditionalValueTypeN<int[1][2][3], 3> {
-        using type = ValueType<int[2][3]>::template type_n<2>;
-    };
-```
+    // 上記T1、T2と同様にT3を宣言する
+    using T3 = ValueType<T2>::type_n<1>;
 
-4. ConditionalValueTypeN\<int\[1]\[2]\[3], 3>::typeを展開するため、
-   ValueType\<int\[2]\[3]>::template type_n<2>の展開が上記1 - 3のように繰り返される。
-   この繰り返しはN == 0になるまで続く。
-
-5. 3回の皮むきによりN == 0となる。
-   この時点で、下記の特殊化が選択されるため再帰は終了し、ConditionalValueTypeN<>::typeはintとなる。
-
-```cpp
-    struct ConditionalValueTypeN<int, 0> {
-        using type = int;
-    };
-```
-
-6. 1 - 5により最終的には下記のように展開される。
-
-```cpp
-    ValueType<int[1][2][3]> {
-        using type = int[2][3];
-        static constexpr size_t Nest = 3;
-        using type_n = int;
-    };
+    static_assert(std::is_same_v<T3, int>);
+    static_assert(ValueType<T3>::extent == 0);
 ```
 
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 146
+    // @@@ example/template/value_type_ut.cpp 155
 
     using T = int[1][2][3];
 
-    static_assert(ValueType<T>::Nest == 3);
-    static_assert(std::is_same_v<int[1][2][3], ValueTypeT_n<T, 0>>);
-    static_assert(std::is_same_v<int[2][3], ValueTypeT_n<T, 1>>);
-    static_assert(std::is_same_v<int[3], ValueTypeT_n<T, 2>>);
-    static_assert(std::is_same_v<int, ValueTypeT_n<T, 3>>);
-    static_assert(std::is_same_v<void, ValueTypeT_n<T, 4>>);
-    static_assert(std::is_same_v<void, ValueTypeT_n<T, 5>>);
+    static_assert(std::is_same_v<int[1][2][3], ValueType<T>::type_n<0>>);  // 0枚剝く
+    static_assert(std::is_same_v<int[2][3], ValueType<T>::type_n<1>>);     // 1枚剝く
+    static_assert(std::is_same_v<int[3], ValueType<T>::type_n<2>>);        // 2枚剝く
+    static_assert(std::is_same_v<int, ValueType<T>::type_n<3>>);           // 3枚剝く
+    static_assert(std::is_same_v<void, ValueType<T>::type_n<4>>);          // 全部剝く
 ```
 
 また、ValueType::NestとValueType::type_n<>の関係に注目すれば、
 上記エイリアスTに対して下記が成立する。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 158
+    // @@@ example/template/value_type_ut.cpp 178
 
+    using T = ValueTypeT_n<int[1][2][3], 3>;
+
+    static_assert(std::is_same_v<int, T>);
     static_assert(std::is_same_v<int, ValueTypeT_n<T, ValueType<T>::Nest>>);
 ```
 
 
 このテンプレートにコンテナが渡された時の特殊化を与えることができればValueTypeは完成するが、
-その前に名前の整理をした方が良いため、下記のような変更を行う。
-
-* この例では、typeは配列が直接保持する型を表すが、
-  この名前は慣例的にメタ関数の戻り型を表すことが多いため、現在の仕様では混乱を招く。
-  また名は体を表す方が良いため、typeを改めtype_directとする。
-* ValueTypeの結果は、上記のようにNestとtype_nの組み合わせで得られるが、このままでは使い勝手が悪い。
-  慣例に従いこれをtypeとする。
-* ConditionalValueTypeNは実装の詳細であるため外部から使われたくない。
-  これまで通り、名前空間Inner\_で定義し、名前を小文字と\_で生成する。
+こういったタイミングで、リファクタリングを行い名前の整理や不要になったコードを削除することは良い習慣である。
 
 これによりValueTypeは下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 192
+    // @@@ example/template/value_type_ut.cpp 240
 
-    template <typename T, typename = void>
-    struct ValueType {
-        using type_direct = void;
-
-        static constexpr size_t Nest{0};
+    template <typename T>
+    struct ValueType {  // プライマリ
+        using type                   = T;
+        static constexpr size_t Nest = 0;
 
         template <size_t N>
-        using type_n = typename std::conditional_t<N == 0, T, void>;
-
-        using type = type_n<Nest>;
+        using type_n = std::conditional_t<N == 0, T, void>;
     };
-
-    namespace Inner_ {
 
     template <typename T, size_t N>
-    struct conditional_value_type_n {
-        using type = typename std::conditional_t<
-            ValueType<T>::Nest != 0,
-            typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
+    struct ValueType<T[N]> {  // 配列型の特殊化
+        using type                   = typename ValueType<T>::type;
+        static constexpr size_t Nest = ValueType<T>::Nest + 1;
+
+        template <size_t M>
+        using type_n = std::conditional_t<M == 0, T[N], typename ValueType<T>::template type_n<M - 1>>;
     };
-
-    template <typename T>
-    struct conditional_value_type_n<T, 0> {
-        using type = T;
-    };
-    }  // namespace Inner_
-
-    template <typename T>
-    struct ValueType<T, typename std::enable_if_t<std::is_array_v<T>>> {
-        using type_direct = typename std::remove_extent_t<T>;
-
-        static constexpr size_t Nest{ValueType<type_direct>::Nest + 1};
-
-        template <size_t N>
-        using type_n = typename Inner_::conditional_value_type_n<T, N>::type;
-
-        using type = type_n<Nest>;
-    };
-
-    template <typename T>
-    using ValueTypeT = typename ValueType<T>::type;
-
-    template <typename T, size_t N>
-    using ValueTypeT_n = typename ValueType<T>::template type_n<N>;
 ```
 
 準備は整ったので上記のValueTypeに下記のようなコンテナ用特殊化を追加する。
+この特殊化のテンプレートパラメータの制約にはすでに開発したコンセプト[Container](#SS_4_3_5_10)を使用する。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 286
+    // @@@ example/template/value_type_ut.cpp 261
 
-    namespace Inner_ {
-
-    // Tが配列でなく、且つIsRrangeV<T>が真ならばコンテナと診断する
-    template <typename T>
-    constexpr bool is_container_v{Nstd::IsRangeV<T> && !std::is_array_v<T>};
-    }  // namespace Inner_
-
-    template <typename T>
-    struct ValueType<T, typename std::enable_if_t<Inner_::is_container_v<T>>> {
-        using type_direct = typename T::value_type;
-
-        static constexpr size_t Nest{ValueType<type_direct>::Nest + 1};
+    template <Container T>
+    struct ValueType<T> {  // コンテナ型の特殊化
+        using type                   = typename ValueType<typename T::value_type>::type;
+        static constexpr size_t Nest = ValueType<typename T::value_type>::Nest + 1;
 
         template <size_t N>
-        using type_n = typename Inner_::conditional_value_type_n<T, N>::type;
-
-        using type = type_n<Nest>;
+        using type_n = std::conditional_t<N == 0, T, typename ValueType<typename T::value_type>::template type_n<N - 1>>;
     };
-
-    template <typename T>
-    using ValueTypeT = typename ValueType<T>::type;
-
-    template <typename T, size_t N>
-    using ValueTypeT_n = typename ValueType<T>::template type_n<N>;
 ```
 
-単体テストは下記のようになる。
+まずは、追加した特殊化の機能を下記のように単体テストを行う。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 317
+    // @@@ example/template/value_type_ut.cpp 278
 
-    using T = std::vector<std::list<int*>[3]>;
+    using T = int[1][2][3];
 
-    static_assert(std::is_same_v<int*, ValueTypeT<T>>);
-
-    static_assert(std::is_same_v<T, ValueTypeT_n<T, 0>>);
-    static_assert(std::is_same_v<std::list<int*>[3], ValueTypeT_n<T, 1>>);
-    static_assert(std::is_same_v<std::list<int*>, ValueTypeT_n<T, 2>>);
-    static_assert(std::is_same_v<int*, ValueTypeT_n<T, 3>>);
-    static_assert(std::is_same_v<void, ValueTypeT_n<T, 4>>);
+    // コンテナ特殊化以外の機能チェック
+    static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+    static_assert(std::is_same_v<int[2][3], ValueType<T>::type_n<1>>);
+    static_assert(std::is_same_v<int[3], ValueType<T>::type_n<2>>);
+    static_assert(std::is_same_v<int, ValueType<T>::type_n<3>>);
+    static_assert(std::is_same_v<int, ValueType<T>::type>);
 ```
 
-最初のValueTypeには、その単純さとは不釣り合いな、やや複雑なSFINAE用のコードを記述をしたが、
-ここまで来ればその理由は明らかだろう。
-今回のように限定的な機能を作ってから、一般化して行く開発スタイルでも、
-静的ディスパッチにはSFINAE等の汎用的手法を使った方が後の修正が少なく済むことが多い。
-一方で、完成時にその静的ディスパッチが不要に複雑であると気づいた場合は、
-リファクタリングを行い、コードを程よいレベルに留めなければならないことは言うまでもない。
+次に特殊化がデグレードを起こしていないことを下記のように証明する。
 
-ValueTypeの開発はまだ終わらない。静的ディスパッチは最初のカンが当り修正の必要はないと思うが、
-「配列用特殊化とコンテナ用特殊化のほとんどがコードクローンになっている」という問題がある。
-この程度のクローンは問題のないレベルであるとも言えるが、演習のため修正する。
-また、合わせてTが配列かどうかを示すための定数IsBuiltinArrayも追加すると下記のようなコードになる。
+```cpp
+    // @@@ example/template/value_type_ut.cpp 291
+
+    // コンテナ特殊化の機能の機能チェック
+    using T = std::vector<std::vector<std::vector<int>>>;
+
+    static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+    static_assert(std::is_same_v<int, ValueType<T>::type_n<3>>);
+    static_assert(ValueType<T>::Nest == 3);
+    static_assert(std::is_same_v<int, ValueType<T>::type>);
+```
+
+ValueTypeの最終的な単体テストのために上記を統合したテストを行う。
+
+```cpp
+    // @@@ example/template/value_type_ut.cpp 303
+
+    // 統合した機能チェック
+    using T = std::vector<int[1][2][3]>;
+
+    static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+    static_assert(std::is_same_v<int[1][2][3], ValueType<T>::type_n<1>>);
+    static_assert(std::is_same_v<int[2][3], ValueType<T>::type_n<2>>);
+    static_assert(std::is_same_v<int[3], ValueType<T>::type_n<3>>);
+    static_assert(std::is_same_v<int, ValueType<T>::type_n<4>>);
+    static_assert(std::is_same_v<int, ValueType<T>::type>);
+    static_assert(ValueType<T>::Nest == 4);
+
+    using L = std::list<T>;
+
+    static_assert(std::is_same_v<T, ValueType<L>::type_n<1>>);
+    static_assert(std::is_same_v<int[1][2][3], ValueType<L>::type_n<2>>);
+    static_assert(std::is_same_v<int, ValueType<T>::type>);
+    static_assert(ValueType<L>::Nest == 5);
+```
+
+以上でValueTypeは完成したが、これ以降のこのドキュメントの前準備として、
+多少のメンバの追加や調整をした最終のコードを以下に示す。
 
 ```cpp
     // @@@ example/template/nstd_type_traits.h 207
 
     namespace Nstd {
-
     template <typename T, typename = void>  // ValueTypeのプライマリ
     struct ValueType {
         using type_direct = void;
@@ -9500,85 +9543,34 @@ ValueTypeの開発はまだ終わらない。静的ディスパッチは最初�
         using type = type_n<Nest>;
     };
 
-    namespace Inner_ {
-
-    #if 0  // C++17スタイル
     template <typename T, size_t N>
-    struct conditional_value_type_n {
-        using type = typename std::conditional_t<
-            ValueType<T>::Nest != 0,
-            typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
+    struct ValueType<T[N]> {  // 配列型の特殊化
+        using type_direct = T;
+
+        static constexpr bool   IsBuiltinArray{true};
+        static constexpr size_t Nest{ValueType<type_direct>::Nest + 1};
+
+        template <size_t M>
+        using type_n = std::conditional_t<M == 0, T[N], typename ValueType<T>::template type_n<M - 1>>;
+
+        using type = type_n<Nest>;
     };
 
-    template <typename T>
-    struct conditional_value_type_n<T, 0> {
-        using type = T;
-    };
-    #else  // C++20スタイル
+    template <Container T>  // ValueTypeの特殊化
+    struct ValueType<T> {   // コンセプトによるSFINAEの回避
+        using type_direct = typename T::value_type;
 
-    template <typename T>
-    concept NonZeroNest = ValueType<T>::Nest != 0;
-
-    template <NonZeroNest T, size_t N>
-    struct conditional_value_type_n {
-        using type = typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>;
-    };
-
-    template <typename T>  // コンセプトの効果でSFINAEの回避
-    struct conditional_value_type_n<T, 0> {
-        using type = T;
-    };
-    #endif
-
-    // エイリアステンプレート
-    template <typename T, size_t N>
-    using ConditionalValueTypeT_n = typename conditional_value_type_n<T, N>::type;
-
-    template <typename T, typename = void>
-    struct array_or_container : std::false_type {
-    };
-
-    template <Array T>
-    struct array_or_container<T> : std::true_type {
-        using type = typename std::remove_extent_t<T>;
-    };
-
-    template <Container T>
-    struct array_or_container<T> : std::true_type {
-        using type = typename T::value_type;
-    };
-
-    template <typename T>
-    constexpr bool array_or_container_v{array_or_container<T>::value};
-
-    template <typename T>
-    concept ArrayOrContainer = array_or_container_v<T>;
-    }  // namespace Inner_
-
-    #if 0  // C++17スタイル
-    template <typename T>       // ValueTypeの特殊化
-    struct ValueType<T, typename std::enable_if_t<Inner_::array_or_container_v<T>>> {
-    #else  // C++20スタイル
-    template <Inner_::ArrayOrContainer T>  // ValueTypeの特殊化
-    struct ValueType<T> {                  // コンセプトによるSFINAEの回避
-    #endif
-
-        using type_direct = typename Inner_::array_or_container<T>::type;
-
-        static constexpr bool   IsBuiltinArray{std::is_array_v<T>};
+        static constexpr bool   IsBuiltinArray{false};
         static constexpr size_t Nest{ValueType<type_direct>::Nest + 1};
 
         template <size_t N>
-        using type_n = typename Inner_::conditional_value_type_n<T, N>::type;
+        using type_n = std::conditional_t<N == 0, T, typename ValueType<typename T::value_type>::template type_n<N - 1>>;
 
         using type = type_n<Nest>;
     };
 
     template <typename T>
     using ValueTypeT = typename ValueType<T>::type;
-
-    template <typename T, size_t N>
-    using ValueTypeT_n = typename ValueType<T>::template type_n<N>;
     }  // namespace Nstd
 ```
 

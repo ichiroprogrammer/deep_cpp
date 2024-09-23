@@ -1617,8 +1617,11 @@ Nstdライブラリの開発には関数の存在の診断が欠かせない。
 |メタ関数名                            |メタ関数の目的                                                     |
 |--------------------------------------|-------------------------------------------------------------------|
 |[exists_begin/exsits_end](---)        |SFINAEを使用したstd::begin(T)/std::end(T)が存在するか否かの診断    |
+|[Array](---)                          |型が配列である制約を行うためのコンセプト                           |
+|[Beginable/Endable](---)              |[コンセプト](---)を使用したexists_begin/exsits_endを単純化した例   |
 |[IsRange](---)                        |exists_begin/exsits_endを使し、範囲forのオペランドになれるか?の判断|
 |[Ranged](---)                         |機能はIsRangeと同一だが、[コンセプト](---)を使用しSFINAEの回避     |
+|[Container](---)                      |Ranged且つ!Arrayをコンテナと便宜的に決めつける                     |
 
 * テンプレートパラメータにoperator<<(put toと発音する)ができるかどうかの診断について、
   次の表のように実装を示す。
@@ -1628,6 +1631,7 @@ Nstdライブラリの開発には関数の存在の診断が欠かせない。
 |[exists_put_to_as_member](---)        |std::ostream::operator<<(T)が存在するか否かの診断      |
 |[exists_put_to_as_non_member](---)    |operator<<(std::ostream&, T)が存在するか否かの診断     |
 |[ExistsPutTo](---)                    |std::ostream& << Tができるかどうかの診断               |
+|[Printable](---)                      |std::ostream& << Tができるかどうか制約コンセプト       |
 
 * テンプレートパラメータがT[N]やC\<T>の形式である時のTに、
   operator<<が適用できるかの診断については、Tの型を取り出す必要がある。
@@ -1803,7 +1807,6 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
     // @@@ example/template/nstd_type_traits_ut.cpp #3:0 begin -1
 ```
 
-
 #### IsRange
 [範囲for文](https://cpprefjp.github.io/lang/cpp11/range_based_for.html)
 文の":"の後ろにT型オブジェクトが指定できる要件は、
@@ -1830,15 +1833,57 @@ IsRangeの実装は以下のようになる。
 
 [演習-範囲for文のオペランドになれるかどうかの診断](~~~)
 
-#### Ranged
-Rangedの機能はIsRangedと同一であるが、下記のようにSFINAEの回避したため、
-コードの可読性はIsRangedに比べ改善している。
+#### Array
+
+以降の節で使用するため、テンプレートパラメータが配列である制約を下記のように宣言する。
 
 ```cpp
     // @@@ h/nstd_concepts.h #0:0 begin
 ```
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp #0:0 begin
+    // @@@ example/template/nstd_concepts_ut.cpp #0:0 begin -1
+```
+
+#### Beginable/Endable
+コンセプトを使用し、[exists_begin/exsits_end](---)をリファクタリングした例を以下に示す。
+
+```cpp
+    // @@@ h/nstd_concepts.h #0:1 begin
+```
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp #0:1 begin -1
+```
+
+
+#### Ranged
+IsRangeと同一の機能を持つコンセプトRangedを以下のように定義する。
+
+```cpp
+    // @@@ h/nstd_concepts.h #1:0 begin
+```
+
+単体テストは以下のようになる。
+
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp #0:2 begin -1
+```
+
+すでにみたようにRangedは[exists_begin/exsits_end](---)の醜いコードを使用しないことで、
+Rangedの可読性はIsRangedに比べ格段に改善している。
+
+#### Container
+与えられた型をコンテナに制約するためのコンセプトを下記のように便宜的に宣言する。
+
+```cpp
+    // @@@ h/nstd_concepts.h #1:0 begin
+```
+
+単体テストには少々の工夫が必要になる。
+
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp #0:3 begin
+
+    // @@@ example/template/nstd_concepts_ut.cpp #0:4 begin -1
 ```
 
 #### exists_put_to_as_member
@@ -1910,6 +1955,23 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
     // @@@ example/template/nstd_type_traits_ut.cpp #5:0 begin -1
 ```
 
+#### Printable
+これまでのパターンに従ってPrintableを以下のように作る。
+
+* [SFINAE](---)を利用した[ExistsPutTo](---)は複雑で醜いため、リファクタリングする。
+* リファクタリングに合わせてコンセプト化し、それらしい名称にする。
+
+```cpp
+    // @@@ h/nstd_concepts.h #2:0 begin
+```
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp #1:0 begin
+
+    // @@@ example/template/nstd_concepts_ut.cpp #1:1 begin -1
+```
+
+これ以降は、[ExistsPutTo](---)ではなくPrintableを使用する。
+
 #### ValueTypeの実装
 下記で示す通り、
 
@@ -1922,13 +1984,15 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 * クラステンプレートCとその型パラメータTにより、C\<T>
 * 型Tと定数整数Nにより、T[N]
 
-のような場合、ExistsPutToV\<X>がtrueであっても、ExistsPutToV\<T>の真偽はわからない。
-従って上記のようなTに対して、ExistsPutToV\<T>がtrueかどうかを診断するためには、
+のような場合、Printable\<X>がtrueであっても、Printable\<T>の真偽はわからない。
+従って上記のようなTに対して、Printable\<T>がtrueかどうかを診断するためには、
 XからTを導出することが必要になる。ここでは、そのようなメタ関数ValueTypeの実装を考える。
 このValueTypeは上記のX、Tに対して、
 
 ```cpp
-    std::is_same<ValueType<X>::type, T>::value == true
+    static_assert(std::is_same<ValueType<X>::type, T>);
+    // もしくは、
+    static_assert(std::is_same<ValueType<X, T>);
 ```
 
 となるような機能を持たなければならないことは明らかだろう。
@@ -1952,7 +2016,7 @@ XからTを導出することが必要になる。ここでは、そのような
     // @@@ example/template/value_type_ut.cpp #0:1 begin -1
 ```
 
-これを多次元配列に拡張する前に、配列の次元をValueType::Nestで返す機能を追加することにすると、
+これを多次元配列に拡張する前に、配列の次元をで返すValueType::Nestや、extent、type_directを追加することにすると、
 コードは下記のようになるだろう。
 
 ```cpp
@@ -1974,7 +2038,7 @@ XからTを導出することが必要になる。ここでは、そのような
     ValueType<int[1][2][3]>::type_n<3>が表す型は、int
 ```
 
-ValueType::type_n\<N>は玉ねぎの皮を一枚ずつむくようなメンバエイリアステンプレートになる。
+ValueType::type_n\<N>は玉ねぎの皮を一枚ずつむくようなメンバテンプレートになる。
 プライマリの実装は以下のようになる。
 
 ```cpp
@@ -1989,92 +2053,29 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
     // @@@ example/template/value_type_ut.cpp #2:1 begin
 ```
 
-下記コードのコンパイル時の展開を説明することで、上記の解説を行う。
+Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しいので、
+読者の理解を確かめるため、以下のように順を追って一枚づつ配列の階層を剝ぎ取る様子を見ていく。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp #2:2 begin -2
-```
-
-1. ValueTypeのテンプレートパラメータが配列であるため、配列への特殊化であるValueTypeが選択され、
-   下記の疑似コードのように展開される。
-
-```cpp
-    ValueType<int[1][2][3], void> {
-        using type = int[2][3];
-        static constexpr size_t Nest = ...
-        using type_n = ConditionalValueTypeN<int[1][2][3], 3>::type;
-    };
-```
-
-2. ConditionalValueTypeNは下記のように展開される。
-   なお、下記のコードの中のtype_n前で使われているキーワードtemplateは、
-   「外部のクラステンプレートのメンバテンプレートにアクセスする」際に必要になる記法である。
-
-```cpp
-    struct ConditionalValueTypeN<int[1][2][3], 3> {
-        using type = typename std::conditional<
-            true,   // ValueType<int[1][2][3]>::Nest == 3であるためtrue
-            ValueType<ValueType<int[1][2][3]>::type>::template type_n<3 - 1>,
-            int[1][2][3]>::type;
-    };
-```
-
-3.  ValueType\<int\[1]\[2]\[3]>::typeは一枚皮をむいたint\[2]\[3]なので、
-    上記はさらに下記のように展開される。
-
-```cpp
-    struct ConditionalValueTypeN<int[1][2][3], 3> {
-        using type = ValueType<int[2][3]>::template type_n<2>;
-    };
-```
-
-4. ConditionalValueTypeN\<int\[1]\[2]\[3], 3>::typeを展開するため、
-   ValueType\<int\[2]\[3]>::template type_n<2>の展開が上記1 - 3のように繰り返される。
-   この繰り返しはN == 0になるまで続く。
-
-5. 3回の皮むきによりN == 0となる。
-   この時点で、下記の特殊化が選択されるため再帰は終了し、ConditionalValueTypeN<>::typeはintとなる。
-
-```cpp
-    struct ConditionalValueTypeN<int, 0> {
-        using type = int;
-    };
-```
-
-6. 1 - 5により最終的には下記のように展開される。
-
-```cpp
-    ValueType<int[1][2][3]> {
-        using type = int[2][3];
-        static constexpr size_t Nest = 3;
-        using type_n = int;
-    };
+    // @@@ example/template/value_type_ut.cpp #2:3 begin -1
 ```
 
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp #2:3 begin -2
+    // @@@ example/template/value_type_ut.cpp #2:4 begin -1
 ```
 
 また、ValueType::NestとValueType::type_n<>の関係に注目すれば、
 上記エイリアスTに対して下記が成立する。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp #2:4 begin -2
+    // @@@ example/template/value_type_ut.cpp #2:5 begin -2
 ```
 
 
 このテンプレートにコンテナが渡された時の特殊化を与えることができればValueTypeは完成するが、
-その前に名前の整理をした方が良いため、下記のような変更を行う。
-
-* この例では、typeは配列が直接保持する型を表すが、
-  この名前は慣例的にメタ関数の戻り型を表すことが多いため、現在の仕様では混乱を招く。
-  また名は体を表す方が良いため、typeを改めtype_directとする。
-* ValueTypeの結果は、上記のようにNestとtype_nの組み合わせで得られるが、このままでは使い勝手が悪い。
-  慣例に従いこれをtypeとする。
-* ConditionalValueTypeNは実装の詳細であるため外部から使われたくない。
-  これまで通り、名前空間Inner\_で定義し、名前を小文字と\_で生成する。
+こういったタイミングで、リファクタリングを行い名前の整理や不要になったコードを削除することは良い習慣である。
 
 これによりValueTypeは下記のようになる。
 
@@ -2083,28 +2084,32 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
 ```
 
 準備は整ったので上記のValueTypeに下記のようなコンテナ用特殊化を追加する。
+この特殊化のテンプレートパラメータの制約にはすでに開発したコンセプト[Container](---)を使用する。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp #4:0 begin
+    // @@@ example/template/value_type_ut.cpp #3:1 begin
 ```
 
-単体テストは下記のようになる。
+まずは、追加した特殊化の機能を下記のように単体テストを行う。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp #4:1 begin -2
+    // @@@ example/template/value_type_ut.cpp #3:2 begin -2
 ```
 
-最初のValueTypeには、その単純さとは不釣り合いな、やや複雑なSFINAE用のコードを記述をしたが、
-ここまで来ればその理由は明らかだろう。
-今回のように限定的な機能を作ってから、一般化して行く開発スタイルでも、
-静的ディスパッチにはSFINAE等の汎用的手法を使った方が後の修正が少なく済むことが多い。
-一方で、完成時にその静的ディスパッチが不要に複雑であると気づいた場合は、
-リファクタリングを行い、コードを程よいレベルに留めなければならないことは言うまでもない。
+次に特殊化がデグレードを起こしていないことを下記のように証明する。
 
-ValueTypeの開発はまだ終わらない。静的ディスパッチは最初のカンが当り修正の必要はないと思うが、
-「配列用特殊化とコンテナ用特殊化のほとんどがコードクローンになっている」という問題がある。
-この程度のクローンは問題のないレベルであるとも言えるが、演習のため修正する。
-また、合わせてTが配列かどうかを示すための定数IsBuiltinArrayも追加すると下記のようなコードになる。
+```cpp
+    // @@@ example/template/value_type_ut.cpp #3:3 begin -2
+```
+
+ValueTypeの最終的な単体テストのために上記を統合したテストを行う。
+
+```cpp
+    // @@@ example/template/value_type_ut.cpp #3:4 begin -2
+```
+
+以上でValueTypeは完成したが、これ以降のこのドキュメントの前準備として、
+多少のメンバの追加や調整をした最終のコードを以下に示す。
 
 ```cpp
     // @@@ example/template/nstd_type_traits.h #5:0 begin
