@@ -111,12 +111,10 @@ TEST(Template, logger_0_X_in_AppX)
 namespace App {
 std::ostream& operator<<(std::ostream& os, Ints_t const& ints)
 {
-    auto first = true;
+    auto sep = "";
 
     for (auto const i : ints) {
-        if (!std::exchange(first, false)) {
-            os << ", ";
-        }
+        os << std::exchange(sep, ", ");
         os << i;
     }
 

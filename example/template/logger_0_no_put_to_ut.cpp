@@ -13,12 +13,10 @@ namespace App {  // App::Ints_tのoperator<<とToStringをApp内で定義
 namespace {      // operator<<は外部から使わない
 std::ostream& operator<<(std::ostream& os, Ints_t const& ints)
 {
-    auto first = true;
+    auto sep = "";
 
-    for (auto const i : ints) {
-        if (!std::exchange(first, false)) {
-            os << ", ";
-        }
+    for (auto const& i : ints) {
+        os << std::exchange(sep, ", ");
         os << i;
     }
 

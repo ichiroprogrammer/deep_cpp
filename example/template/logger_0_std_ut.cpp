@@ -11,14 +11,12 @@
 // @@@ sample begin 0:0
 
 namespace std {  // operator<<の定義をstdで行う
-std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
+ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
 {
-    auto first = true;
+    auto sep = "";
 
-    for (auto const i : ints) {
-        if (!std::exchange(first, false)) {
-            os << ", ";
-        }
+    for (auto const& i : ints) {
+        os << std::exchange(sep, ", ");
         os << i;
     }
 
@@ -31,3 +29,5 @@ std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
 #define INTS_UT_NAME logger_0_Ints_std
 #include "logger_0_ints_ut.h"
 // clang-format on
+// 「operator<<の定義をstdで行う」が文字化けする
+// 「operator<<の定義をstdで行う」が文字化けする

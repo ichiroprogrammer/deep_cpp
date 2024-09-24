@@ -12,12 +12,10 @@
 // グローバル名前空間
 std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
 {
-    auto first = true;
+    auto sep = "";
 
-    for (auto const i : ints) {
-        if (!std::exchange(first, false)) {
-            os << ", ";
-        }
+    for (auto const& i : ints) {
+        os << std::exchange(sep, ", ");
         os << i;
     }
 

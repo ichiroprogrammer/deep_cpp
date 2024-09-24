@@ -6396,12 +6396,10 @@ App3::operator<<は発見されない(繰り返すが、インスタン化の場
     namespace App {
     std::ostream& operator<<(std::ostream& os, Ints_t const& ints)
     {
-        auto first = true;
+        auto sep = "";
 
         for (auto const i : ints) {
-            if (!std::exchange(first, false)) {
-                os << ", ";
-            }
+            os << std::exchange(sep, ", ");
             os << i;
         }
 
@@ -6413,7 +6411,7 @@ App3::operator<<は発見されない(繰り返すが、インスタン化の場
 単体テストは下記のように書けるが、残念ながらコンパイルエラーになり、
 
 ```cpp
-    // @@@ example/template/logger_0_ut.cpp 134
+    // @@@ example/template/logger_0_ut.cpp 132
 
     auto ints = App::Ints_t{1, 2, 3};
 
@@ -6487,14 +6485,12 @@ LOGGERからApp::operator<<を使う場合の単体テストは下記のよう�
     // @@@ example/template/logger_0_std_ut.cpp 11
 
     namespace std {  // operator<<の定義をstdで行う
-    std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
+    ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
     {
-        auto first = true;
+        auto sep = "";
 
-        for (auto const i : ints) {
-            if (!std::exchange(first, false)) {
-                os << ", ";
-            }
+        for (auto const& i : ints) {
+            os << std::exchange(sep, ", ");
             os << i;
         }
 
@@ -6531,12 +6527,10 @@ Loggerを宣言しているLoggingの3つである。
     // グローバル名前空間
     std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
     {
-        auto first = true;
+        auto sep = "";
 
-        for (auto const i : ints) {
-            if (!std::exchange(first, false)) {
-                os << ", ";
-            }
+        for (auto const& i : ints) {
+            os << std::exchange(sep, ", ");
             os << i;
         }
 
@@ -6606,12 +6600,10 @@ clang++は「LOGGERの前にoperator<<を宣言せよ」と言っている。
     namespace Logging {  // operator<<の定義をLoggingで行う
     std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
     {
-        auto first = true;
+        auto sep = "";
 
-        for (auto const i : ints) {
-            if (!std::exchange(first, false)) {
-                os << ", ";
-            }
+        for (auto const& i : ints) {
+            os << std::exchange(sep, ", ");
             os << i;
         }
 
@@ -6652,7 +6644,7 @@ App::Ints_t用のoperator<<がLogging::Logger::set_inner内でname lookup出来�
     {
         auto first = true;
 
-        for (auto const i : ints) {
+        for (auto const& i : ints) {
             if (!std::exchange(first, false)) {
                 os << ", ";
             }
@@ -6703,12 +6695,10 @@ LOGGERの中でname lookupできる、エイリアスApp::Ints_tのoperator<<の
     namespace {      // operator<<は外部から使わない
     std::ostream& operator<<(std::ostream& os, Ints_t const& ints)
     {
-        auto first = true;
+        auto sep = "";
 
-        for (auto const i : ints) {
-            if (!std::exchange(first, false)) {
-                os << ", ";
-            }
+        for (auto const& i : ints) {
+            os << std::exchange(sep, ", ");
             os << i;
         }
 
@@ -6732,7 +6722,7 @@ LOGGERの中でname lookupできる、エイリアスApp::Ints_tのoperator<<の
 当然だが、恥を忍んで受け入れたコードにも単体テストは必要である。
 
 ```cpp
-    // @@@ example/template/logger_0_no_put_to_ut.cpp 47
+    // @@@ example/template/logger_0_no_put_to_ut.cpp 45
 
     auto ints = App::Ints_t{1, 2, 3};
 
@@ -6791,12 +6781,10 @@ App::ToString()によりstd::stringへ変換する必要があり、残念なイ
     template <typename T>
     std::ostream& operator<<(std::ostream& os, std::vector<T> const& vec)
     {
-        auto first = true;
+        auto sep = "";
 
         for (auto const& i : vec) {
-            if (!std::exchange(first, false)) {
-                os << ", ";
-            }
+            os << std::exchange(sep, ", ");
             os << i;
         }
 
@@ -9991,12 +9979,10 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
     template <template <class...> class C, typename... Ts>
     std::ostream& operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index)
     {
-        auto first = true;
+        auto sep = "";
 
         for (auto const& i : safe_index) {
-            if (!std::exchange(first, false)) {
-                os << ", ";
-            }
+            os << std::exchange(sep, ", ");
             os << i;
         }
 
@@ -10007,7 +9993,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 以下の単体テストで動作確認する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 28
+    // @@@ example/template/safe_index_put_to_ut.cpp 26
     {
         auto v_i = Nstd::SafeVector<int>{1, 2};
 
@@ -10026,7 +10012,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ここまではうまく行っているが、以下の単体テストによりバグが発覚する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 43
+    // @@@ example/template/safe_index_put_to_ut.cpp 41
 
     {
         auto s_str = Nstd::SafeString{"hello"};
@@ -10050,19 +10036,17 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 「[メタ関数のテクニック](#SS_4_3)」で紹介したSFINAEにより、この問題は下記のように対処できる。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 102
+    // @@@ example/template/safe_index_put_to_ut.cpp 100
 
     template <template <class...> class C, typename... Ts>
     auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) ->
         typename std::enable_if_t<    // safe_indexがSafeString型ならば、SFINAEにより非活性化
             !std::is_same_v<Nstd::SafeIndex<C, Ts...>, Nstd::SafeString>, std::ostream&>
     {
-        auto first = true;
+        auto sep = "";
 
         for (auto const& i : safe_index) {
-            if (!std::exchange(first, false)) {
-                os << ", ";
-            }
+            os << std::exchange(sep, ", ");
             os << i;
         }
 
@@ -10073,7 +10057,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 これにより先ほど問題が発生した単体テストも下記のようにパスする。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 138
+    // @@@ example/template/safe_index_put_to_ut.cpp 134
 
     auto str = Nstd::SafeString{"hello"};
     auto oss = std::ostringstream{};
@@ -10114,9 +10098,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
     {
         { os << t } -> std::same_as<std::ostream&>;
     };
-    }  // namespace Inner_
 
-    namespace Inner_ {
     template <typename T>
     constexpr bool enable_range_put_to() noexcept
     {
@@ -10204,7 +10186,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 Nstd::operator\<\<は下記のように定義できる。
 
 ```cpp
-    // @@@ example/template/nstd_put_to.h 66
+    // @@@ example/template/nstd_put_to.h 64
 
     namespace Nstd {
     namespace Inner_ {

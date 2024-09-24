@@ -12,12 +12,10 @@
 namespace Logging {  // operator<<の定義をLoggingで行う
 std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
 {
-    auto first = true;
+    auto sep = "";
 
-    for (auto const i : ints) {
-        if (!std::exchange(first, false)) {
-            os << ", ";
-        }
+    for (auto const& i : ints) {
+        os << std::exchange(sep, ", ");
         os << i;
     }
 
@@ -38,3 +36,4 @@ std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
 #include "logger_0_ints_ut.h"
 // clang-format on
 #endif
+// 「operator<<の定義をLoggingで行う」が文字化けする

@@ -19,7 +19,7 @@ std::ostream& operator<<(std::ostream& os, Ints_t const& ints)
 {
     auto first = true;
 
-    for (auto const i : ints) {
+    for (auto const& i : ints) {
         if (!std::exchange(first, false)) {
             os << ", ";
         }

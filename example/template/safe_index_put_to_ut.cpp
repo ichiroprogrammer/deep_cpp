@@ -10,12 +10,10 @@ namespace {
 template <template <class...> class C, typename... Ts>
 std::ostream& operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index)
 {
-    auto first = true;
+    auto sep = "";
 
     for (auto const& i : safe_index) {
-        if (!std::exchange(first, false)) {
-            os << ", ";
-        }
+        os << std::exchange(sep, ", ");
         os << i;
     }
 
@@ -107,12 +105,10 @@ auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) -
         !std::is_same_v<Nstd::SafeIndex<C, Ts...>, Nstd::SafeString>, std::ostream&>
 // clang-format on
 {
-    auto first = true;
+    auto sep = "";
 
     for (auto const& i : safe_index) {
-        if (!std::exchange(first, false)) {
-            os << ", ";
-        }
+        os << std::exchange(sep, ", ");
         os << i;
     }
 

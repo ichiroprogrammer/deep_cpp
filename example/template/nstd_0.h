@@ -8,12 +8,10 @@ namespace Nstd {
 template <typename T>
 std::ostream& operator<<(std::ostream& os, std::vector<T> const& vec)
 {
-    auto first = true;
+    auto sep = "";
 
     for (auto const& i : vec) {
-        if (!std::exchange(first, false)) {
-            os << ", ";
-        }
+        os << std::exchange(sep, ", ");
         os << i;
     }
 
