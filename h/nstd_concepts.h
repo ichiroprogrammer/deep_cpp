@@ -10,6 +10,7 @@ namespace Nstd {
 template <typename T>
 concept Array = std::is_array_v<T>;
 // @@@ sample end
+
 // @@@ sample begin 0:1
 
 // clang-format off
@@ -34,14 +35,8 @@ template <typename T>
 concept Ranged = Beginable<T> && Endable<T>;
 // @@@ sample end
 
-// @@@ sample begin 1:0
-
 template <typename T>
-concept Container = (Ranged<T> && !Array<T>) || requires
-{
-    T::value_type;
-};
-// @@@ sample end
+concept Container = Ranged<T> && !Array<T>;
 
 // @@@ sample begin 2:0
 
@@ -53,7 +48,6 @@ concept Printable = requires(T t, std::ostream& os)
 };
 // @@@ sample end
 // clang-format on
-// <- ExistsPutToV
 
 template <typename T, typename... Us>
 concept OneOf = (std::same_as<T, Us> || ...);  // <-IsSameSomeOfV

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "nstd_concepts.h"
 #include "nstd_type_traits.h"
 
 // C : コンテナもしくはコンテナから派生した型
@@ -18,6 +19,15 @@
 namespace Nstd {
 namespace Inner_ {
 
+template <typename T>  // Nstd::Printableを使用するとg++のバグで、問題が発生するため、
+                       // バグ回避のため敢えてここでNstd::Inner_::Printableを宣言する
+// clang-format off
+concept Printable = requires(T t, std::ostream& os)
+{
+    { os << t } -> std::same_as<std::ostream&>;
+};
+// clang-format on
+
 template <typename T>
 constexpr bool enable_range_put_to() noexcept
 {
@@ -27,20 +37,16 @@ constexpr bool enable_range_put_to() noexcept
             return false;
         }
         else {
-            return Nstd::ExistsPutToV<typename Nstd::ValueTypeT<T>>;
+            return Nstd::Printable<typename Nstd::ValueTypeT<T>>;
         }
     }
     else {  // Tは配列ではない
-#if defined(__clang__)
-        if constexpr (Nstd::ExistsPutToV<T>) {  // operator<<を持つ(std::string等)
-#else                                           // g++でのワークアラウンド
-        if (Nstd::ExistsPutToV<T>) {  // operator<<を持つ(std::string等)
-#endif
+        if constexpr (Printable<T>) {
             return false;
         }
         else {
             if constexpr (Nstd::IsRangeV<T>) {  // 範囲for文に適用できる
-                return Nstd::ExistsPutToV<typename Nstd::ValueTypeT<T>>;
+                return Nstd::Printable<typename Nstd::ValueTypeT<T>>;
             }
             else {
                 return false;

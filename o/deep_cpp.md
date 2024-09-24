@@ -8930,7 +8930,7 @@ IsRangeの実装は以下のようになる。
 コンセプトを使用し、[exists_begin/exsits_end](#SS_4_3_5_5)をリファクタリングした例を以下に示す。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 13
+    // @@@ h/nstd_concepts.h 14
 
     template <typename T>
     concept Beginable = Array<T> || requires(T& t)
@@ -8945,7 +8945,7 @@ IsRangeの実装は以下のようになる。
     };
 ```
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 33
+    // @@@ example/template/nstd_concepts_ut.cpp 34
 
     int  a[3];
     int* ptr = a;
@@ -8963,19 +8963,16 @@ IsRangeの実装は以下のようになる。
 IsRangeと同一の機能を持つコンセプトRangedを以下のように定義する。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 37
+    // @@@ h/nstd_concepts.h 32
 
     template <typename T>
-    concept Container = (Ranged<T> && !Array<T>) || requires
-    {
-        T::value_type;
-    };
+    concept Ranged = Beginable<T> && Endable<T>;
 ```
 
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 52
+    // @@@ example/template/nstd_concepts_ut.cpp 53
 
     static_assert(Ranged<std::string>);
     static_assert(!Ranged<int>);
@@ -8990,19 +8987,16 @@ Rangedの可読性はIsRangedに比べ格段に改善している。
 与えられた型をコンテナに制約するためのコンセプトを下記のように便宜的に宣言する。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 37
+    // @@@ h/nstd_concepts.h 32
 
     template <typename T>
-    concept Container = (Ranged<T> && !Array<T>) || requires
-    {
-        T::value_type;
-    };
+    concept Ranged = Beginable<T> && Endable<T>;
 ```
 
 単体テストには少々の工夫が必要になる。
 
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 61
+    // @@@ example/template/nstd_concepts_ut.cpp 62
 
     struct X {
         std::vector<int> data{1, 2, 3, 4, 5};
@@ -9011,7 +9005,7 @@ Rangedの可読性はIsRangedに比べ格段に改善している。
         auto end() { return data.end(); }      // std::end
     };
 
-    // @@@ example/template/nstd_concepts_ut.cpp 73
+    // @@@ example/template/nstd_concepts_ut.cpp 74
 
     static_assert(Container<std::string>);
     static_assert(!Container<int>);
@@ -9179,7 +9173,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 * リファクタリングに合わせてコンセプト化し、それらしい名称にする。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 46
+    // @@@ h/nstd_concepts.h 41
 
     template <typename T>
     concept Printable = requires(T t, std::ostream& os)
@@ -9188,7 +9182,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
     };
 ```
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 85
+    // @@@ example/template/nstd_concepts_ut.cpp 86
 
     struct X {};  // Non-pritable
     struct Y {};  // Printable
@@ -9198,7 +9192,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
         return os;  // 何もしない
     }
 
-    // @@@ example/template/nstd_concepts_ut.cpp 98
+    // @@@ example/template/nstd_concepts_ut.cpp 99
 
     static_assert(Printable<bool>);
     static_assert(Printable<std::string>);
@@ -10109,11 +10103,20 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 となるだろう。この条件を診断するためのメタ関数は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_put_to.h 16
+    // @@@ example/template/nstd_put_to.h 17
 
     namespace Nstd {
     namespace Inner_ {
 
+    template <typename T>  // Nstd::Printableを使用するとg++のバグで、問題が発生するため、
+                           // バグ回避のため敢えてここでNstd::Inner_::Printableを宣言する
+    concept Printable = requires(T t, std::ostream& os)
+    {
+        { os << t } -> std::same_as<std::ostream&>;
+    };
+    }  // namespace Inner_
+
+    namespace Inner_ {
     template <typename T>
     constexpr bool enable_range_put_to() noexcept
     {
@@ -10123,20 +10126,16 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
                 return false;
             }
             else {
-                return Nstd::ExistsPutToV<typename Nstd::ValueTypeT<T>>;
+                return Nstd::Printable<typename Nstd::ValueTypeT<T>>;
             }
         }
         else {  // Tは配列ではない
-    #if defined(__clang__)
-            if constexpr (Nstd::ExistsPutToV<T>) {  // operator<<を持つ(std::string等)
-    #else                                           // g++でのワークアラウンド
-            if (Nstd::ExistsPutToV<T>) {  // operator<<を持つ(std::string等)
-    #endif
+            if constexpr (Printable<T>) {
                 return false;
             }
             else {
                 if constexpr (Nstd::IsRangeV<T>) {  // 範囲for文に適用できる
-                    return Nstd::ExistsPutToV<typename Nstd::ValueTypeT<T>>;
+                    return Nstd::Printable<typename Nstd::ValueTypeT<T>>;
                 }
                 else {
                     return false;
@@ -10205,7 +10204,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 Nstd::operator\<\<は下記のように定義できる。
 
 ```cpp
-    // @@@ example/template/nstd_put_to.h 58
+    // @@@ example/template/nstd_put_to.h 66
 
     namespace Nstd {
     namespace Inner_ {
