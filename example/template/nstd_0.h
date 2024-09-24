@@ -11,8 +11,7 @@ std::ostream& operator<<(std::ostream& os, std::vector<T> const& vec)
     auto sep = "";
 
     for (auto const& i : vec) {
-        os << std::exchange(sep, ", ");
-        os << i;
+        os << std::exchange(sep, ", ") << i;
     }
 
     return os;

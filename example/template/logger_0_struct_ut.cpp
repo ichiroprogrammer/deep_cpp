@@ -17,13 +17,10 @@ struct Ints_t : std::vector<int> {  // エイリアスではなく、継承を�
 // App内
 std::ostream& operator<<(std::ostream& os, Ints_t const& ints)
 {
-    auto first = true;
+    auto sep = "";
 
     for (auto const& i : ints) {
-        if (!std::exchange(first, false)) {
-            os << ", ";
-        }
-        os << i;
+        os << std::exchange(sep, ", ") << i;
     }
 
     return os;

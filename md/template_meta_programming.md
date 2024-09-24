@@ -1314,6 +1314,7 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](---)の
 |[same_as](---)                |[コンセプト](---)よるis_same_sfinae_sと同一の機能      |
 |[is_same_templ](---)          |テンプレートテンプレートパラメータ                     |
 |[IsSameSomeOf](---)           |パラメータパックと再帰                                 |
+|[OneOf](---)                  |IsSameSomeOfをコンセプトに                             |
 
 #### is_same_f
 関数テンプレートのオーバーロードを用いたis_same_fの実装は以下のようになる。
@@ -1504,6 +1505,19 @@ Usが複数だった場合、[畳み込み式](--)を使用し上記の処理を
 ```
 
 [演習-テンプレートパラメータを可変長にしたstd::is_same](~~~)
+
+#### OneOf
+OneOfは、[IsSameSomeOf](---)同様の機能を持つコンセプトである。
+OneOfの実装にはシンプルに記述するための[畳み込み式](---)を使用した。
+
+```cpp
+    // @@@ h/nstd_concepts.h #3:0 begin
+```
+単体テストは以下のようになる。
+
+```cpp
+    // @@@ example/template/nstd_type_traits_ut.cpp #0:1 begin -1
+```
 
 ### AreConvertibleXxxの実装
 std::is_convertible\<FROM, TO>は、

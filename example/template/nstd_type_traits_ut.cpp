@@ -22,6 +22,19 @@ TEST(Template, is_same_some_of)
     // @@@ sample end
 }
 
+TEST(Template, OneOf)
+{
+    // @@@ sample begin 0:1
+
+    static_assert(!Nstd::OneOf<int, int8_t, int16_t, uint16_t>);
+    static_assert(Nstd::OneOf<int, int8_t, int16_t, uint16_t, int32_t>);
+    static_assert(Nstd::OneOf<int&, int8_t, int16_t, int32_t&, int32_t>);
+    static_assert(!Nstd::OneOf<int&, int8_t, int16_t, uint32_t&, int32_t>);
+    static_assert(Nstd::OneOf<std::string, int, char*, std::string>);
+    static_assert(!Nstd::OneOf<std::string, int, char*>);
+    // @@@ sample end
+}
+
 TEST(Template, are_convertible)
 {
     // @@@ sample begin 1:0

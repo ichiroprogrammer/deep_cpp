@@ -46,11 +46,13 @@ concept Printable = requires(T t, std::ostream& os)
 {
     { os << t } -> std::same_as<std::ostream&>;
 };
-// @@@ sample end
 // clang-format on
+// @@@ sample end
+// @@@ sample begin 3:0
 
 template <typename T, typename... Us>
-concept OneOf = (std::same_as<T, Us> || ...);  // <-IsSameSomeOfV
+concept OneOf = (std::same_as<T, Us> || ...);
+// @@@ sample end
 
 // 複数の型 FROMs がすべて TO に変換可能かどうかを制約するコンセプト
 template <typename TO, typename... FROMs>

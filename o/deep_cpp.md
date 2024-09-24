@@ -6399,8 +6399,7 @@ App3::operator<<は発見されない(繰り返すが、インスタン化の場
         auto sep = "";
 
         for (auto const i : ints) {
-            os << std::exchange(sep, ", ");
-            os << i;
+            os << std::exchange(sep, ", ") << i;
         }
 
         return os;
@@ -6411,7 +6410,7 @@ App3::operator<<は発見されない(繰り返すが、インスタン化の場
 単体テストは下記のように書けるが、残念ながらコンパイルエラーになり、
 
 ```cpp
-    // @@@ example/template/logger_0_ut.cpp 132
+    // @@@ example/template/logger_0_ut.cpp 131
 
     auto ints = App::Ints_t{1, 2, 3};
 
@@ -6490,8 +6489,7 @@ LOGGERからApp::operator<<を使う場合の単体テストは下記のよう�
         auto sep = "";
 
         for (auto const& i : ints) {
-            os << std::exchange(sep, ", ");
-            os << i;
+            os << std::exchange(sep, ", ") << i;
         }
 
         return os;
@@ -6530,8 +6528,7 @@ Loggerを宣言しているLoggingの3つである。
         auto sep = "";
 
         for (auto const& i : ints) {
-            os << std::exchange(sep, ", ");
-            os << i;
+            os << std::exchange(sep, ", ") << i;
         }
 
         return os;
@@ -6603,8 +6600,7 @@ clang++は「LOGGERの前にoperator<<を宣言せよ」と言っている。
         auto sep = "";
 
         for (auto const& i : ints) {
-            os << std::exchange(sep, ", ");
-            os << i;
+            os << std::exchange(sep, ", ") << i;
         }
 
         return os;
@@ -6642,13 +6638,10 @@ App::Ints_t用のoperator<<がLogging::Logger::set_inner内でname lookup出来�
     // App内
     std::ostream& operator<<(std::ostream& os, Ints_t const& ints)
     {
-        auto first = true;
+        auto sep = "";
 
         for (auto const& i : ints) {
-            if (!std::exchange(first, false)) {
-                os << ", ";
-            }
-            os << i;
+            os << std::exchange(sep, ", ") << i;
         }
 
         return os;
@@ -6698,8 +6691,7 @@ LOGGERの中でname lookupできる、エイリアスApp::Ints_tのoperator<<の
         auto sep = "";
 
         for (auto const& i : ints) {
-            os << std::exchange(sep, ", ");
-            os << i;
+            os << std::exchange(sep, ", ") << i;
         }
 
         return os;
@@ -6722,7 +6714,7 @@ LOGGERの中でname lookupできる、エイリアスApp::Ints_tのoperator<<の
 当然だが、恥を忍んで受け入れたコードにも単体テストは必要である。
 
 ```cpp
-    // @@@ example/template/logger_0_no_put_to_ut.cpp 45
+    // @@@ example/template/logger_0_no_put_to_ut.cpp 44
 
     auto ints = App::Ints_t{1, 2, 3};
 
@@ -6784,8 +6776,7 @@ App::ToString()によりstd::stringへ変換する必要があり、残念なイ
         auto sep = "";
 
         for (auto const& i : vec) {
-            os << std::exchange(sep, ", ");
-            os << i;
+            os << std::exchange(sep, ", ") << i;
         }
 
         return os;
@@ -7900,6 +7891,7 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](#SS_4_3
 |[same_as](#SS_4_3_3_6)                |[コンセプト](#SS_6_4_8)よるis_same_sfinae_sと同一の機能      |
 |[is_same_templ](#SS_4_3_3_7)          |テンプレートテンプレートパラメータ                     |
 |[IsSameSomeOf](#SS_4_3_3_8)           |パラメータパックと再帰                                 |
+|[OneOf](#SS_4_3_3_9)                  |IsSameSomeOfをコンセプトに                             |
 
 #### is_same_f <a id="SS_4_3_3_1"></a>
 関数テンプレートのオーバーロードを用いたis_same_fの実装は以下のようになる。
@@ -8277,6 +8269,29 @@ Usが複数だった場合、[畳み込み式](--)を使用し上記の処理を
 ```
 
 
+#### OneOf <a id="SS_4_3_3_9"></a>
+OneOfは、[IsSameSomeOf](#SS_4_3_3_8)同様の機能を持つコンセプトである。
+OneOfの実装にはシンプルに記述するための[畳み込み式](#SS_6_1_18_6)を使用した。
+
+```cpp
+    // @@@ h/nstd_concepts.h 51
+
+    template <typename T, typename... Us>
+    concept OneOf = (std::same_as<T, Us> || ...);
+```
+単体テストは以下のようになる。
+
+```cpp
+    // @@@ example/template/nstd_type_traits_ut.cpp 27
+
+    static_assert(!Nstd::OneOf<int, int8_t, int16_t, uint16_t>);
+    static_assert(Nstd::OneOf<int, int8_t, int16_t, uint16_t, int32_t>);
+    static_assert(Nstd::OneOf<int&, int8_t, int16_t, int32_t&, int32_t>);
+    static_assert(!Nstd::OneOf<int&, int8_t, int16_t, uint32_t&, int32_t>);
+    static_assert(Nstd::OneOf<std::string, int, char*, std::string>);
+    static_assert(!Nstd::OneOf<std::string, int, char*>);
+```
+
 ### AreConvertibleXxxの実装 <a id="SS_4_3_4"></a>
 std::is_convertible\<FROM, TO>は、
 
@@ -8339,7 +8354,7 @@ AreConvertibleの実装は以下のようになる。
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 27
+    // @@@ example/template/nstd_type_traits_ut.cpp 40
 
     static_assert(Nstd::AreConvertibleV<int, int8_t, int16_t, int>);
     static_assert(Nstd::AreConvertibleV<int, char, int, int>);
@@ -8406,7 +8421,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 39
+    // @@@ example/template/nstd_type_traits_ut.cpp 52
 
     static_assert(Nstd::Inner_::is_convertible_without_narrow_conv_v<int, int>);
     static_assert(Nstd::Inner_::is_convertible_without_narrow_conv_v<int, int16_t>);
@@ -8456,7 +8471,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 47
+    // @@@ example/template/nstd_type_traits_ut.cpp 60
 
     static_assert(Nstd::AreConvertibleWithoutNarrowConvV<int, char, int16_t, uint16_t>);
     static_assert(!Nstd::AreConvertibleWithoutNarrowConvV<int, char, int16_t, uint32_t>);
@@ -8840,7 +8855,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 81
+    // @@@ example/template/nstd_type_traits_ut.cpp 94
 
     static_assert(exists_begin_v<std::string>);
     static_assert(!exists_begin_v<int>);
@@ -8882,7 +8897,7 @@ IsRangeの実装は以下のようになる。
 名前空間Inner\_で宣言している。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 100
+    // @@@ example/template/nstd_type_traits_ut.cpp 113
 
     static_assert(IsRangeV<std::string>);
     static_assert(!IsRangeV<int>);
@@ -9143,7 +9158,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 111
+    // @@@ example/template/nstd_type_traits_ut.cpp 124
 
     static_assert(Nstd::ExistsPutToV<bool>);
     static_assert(Nstd::ExistsPutToV<std::string>);
@@ -9196,7 +9211,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 下記で示す通り、
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 129
+    // @@@ example/template/nstd_type_traits_ut.cpp 142
 
     struct T {};
 
@@ -9982,8 +9997,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
         auto sep = "";
 
         for (auto const& i : safe_index) {
-            os << std::exchange(sep, ", ");
-            os << i;
+            os << std::exchange(sep, ", ") << i;
         }
 
         return os;
@@ -9993,7 +10007,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 以下の単体テストで動作確認する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 26
+    // @@@ example/template/safe_index_put_to_ut.cpp 25
     {
         auto v_i = Nstd::SafeVector<int>{1, 2};
 
@@ -10012,7 +10026,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ここまではうまく行っているが、以下の単体テストによりバグが発覚する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 41
+    // @@@ example/template/safe_index_put_to_ut.cpp 40
 
     {
         auto s_str = Nstd::SafeString{"hello"};
@@ -10036,7 +10050,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 「[メタ関数のテクニック](#SS_4_3)」で紹介したSFINAEにより、この問題は下記のように対処できる。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 100
+    // @@@ example/template/safe_index_put_to_ut.cpp 99
 
     template <template <class...> class C, typename... Ts>
     auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) ->
@@ -10046,8 +10060,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
         auto sep = "";
 
         for (auto const& i : safe_index) {
-            os << std::exchange(sep, ", ");
-            os << i;
+            os << std::exchange(sep, ", ") << i;
         }
 
         return os;
@@ -10057,7 +10070,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 これにより先ほど問題が発生した単体テストも下記のようにパスする。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 134
+    // @@@ example/template/safe_index_put_to_ut.cpp 132
 
     auto str = Nstd::SafeString{"hello"};
     auto oss = std::ostringstream{};
@@ -10215,14 +10228,11 @@ Nstd::operator\<\<は下記のように定義できる。
         typename std::enable_if_t<Inner_::enable_range_put_to<T>(), std::ostream&>
     #endif
     {
-        auto           first = true;
-        constexpr auto s     = Inner_::range_put_to_sep<ValueType<T>::Nest>();
+        auto sep = std::string_view("");
+        auto s   = Inner_::range_put_to_sep<ValueType<T>::Nest>();
 
         for (auto const& i : t) {
-            if (!std::exchange(first, false)) {
-                os << s;
-            }
-            os << i;
+            os << std::exchange(sep, s) << i;
         }
 
         return os;
@@ -10238,7 +10248,7 @@ range_put_to_sep<>()を用意した。
 まずは、配列の単体テストを示す。
 
 ```cpp
-    // @@@ example/template/nstd_put_to_ut.cpp 61
+    // @@@ example/template/nstd_put_to_ut.cpp 113
 
     using namespace Nstd;
     {
@@ -10281,7 +10291,7 @@ range_put_to_sep<>()を用意した。
 次に、コンテナの単体テストを示す。
 
 ```cpp
-    // @@@ example/template/nstd_put_to_ut.cpp 118
+    // @@@ example/template/nstd_put_to_ut.cpp 170
 
     using namespace Nstd;
     {
@@ -10310,7 +10320,7 @@ range_put_to_sep<>()を用意した。
 最後に、Nstd::SafeIndexの単体テストを示す。
 
 ```cpp
-    // @@@ example/template/nstd_put_to_ut.cpp 168
+    // @@@ example/template/nstd_put_to_ut.cpp 220
 
     {
         auto sal_s = Nstd::SafeArray<std::string, 4>{"1", "2", "3"};

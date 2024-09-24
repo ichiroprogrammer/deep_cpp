@@ -13,8 +13,7 @@ std::ostream& operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe
     auto sep = "";
 
     for (auto const& i : safe_index) {
-        os << std::exchange(sep, ", ");
-        os << i;
+        os << std::exchange(sep, ", ") << i;
     }
 
     return os;
@@ -108,8 +107,7 @@ auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) -
     auto sep = "";
 
     for (auto const& i : safe_index) {
-        os << std::exchange(sep, ", ");
-        os << i;
+        os << std::exchange(sep, ", ") << i;
     }
 
     return os;

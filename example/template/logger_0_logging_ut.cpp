@@ -15,8 +15,7 @@ std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
     auto sep = "";
 
     for (auto const& i : ints) {
-        os << std::exchange(sep, ", ");
-        os << i;
+        os << std::exchange(sep, ", ") << i;
     }
 
     return os;

@@ -50,6 +50,58 @@ TEST(Template, enable_put_to_if_v)
 
     static_assert(enable_range_put_to_v<std::list<TestNS::X2>>);
 }
+
+template <typename T>
+concept ranged_printable = enable_range_put_to_v<T>;
+
+template <typename>
+struct test_ranged_printable : std::false_type {
+};
+
+template <ranged_printable T>
+struct test_ranged_printable<T> : std::true_type {
+};
+
+template <typename T>
+constexpr bool test_ranged_printable_v = test_ranged_printable<T>::value;
+
+template <typename T>
+std::string_view test_f(T const&)
+{
+    return "false";
+}
+
+template <ranged_printable T>
+std::string_view test_f(T const&)
+{
+    return "true";
+}
+
+TEST(Template, ranged_printable)
+{
+    static_assert(test_ranged_printable_v<int[3]>);  // Nstd::operator<<
+
+    static_assert(!test_ranged_printable_v<char[3]>);  // std::operator<<
+                                                       //
+    int  a3[3];
+    char c3[3];
+    ASSERT_EQ(test_f(a3), "true");                                          // Nstd::operator<<
+    ASSERT_EQ(test_f(c3), "false");                                         // std::operator<<
+    static_assert(!test_ranged_printable_v<int>);                           // std::operator<<
+    static_assert(test_ranged_printable_v<std::vector<int>>);               // Nstd::operator<<
+    static_assert(test_ranged_printable_v<std::vector<std::vector<int>>>);  // Nstd::operator<<
+    static_assert(!test_ranged_printable_v<std::string>);                   // std::operator<<
+    static_assert(test_ranged_printable_v<std::vector<std::string>>);       // Nstd::operator<<
+
+    static_assert(!ranged_printable<test_class_not_exits_put_to>);  // operator<<無し
+    static_assert(!ranged_printable<test_class_exits_put_to>);      // ユーザ定義operator<<
+    static_assert(!ranged_printable<std::vector<test_class_not_exits_put_to>>);  // operator<<無し
+    static_assert(ranged_printable<std::vector<test_class_exits_put_to>>);       // Nstd::operator<<
+    static_assert(!ranged_printable<std::list<test_class_not_exits_put_to>>);    // operator<<無し
+    static_assert(ranged_printable<std::list<test_class_exits_put_to>>);         // Nstd::operator<<
+
+    static_assert(ranged_printable<std::list<TestNS::X2>>);
+}
 }  // namespace
 }  // namespace Inner_
 }  // namespace Nstd

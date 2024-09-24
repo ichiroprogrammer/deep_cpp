@@ -90,14 +90,11 @@ auto operator<<(std::ostream& os, T const& t) ->
     typename std::enable_if_t<Inner_::enable_range_put_to<T>(), std::ostream&>
 #endif
 {
-    auto           first = true;
-    constexpr auto s     = Inner_::range_put_to_sep<ValueType<T>::Nest>();
+    auto sep = std::string_view("");
+    auto s   = Inner_::range_put_to_sep<ValueType<T>::Nest>();
 
     for (auto const& i : t) {
-        if (!std::exchange(first, false)) {
-            os << s;
-        }
-        os << i;
+        os << std::exchange(sep, s) << i;
     }
 
     return os;
