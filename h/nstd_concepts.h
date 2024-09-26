@@ -53,10 +53,13 @@ concept Printable = requires(T t, std::ostream& os)
 template <typename T, typename... Us>
 concept OneOf = (std::same_as<T, Us> || ...);
 // @@@ sample end
+// @@@ sample begin 4:0
 
 // 複数の型 FROMs がすべて TO に変換可能かどうかを制約するコンセプト
 template <typename TO, typename... FROMs>
-concept ConvertibleToAll = (std::convertible_to<FROMs, TO> && ...);  // <- AreConvertibleV
+concept ConvertibleToAll = (std::convertible_to<FROMs, TO> && ...);
+// @@@ sample end
+// @@@ sample begin 5:0
 
 namespace Inner_ {
 
@@ -77,5 +80,5 @@ concept all_convertible_without_narrowing = (convertible_without_narrowing<TO, F
 // コンセプトを使用
 template <typename TO, typename... FROMs>
 concept ConvertibleWithoutNarrowing = Inner_::all_convertible_without_narrowing<TO, FROMs...>;
-// <-AreConvertibleWithoutNarrowConvV
+// @@@ sample end
 }  // namespace Nstd

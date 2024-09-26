@@ -6838,7 +6838,7 @@ std::vector、std::basic_string、std::array等の配列型コンテナは、
 下記のコードのようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 9
+    // @@@ example/template/safe_vector_ut.cpp 10
 
 namespace Nstd {
 
@@ -6864,7 +6864,7 @@ struct SafeVector : std::vector<T> {
 である。単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 29
+    // @@@ example/template/safe_vector_ut.cpp 30
 
     {
         auto v = Nstd::SafeVector<int>(10);  // ()での初期化
@@ -6902,7 +6902,7 @@ std::arrayがあるため、それらにも範囲チェックを導入する。
 std::basic_stringはstd::vectorとほぼ同様に下記のようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 61
+    // @@@ example/template/safe_vector_ut.cpp 62
     namespace Nstd {
 
     struct SafeString : std::string {
@@ -6923,7 +6923,7 @@ std::stringはstd::basic_string\<char>のエイリアスであるため、
 この単体テストはSafeVectorの場合と同様に下記のようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 79
+    // @@@ example/template/safe_vector_ut.cpp 80
 
     {
         auto s = Nstd::SafeString{"0123456789"};
@@ -6944,7 +6944,7 @@ std::arrayでは少々事情が異なるが、
 std::vectorのコードパターンをそのまま適用すると下記のようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 100
+    // @@@ example/template/safe_vector_ut.cpp 101
 
     namespace Nstd {
 
@@ -6964,7 +6964,7 @@ std::vectorのコードパターンをそのまま適用すると下記のよう
 ただし、この実装には問題がある。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 121
+    // @@@ example/template/safe_vector_ut.cpp 122
 
     auto sa_not_init = Nstd::SafeArray<int, 3>{};
 
@@ -6975,7 +6975,7 @@ std::vectorのコードパターンをそのまま適用すると下記のよう
 上記コードでは、その問題が露見することはないが、以下のコードはコンパイルできない。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 131
+    // @@@ example/template/safe_vector_ut.cpp 132
 
     // std::initializer_listを引数とするコンストラクタが未定義
     auto sa_init = Nstd::SafeArray<int, 3>{1, 2, 3};
@@ -6997,7 +6997,7 @@ std::arrayにはデフォルトで自動生成される
 この問題に対処したのが以下のコードである。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 145
+    // @@@ example/template/safe_vector_ut.cpp 146
 
     namespace Nstd {
 
@@ -7024,7 +7024,7 @@ std::arrayにはデフォルトで自動生成される
 このコンストラクタによりパスするようになった。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 180
+    // @@@ example/template/safe_vector_ut.cpp 181
     {
         auto sa_init = Nstd::SafeArray<int, 3>{1, 2, 3};
 
@@ -7050,7 +7050,7 @@ std::arrayにはデフォルトで自動生成される
 この効果を生み出した上記を抜粋した下記のコードには解説が必要だろう。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 154
+    // @@@ example/template/safe_vector_ut.cpp 155
 
     template <typename... ARGS>  // コンストラクタを定義
     SafeArray(ARGS... args) : base_type{args...}
@@ -7078,7 +7078,7 @@ SafeArrayにはメンバ変数が存在しないため、
 上記SafeArrayの初期化子リストコンストラクタは以下のようなコードを許可しない。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 212
+    // @@@ example/template/safe_vector_ut.cpp 213
     {
         auto sa_init = Nstd::SafeArray<int, 3>{1.0, 2, 3};
 
@@ -7886,7 +7886,7 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](#SS_4_3
 |[is_same_f](#SS_4_3_3_1)              |関数テンプレートのオーバーロード                       |
 |[is_same_v](#SS_4_3_3_2)              |定数テンプレートの特殊化                               |
 |[is_same_s](#SS_4_3_3_3)              |クラステンプレートの特殊化                             |
-|[is_same_sfinae_fの実装](#SS_4_3_3_4) |SFINAEと関数テンプレート/関数のオーバーロード          |
+|[is_same_sfinae_f](#SS_4_3_3_4)       |SFINAEと関数テンプレート/関数のオーバーロード          |
 |[is_same_sfinae_s](#SS_4_3_3_5)       |SFINAEとクラステンプレートの特殊化                     |
 |[same_as](#SS_4_3_3_6)                |[コンセプト](#SS_6_4_8)よるis_same_sfinae_sと同一の機能      |
 |[is_same_templ](#SS_4_3_3_7)          |テンプレートテンプレートパラメータ                     |
@@ -8020,7 +8020,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 ```
 
 
-#### is_same_sfinae_fの実装 <a id="SS_4_3_3_4"></a>
+#### is_same_sfinae_f <a id="SS_4_3_3_4"></a>
 SFINAEと関数テンプレート/関数のオーバーロードを用いたis_same_sfinae_f実装は以下のようになる。
 
 ```cpp
@@ -8307,8 +8307,15 @@ std::is_convertible\<FROM, TO>は、
 
 の実装を考える。
 
+|AreConvertibleXxx                     |実装方法                                     |
+|--------------------------------------|---------------------------------------------|
+|[AreConvertible](#SS_4_3_4_1)                 |クラステンプレートの特殊化                   |
+|[ConvertibleToAll](#SS_4_3_4_3)               |AreConvertibleをコンセプトへ                 |
+|[AreConvertibleWithoutNarrowConv](#SS_4_3_4_2)|SFINAEとクラステンプレートの特殊化           |
+|[ConvertibleWithoutNarrowing](#SS_4_3_4_4)    |AreConvertibleWithoutNarrowConvをコンセプトへ|
 
-#### AreConvertibleの実装 <a id="SS_4_3_4_1"></a>
+
+#### AreConvertible <a id="SS_4_3_4_1"></a>
 AreConvertibleの実装は以下のようになる。
 
 ```cpp
@@ -8364,7 +8371,7 @@ AreConvertibleの実装は以下のようになる。
 ```
 
 
-#### AreConvertibleWithoutNarrowConvの実装 <a id="SS_4_3_4_2"></a>
+#### AreConvertibleWithoutNarrowConv <a id="SS_4_3_4_2"></a>
 縮小無しの型変換ができるかどうかを判定するAreConvertibleWithoutNarrowConvは、
 AreConvertibleと同じように実装できるが、
 その場合、AreConvertibleに対してstd::is_convertibleが必要になったように、
@@ -8481,6 +8488,74 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
     // int8_t -> doubleは縮小型変換
     static_assert(!Nstd::AreConvertibleWithoutNarrowConvV<double, float, int8_t>);
 ```
+
+#### ConvertibleToAll <a id="SS_4_3_4_3"></a>
+ConvertibleToAllの実装は下記のようになる。
+
+```cpp
+    // @@@ h/nstd_concepts.h 56
+
+// 複数の型 FROMs がすべて TO に変換可能かどうかを制約するコンセプト
+template <typename TO, typename... FROMs>
+concept ConvertibleToAll = (std::convertible_to<FROMs, TO> && ...);
+```
+
+使用方法を含めて、単体テストは以下のようになる。
+
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp 137
+
+    // ConvertibleToAll_Test テンプレートの定義
+    template <typename TO, typename... FROMs>
+    struct ConvertibleToAll_Test : std::false_type {
+    };
+
+    // すべての FROMs が TO に変換可能な場合の部分特殊化
+    template <typename TO, typename... Us>
+    requires ConvertibleToAll<TO, Us...>
+    struct ConvertibleToAll_Test<TO, Us...> : std::true_type {
+    };
+
+    struct convert_bool {
+        operator bool() const { return false; }
+    };
+
+    static_assert(!ConvertibleToAll_Test<bool, int, std::string>::value);
+    static_assert(ConvertibleToAll_Test<bool, int, convert_bool>::value);
+```
+
+#### ConvertibleWithoutNarrowing <a id="SS_4_3_4_4"></a>
+ConvertibleWithoutNarrowingは以下のようなコンセプトである。
+
+* [AreConvertibleWithoutNarrowConv](#SS_4_3_4_2)と同様の機能を持つ
+* [ConvertibleToAll](#SS_4_3_4_3)と同様構造を持つ
+
+実装は以下のようになる。
+
+```cpp
+    // @@@ h/nstd_concepts.h 62
+
+namespace Inner_ {
+
+template <typename TO, typename FROM>
+concept convertible_without_narrowing = requires(FROM from)
+{
+    { TO {from} } -> std::same_as<TO>;
+};
+
+// 複数の型が変換可能かどうかを確認するバージョン
+template <typename TO, typename... FROMs>
+concept all_convertible_without_narrowing = (convertible_without_narrowing<TO, FROMs> && ...);
+
+}  // namespace Inner_
+
+// コンセプトを使用
+template <typename TO, typename... FROMs>
+concept ConvertibleWithoutNarrowing = Inner_::all_convertible_without_narrowing<TO, FROMs...>;
+```
+
+単体テストは他の似たコンセプトとほぼ同様になるため省略する。
+
 
 ### 関数の存在の診断 <a id="SS_4_3_5"></a>
 Nstdライブラリの開発には関数の存在の診断が欠かせない。
@@ -9585,12 +9660,12 @@ SafeArray2の要件をまとめると、
 * SafeArrayでのパラメータパックによる初期化機能はそのまま残す
 * SafeArrayではできなかった縮小型変換が起こる初期化にも対応する
 * 新規要件として、
-  縮小型変換により初期化されたかどうかを示すメンバ関数InitializedWithNarrowConv()を持つ。
+  縮小型変換により初期化されたかどうかを示すメンバ関数InitWithNarrowing()を持つ。
 
 となる。この要件を満たすためには、SafeArrayが
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 154
+    // @@@ example/template/safe_vector_ut.cpp 155
 
     template <typename... ARGS>  // コンストラクタを定義
     SafeArray(ARGS... args) : base_type{args...}
@@ -9606,55 +9681,64 @@ SafeArray2の要件をまとめると、
 パラメータパックによるコンストラクタのシグネチャは上記した一種類しかないため、
 関数のシグネチャの差異よるオーバーロードは使えない。
 とすれば、テンプレートパラメータの型の差異によるオーバーロードを使うしか方法がない。
-縮小型変換が起こるか否かの場合分けはSFINAEで実現させることができる。
+縮小型変換が起こるか否かの場合分けは、
+コンセプト[ConvertibleWithoutNarrowing](#SS_4_3_4_4)を使用したSFINAEで実現させることができる。
 という風な思考の変遷により以下のコードにたどり着く。
 
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 227
-    namespace Nstd {
+    // @@@ example/template/safe_vector_ut.cpp 228
+namespace Nstd {
 
-    template <typename T, size_t N>
-    struct SafeArray2 : std::array<T, N> {
-        using std::array<T, N>::array;  // 継承コンストラクタ
-        using base_type = std::array<T, N>;
+template <typename T, size_t N>
+struct SafeArray2 : std::array<T, N> {
+    using std::array<T, N>::array;  // 継承コンストラクタ
+    using base_type = std::array<T, N>;
 
-        // 縮小型変換した場合には、ill-formedになるコンストラクタ
-        template <typename... ARGS,
-                  typename = 
-                      typename std::enable_if_t<
-                           AreConvertibleWithoutNarrowConvV<T, ARGS...>>>
-        SafeArray2(ARGS... args) : base_type{args...} // 初期化子リストによるarrayの初期化
-        {
-        }
-
-        // 縮小型変換しない場合には、ill-formedになるコンストラクタ
-        template <typename... ARGS, 
+    // 縮小型変換した場合には、ill-formedになるコンストラクタ
+    /* c++17スタイルのSFINAE
+    template <typename... ARGS,
+              typename = 
                   typename std::enable_if_t<
-                      !AreConvertibleWithoutNarrowConvV<T, ARGS...>>* = nullptr>
-        SafeArray2(ARGS... args) :
-            base_type{T(args)...},  // 縮小型変換を抑止するため、T(args)が必要
-            is_with_narrow_conv_{true}
-        {
-        }
+                       AreConvertibleWithoutNarrowConvV<T, ARGS...>>>
+    */ 
+    template <typename... ARGS> // C++20のコンセプトを使用したSFINAE
+    requires ConvertibleWithoutNarrowing<T, ARGS...>
+    SafeArray2(ARGS... args) : base_type{args...} // 初期化子リストによるarrayの初期化
+    {
+    }
 
-        using size_type = typename base_type::size_type;
+    // 縮小型変換しない場合には、ill-formedになるコンストラクタ
+    /* C++17までのSFINAE
+    template <typename... ARGS, 
+              typename std::enable_if_t<
+                  !AreConvertibleWithoutNarrowConvV<T, ARGS...>>* = nullptr>
+    */
+    template <typename... ARGS> // C++20のコンセプトを使用したSFINAE
+    requires (!ConvertibleWithoutNarrowing<T, ARGS...>)  // この行には()が必要
+    SafeArray2(ARGS... args) :
+        base_type{T(args)...},  // 縮小型変換を抑止するため、T(args)が必要
+        is_with_narrow_conv_{true}
+    {
+    }
 
-        typename base_type::reference       operator[](size_type i) { return this->at(i); }
-        typename base_type::const_reference operator[](size_type i) const { return this->at(i); }
+    using size_type = typename base_type::size_type;
 
-        bool InitializedWithNarrowConv() const noexcept { return is_with_narrow_conv_; }
+    typename base_type::reference       operator[](size_type i) { return this->at(i); }
+    typename base_type::const_reference operator[](size_type i) const { return this->at(i); }
 
-    private:
-        bool const is_with_narrow_conv_{false};
-    };
-    }  // namespace Nstd
+    bool InitWithNarrowing() const noexcept { return is_with_narrow_conv_; }
+
+private:
+    bool const is_with_narrow_conv_{false};
+};
+}  // namespace Nstd
 ```
 
 下記のようなコードでのコンストラクタ呼び出しには、
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 290
+    // @@@ example/template/safe_vector_ut.cpp 299
 
     auto sa_init = Nstd::SafeArray2<int, 3>{1, 2, 3};
 ```
@@ -9662,12 +9746,16 @@ SafeArray2の要件をまとめると、
 上記の抜粋である下記のコンストラクタが置換失敗により排除される(SFINAE)。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 247
+    // @@@ example/template/safe_vector_ut.cpp 252
 
     // 縮小型変換しない場合には、ill-formedになるコンストラクタ
+    /* C++17までのSFINAE
     template <typename... ARGS, 
               typename std::enable_if_t<
                   !AreConvertibleWithoutNarrowConvV<T, ARGS...>>* = nullptr>
+    */
+    template <typename... ARGS> // C++20のコンセプトを使用したSFINAE
+    requires (!ConvertibleWithoutNarrowing<T, ARGS...>)  // この行には()が必要
     SafeArray2(ARGS... args) :
         base_type{T(args)...},  // 縮小型変換を抑止するため、T(args)が必要
         is_with_narrow_conv_{true}
@@ -9678,13 +9766,17 @@ SafeArray2の要件をまとめると、
 従って、マッチするコンストラクタは
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 236
+    // @@@ example/template/safe_vector_ut.cpp 237
 
     // 縮小型変換した場合には、ill-formedになるコンストラクタ
+    /* c++17スタイルのSFINAE
     template <typename... ARGS,
               typename = 
                   typename std::enable_if_t<
                        AreConvertibleWithoutNarrowConvV<T, ARGS...>>>
+    */ 
+    template <typename... ARGS> // C++20のコンセプトを使用したSFINAE
+    requires ConvertibleWithoutNarrowing<T, ARGS...>
     SafeArray2(ARGS... args) : base_type{args...} // 初期化子リストによるarrayの初期化
     {
     }
@@ -9693,11 +9785,11 @@ SafeArray2の要件をまとめると、
 のみとなり、無事にコンパイルが成功し、下記の単体テストもパスする。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 290
+    // @@@ example/template/safe_vector_ut.cpp 299
 
     auto sa_init = Nstd::SafeArray2<int, 3>{1, 2, 3};
 
-    ASSERT_FALSE(sa_init.InitializedWithNarrowConv());  // 縮小型変換なし
+    ASSERT_FALSE(sa_init.InitWithNarrowing());  // 縮小型変換なし
     ASSERT_EQ(3, sa_init.size());
     ASSERT_EQ(1, sa_init[0]);
     ASSERT_EQ(2, sa_init[1]);
@@ -9709,10 +9801,10 @@ SafeArray2の要件をまとめると、
 コンパイルも単体テストもパスする。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 305
+    // @@@ example/template/safe_vector_ut.cpp 314
     auto const sa_init = Nstd::SafeArray2<int, 3>{10, 20, 30.0};  // 30.0はintに縮小型変換される
 
-    ASSERT_TRUE(sa_init.InitializedWithNarrowConv());  // 縮小型変換あり
+    ASSERT_TRUE(sa_init.InitWithNarrowing());  // 縮小型変換あり
     ASSERT_EQ(3, sa_init.size());
     ASSERT_EQ(10, sa_init[0]);
     ASSERT_EQ(20, sa_init[1]);
@@ -9728,7 +9820,7 @@ SafeArray2の要件をまとめると、
 パラメータパックで与えられた全引数をそれぞれにT型オブジェクトに変換するための記法である。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 255
+    // @@@ example/template/safe_vector_ut.cpp 264
 
     base_type{T(args)...},  // 縮小型変換を抑止するため、T(args)が必要
 ```

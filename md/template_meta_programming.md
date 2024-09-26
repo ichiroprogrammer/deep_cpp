@@ -1309,7 +1309,7 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](---)の
 |[is_same_f](---)              |関数テンプレートのオーバーロード                       |
 |[is_same_v](---)              |定数テンプレートの特殊化                               |
 |[is_same_s](---)              |クラステンプレートの特殊化                             |
-|[is_same_sfinae_fの実装](---) |SFINAEと関数テンプレート/関数のオーバーロード          |
+|[is_same_sfinae_f](---)       |SFINAEと関数テンプレート/関数のオーバーロード          |
 |[is_same_sfinae_s](---)       |SFINAEとクラステンプレートの特殊化                     |
 |[same_as](---)                |[コンセプト](---)よるis_same_sfinae_sと同一の機能      |
 |[is_same_templ](---)          |テンプレートテンプレートパラメータ                     |
@@ -1378,7 +1378,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 ```
 
 
-#### is_same_sfinae_fの実装
+#### is_same_sfinae_f
 SFINAEと関数テンプレート/関数のオーバーロードを用いたis_same_sfinae_f実装は以下のようになる。
 
 ```cpp
@@ -1534,8 +1534,15 @@ std::is_convertible\<FROM, TO>は、
 
 の実装を考える。
 
+|AreConvertibleXxx                     |実装方法                                     |
+|--------------------------------------|---------------------------------------------|
+|[AreConvertible](---)                 |クラステンプレートの特殊化                   |
+|[ConvertibleToAll](---)               |AreConvertibleをコンセプトへ                 |
+|[AreConvertibleWithoutNarrowConv](---)|SFINAEとクラステンプレートの特殊化           |
+|[ConvertibleWithoutNarrowing](---)    |AreConvertibleWithoutNarrowConvをコンセプトへ|
 
-#### AreConvertibleの実装
+
+#### AreConvertible
 AreConvertibleの実装は以下のようになる。
 
 ```cpp
@@ -1558,7 +1565,7 @@ AreConvertibleの実装は以下のようになる。
 ```
 
 
-#### AreConvertibleWithoutNarrowConvの実装
+#### AreConvertibleWithoutNarrowConv
 縮小無しの型変換ができるかどうかを判定するAreConvertibleWithoutNarrowConvは、
 AreConvertibleと同じように実装できるが、
 その場合、AreConvertibleに対してstd::is_convertibleが必要になったように、
@@ -1601,6 +1608,34 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 ```cpp
     // @@@ example/template/nstd_type_traits_ut.cpp #2:1 begin -1
 ```
+
+#### ConvertibleToAll
+ConvertibleToAllの実装は下記のようになる。
+
+```cpp
+    // @@@ h/nstd_concepts.h #4:0 begin -1
+```
+
+使用方法を含めて、単体テストは以下のようになる。
+
+```cpp
+    // @@@ example/template/nstd_concepts_ut.cpp #2:0 begin
+```
+
+#### ConvertibleWithoutNarrowing
+ConvertibleWithoutNarrowingは以下のようなコンセプトである。
+
+* [AreConvertibleWithoutNarrowConv](---)と同様の機能を持つ
+* [ConvertibleToAll](---)と同様構造を持つ
+
+実装は以下のようになる。
+
+```cpp
+    // @@@ h/nstd_concepts.h #5:0 begin -1
+```
+
+単体テストは他の似たコンセプトとほぼ同様になるため省略する。
+
 
 ### 関数の存在の診断
 Nstdライブラリの開発には関数の存在の診断が欠かせない。
@@ -2145,7 +2180,7 @@ SafeArray2の要件をまとめると、
 * SafeArrayでのパラメータパックによる初期化機能はそのまま残す
 * SafeArrayではできなかった縮小型変換が起こる初期化にも対応する
 * 新規要件として、
-  縮小型変換により初期化されたかどうかを示すメンバ関数InitializedWithNarrowConv()を持つ。
+  縮小型変換により初期化されたかどうかを示すメンバ関数InitWithNarrowing()を持つ。
 
 となる。この要件を満たすためには、SafeArrayが
 
@@ -2161,17 +2196,18 @@ SafeArray2の要件をまとめると、
 パラメータパックによるコンストラクタのシグネチャは上記した一種類しかないため、
 関数のシグネチャの差異よるオーバーロードは使えない。
 とすれば、テンプレートパラメータの型の差異によるオーバーロードを使うしか方法がない。
-縮小型変換が起こるか否かの場合分けはSFINAEで実現させることができる。
+縮小型変換が起こるか否かの場合分けは、
+コンセプト[ConvertibleWithoutNarrowing](---)を使用したSFINAEで実現させることができる。
 という風な思考の変遷により以下のコードにたどり着く。
 
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp #4:0 begin
-    // @@@ example/template/safe_vector_ut.cpp #4:1 begin
-    // @@@ example/template/safe_vector_ut.cpp #4:2 begin
-    // @@@ example/template/safe_vector_ut.cpp #4:3 begin
-    // @@@ example/template/safe_vector_ut.cpp #4:4 begin
-    // @@@ example/template/safe_vector_ut.cpp #4:5 begin
+    // @@@ example/template/safe_vector_ut.cpp #4:0 begin -1
+    // @@@ example/template/safe_vector_ut.cpp #4:1 begin -1
+    // @@@ example/template/safe_vector_ut.cpp #4:2 begin -1
+    // @@@ example/template/safe_vector_ut.cpp #4:3 begin -1
+    // @@@ example/template/safe_vector_ut.cpp #4:4 begin -1
+    // @@@ example/template/safe_vector_ut.cpp #4:5 begin -1
 ```
 
 下記のようなコードでのコンストラクタ呼び出しには、

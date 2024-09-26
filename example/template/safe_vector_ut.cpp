@@ -3,6 +3,7 @@
 
 #include "gtest_wrapper.h"
 
+#include "nstd_concepts.h"
 #include "nstd_type_traits.h"
 #include "suppress_warning.h"
 
@@ -236,10 +237,14 @@ struct SafeArray2 : std::array<T, N> {
     // @@@ sample begin 4:1
 
     // 縮小型変換した場合には、ill-formedになるコンストラクタ
+    /* c++17スタイルのSFINAE
     template <typename... ARGS,
               typename = 
                   typename std::enable_if_t<
                        AreConvertibleWithoutNarrowConvV<T, ARGS...>>>
+    */ 
+    template <typename... ARGS> // C++20のコンセプトを使用したSFINAE
+    requires ConvertibleWithoutNarrowing<T, ARGS...>
     SafeArray2(ARGS... args) : base_type{args...} // 初期化子リストによるarrayの初期化
     {
     }
@@ -247,9 +252,13 @@ struct SafeArray2 : std::array<T, N> {
     // @@@ sample begin 4:2
 
     // 縮小型変換しない場合には、ill-formedになるコンストラクタ
+    /* C++17までのSFINAE
     template <typename... ARGS, 
               typename std::enable_if_t<
                   !AreConvertibleWithoutNarrowConvV<T, ARGS...>>* = nullptr>
+    */
+    template <typename... ARGS> // C++20のコンセプトを使用したSFINAE
+    requires (!ConvertibleWithoutNarrowing<T, ARGS...>)  // この行には()が必要
     SafeArray2(ARGS... args) :
         // @@@ sample end
         // @@@ sample begin 4:3
@@ -268,7 +277,7 @@ struct SafeArray2 : std::array<T, N> {
     typename base_type::reference       operator[](size_type i) { return this->at(i); }
     typename base_type::const_reference operator[](size_type i) const { return this->at(i); }
 
-    bool InitializedWithNarrowConv() const noexcept { return is_with_narrow_conv_; }
+    bool InitWithNarrowing() const noexcept { return is_with_narrow_conv_; }
 
 private:
     bool const is_with_narrow_conv_{false};
@@ -282,7 +291,7 @@ TEST(Template, safe_array2)
     {
         auto sa_not_init = Nstd::SafeArray2<int, 3>{};
 
-        ASSERT_FALSE(sa_not_init.InitializedWithNarrowConv());
+        ASSERT_FALSE(sa_not_init.InitWithNarrowing());
         ASSERT_EQ(3, sa_not_init.size());
         ASSERT_THROW(sa_not_init[3], std::out_of_range);
     }
@@ -293,7 +302,7 @@ TEST(Template, safe_array2)
         // @@@ sample end
         // @@@ sample begin 4:7
 
-        ASSERT_FALSE(sa_init.InitializedWithNarrowConv());  // 縮小型変換なし
+        ASSERT_FALSE(sa_init.InitWithNarrowing());  // 縮小型変換なし
         ASSERT_EQ(3, sa_init.size());
         ASSERT_EQ(1, sa_init[0]);
         ASSERT_EQ(2, sa_init[1]);
@@ -305,7 +314,7 @@ TEST(Template, safe_array2)
         // @@@ sample begin 4:8
         auto const sa_init = Nstd::SafeArray2<int, 3>{10, 20, 30.0};  // 30.0はintに縮小型変換される
 
-        ASSERT_TRUE(sa_init.InitializedWithNarrowConv());  // 縮小型変換あり
+        ASSERT_TRUE(sa_init.InitWithNarrowing());  // 縮小型変換あり
         ASSERT_EQ(3, sa_init.size());
         ASSERT_EQ(10, sa_init[0]);
         ASSERT_EQ(20, sa_init[1]);
@@ -316,7 +325,7 @@ TEST(Template, safe_array2)
     {
         auto sa_init = Nstd::SafeArray2<int, 4>{2, 3.0};
 
-        ASSERT_TRUE(sa_init.InitializedWithNarrowConv());
+        ASSERT_TRUE(sa_init.InitWithNarrowing());
         ASSERT_EQ(4, sa_init.size());
         ASSERT_EQ(2, sa_init[0]);
         ASSERT_EQ(3, sa_init[1]);
@@ -327,7 +336,7 @@ TEST(Template, safe_array2)
     {
         auto const sa_string_const = Nstd::SafeArray2<std::string, 5>{"1", "2", "3"};
 
-        ASSERT_FALSE(sa_string_const.InitializedWithNarrowConv());
+        ASSERT_FALSE(sa_string_const.InitWithNarrowing());
         ASSERT_EQ(5, sa_string_const.size());
         ASSERT_EQ("1", sa_string_const[0]);
         ASSERT_EQ("2", sa_string_const[1]);
@@ -340,7 +349,7 @@ TEST(Template, safe_array2)
         auto       cl              = std::initializer_list<char>{'1', '2', '3'};
         auto const sa_string_const = Nstd::SafeArray2<std::string, 2>{std::string("aaa"), cl};
 
-        ASSERT_FALSE(sa_string_const.InitializedWithNarrowConv());
+        ASSERT_FALSE(sa_string_const.InitWithNarrowing());
         ASSERT_EQ(2, sa_string_const.size());
         ASSERT_EQ("aaa", sa_string_const[0]);
         ASSERT_EQ("123", sa_string_const[1]);

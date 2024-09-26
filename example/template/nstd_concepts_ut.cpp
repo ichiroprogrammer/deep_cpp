@@ -134,6 +134,28 @@ TEST(Template, are_convertible)
     static_assert(!Nstd::ConvertibleToAll<std::string, std::string, char*, int>);
 }
 
+// @@@ sample begin 2:0
+
+// ConvertibleToAll_Test テンプレートの定義
+template <typename TO, typename... FROMs>
+struct ConvertibleToAll_Test : std::false_type {
+};
+
+// すべての FROMs が TO に変換可能な場合の部分特殊化
+template <typename TO, typename... Us>
+requires ConvertibleToAll<TO, Us...>
+struct ConvertibleToAll_Test<TO, Us...> : std::true_type {
+};
+
+struct convert_bool {
+    operator bool() const { return false; }
+};
+
+static_assert(!ConvertibleToAll_Test<bool, int, std::string>::value);
+static_assert(ConvertibleToAll_Test<bool, int, convert_bool>::value);
+// @@@ sample end
+TEST(Template, ConvertibleToAll) {}
+
 TEST(Template, are_convertible_without_narrow_conv)
 {
     static_assert(Nstd::Inner_::convertible_without_narrowing<int, int>);
