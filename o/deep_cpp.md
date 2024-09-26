@@ -9812,9 +9812,11 @@ private:
     ASSERT_THROW(sa_init[3], std::out_of_range);
 ```
 
-ここで紹介した2つのコンストラクタテンプレートの最後のパラメータには、かなりの違和感があるだろうが、
+ここで紹介したC++17スタイルの2つのコンストラクタテンプレートの最後のパラメータには、
+かなりの違和感があるだろうが、
 引数や戻り値に制限の多いコンストラクタテンプレートでSFINAEを起こすためには、
 このような記述が必要になる。
+一方で[コンセプト](#SS_6_4_8)を使用したC++20スタイルのSFINAEの可読性の高さを実感できただろう。
 
 なお、2つ目のコンストラクタテンプレートの中で使用した下記のコードは、
 パラメータパックで与えられた全引数をそれぞれにT型オブジェクトに変換するための記法である。
@@ -10139,16 +10141,21 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 
 この原因は、Nstd::SafeStringオブジェクトに対して、std::operator<<が使用されなかったからである。
 
-「[メタ関数のテクニック](#SS_4_3)」で紹介したSFINAEにより、この問題は下記のように対処できる。
+「[メタ関数のテクニック](#SS_4_3)」で紹介したSFINAEによりこの問題を回避できるが、
+ここでも、すでにみてきた[コンセプト](#SS_6_4_8)による制約によりこの問題に対処する。
 
 ```cpp
     // @@@ example/template/safe_index_put_to_ut.cpp 99
 
+    namespace Inner_ {
+    template <typename T>
+    concept not_safe_string = !std::is_same_v<T, Nstd::SafeString>;
+    }
+
     template <template <class...> class C, typename... Ts>
-    auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) ->
-        typename std::enable_if_t<    // safe_indexがSafeString型ならば、SFINAEにより非活性化
-            !std::is_same_v<Nstd::SafeIndex<C, Ts...>, Nstd::SafeString>, std::ostream&>
-    {
+    auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) -> std::ostream& 
+        requires Inner_::not_safe_string<Nstd::SafeIndex<C, Ts...>> // enable_ifによるSFINAEを避け、
+    {                                                               // コンセプトによる制約
         auto sep = "";
 
         for (auto const& i : safe_index) {
@@ -10162,7 +10169,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 これにより先ほど問題が発生した単体テストも下記のようにパスする。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 132
+    // @@@ example/template/safe_index_put_to_ut.cpp 135
 
     auto str = Nstd::SafeString{"hello"};
     auto oss = std::ostringstream{};
@@ -10239,11 +10246,10 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 
 ただし、このようなコードはコンパイラのバグによりコンパイルできないことがある。
 実際、現在使用中の[g++](#SS_6_9_1)ではこのコードはコンパイルできず、
-上記コードではそのワークアラウンドを行っている。
+上記コードでコメントにも書いた通り、Inner_の中でPrintableを再定義することで、
+そのワークアラウンドを行っている。
 
-このような場合、条件分岐に三項演算子を使うことで回避できることが多いが、
-ここではg++の問題を明示するためにプリプロセッサ命令を用いた。
-
+このような場合、条件分岐に三項演算子や中間式にconstexprを使うことで回避できることが多い。
 このような複雑なメタ関数には単体テストは必須である。
 
 ```cpp
