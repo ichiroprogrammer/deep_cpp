@@ -10678,27 +10678,24 @@ range_put_to_sep<>()を用意した。
 下記に示した通り、universal_refとuniversal_ref2のパラメータが同じ型であるとは限らない。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 95
+    // @@@ example/template/universal_ref_ut.cpp 96
 
     auto i = 0;
 
     constexpr auto p = universal_ref(i);
+    static_assert(universal_ref2(i) == ExpressionType::Lvalue);            // iはlvalue
+    static_assert(p.first == ExpressionType::Lvalue);                      // universal_refの引数はlvalue
+    static_assert(p.second == ExpressionType::Lvalue);                     // universal_ref中のuniversal_ref2の引数はlvalue
 
-    static_assert(universal_ref2(i) == ExpressionType::Lvalue);
-    static_assert(p.first == ExpressionType::Lvalue);
-    static_assert(p.second == ExpressionType::Lvalue);
-
-    constexpr auto pm = universal_ref(std::move(i));
-
-    static_assert(universal_ref2(std::move(i)) == ExpressionType::Rvalue);
-    static_assert(pm.first == ExpressionType::Rvalue);
-    static_assert(pm.second == ExpressionType::Lvalue);
+    constexpr auto pm = universal_ref(std::move(i));                       // universal_refの引数はrvalue
+    static_assert(universal_ref2(std::move(i)) == ExpressionType::Rvalue); // universal_ref2の引数はrvalue
+    static_assert(pm.first == ExpressionType::Rvalue);                     // universal_refの引数はrvalue
+    static_assert(pm.second == ExpressionType::Lvalue);                    // universal_ref中のuniversal_ref2の引数はrvalue
 
     constexpr auto pm2 = universal_ref(int{});
-
-    static_assert(universal_ref2(int{}) == ExpressionType::Rvalue);
-    static_assert(pm2.first == ExpressionType::Rvalue);
-    static_assert(pm2.second == ExpressionType::Lvalue);
+    static_assert(universal_ref2(int{}) == ExpressionType::Rvalue);        // universal_ref2の引数はrvalue
+    static_assert(pm2.first == ExpressionType::Rvalue);                    // universal_refの引数はrvalue
+    static_assert(pm2.second == ExpressionType::Lvalue);                   // universal_ref中のuniversal_ref2の引数はrvalue
 ```
 
 この問題はstd::forwardにより対処できる。これによって改良されたコードを下記に示す。
@@ -10755,9 +10752,9 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 下記は、この対策を施すとともに任意の数の引数を受け取れるように改良したコードである。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 170
+    // @@@ example/template/universal_ref_ut.cpp 171
 
-    void emplace_back(std::vector<std::string>&) noexcept {}
+    void emplace_back(std::vector<std::string>&) {}
 
     template <typename HEAD, typename... TAIL>
     void emplace_back(std::vector<std::string>& strs, HEAD&& head, TAIL&&... tails)
@@ -10803,7 +10800,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 (が、残念ならがテンポラリオブジェクトが生成されていないことを単体テストで証明することはできない)。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 198
+    // @@@ example/template/universal_ref_ut.cpp 197
 
     auto a = std::string{"a"};
     auto b = std::string{"b"};
@@ -10815,6 +10812,23 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
     ASSERT_EQ("", b);  // bはmoveされた
 ```
 
+上記のgen_vectorはリカーシブコールを使って実装したが、
+[畳み込み式](#SS_6_1_18_6)を使用した下記の実装の方がより明確である。
+
+```cpp
+    // @@@ example/template/universal_ref_ut.cpp 211
+
+    template <typename... STR>
+    std::vector<std::string> gen_vector(STR&&... ss)
+    {
+        auto ret = std::vector<std::string>{};
+
+        (ret.emplace_back(std::forward<STR>(ss)), ...);
+
+        return ret;
+    }
+```
+
 ユニバーサルリファレンスはconstにすることができないが
 (T const&&はconstな[rvalue](#SS_6_5_3)リファレンスである)、
 ユニバーサルリファレンスが[lvalue](#SS_6_5_2)リファレンスであった場合は、
@@ -10823,7 +10837,7 @@ constなlvalueリファレンスとして扱うべきである。
 従って、下記のようなコードは書くべきではない。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 215
+    // @@@ example/template/universal_ref_ut.cpp 240
 
     template <typename STR0, typename STR1>
     std::vector<std::string> gen_vector(STR0&& s0, STR1&& s1)
@@ -10841,7 +10855,7 @@ constなlvalueリファレンスとして扱うべきである。
 下記単体テストが示すように非constな実引数はmoveされてしまうことになる。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 232
+    // @@@ example/template/universal_ref_ut.cpp 257
 
     auto       a = std::string{"a"};
     auto const b = std::string{"b"};
@@ -10857,7 +10871,7 @@ constなlvalueリファレンスとして扱うべきである。
 すでに述べたように引数はユニバーサルリファレンスとなってしまうため、lvalueにもバインドしてしまう。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 248
+    // @@@ example/template/universal_ref_ut.cpp 273
 
     template <typename T>
     void f(T&& t) noexcept
@@ -10869,7 +10883,7 @@ constなlvalueリファレンスとして扱うべきである。
 このような場合、下記の記述が必要になる。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 267
+    // @@@ example/template/universal_ref_ut.cpp 292
 
     template <typename T>
     void f(T&) = delete;
@@ -10879,7 +10893,7 @@ constなlvalueリファレンスとして扱うべきである。
 当初の目的通り、rvalueのみを引数に取る関数テンプレートが定義できたことになる。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 275
+    // @@@ example/template/universal_ref_ut.cpp 300
 
     auto s = std::string{};
 
@@ -11006,16 +11020,16 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
     private:
         std::ostream& os_;
     };
+```
+```cpp
+    // @@@ example/template/generic_lambda_ut.cpp 111
 
-    TEST(Template, generic_lambda_like)
-    {
-        auto oss = std::ostringstream{};
+    auto oss = std::ostringstream{};
 
-        auto closure = Closure{oss};
-        f(closure);
+    auto closure = Closure{oss};
+    f(closure);
 
-        ASSERT_EQ("1\n2.71\nhehe\n", oss.str());
-    }
+    ASSERT_EQ("1\n2.71\nhehe\n", oss.str());
 ```
 
 #### std::variantとジェネリックラムダ <a id="SS_4_6_2_2"></a>

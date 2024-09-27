@@ -104,15 +104,18 @@ public:
 private:
     std::ostream& os_;
 };
+// @@@ sample end
 
 TEST(Template, generic_lambda_like)
 {
+    // @@@ sample begin 1:2
+
     auto oss = std::ostringstream{};
 
     auto closure = Closure{oss};
     f(closure);
 
     ASSERT_EQ("1\n2.71\nhehe\n", oss.str());
+    // @@@ sample end
 }
-// @@@ sample end
 }  // namespace

@@ -92,31 +92,31 @@ constexpr std::pair<ExpressionType, ExpressionType> universal_ref(T&& t)
 
 TEST(Template, universal_ref)
 {
+    // clang-format off
     // @@@ sample begin 1:3
 
     auto i = 0;
 
     constexpr auto p = universal_ref(i);
+    static_assert(universal_ref2(i) == ExpressionType::Lvalue);            // iはlvalue
+    static_assert(p.first == ExpressionType::Lvalue);                      // universal_refの引数はlvalue
+    static_assert(p.second == ExpressionType::Lvalue);                     // universal_ref中のuniversal_ref2の引数はlvalue
 
-    static_assert(universal_ref2(i) == ExpressionType::Lvalue);
-    static_assert(p.first == ExpressionType::Lvalue);
-    static_assert(p.second == ExpressionType::Lvalue);
-
-    constexpr auto pm = universal_ref(std::move(i));
-
-    static_assert(universal_ref2(std::move(i)) == ExpressionType::Rvalue);
-    static_assert(pm.first == ExpressionType::Rvalue);
-    static_assert(pm.second == ExpressionType::Lvalue);
+    constexpr auto pm = universal_ref(std::move(i));                       // universal_refの引数はrvalue
+    static_assert(universal_ref2(std::move(i)) == ExpressionType::Rvalue); // universal_ref2の引数はrvalue
+    static_assert(pm.first == ExpressionType::Rvalue);                     // universal_refの引数はrvalue
+    static_assert(pm.second == ExpressionType::Lvalue);                    // universal_ref中のuniversal_ref2の引数はrvalue
 
     constexpr auto pm2 = universal_ref(int{});
-
-    static_assert(universal_ref2(int{}) == ExpressionType::Rvalue);
-    static_assert(pm2.first == ExpressionType::Rvalue);
-    static_assert(pm2.second == ExpressionType::Lvalue);
+    static_assert(universal_ref2(int{}) == ExpressionType::Rvalue);        // universal_ref2の引数はrvalue
+    static_assert(pm2.first == ExpressionType::Rvalue);                    // universal_refの引数はrvalue
+    static_assert(pm2.second == ExpressionType::Lvalue);                   // universal_ref中のuniversal_ref2の引数はrvalue
     // @@@ sample end
 
-    ASSERT_EQ(0, i);
+    // clang-format off
+    IGNORE_UNUSED_VAR(i);
 }
+
 }  // namespace
 }  // namespace GenVectorUniversalRef
 
@@ -167,9 +167,10 @@ TEST(Template, gen_vector_universal_ref_with_forwad)
 }  // namespace GenVectorUniversalRefWithForward
 
 namespace GenVectorUniversalRefParameterPackWithForward {
+namespace not_folding {
 // @@@ sample begin 3:0
 
-void emplace_back(std::vector<std::string>&) noexcept {}
+void emplace_back(std::vector<std::string>&) {}
 
 template <typename HEAD, typename... TAIL>
 void emplace_back(std::vector<std::string>& strs, HEAD&& head, TAIL&&... tails)
@@ -191,9 +192,7 @@ std::vector<std::string> gen_vector(STR&&... ss)
     return ret;
 }
 // @@@ sample end
-
-namespace {
-TEST(Template, gen_vector_universal_ref_with_forwad)
+TEST(Template, gen_vector_universal_ref_with_forwad_old)
 {
     // @@@ sample begin 3:1
 
@@ -207,7 +206,33 @@ TEST(Template, gen_vector_universal_ref_with_forwad)
     ASSERT_EQ("", b);  // bはmoveされた
     // @@@ sample end
 }
-}  // namespace
+}
+namespace folding {
+// @@@ sample begin 3:2
+
+template <typename... STR>
+std::vector<std::string> gen_vector(STR&&... ss)
+{
+    auto ret = std::vector<std::string>{};
+
+    (ret.emplace_back(std::forward<STR>(ss)), ...);
+
+    return ret;
+}
+// @@@ sample end
+
+TEST(Template, gen_vector_universal_ref_with_forwad_folding)
+{
+    auto a = std::string{"a"};
+    auto b = std::string{"b"};
+
+    auto v = gen_vector(a, std::move(b), "c");
+
+    ASSERT_EQ((std::vector<std::string>{"a", "b", "c"}), v);
+    ASSERT_EQ("a", a);
+    ASSERT_EQ("", b);  // bはmoveされた
+}
+}
 }  // namespace GenVectorUniversalRefParameterPackWithForward
 
 namespace GenVectorUniversalRef_Worst {

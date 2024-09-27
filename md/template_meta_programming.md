@@ -2620,6 +2620,13 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
     // @@@ example/template/universal_ref_ut.cpp #3:1 begin -1
 ```
 
+上記のgen_vectorはリカーシブコールを使って実装したが、
+[畳み込み式](---)を使用した下記の実装の方がより明確である。
+
+```cpp
+    // @@@ example/template/universal_ref_ut.cpp #3:2 begin
+```
+
 ユニバーサルリファレンスはconstにすることができないが
 (T const&&はconstな[expressionと値カテゴリ|rvalue](---)リファレンスである)、
 ユニバーサルリファレンスが[lvalue](---)リファレンスであった場合は、
@@ -2704,6 +2711,9 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
 
 ```cpp
     // @@@ example/template/generic_lambda_ut.cpp #1:1 begin
+```
+```cpp
+    // @@@ example/template/generic_lambda_ut.cpp #1:2 begin -1
 ```
 
 #### std::variantとジェネリックラムダ
