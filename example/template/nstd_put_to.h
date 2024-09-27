@@ -80,15 +80,16 @@ constexpr std::string_view range_put_to_sep() noexcept
         return " # ";
     }
 };
+
+template <typename T>
+concept range_put_to = Inner_::enable_range_put_to_v<T>;
 }  // namespace Inner_
 
 template <typename T>
 auto operator<<(std::ostream& os, T const& t) ->
-#if defined(__clang__)
     typename std::enable_if_t<Inner_::enable_range_put_to_v<T>, std::ostream&>
-#else  // g++でのワークアラウンド
-    typename std::enable_if_t<Inner_::enable_range_put_to<T>(), std::ostream&>
-#endif
+// std::enable_if_t<Inner_::enable_range_put_to_v<T>を使わずに上のrange_put_toを使いたいが、
+// コンパイラのバグによりコンパイルできない
 {
     auto sep = std::string_view("");
     auto s   = Inner_::range_put_to_sep<ValueType<T>::Nest>();

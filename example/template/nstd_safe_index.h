@@ -44,7 +44,7 @@ struct std_array_like : std::array<T, U::value> {
     std_array_like(ARGS... args) noexcept(std::is_nothrow_constructible_v<T, ARGS...>)
         : std::array<T, U::value>{args...}
     {
-        static_assert(AreConvertibleV<T, ARGS...>, "arguemnt error");
+        static_assert(ConvertibleToAll<T, ARGS...>, "arguemnt error");
     }
 };
 }  // namespace Inner_

@@ -9961,7 +9961,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
         std_array_like(ARGS... args) noexcept(std::is_nothrow_constructible_v<T, ARGS...>)
             : std::array<T, U::value>{args...}
         {
-            static_assert(AreConvertibleV<T, ARGS...>, "arguemnt error");
+            static_assert(ConvertibleToAll<T, ARGS...>, "arguemnt error");
         }
     };
     }  // namespace Inner_
@@ -10316,15 +10316,16 @@ Nstd::operator\<\<は下記のように定義できる。
             return " # ";
         }
     };
+
+    template <typename T>
+    concept range_put_to = Inner_::enable_range_put_to_v<T>;
     }  // namespace Inner_
 
     template <typename T>
     auto operator<<(std::ostream& os, T const& t) ->
-    #if defined(__clang__)
         typename std::enable_if_t<Inner_::enable_range_put_to_v<T>, std::ostream&>
-    #else  // g++でのワークアラウンド
-        typename std::enable_if_t<Inner_::enable_range_put_to<T>(), std::ostream&>
-    #endif
+    // std::enable_if_t<Inner_::enable_range_put_to_v<T>を使わずに上のrange_put_toを使いたいが、
+    // コンパイラのバグによりコンパイルできない
     {
         auto sep = std::string_view("");
         auto s   = Inner_::range_put_to_sep<ValueType<T>::Nest>();
