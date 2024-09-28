@@ -6,7 +6,7 @@ SRCS:=\
     name_hiding.cpp name_lookup_adl_ut.cpp name_lookup_ut.cpp namespace_ut.cpp \
     override_overload_ut.cpp range_for_ut.cpp ref_collapsing_ut.cpp rtti_ut.cpp \
     rvalue_lvalue_ut.cpp semantics_ut.cpp slice_ut.cpp spurious_wakeup_ut.cpp \
-    two_phase_name_lookup_ut.cpp uniform_initialization_ut.cpp \
+    two_phase_name_lookup_ut.cpp uniform_initialization_ut.cpp constexpr_if_ut.cpp \
     ambiguous_ownership_ut.cpp unique_ptr_ownership_ut.cpp shared_ptr_ownership_ut.cpp \
     universal_ref_ut.cpp user_defined_literal_ut.cpp dominance_ut.cpp diamond_inheritance_ut.cpp \
     virtual_inheritance_ut.cpp underlying_type_ut.cpp most_vexing_parse_ut.cpp \

@@ -5697,13 +5697,12 @@ __この章の構成__
 &emsp;&emsp; [ログ取得ライブラリの開発2](#SS_4_5)  
 &emsp;&emsp; [その他のテンプレートテクニック](#SS_4_6)  
 &emsp;&emsp;&emsp; [ユニバーサルリファレンスとstd::forward](#SS_4_6_1)  
-&emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_4_6_2)  
+&emsp;&emsp;&emsp; [ジェネリックラムダによる関数内での関数テンプレートの定義](#SS_4_6_2)  
 &emsp;&emsp;&emsp; [クラステンプレートと継承の再帰構造](#SS_4_6_3)  
-&emsp;&emsp;&emsp; [constexpr if文](#SS_4_6_4)  
-&emsp;&emsp;&emsp; [意図しないname lookupの防止](#SS_4_6_5)  
-&emsp;&emsp;&emsp; [Nstd::Type2Strの開発](#SS_4_6_6)  
-&emsp;&emsp;&emsp; [静的な文字列オブジェクト](#SS_4_6_7)  
-&emsp;&emsp;&emsp; [関数型をテンプレートパラメータで使う](#SS_4_6_8)  
+&emsp;&emsp;&emsp; [意図しないname lookupの防止](#SS_4_6_4)  
+&emsp;&emsp;&emsp; [Nstd::Type2Strの開発](#SS_4_6_5)  
+&emsp;&emsp;&emsp; [静的な文字列オブジェクト](#SS_4_6_6)  
+&emsp;&emsp;&emsp; [関数型をテンプレートパラメータで使う](#SS_4_6_7)  
 
 &emsp;&emsp; [注意点まとめ](#SS_4_7)  
   
@@ -7317,8 +7316,8 @@ std::enable_ifの使用例を下記に示す。
 
 実装例から明らかなように
 
-* std::enable_if\<true>::typeは[well-formed](#SS_6_12_9)
-* std::enable_if\<false>::typeは[ill-formed](#SS_6_12_8)
+* std::enable_if\<true>::typeは[well-formed](#SS_6_12_8)
+* std::enable_if\<false>::typeは[ill-formed](#SS_6_12_7)
 
 となるため、下記のコードはコンパイルできない。
 
@@ -8409,7 +8408,7 @@ SFINAEと関数テンプレート/関数のオーバーライドを使用し以�
 AreConvertibleWithoutNarrowConvはNstdで定義するため、その内部のみで用いる
 is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 
-上記を抜粋した下記のコードは「縮小型変換を発生さる{}による初期化は[ill-formed](#SS_6_12_8)になる」
+上記を抜粋した下記のコードは「縮小型変換を発生さる{}による初期化は[ill-formed](#SS_6_12_7)になる」
 ことをSFINAEに利用している。
 
 ```cpp
@@ -8819,8 +8818,8 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 
 上記で使用したstd::void_tは、テンプレートパラメータが
 
-* [ill-formed](#SS_6_12_8)ならばill-formedになる
-* [well-formed](#SS_6_12_9)ならvoidを生成する
+* [ill-formed](#SS_6_12_7)ならばill-formedになる
+* [well-formed](#SS_6_12_8)ならvoidを生成する
 
 テンプレートである。
 
@@ -10898,7 +10897,7 @@ constなlvalueリファレンスとして扱うべきである。
 
 なお、ユニバーサルリファレンスは、[リファレンスcollapsing](#SS_6_8_4)の一機能としても理解できる。
 
-### ジェネリックラムダ <a id="SS_4_6_2"></a>
+### ジェネリックラムダによる関数内での関数テンプレートの定義 <a id="SS_4_6_2"></a>
 下記のようなクラスとoperator<<があった場合を考える。
 
 ```cpp
@@ -10968,7 +10967,7 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
     ASSERT_EQ("0/1/2, 3/2/1, 6/5/4, 9/8/7", oss.str());
 ```
 
-この記法はジェネリックラムダと呼ばれる。
+この記法は[ジェネリックラムダ](#SS_6_5_4)と呼ばれる。
 この機能により関数の中で関数テンプレートと同等のものが定義できるようになった。
 
 #### ジェネリックラムダの内部構造 <a id="SS_4_6_2_1"></a>
@@ -11252,127 +11251,8 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 このコードパターンについては、
 「[CRTP(curiously recurring template pattern)](#SS_3_21)」で説明している。
 
-### constexpr if文 <a id="SS_4_6_4"></a>
-C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/if_constexpr.html)とは、
-文を条件付きコンパイルすることができるようにするための制御構文である。
 
-まずは、この構文を使用しない例を示す。
-
-```cpp
-    // @@@ example/template/constexpr_if_ut.cpp 9
-
-    // 配列のサイズ
-    template <typename T>
-    auto Length(T const&) -> std::enable_if_t<std::is_array_v<T>, size_t>
-    {
-        return std::extent_v<T>;
-    }
-
-    // コンテナのサイズ
-    template <typename T>
-    auto Length(T const& t) -> decltype(t.size())
-    {
-        return t.size();
-    }
-
-    // その他のサイズ
-    size_t Length(...) { return 0; }
-```
-```cpp
-    // @@@ example/template/constexpr_if_ut.cpp 31
-
-    uint32_t a[5];
-    auto     v = std::vector{0, 1, 2};
-    struct SizeTest {
-    } t;
-
-    ASSERT_EQ(5, Length(a));
-    ASSERT_EQ(3, Length(v));
-    ASSERT_EQ(0, Length(t));
-
-    // C++17で、Lengthと同様の機能の関数テンプレートがSTLに追加された
-    ASSERT_EQ(std::size(a), Length(a));
-    ASSERT_EQ(std::size(v), Length(v));
-```
-
-このような場合、[SFINAE](#SS_6_5_1)によるオーバーロードが必須であったが、
-この文を使用することで、下記のようにオーバーロードを使用せずに記述できるため、
-条件分岐の可読性の向上が見込める。
-
-```cpp
-    // @@@ example/template/constexpr_if_ut.cpp 52
-
-    struct helper {
-        template <typename T>
-        auto operator()(T const& t) -> decltype(t.size());
-    };
-
-    template <typename T>
-    size_t Length(T const& t)
-    {
-        if constexpr (std::is_array_v<T>) {  // Tが配列の場合
-            // Tが配列でない場合、他の条件のブロックはコンパイル対象外
-            return std::extent_v<T>;
-        }
-        else if constexpr (std::is_invocable_v<helper, T>) {  // T::Lengthが呼び出せる場合
-            // T::Lengthが呼び出せない場合、他の条件のブロックはコンパイル対象外
-            return t.size();
-        }
-        else {  // それ以外
-            // Tが配列でなく且つ、T::Lengthが呼び出ない場合、他の条件のブロックはコンパイル対象外
-            return 0;
-        }
-    }
-```
-
-この構文は[パラメータパック](#SS_4_1_3)の展開においても有用な場合がある。
-
-```cpp
-    // @@@ example/template/constexpr_if_ut.cpp 93
-
-    // テンプレートパラメータで与えられた型のsizeofの値が最も大きな値を返す。
-    template <typename HEAD>
-    constexpr size_t MaxSizeof()
-    {
-        return sizeof(HEAD);
-    }
-
-    template <typename HEAD, typename T, typename... TAILS>
-    constexpr size_t MaxSizeof()
-    {
-        return std::max(sizeof(HEAD), MaxSizeof<T, TAILS...>());
-    }
-```
-```cpp
-    // @@@ example/template/constexpr_if_ut.cpp 111
-
-    static_assert(4 == (MaxSizeof<int8_t, int16_t, int32_t>()));
-    static_assert(4 == (MaxSizeof<int32_t, int16_t, int8_t>()));
-    static_assert(sizeof(std::string) == MaxSizeof<int32_t, int16_t, int8_t, std::string>());
-```
-
-C++14までの構文を使用する場合、
-上記のようなオーバーロードとリカーシブコールの組み合わせが必要であったが、
-constexpr ifを使用することで、やや単純に記述できる。
-
-```cpp
-    // @@@ example/template/constexpr_if_ut.cpp 123
-
-    // テンプレートパラメータで与えられた型のsizeofの値が最も大きな値を返す。
-    template <typename HEAD, typename... TAILS>
-    constexpr size_t MaxSizeof()
-    {
-        if constexpr (sizeof...(TAILS) == 0) {  // TAILSが存在しない場合
-            return sizeof(HEAD);
-        }
-        else {
-            return std::max(sizeof(HEAD), MaxSizeof<TAILS...>());
-        }
-    }
-```
-
-
-### 意図しないname lookupの防止 <a id="SS_4_6_5"></a>
+### 意図しないname lookupの防止 <a id="SS_4_6_4"></a>
 下記のようにクラスや関数テンプレートが定義されている場合を考える。
 
 ```cpp
@@ -11486,13 +11366,13 @@ lookupによるバグの混入を起こしてしまうことがある。
 
 こういったname lookup、特にADLの問題に対処する方法は、
 
-* [ジェネリックすぎるテンプレートを書かない](#SS_4_6_5_1)
-* [ADLが本当に必要でない限り名前を修飾する](#SS_4_6_5_2)
-* [ADL Firewallを使う](#SS_4_6_5_3)
+* [ジェネリックすぎるテンプレートを書かない](#SS_4_6_4_1)
+* [ADLが本当に必要でない限り名前を修飾する](#SS_4_6_4_2)
+* [ADL Firewallを使う](#SS_4_6_4_3)
 
 のようにいくつか考えられる。これらについて以下で説明を行う。
 
-#### ジェネリックすぎるテンプレートを書かない <a id="SS_4_6_5_1"></a>
+#### ジェネリックすぎるテンプレートを書かない <a id="SS_4_6_4_1"></a>
 ここでの「ジェネリックすぎるテンプレート」とは、
 シンタックス的には適用範囲が広いにもかかわらず、セマンティクス的な適用範囲は限られているものを指す。
 従って下記のような関数テンプレートを指す概念ではない。
@@ -11544,7 +11424,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 ```
 
 ジェネリックなis_equalが必要であれば下記単体テストのように
-[ジェネリックラムダ](#SS_4_6_2)を使えばよい。
+[ジェネリックラムダによる関数内での関数テンプレートの定義](#SS_4_6_2)を行えばよい。
 こうすることでその適用範囲はそれを定義した関数内に留まる。
 
 ```cpp
@@ -11573,14 +11453,14 @@ lookupによるバグの混入を起こしてしまうことがある。
 
 といった方法の他にも、「[コンテナ用Nstd::operator\<\<の開発](#SS_4_4_4)」で示した
 
-* std::enable_if等を使用してテンプレートに適用できる型を制限する
+* [std::enable_if](#SS_4_3_1_4)や[コンセプト](#SS_6_5_2)等を使用してテンプレートに適用できる型を制約する
 
 ことも考えられる。
 ベストな方法は状況に大きく依存するため一概には決められない。
 その状況でのもっとも単純は方法を選ぶべきだろう(が、何が単純かも一概に決めることは難しい)。
 
 
-#### ADLが本当に必要でない限り名前を修飾する <a id="SS_4_6_5_2"></a>
+#### ADLが本当に必要でない限り名前を修飾する <a id="SS_4_6_4_2"></a>
 下記のコードについて考える。
 
 ```cpp
@@ -11667,7 +11547,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
 修飾することをルール化することはできない。場合に合わせた運用が唯一の解となる。
 
 
-#### ADL Firewallを使う <a id="SS_4_6_5_3"></a>
+#### ADL Firewallを使う <a id="SS_4_6_4_3"></a>
 下記のコードについて考える。
 
 ```cpp
@@ -11746,7 +11626,7 @@ std::vectorオブジェクトをstd::stringに変換する。
 これが意図通りなら問題ないが、
 ここでは「新たに追加した関数テンプレートApp::operator<<はstd::vector\<App::XY>用ではなかった」
 としよう。その場合、これは意図しないADLによるバグの混入となる。
-「[ジェネリックすぎるテンプレートを書かない](#SS_4_6_5_1)」
+「[ジェネリックすぎるテンプレートを書かない](#SS_4_6_4_1)」
 で述べたように追加した関数テンプレートの適用範囲が広すぎることが原因であるが、
 XY型から生成されたオブジェクト(std::vector\<App::XY>も含む)によるADLのため、
 Appの宣言がname lookupの対象になったことにも原因がある。
@@ -11785,7 +11665,7 @@ App内でusing XYを宣言したことで、これまで通りApp::XYが使え�
 このようなテクニックをADL firewallと呼ぶ。
 
 
-### Nstd::Type2Strの開発 <a id="SS_4_6_6"></a>
+### Nstd::Type2Strの開発 <a id="SS_4_6_5"></a>
 「[Nstdライブラリの開発](#SS_4_2)」等で行ったメタ関数の実装は、
 
 * 入り組んだ<>や()の対応漏れ
@@ -11884,7 +11764,7 @@ typeid::name()が返す文字列リテラルは引数の型の文字列表現を
     ASSERT_EQ("int (&) [3]", Nstd::Type2Str<decltype(r)>());
 ```
 
-### 静的な文字列オブジェクト <a id="SS_4_6_7"></a>
+### 静的な文字列オブジェクト <a id="SS_4_6_6"></a>
 std::stringは文字列を扱うことにおいて、非常に有益なクラスではあるが、
 コンパイル時に文字列が決定できる場合でも、動的にメモリを確保する。
 
@@ -11935,7 +11815,7 @@ std::stringは文字列を扱うことにおいて、非常に有益なクラス
 
 このような問題を回避するために、ここでは静的に文字列を扱うためのクラスStaticStringを開発する。
 
-#### StaticStringのヘルパークラスの開発 <a id="SS_4_6_7_1"></a>
+#### StaticStringのヘルパークラスの開発 <a id="SS_4_6_6_1"></a>
 StaticStringオブジェクトは、char配列をメンバとして持つが、
 コンパイル時に解決できる配列の初期化にはパラメータパックが利用できる。
 そのパラメータパック生成クラスを下記のように定義する。
@@ -12021,7 +11901,7 @@ StaticStringオブジェクトは、char配列をメンバとして持つが、
 上記とほぼ同様のクラステンプレートstd::index_sequence、std::make_index_sequenceが、
 utilityで定義されているため、以下ではこれらを使用する。
 
-#### StaticStringの開発 <a id="SS_4_6_7_2"></a>
+#### StaticStringの開発 <a id="SS_4_6_6_2"></a>
 StaticStringはすでに示したテクニックを使い、下記のように定義できる。
 
 ```cpp
@@ -12323,7 +12203,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
     ASSERT_EQ(ss2 + ss8, ss);  // 元に戻す。+、= が使用される。
 ```
 
-#### 整数をStaticStringに変換する関数の開発 <a id="SS_4_6_7_3"></a>
+#### 整数をStaticStringに変換する関数の開発 <a id="SS_4_6_6_3"></a>
 コンパイル時に__LINE__をStaticStringに変換できれば、
 ファイル位置をStaticStringで表現できるため、
 ここではその変換関数Int2StaticString\<>()の実装を行う。
@@ -12402,8 +12282,8 @@ Int2StaticString\<>()が得られる。
     ASSERT_EQ(std::to_string(line_num), ns.String());
 ```
 
-#### ファイル位置を静的に保持したエクセプションクラスの開発 <a id="SS_4_6_7_4"></a>
-「[静的な文字列オブジェクト](#SS_4_6_7)」で見たように、
+#### ファイル位置を静的に保持したエクセプションクラスの開発 <a id="SS_4_6_6_4"></a>
+「[静的な文字列オブジェクト](#SS_4_6_6)」で見たように、
 ファイル位置を動的に保持するエクセプションクラスは使い勝手が悪い。
 ここでは、その問題を解決するためのExceptionクラスの実装を示す。
 
@@ -12515,7 +12395,7 @@ Exceptionクラスの利便性をさらに高めるため、下記の定義を�
     ASSERT_TRUE(caught);
 ```
 
-### 関数型をテンプレートパラメータで使う <a id="SS_4_6_8"></a>
+### 関数型をテンプレートパラメータで使う <a id="SS_4_6_7"></a>
 ここで使う「関数型」とは、
 
 * 関数へのポインタの型
@@ -12855,7 +12735,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
   パラメータパックの処理の順番に気を付ける(「[前から演算するパラメータパック](#SS_4_1_3_2)」参照)。
 
 * [ADL](#SS_6_4_5)を利用しない場合、テンプレートで使う識別子は名前空間名やthis->等で修飾する
-  (「[意図しないname lookupの防止](#SS_4_6_5)」参照)。
+  (「[意図しないname lookupの防止](#SS_4_6_4)」参照)。
 
 * テンプレートのインターフェースではないが、実装の都合上ヘッダファイルに記述する定義は、
   "namespace Inner\_"を使用し、非公開であることを明示する。
@@ -12917,7 +12797,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
   オーバーロードを使わずに実現するための記法である。
 
 * テンプレートに関数型オブジェクトを渡す場合、リファレンスの付け忘れに気を付ける
-  (「[関数型をテンプレートパラメータで使う](#SS_4_6_8)」
+  (「[関数型をテンプレートパラメータで使う](#SS_4_6_7)」
   参照)。
 
 * 意図しないテンプレートパラメータによるインスタンス化の防止や、
@@ -13200,7 +13080,7 @@ malloc/freeにリアルタイム性がない原因は、
 によって実装することにする。
 
 まずは、MPoolを下記に示す
-(「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_6_7_4)」参照)。
+(「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_6_6_4)」参照)。
 
 ```cpp
     // @@@ example/dynamic_memory_allocation/mpool.h 12
@@ -13424,7 +13304,7 @@ MPoolFixedの単体テストは、下記のようになる。
 ```
 
 上記テストで使用したMPoolBadAllocは下記のように定義されたクラスであり
-(「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_6_7_4)」参照)、
+(「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_6_6_4)」参照)、
 
 ```cpp
     // @@@ example/h/nstd_exception.h 11
@@ -14431,6 +14311,8 @@ __この章の構成__
 &emsp;&emsp;&emsp; [SFINAE](#SS_6_5_1)  
 &emsp;&emsp;&emsp; [コンセプト](#SS_6_5_2)  
 &emsp;&emsp;&emsp; [畳み込み式](#SS_6_5_3)  
+&emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_6_5_4)  
+&emsp;&emsp;&emsp; [constexpr if文](#SS_6_5_5)  
 
 &emsp;&emsp; [explicit](#SS_6_6)  
 &emsp;&emsp;&emsp; [単一引数のコンストラクタを持つクラスの暗黙の型変換抑止](#SS_6_6_1)  
@@ -14477,22 +14359,21 @@ __この章の構成__
 &emsp;&emsp;&emsp; [実引数/仮引数](#SS_6_12_2)  
 &emsp;&emsp;&emsp; [範囲for文](#SS_6_12_3)  
 &emsp;&emsp;&emsp; [ラムダ式](#SS_6_12_4)  
-&emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_6_12_5)  
-&emsp;&emsp;&emsp; [関数tryブロック](#SS_6_12_6)  
-&emsp;&emsp;&emsp; [単純代入](#SS_6_12_7)  
-&emsp;&emsp;&emsp; [ill-formed](#SS_6_12_8)  
-&emsp;&emsp;&emsp; [well-formed](#SS_6_12_9)  
-&emsp;&emsp;&emsp; [one-definition rule](#SS_6_12_10)  
-&emsp;&emsp;&emsp; [ODR](#SS_6_12_11)  
-&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_12_12)  
-&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_12_13)  
-&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_12_14)  
-&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_12_15)  
-&emsp;&emsp;&emsp; [RTTI](#SS_6_12_16)  
-&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_12_17)  
-&emsp;&emsp;&emsp; [simple-declaration](#SS_6_12_18)  
-&emsp;&emsp;&emsp; [typeid](#SS_6_12_19)  
-&emsp;&emsp;&emsp; [トライグラフ](#SS_6_12_20)  
+&emsp;&emsp;&emsp; [関数tryブロック](#SS_6_12_5)  
+&emsp;&emsp;&emsp; [単純代入](#SS_6_12_6)  
+&emsp;&emsp;&emsp; [ill-formed](#SS_6_12_7)  
+&emsp;&emsp;&emsp; [well-formed](#SS_6_12_8)  
+&emsp;&emsp;&emsp; [one-definition rule](#SS_6_12_9)  
+&emsp;&emsp;&emsp; [ODR](#SS_6_12_10)  
+&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_12_11)  
+&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_12_12)  
+&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_12_13)  
+&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_12_14)  
+&emsp;&emsp;&emsp; [RTTI](#SS_6_12_15)  
+&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_12_16)  
+&emsp;&emsp;&emsp; [simple-declaration](#SS_6_12_17)  
+&emsp;&emsp;&emsp; [typeid](#SS_6_12_18)  
+&emsp;&emsp;&emsp; [トライグラフ](#SS_6_12_19)  
 
 &emsp;&emsp; [ソフトウェア一般](#SS_6_13)  
 &emsp;&emsp;&emsp; [フリースタンディング環境](#SS_6_13_1)  
@@ -18032,7 +17913,7 @@ XXXの識別子が使用できる。
 ### SFINAE <a id="SS_6_5_1"></a>
 [SFINAE](https://cpprefjp.github.io/lang/cpp11/sfinae_expressions.html)
 (Substitution Failure Is Not An Errorの略称、スフィネェと読む)とは、
-「テンプレートのパラメータ置き換えに失敗した([ill-formed](#SS_6_12_8)になった)際に、
+「テンプレートのパラメータ置き換えに失敗した([ill-formed](#SS_6_12_7)になった)際に、
 即時にコンパイルエラーとはせず、置き換えに失敗したテンプレートを
 [name lookup](#SS_6_4_2)の候補から除外する」
 という言語機能である。
@@ -18334,6 +18215,186 @@ C++20から導入された「コンセプト(concepts)」は、
     static_assert(is_same_some_of<std::string, std::string, int>::value);
 ```
 
+### ジェネリックラムダ <a id="SS_6_5_4"></a>
+ジェネリックラムダとは、C++11のラムダ式のパラメータの型にautoを指定できるようにした機能で、
+C++14で導入された。
+
+この機能により関数の中で関数テンプレートと同等のものが定義できるようになった。
+
+ジェネリックラムダで定義されたクロージャは、通常のラムダと同様にオブジェクトであるため、
+下記のように使用することもできる便利な記法である。
+
+```cpp
+    // @@@ example/term_explanation/generic_lambda_ut.cpp 4
+
+    template <typename PUTTO>
+    void f(PUTTO&& p)
+    {
+        p(1);
+        p(2.71);
+        p("str");
+    }
+
+    TEST(Template, generic_lambda)
+    {
+        std::ostringstream oss;
+
+        f([&oss](auto const& elem) { oss << elem << std::endl; });
+
+        ASSERT_EQ("1\n2.71\nstr\n", oss.str());
+    }
+```
+
+なお、上記のジェネリックラムダは下記クラスのインスタンスの動きと同じである。
+
+```cpp
+    // @@@ example/term_explanation/generic_lambda_ut.cpp 23
+
+    class Closure {
+    public:
+        Closure(std::ostream& os) : os_(os) {}
+
+        template <typename T>
+        void operator()(T&& t)
+        {
+            os_ << t << std::endl;
+        }
+
+    private:
+        std::ostream& os_;
+    };
+
+    TEST(Template, generic_lambda_like)
+    {
+        std::ostringstream oss;
+
+        Closure closure(oss);
+        f(closure);
+
+        ASSERT_EQ("1\n2.71\nstr\n", oss.str());
+    }
+```
+
+### constexpr if文 <a id="SS_6_5_5"></a>
+C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/if_constexpr.html)とは、
+文を条件付きコンパイルすることができるようにするための制御構文である。
+
+まずは、この構文を使用しない例を示す。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp 9
+
+    // 配列のサイズ
+    template <typename T>
+    auto Length(T const&) -> std::enable_if_t<std::is_array_v<T>, size_t>
+    {
+        return std::extent_v<T>;
+    }
+
+    // コンテナのサイズ
+    template <typename T>
+    auto Length(T const& t) -> decltype(t.size())
+    {
+        return t.size();
+    }
+
+    // その他のサイズ
+    size_t Length(...) { return 0; }
+```
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp 31
+
+    uint32_t a[5];
+    auto     v = std::vector{0, 1, 2};
+    struct SizeTest {
+    } t;
+
+    ASSERT_EQ(5, Length(a));
+    ASSERT_EQ(3, Length(v));
+    ASSERT_EQ(0, Length(t));
+
+    // C++17で、Lengthと同様の機能の関数テンプレートがSTLに追加された
+    ASSERT_EQ(std::size(a), Length(a));
+    ASSERT_EQ(std::size(v), Length(v));
+```
+
+このような場合、[SFINAE](#SS_6_5_1)によるオーバーロードが必須であったが、
+この文を使用することで、下記のようにオーバーロードを使用せずに記述できるため、
+条件分岐の可読性の向上が見込める。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp 52
+
+    struct helper {
+        template <typename T>
+        auto operator()(T const& t) -> decltype(t.size());
+    };
+
+    template <typename T>
+    size_t Length(T const& t)
+    {
+        if constexpr (std::is_array_v<T>) {  // Tが配列の場合
+            // Tが配列でない場合、他の条件のブロックはコンパイル対象外
+            return std::extent_v<T>;
+        }
+        else if constexpr (std::is_invocable_v<helper, T>) {  // T::Lengthが呼び出せる場合
+            // T::Lengthが呼び出せない場合、他の条件のブロックはコンパイル対象外
+            return t.size();
+        }
+        else {  // それ以外
+            // Tが配列でなく且つ、T::Lengthが呼び出ない場合、他の条件のブロックはコンパイル対象外
+            return 0;
+        }
+    }
+```
+
+この構文は[パラメータパック](#SS_4_1_3)の展開においても有用な場合がある。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp 93
+
+    // テンプレートパラメータで与えられた型のsizeofの値が最も大きな値を返す。
+    template <typename HEAD>
+    constexpr size_t MaxSizeof()
+    {
+        return sizeof(HEAD);
+    }
+
+    template <typename HEAD, typename T, typename... TAILS>
+    constexpr size_t MaxSizeof()
+    {
+        return std::max(sizeof(HEAD), MaxSizeof<T, TAILS...>());
+    }
+```
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp 111
+
+    static_assert(4 == (MaxSizeof<int8_t, int16_t, int32_t>()));
+    static_assert(4 == (MaxSizeof<int32_t, int16_t, int8_t>()));
+    static_assert(sizeof(std::string) == MaxSizeof<int32_t, int16_t, int8_t, std::string>());
+```
+
+C++14までの構文を使用する場合、
+上記のようなオーバーロードとリカーシブコールの組み合わせが必要であったが、
+constexpr ifを使用することで、やや単純に記述できる。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp 123
+
+    // テンプレートパラメータで与えられた型のsizeofの値が最も大きな値を返す。
+    template <typename HEAD, typename... TAILS>
+    constexpr size_t MaxSizeof()
+    {
+        if constexpr (sizeof...(TAILS) == 0) {  // TAILSが存在しない場合
+            return sizeof(HEAD);
+        }
+        else {
+            return std::max(sizeof(HEAD), MaxSizeof<TAILS...>());
+        }
+    }
+```
+
+
 ## explicit <a id="SS_6_6"></a>
 explicitは、コンストラクタに対して付与することで、
 コンストラクタによる暗黙の型変換を禁止するためのキーワードである。
@@ -18547,7 +18608,6 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 
 こういった工夫により、コードの過度な柔軟性を適度に保つことができ、
 可読性の向上につながる。
-
 
 
 ## expressionと値カテゴリ <a id="SS_6_7"></a>
@@ -18950,8 +19010,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
     g(std::vector<std::string>{"rvalue"});  // 引数はrvalue
 ```
 
-下記のコードはジェネリックラムダ(「[ラムダ式](#SS_6_12_4)」参照)
-の引数をユニバーサルリファレンスにした例である。
+下記のコードは[ジェネリックラムダ](#SS_6_5_4)の引数をユニバーサルリファレンスにした例である。
 
 ```cpp
     // @@@ example/term_explanation/universal_ref_ut.cpp 47
@@ -19400,7 +19459,7 @@ Derived用のoperator==を
     ASSERT_TRUE(d0_b_ref == d1);  // NG d0_b_refの実態はd0なのでd1と等価でない
 ```
 
-この問題は、[RTTI](#SS_6_12_16)を使った下記のようなコードで対処できる。
+この問題は、[RTTI](#SS_6_12_15)を使った下記のようなコードで対処できる。
 
 ```cpp
     // @@@ example/term_explanation/semantics_ut.cpp 203
@@ -19833,7 +19892,7 @@ begin()、end()によって表される範囲内のすべての要素に対し�
 * クロージャ型とは、クロージャオブジェクトの型。
 * キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
 * ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
-* [ジェネリックラムダ](#SS_6_12_5)とは、C++11のラムダ式を拡張して、
+* [ジェネリックラムダ](#SS_6_5_4)とは、C++11のラムダ式を拡張して、
   パラメータにautoを使用(型推測)できるようにした機能。
 
 ```cpp
@@ -19856,67 +19915,7 @@ begin()、end()によって表される範囲内のすべての要素に対し�
     auto s = g_closure(std::string{"1"}, std::string{"2"});  // t0、t1はstd::string
 ```
 
-### ジェネリックラムダ <a id="SS_6_12_5"></a>
-ジェネリックラムダとは、C++11のラムダ式のパラメータの型にautoを指定できるようにした機能で、
-C++14で導入された。
-
-この機能により関数の中で関数テンプレートと同等のものが定義できるようになった。
-
-ジェネリックラムダで定義されたクロージャは、通常のラムダと同様にオブジェクトであるため、
-下記のように使用することもできる便利な記法である。
-
-```cpp
-    // @@@ example/term_explanation/generic_lambda_ut.cpp 4
-
-    template <typename PUTTO>
-    void f(PUTTO&& p)
-    {
-        p(1);
-        p(2.71);
-        p("str");
-    }
-
-    TEST(Template, generic_lambda)
-    {
-        std::ostringstream oss;
-
-        f([&oss](auto const& elem) { oss << elem << std::endl; });
-
-        ASSERT_EQ("1\n2.71\nstr\n", oss.str());
-    }
-```
-
-なお、上記のジェネリックラムダは下記クラスのインスタンスの動きと同じである。
-
-```cpp
-    // @@@ example/term_explanation/generic_lambda_ut.cpp 23
-
-    class Closure {
-    public:
-        Closure(std::ostream& os) : os_(os) {}
-
-        template <typename T>
-        void operator()(T&& t)
-        {
-            os_ << t << std::endl;
-        }
-
-    private:
-        std::ostream& os_;
-    };
-
-    TEST(Template, generic_lambda_like)
-    {
-        std::ostringstream oss;
-
-        Closure closure(oss);
-        f(closure);
-
-        ASSERT_EQ("1\n2.71\nstr\n", oss.str());
-    }
-```
-
-### 関数tryブロック <a id="SS_6_12_6"></a>
+### 関数tryブロック <a id="SS_6_12_5"></a>
 関数tryブロックとはtry-catchを本体とした下記のような関数のブロックを指す。
 
 ```cpp
@@ -19935,13 +19934,13 @@ C++14で導入された。
     }
 ```
 
-### 単純代入 <a id="SS_6_12_7"></a>
+### 単純代入 <a id="SS_6_12_6"></a>
 代入は下記のように分類される。
 
 * 単純代入(=)
 * 複合代入(+=，++ 等)
 
-### ill-formed <a id="SS_6_12_8"></a>
+### ill-formed <a id="SS_6_12_7"></a>
 [標準規格と処理系](https://cpprefjp.github.io/implementation-compliance.html)に詳しい解説があるが、
 
 * well-formed(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
@@ -19953,13 +19952,13 @@ C++14で導入された。
 対象がテンプレートの場合、事情は少々異なり、[SFINAE](#SS_6_5_1)によりコンパイルできることもある。
 
 
-### well-formed <a id="SS_6_12_9"></a>
-「[ill-formed](#SS_6_12_8)」を参照せよ。
+### well-formed <a id="SS_6_12_8"></a>
+「[ill-formed](#SS_6_12_7)」を参照せよ。
 
-### one-definition rule <a id="SS_6_12_10"></a>
-「[ODR](#SS_6_12_11)」を参照せよ。
+### one-definition rule <a id="SS_6_12_9"></a>
+「[ODR](#SS_6_12_10)」を参照せよ。
 
-### ODR <a id="SS_6_12_11"></a>
+### ODR <a id="SS_6_12_10"></a>
 ODRとは、One Definition Ruleの略語であり、下記のようなことを定めている。
 
 * どの翻訳単位でも、テンプレート、型、関数、またはオブジェクトは、複数の定義を持つことができない。
@@ -19970,7 +19969,7 @@ ODRとは、One Definition Ruleの略語であり、下記のようなことを�
 [https://en.cppreference.com/w/cpp/language/definition](https://en.cppreference.com/w/cpp/language/definition)
 が参考になる。
 
-### RVO(Return Value Optimization) <a id="SS_6_12_12"></a>
+### RVO(Return Value Optimization) <a id="SS_6_12_11"></a>
 関数の戻り値がオブジェクトである場合、
 戻り値オブジェクトは、その関数の呼び出し元のオブジェクトにコピーされた後、すぐに破棄される。
 この「オブジェクトをコピーして、その後すぐにそのオブジェクトを破棄する」動作は、
@@ -19981,7 +19980,7 @@ RVOとはこのような最適化を指す。
 [C++17から規格化](https://cpprefjp.github.io/lang/cpp17/guaranteed_copy_elision.html)された。
 
 
-### SSO(Small String Optimization) <a id="SS_6_12_13"></a>
+### SSO(Small String Optimization) <a id="SS_6_12_12"></a>
 一般にstd::stringで文字列を保持する場合、newしたメモリが使用される。
 64ビット環境であれば、newしたメモリのアドレスを保持する領域は8バイトになる。
 std::stringで保持する文字列が終端の'\0'も含め8バイト以下である場合、
@@ -19990,7 +19989,7 @@ std::stringで保持する文字列が終端の'\0'も含め8バイト以下で�
 
 SOOとはこのような最適化を指す。
 
-### heap allocation elision <a id="SS_6_12_14"></a>
+### heap allocation elision <a id="SS_6_12_13"></a>
 C++11までの仕様では、new式によるダイナミックメモリアロケーションはコードに書かれた通りに、
 実行されなければならず、ひとまとめにしたり省略したりすることはできなかった。
 つまり、ヒープ割り当てに対する最適化は認められなかった。
@@ -20038,7 +20037,7 @@ new/deleteの呼び出しをまとめたり省略したりすることができ�
 ダイナミックメモリアロケーションが1回に抑えられるため、メモリアクセスが高速化される。
 
 
-### Most Vexing Parse <a id="SS_6_12_15"></a>
+### Most Vexing Parse <a id="SS_6_12_14"></a>
 Most Vexing Parse(最も困惑させる構文解析)とは、C++の文法に関連する問題で、
 Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつけたことに由来する。
 
@@ -20070,7 +20069,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 このような問題を回避できる。
 
 
-### RTTI <a id="SS_6_12_16"></a>
+### RTTI <a id="SS_6_12_15"></a>
 RTTI(Run-time Type Information)とは、プログラム実行中のオブジェクトの型を導出するための機能であり、
 具体的には下記の3つの要素を指す。
 
@@ -20158,10 +20157,10 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     // ASSERT_THROW(dynamic_cast<NonPolymorphic_Derived&>(b_ref_b), std::bad_cast);
 ```
 
-### Run-time Type Information <a id="SS_6_12_17"></a>
-「[RTTI](#SS_6_12_16)」を参照せよ。
+### Run-time Type Information <a id="SS_6_12_16"></a>
+「[RTTI](#SS_6_12_15)」を参照せよ。
 
-### simple-declaration <a id="SS_6_12_18"></a>
+### simple-declaration <a id="SS_6_12_17"></a>
 このための記述が
 [simple-declaration](https://cpprefjp.github.io/lang/cpp17/selection_statements_with_initializer.html)
 とは、C++17から導入された
@@ -20195,10 +20194,10 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     }
 ```
 
-### typeid <a id="SS_6_12_19"></a>
-「[RTTI](#SS_6_12_16)」を参照せよ。
+### typeid <a id="SS_6_12_18"></a>
+「[RTTI](#SS_6_12_15)」を参照せよ。
 
-### トライグラフ <a id="SS_6_12_20"></a>
+### トライグラフ <a id="SS_6_12_19"></a>
 トライグラフとは、2つの疑問符とその後に続く1文字によって表される、下記の文字列である。
 
 ```

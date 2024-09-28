@@ -1764,6 +1764,64 @@ C++20から導入された「コンセプト(concepts)」は、
     // @@@ example/term_explanation/flold_expression_ut.cpp #2:1 begin
 ```
 
+### ジェネリックラムダ
+ジェネリックラムダとは、C++11のラムダ式のパラメータの型にautoを指定できるようにした機能で、
+C++14で導入された。
+
+この機能により関数の中で関数テンプレートと同等のものが定義できるようになった。
+
+ジェネリックラムダで定義されたクロージャは、通常のラムダと同様にオブジェクトであるため、
+下記のように使用することもできる便利な記法である。
+
+```cpp
+    // @@@ example/term_explanation/generic_lambda_ut.cpp #0:0 begin
+```
+
+なお、上記のジェネリックラムダは下記クラスのインスタンスの動きと同じである。
+
+```cpp
+    // @@@ example/term_explanation/generic_lambda_ut.cpp #0:1 begin
+```
+
+### constexpr if文
+C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/if_constexpr.html)とは、
+文を条件付きコンパイルすることができるようにするための制御構文である。
+
+まずは、この構文を使用しない例を示す。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #0:1 begin -1
+```
+
+このような場合、[SFINAE](---)によるオーバーロードが必須であったが、
+この文を使用することで、下記のようにオーバーロードを使用せずに記述できるため、
+条件分岐の可読性の向上が見込める。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #0:2 begin
+```
+
+この構文は[パラメータパック](---)の展開においても有用な場合がある。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #1:1 begin -1
+```
+
+C++14までの構文を使用する場合、
+上記のようなオーバーロードとリカーシブコールの組み合わせが必要であったが、
+constexpr ifを使用することで、やや単純に記述できる。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #1:2 begin
+```
+
+
 ## explicit
 explicitは、コンストラクタに対して付与することで、
 コンストラクタによる暗黙の型変換を禁止するためのキーワードである。
@@ -1867,7 +1925,6 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 
 こういった工夫により、コードの過度な柔軟性を適度に保つことができ、
 可読性の向上につながる。
-
 
 
 ## expressionと値カテゴリ
@@ -2099,8 +2156,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
     // @@@ example/term_explanation/universal_ref_ut.cpp #0:1 begin -1
 ```
 
-下記のコードはジェネリックラムダ(「[C++その他|ラムダ式](---)」参照)
-の引数をユニバーサルリファレンスにした例である。
+下記のコードは[ジェネリックラムダ](---)の引数をユニバーサルリファレンスにした例である。
 
 ```cpp
     // @@@ example/term_explanation/universal_ref_ut.cpp #0:2 begin -1
@@ -2540,30 +2596,11 @@ begin()、end()によって表される範囲内のすべての要素に対し�
 * クロージャ型とは、クロージャオブジェクトの型。
 * キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
 * ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
-* [C++その他|ジェネリックラムダ](---)とは、C++11のラムダ式を拡張して、
+* [ジェネリックラムダ](---)とは、C++11のラムダ式を拡張して、
   パラメータにautoを使用(型推測)できるようにした機能。
 
 ```cpp
     // @@@ example/term_explanation/lambda.cpp #0:0 begin -1
-```
-
-### ジェネリックラムダ
-ジェネリックラムダとは、C++11のラムダ式のパラメータの型にautoを指定できるようにした機能で、
-C++14で導入された。
-
-この機能により関数の中で関数テンプレートと同等のものが定義できるようになった。
-
-ジェネリックラムダで定義されたクロージャは、通常のラムダと同様にオブジェクトであるため、
-下記のように使用することもできる便利な記法である。
-
-```cpp
-    // @@@ example/term_explanation/generic_lambda_ut.cpp #0:0 begin
-```
-
-なお、上記のジェネリックラムダは下記クラスのインスタンスの動きと同じである。
-
-```cpp
-    // @@@ example/term_explanation/generic_lambda_ut.cpp #0:1 begin
 ```
 
 ### 関数tryブロック
