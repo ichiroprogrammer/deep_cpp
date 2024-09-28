@@ -8,15 +8,14 @@ namespace Nstd {
 
 /// @class ScopedGuard
 /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
+///
 template <std::invocable F>  // Fが呼び出し可能であることを制約
+// @@@ sample end
+// @@@ sample begin 0:1
 class ScopedGuard {
 public:
     explicit ScopedGuard(F&& f) noexcept : f_{f}
     {
-        // @@@ sample end
-        // @@@ sample begin 0:1
-        // f()がill-formedにならず、その戻りがvoidでなければならない
-        static_assert(std::is_invocable_r_v<void, F>, "F must be callable and return void");
         // @@@ sample end
         // @@@ sample begin 0:2
     }
@@ -29,7 +28,7 @@ private:
     F f_;
 };
 // @@@ sample end
-// @@@ sample begin 0:1
+// @@@ sample begin 0:3
 
 template <typename F>
 ScopedGuard<F> MakeScopedGuard(F&& f) noexcept

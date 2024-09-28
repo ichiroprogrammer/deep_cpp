@@ -5,7 +5,7 @@
 ___
 __この章の構成__
 
-<!-- index 1-3 -->
+<!-- index 1-4 -->
 
 ## 型とインスタンス
 
@@ -315,53 +315,6 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
     // @@@ example/term_explanation/comparison_operator_ut.cpp #2:1 begin
 ```
 
-#### 畳み込み式
-畳み式(fold expression)とは、C++17から導入された新機能であり、
-可変引数テンプレートのパラメータパックに対して二項演算を累積的に行うためのものである。
-
-畳み込み式のシンタックスの使用は下記のようなものである。
-```
-( pack op ... )          // (1) 単項右畳み込み
-( ... op pack )          // (2) 単項左畳み込み
-( pack op ... op init )  // (3) 二項右畳み込み
-( init op ... op pack )  // (4) 二項左畳み込み
-```
-
-1. 単項右畳み込み
-```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #0:0 begin 
-```
-2. 単項左畳み込み
-```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #0:1 begin 
-```
-3. 二項右畳み込み
-```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #0:2 begin 
-```
-4. 二項左畳み込み
-```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #0:3 begin 
-```
-
-上記したような単純な例では、畳み込み式の効果はわかりずらいため、
-もっと複雑なで読解が困難な再帰構造を持ったコードを以下に示す。
-
-```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #1:0 begin 
-```
-```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #1:1 begin
-```
-
-畳み込み式を使うことで、この問題をある程度緩和したコードを下記する。
-
-```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #2:0 begin 
-```
-```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #2:1 begin
-```
 
 #### 三方比較演算子
 「[std::tuppleを使用した比較演算子の実装方法](---)」
@@ -1395,179 +1348,6 @@ ADLは思わぬname lookupによるバグを誘発することもあるが、
 [ADL](---)(実引数依存探索)によってname lookupの対象になった宣言を含む名前空間のことである。
 
 
-### SFINAE
-[SFINAE](https://cpprefjp.github.io/lang/cpp11/sfinae_expressions.html)
-(Substitution Failure Is Not An Errorの略称、スフィネェと読む)とは、
-「テンプレートのパラメータ置き換えに失敗した([ill-formed](---)になった)際に、
-即時にコンパイルエラーとはせず、置き換えに失敗したテンプレートを
-[name lookup](---)の候補から除外する」
-という言語機能である。
-
-### コンセプト
-C++17までのテンプレートには以下のような問題があった。
-
-* [SFINAE](---)による制約が複雑  
-  テンプレートの制約を行うために、
-  std::enable_ifやの仕組みを使う必要があり、コードが非常に複雑で難読になりがちだった。
-* エラーメッセージが不明瞭  
-  テンプレートのパラメータが不適切な型だった場合に、
-  コンパイルエラーのメッセージが非常にわかりにくく、問題の原因を特定するのが困難だった。
-* テンプレートの適用範囲が不明確  
-  テンプレートの使用可能な型の範囲がドキュメントやコメントでしか表現されず、
-  明確な制約がコードに反映されていなかったため、コードの意図が伝わりずらい。
-* 部分特殊化やオーバーロードによる冗長性  
-  特定の型に対するテンプレートの処理を制限するために、
-  部分特殊化やテンプレートオーバーロードを行うことが多く、コードが冗長になりがちだった。
-
-C++20から導入された「コンセプト(concepts)」は、
-テンプレートパラメータを制約する機能である。
-この機能を使用することで、以下のようなプログラミングでのメリットが得られる。
-
-* テンプレートの制約を明確に定義できる  
-  コンセプトを使うことで、テンプレートパラメータが満たすべき条件を宣言的に記述できるため、
-  コードの意図が明確にできる。
-* コンパイルエラーがわかりやすくなる  
-  コンセプトを使用すると、テンプレートの適用範囲外の型に対して、
-  より具体的でわかりやすいエラーメッセージが表示される。
-* コードの可読性が向上する  
-  コンセプトを利用することで、
-  テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
-
-```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #0:0 begin
-
-    // @@@ example/term_explanation/concept_ut.cpp #0:1 begin -1
-```
-
-```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #1:0 begin
-
-    // @@@ example/term_explanation/concept_ut.cpp #1:1 begin -1
-```
-
-以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
-
-```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #2:0 begin
-```
-
-以上の関数テンプレートをコンセプトを使用して改善した例である。
-
-```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #3:0 begin
-```
-
-フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
-
-```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #4:0 begin
-```
-
-### explicit
-explicitは、コンストラクタに対して付与することで、
-コンストラクタによる暗黙の型変換を禁止するためのキーワードである。
-暗黙の型変換とは、ある型の値を別の型の値に自動的に変換する言語機能を指す。
-explicitキーワードを付けることで、意図しない型変換を防ぎ、コードの堅牢性を高めることがでできる。
-
-この節で説明するexplicitの機能は下記のような項目に渡って説明を行う。
-
-- [単一引数のコンストラクタを持つクラスの暗黙の型変換抑止](---)
-- [暗黙の型変換抑止](---)
-- [型変換演算子のオーバーロードの型変換の抑止](---)
-- [explicit(COND)](---)
-
-#### 単一引数のコンストラクタを持つクラスの暗黙の型変換抑止
-explicit宣言されていないコンストラクタを持つクラスは、
-下記のコードのように暗黙のの型変換が起こる。
-
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #0:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #0:1 begin -1
-```
-
-暗黙の型変換はわかりずらいバグを生み出してしまうことがあるため、
-下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
-
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #1:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #1:1 begin -1
-```
-
-C++03までは、[一様初期化](---)がサポートされていなかったため、
-explicitは単一引数のコンストラクタに使用されることが一般的であった。
-
-#### 暗黙の型変換抑止
-C++11からサポートされた[一様初期化](---)を下記のように使用することで、
-暗黙の型変換を使用できる。
-
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #2:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #2:1 begin -1
-```
-
-以下に示す通り、コンストラクタの引数の数によらず、
-C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
-
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #3:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #3:1 begin -1
-```
-
-#### 型変換演算子のオーバーロードの型変換の抑止
-型変換演算子のオーバーロードの戻り値をさらに別の型に変換すると、
-きわめてわかりずらいバグを生み出してしまうことがある。
-
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #4:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #4:1 begin -1
-```
-
-以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
-
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #5:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #5:1 begin -1
-```
-
-#### explicit(COND)
-C++20から導入されたexplicit(COND)は、
-コンストラクタや変換演算子に対して、
-特定の条件下で暗黙の型変換を許可または禁止する機能である。
-CONDには、型特性や定数式などの任意のconstexprな条件式を指定できる。
-以下にこのシンタックスの単純な使用例を示す。
-
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #6:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #6:1 begin -1
-```
-
-テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
-
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #7:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #7:1 begin -1
-```
-
-こういった工夫により、コードの過度な柔軟性を適度に保つことができ、
-可読性の向上につながる。
-
-
 ### name-hiding
 name-hidingとは
 「前方の識別子が、その後方に同一の名前をもつ識別子があるために、
@@ -1644,61 +1424,6 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 
 全チームメンバがこういったname lookupを正しく扱えると確信できないのであれば、
 前述の通り、デフォルトでは名前空間を使用して修飾を行うのが良いだろう。
-
-### ドミナンス
-[ドミナンス(Dominance、支配性)](https://en.wikipedia.org/wiki/Dominance_(C%2B%2B))とは、
-「探索対称の名前が継承の中にも存在するような場合の[name lookup](---)の仕様の一部」
-を指す慣用句である。
-
-以下に
-
-* [ダイヤモンド継承を含まない場合](---)
-* [ダイヤモンド継承かつそれが仮想継承でない場合](---)
-* [ダイヤモンド継承かつそれが仮想継承である場合](---)
-
-のドミナンスについてのコードを例示する。
-
-この例で示したように、[ダイヤモンド継承](---)を通常の継承で行うか、
-[仮想継承](---)で行うかでは結果が全く異なるため、注意が必要である。
-
-#### ダイヤモンド継承を含まない場合
-
-```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #0:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #0:1 begin -1
-```
-
-この[name lookup](---)については、[name-hiding](---)で説明した通りである。
-
-#### ダイヤモンド継承かつそれが仮想継承でない場合
-
-```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #1:0 begin
-```
-
-上記コードはコードブロック内のコメントのようなメッセージが原因でコンパイルできない。
-
-Derived_0のドミナンスにより、DerivedDerived::gはDerived_0::fを呼び出すように見えるが、
-もう一つの継承元であるDerived_1が導入したDerived_1::f(実際には、Derived_1::Base::f)があるため、
-Derived_1によるドミナンスも働き、その結果として、呼び出しが曖昧(ambiguous)になることで、
-このような結果となる。
-
-#### ダイヤモンド継承かつそれが仮想継承である場合
-
-```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #2:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #2:1 begin -1
-```
-
-これまでと同様にDerived_0のドミナンスによりBase::fは[name-hiding](---)されることになる。
-この時、Derived_0、Derived_1がBaseから[仮想継承](---)した効果により、
-この継承ヒエラルキーの中でBaseは１つのみ存在することになるため、
-Derived_1により導入されたBase::fも併せて[name-hiding](---)される。
-結果として、曖昧性は排除され、コンパイルエラーにはならず、このような結果となる。
 
 ### ダイヤモンド継承
 ダイヤモンド継承(Diamond Inheritance)とは、以下のような構造のクラス継承を指す。
@@ -1830,6 +1555,61 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 ### 仮想基底
 仮想基底(クラス)とは、[仮想継承](---)の基底クラス指す。
 
+### ドミナンス
+[ドミナンス(Dominance、支配性)](https://en.wikipedia.org/wiki/Dominance_(C%2B%2B))とは、
+「探索対称の名前が継承の中にも存在するような場合の[name lookup](---)の仕様の一部」
+を指す慣用句である。
+
+以下に
+
+* [ダイヤモンド継承を含まない場合](---)
+* [ダイヤモンド継承かつそれが仮想継承でない場合](---)
+* [ダイヤモンド継承かつそれが仮想継承である場合](---)
+
+のドミナンスについてのコードを例示する。
+
+この例で示したように、[ダイヤモンド継承](---)を通常の継承で行うか、
+[仮想継承](---)で行うかでは結果が全く異なるため、注意が必要である。
+
+#### ダイヤモンド継承を含まない場合
+
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #0:1 begin -1
+```
+
+この[name lookup](---)については、[name-hiding](---)で説明した通りである。
+
+#### ダイヤモンド継承かつそれが仮想継承でない場合
+
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #1:0 begin
+```
+
+上記コードはコードブロック内のコメントのようなメッセージが原因でコンパイルできない。
+
+Derived_0のドミナンスにより、DerivedDerived::gはDerived_0::fを呼び出すように見えるが、
+もう一つの継承元であるDerived_1が導入したDerived_1::f(実際には、Derived_1::Base::f)があるため、
+Derived_1によるドミナンスも働き、その結果として、呼び出しが曖昧(ambiguous)になることで、
+このような結果となる。
+
+#### ダイヤモンド継承かつそれが仮想継承である場合
+
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #2:1 begin -1
+```
+
+これまでと同様にDerived_0のドミナンスによりBase::fは[name-hiding](---)されることになる。
+この時、Derived_0、Derived_1がBaseから[仮想継承](---)した効果により、
+この継承ヒエラルキーの中でBaseは１つのみ存在することになるため、
+Derived_1により導入されたBase::fも併せて[name-hiding](---)される。
+結果として、曖昧性は排除され、コンパイルエラーにはならず、このような結果となる。
+
 ### using宣言
 using宣言とは、"using XXX::func"のような記述である。
 この記述が行われたスコープでは、この記述後の行から名前空間XXXでの修飾をすることなく、
@@ -1866,6 +1646,228 @@ XXXの識別子が使用できる。
 ```
 
 従って、usingディレクティブの使用は避けるべきである。
+
+## template強化機能
+### SFINAE
+[SFINAE](https://cpprefjp.github.io/lang/cpp11/sfinae_expressions.html)
+(Substitution Failure Is Not An Errorの略称、スフィネェと読む)とは、
+「テンプレートのパラメータ置き換えに失敗した([ill-formed](---)になった)際に、
+即時にコンパイルエラーとはせず、置き換えに失敗したテンプレートを
+[name lookup](---)の候補から除外する」
+という言語機能である。
+
+### コンセプト
+C++17までのテンプレートには以下のような問題があった。
+
+* [SFINAE](---)による制約が複雑  
+  テンプレートの制約を行うために、
+  std::enable_ifやの仕組みを使う必要があり、コードが非常に複雑で難読になりがちだった。
+* エラーメッセージが不明瞭  
+  テンプレートのパラメータが不適切な型だった場合に、
+  コンパイルエラーのメッセージが非常にわかりにくく、問題の原因を特定するのが困難だった。
+* テンプレートの適用範囲が不明確  
+  テンプレートの使用可能な型の範囲がドキュメントやコメントでしか表現されず、
+  明確な制約がコードに反映されていなかったため、コードの意図が伝わりずらい。
+* 部分特殊化やオーバーロードによる冗長性  
+  特定の型に対するテンプレートの処理を制限するために、
+  部分特殊化やテンプレートオーバーロードを行うことが多く、コードが冗長になりがちだった。
+
+C++20から導入された「コンセプト(concepts)」は、
+テンプレートパラメータを制約する機能である。
+この機能を使用することで、以下のようなプログラミングでのメリットが得られる。
+
+* テンプレートの制約を明確に定義できる  
+  コンセプトを使うことで、テンプレートパラメータが満たすべき条件を宣言的に記述できるため、
+  コードの意図が明確にできる。
+* コンパイルエラーがわかりやすくなる  
+  コンセプトを使用すると、テンプレートの適用範囲外の型に対して、
+  より具体的でわかりやすいエラーメッセージが表示される。
+* コードの可読性が向上する  
+  コンセプトを利用することで、
+  テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #0:0 begin
+
+    // @@@ example/term_explanation/concept_ut.cpp #0:1 begin -1
+```
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #1:0 begin
+
+    // @@@ example/term_explanation/concept_ut.cpp #1:1 begin -1
+```
+
+以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #2:0 begin
+```
+
+以上の関数テンプレートをコンセプトを使用して改善した例である。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #3:0 begin
+```
+
+フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #4:0 begin
+```
+
+### 畳み込み式
+畳み式(fold expression)とは、C++17から導入された新機能であり、
+可変引数テンプレートのパラメータパックに対して二項演算を累積的に行うためのものである。
+
+畳み込み式のシンタックスの使用は下記のようなものである。
+```
+( pack op ... )          // (1) 単項右畳み込み
+( ... op pack )          // (2) 単項左畳み込み
+( pack op ... op init )  // (3) 二項右畳み込み
+( init op ... op pack )  // (4) 二項左畳み込み
+```
+
+1. 単項右畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:0 begin 
+```
+2. 単項左畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:1 begin 
+```
+3. 二項右畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:2 begin 
+```
+4. 二項左畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:3 begin 
+```
+
+上記したような単純な例では、畳み込み式の効果はわかりずらいため、
+もっと複雑なで読解が困難な再帰構造を持ったコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #1:0 begin 
+```
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #1:1 begin
+```
+
+畳み込み式を使うことで、この問題をある程度緩和したコードを下記する。
+
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #2:0 begin 
+```
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #2:1 begin
+```
+
+## explicit
+explicitは、コンストラクタに対して付与することで、
+コンストラクタによる暗黙の型変換を禁止するためのキーワードである。
+暗黙の型変換とは、ある型の値を別の型の値に自動的に変換する言語機能を指す。
+explicitキーワードを付けることで、意図しない型変換を防ぎ、コードの堅牢性を高めることがでできる。
+
+この節で説明するexplicitの機能は下記のような項目に渡って説明を行う。
+
+- [単一引数のコンストラクタを持つクラスの暗黙の型変換抑止](---)
+- [暗黙の型変換抑止](---)
+- [型変換演算子のオーバーロードの型変換の抑止](---)
+- [explicit(COND)](---)
+
+### 単一引数のコンストラクタを持つクラスの暗黙の型変換抑止
+explicit宣言されていないコンストラクタを持つクラスは、
+下記のコードのように暗黙のの型変換が起こる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #0:1 begin -1
+```
+
+暗黙の型変換はわかりずらいバグを生み出してしまうことがあるため、
+下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #1:1 begin -1
+```
+
+C++03までは、[一様初期化](---)がサポートされていなかったため、
+explicitは単一引数のコンストラクタに使用されることが一般的であった。
+
+### 暗黙の型変換抑止
+C++11からサポートされた[一様初期化](---)を下記のように使用することで、
+暗黙の型変換を使用できる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #2:1 begin -1
+```
+
+以下に示す通り、コンストラクタの引数の数によらず、
+C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #3:1 begin -1
+```
+
+### 型変換演算子のオーバーロードの型変換の抑止
+型変換演算子のオーバーロードの戻り値をさらに別の型に変換すると、
+きわめてわかりずらいバグを生み出してしまうことがある。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #4:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #4:1 begin -1
+```
+
+以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #5:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #5:1 begin -1
+```
+
+### explicit(COND)
+C++20から導入されたexplicit(COND)は、
+コンストラクタや変換演算子に対して、
+特定の条件下で暗黙の型変換を許可または禁止する機能である。
+CONDには、型特性や定数式などの任意のconstexprな条件式を指定できる。
+以下にこのシンタックスの単純な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #6:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #6:1 begin -1
+```
+
+テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #7:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #7:1 begin -1
+```
+
+こういった工夫により、コードの過度な柔軟性を適度に保つことができ、
+可読性の向上につながる。
+
 
 
 ## expressionと値カテゴリ
