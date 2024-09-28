@@ -11,6 +11,7 @@
 
 ## 改訂履歴 <a id="SS_1_1"></a>
 * V20.01
+    * std::enable_ifをコンセプトを使用しリファクタリング
     * 畳み込み式の解説
     * テンプレートのテクニックに畳み込み式の使用
     * explicitの解説
@@ -4408,25 +4409,32 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 ```cpp
     // @@@ example/design_pattern/find_files_strategy.h 23
 
-    template <typename F>  // Fはファンクタ
-    auto find_files_recursively2(std::string const& path, F condition)
-        -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>,
-                            std::vector<std::string>>
+    // ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
+    namespace Inner_ {
+    template <typename F>
+    concept find_condition = requires(F f, std::filesystem::path const& p)
+    {
+        { f(p) } -> std::same_as<bool>;
+    };
+    }  // namespace Inner_
+
+    template <Inner_::find_condition F>
+    auto find_files_recursively2(std::string const& path, F&& condition) -> std::vector<std::string>
     {
         namespace fs = std::filesystem;
 
         auto files = std::vector<fs::path>{};
 
-        // recursive_directory_iteratorはファイルシステム依存するため、その依存を排除する他の処理
+        // recursive_directory_iteratorでディレクトリ内のファイルを再帰的に取得
         std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{},
                   std::back_inserter(files));
 
-        std::sort(files.begin(), files.end());
+        std::sort(files.begin(), files.end());  // ファイルリストをソート
 
         auto ret = std::vector<std::string>{};
 
         std::for_each(files.cbegin(), files.cend(), [&](fs::path const& p) {
-            if (condition(p)) {
+            if (condition(p)) {  // 条件を満たすファイルをretに追加
                 ret.emplace_back(p.generic_string());
             }
         });

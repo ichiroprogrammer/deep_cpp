@@ -22,25 +22,34 @@ extern std::vector<std::string> find_files_recursively(std::string const& path,
 // @@@ sample end
 // @@@ sample begin 1:0
 
-template <typename F>  // Fはファンクタ
-auto find_files_recursively2(std::string const& path, F condition)
-    -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>,
-                        std::vector<std::string>>
+// ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
+// clang-format off
+namespace Inner_ {
+template <typename F>
+concept find_condition = requires(F f, std::filesystem::path const& p)
+{
+    { f(p) } -> std::same_as<bool>;
+};
+// clang-format on
+}  // namespace Inner_
+
+template <Inner_::find_condition F>
+auto find_files_recursively2(std::string const& path, F&& condition) -> std::vector<std::string>
 {
     namespace fs = std::filesystem;
 
     auto files = std::vector<fs::path>{};
 
-    // recursive_directory_iteratorはファイルシステム依存するため、その依存を排除する他の処理
+    // recursive_directory_iteratorでディレクトリ内のファイルを再帰的に取得
     std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{},
               std::back_inserter(files));
 
-    std::sort(files.begin(), files.end());
+    std::sort(files.begin(), files.end());  // ファイルリストをソート
 
     auto ret = std::vector<std::string>{};
 
     std::for_each(files.cbegin(), files.cend(), [&](fs::path const& p) {
-        if (condition(p)) {
+        if (condition(p)) {  // 条件を満たすファイルをretに追加
             ret.emplace_back(p.generic_string());
         }
     });
