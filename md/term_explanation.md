@@ -232,7 +232,78 @@ constexprとして宣言された関数の戻り値がコンパイル時に確�
     // @@@ example/term_explanation/constexpr_ut.cpp #0:6 begin -1
 ```
 
-### ユーザ定義リテラル演算子
+## リテラル
+プログラムに具体的な値を与えるための基本的な即値を指す。
+例えば、1, 2, 1.0, true/false, nullptr, "literal string"など。
+
+### 生文字列リテラル
+下記の例にあるように正規表現をそのまま文字列リテラルとして表現するために、
+C++11から導入された導入されたリテラル。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #0:0 begin
+```
+
+### 2進数リテラル
+C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #1:0 begin -1
+```
+
+### 数値リテラル
+C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #2:0 begin -1
+```
+
+### ワイド文字列
+ワイド文字列リテラルを保持する型は下記のように定義された。
+
+* char16_t: UTF-16エンコーディングのコード単位を扱う型。 u"..." というリテラルでUTF-16文字列を表す。
+* char32_t: UTF-32エンコーディングのコード単位を扱う型。 U"..." というリテラルでUTF-32文字列を表す。
+* char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #3:0 begin -1
+```
+
+### 16進浮動小数点数リテラル          
+16進浮動小数点数リテラルは、
+C++17から導入された浮動小数点数を16進数で表現する方法である。
+特に、ハードウェアや低レベルのプログラミングで、
+浮動小数点数の内部表現を直接扱う際に便利である
+
+```
+    一般的な形式:
+        0x[数字].[数字]p[指数]
+        0x: 16進数を表すプレフィックス
+        [数字]: 16進数の数字 (0-9, a-f, A-F)
+        .: 小数点
+        p: 指数部を表す
+        [指数]: 10進数の指数
+
+    例:
+        0x1.2p3は下記に解説する
+
+    リテラルの構成:
+        0x: 16進数の開始を示す。
+        1.2: 仮数部を表す。この部分は16進数。
+        p3: 指数部を表す。この場合、2の3乗を意味すため、つまり8。
+
+        1.2(16進数) =  1 + 2 / 16 = 1.125(10進数)
+        1.125 * 8 = 9.0
+```
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #4:0 begin -1
+```
+
+### ユーザー定義リテラル                                          
+[ユーザ定義リテラル演算子](---)により定義されたリテラルを指す。
+
+#### ユーザ定義リテラル演算子
 ユーザ定義リテラル演算子とは以下のようなものである。
 
 ```cpp
@@ -242,11 +313,25 @@ constexprとして宣言された関数の戻り値がコンパイル時に確�
     // @@@ example/term_explanation/user_defined_literal_ut.cpp #0:1 begin -1
 ```
 
-### std::string型リテラル
+#### std::string型リテラル
 "xxx"sとすることで、std::string型のリテラルを作ることができる。
 
 ```cpp
     // @@@ example/term_explanation/user_defined_literal_ut.cpp #1:0 begin -1
+```
+
+#### std::chronoのリテラル
+std::chronoのリテラルは以下のコードのように使用できる。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #5:0 begin
+```
+
+#### std::complexリテラル
+std::complexリテラル以下のコードのように使用できる。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #6:0 begin
 ```
 
 ### 比較演算子

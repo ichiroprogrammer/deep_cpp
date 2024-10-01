@@ -10,7 +10,7 @@ SRCS:=\
     ambiguous_ownership_ut.cpp unique_ptr_ownership_ut.cpp shared_ptr_ownership_ut.cpp \
     universal_ref_ut.cpp user_defined_literal_ut.cpp dominance_ut.cpp diamond_inheritance_ut.cpp \
     virtual_inheritance_ut.cpp underlying_type_ut.cpp most_vexing_parse_ut.cpp \
-    heap_allocation_elision_ut.cpp simple_declaration_ut.cpp dangling_ut.cpp \
+    heap_allocation_elision_ut.cpp simple_declaration_ut.cpp dangling_ut.cpp literal_ut.cpp \
     class_relation_ut.cpp  comparison_operator_ut.cpp concept_ut.cpp explicit_ut.cpp
 
 SHARED:=../../
