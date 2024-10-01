@@ -7,12 +7,12 @@ __この章の構成__
 
 <!-- index 1-4 -->
 
-## 型とインスタンス
+## 組み込み型とインスタンス
 
 ### 算術型
 算術型とは下記の型の総称である。
 
-* [用語解説|型とインスタンス|汎整数型](---)(bool, char, int, unsigned int, long long等)
+* [用語解説|組み込み型とインスタンス|汎整数型](---)(bool, char, int, unsigned int, long long等)
 * 浮動小数点型(float、double、long double)
 
 算術型のサイズは下記のように規定されている。
@@ -29,7 +29,7 @@ __この章の構成__
 
 * 論理型(bool)
 * 文字型(char、wchar_t等)
-* [用語解説|型とインスタンス|整数型](---)(int、unsigned int、long等)
+* [用語解説|組み込み型とインスタンス|整数型](---)(int、unsigned int、long等)
 
 ### 整数型
 整数型とは下記の型の総称である。
@@ -86,6 +86,77 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
     // @@@ example/term_explanation/integral_promotion_ut.cpp #1:0 begin -1
 ```
 
+### underlying type
+underlying typeとは、enumやenum classの汎整数表現を指定できるようにするために、
+C++11で導入されたシンタックスである。
+
+```cpp
+    // @@@ example/term_explanation/underlying_type_ut.cpp #0:0 begin
+```
+
+```cpp
+    // @@@ example/term_explanation/underlying_type_ut.cpp #0:1 begin -1
+```
+
+## 型とインスタンス
+### 特殊メンバ関数
+特殊メンバ関数とは下記の関数を指す。
+
+* デフォルトコンストラクタ
+* copyコンストラクタ
+* copy代入演算子
+* moveコンストラクタ
+* move代入演算子
+* デストラクタ
+
+ユーザがこれらを一切定義しない場合、または一部のみを定義する場合、
+コンパイラは、下記のテーブル等で示すルールに従い、特殊関数メンバの宣言、定義の状態をを定める。
+
+左1列目がユーザによる各関数の宣言を表し、2列目以降はユーザ宣言の影響による各関数の宣言の状態を表す。  
+下記表において、
+
+* 「= default」とは、「コンパイラによってその関数が= defaultと宣言された」状態であることを表す。
+* 「~~= default~~」とは、= defaultと同じであるが、バグが発生しやすいので推奨されない。
+* 「宣言無し」とは、「コンパイラによってその関数が= defaultと宣言された状態ではない」ことを表す。
+    * 「moveコンストラクタが= defaultと宣言された状態ではない」且つ
+      「copyコンストラクタが宣言されている」場合、
+      rvalueを使用したオブジェクトの初期化には、
+      moveコンストラクタの代わりにcopyコンストラクタが使われる。
+    * 「move代入演算子が= defaultと宣言された状態ではない」且つ
+      「copy代入演算子が宣言されている」場合、
+      rvalueを使用したオブジェクトの代入には、
+      move代入演算子の代わりにcopy代入演算子が使われる。
+* 「= delete」とは「コンパイラによってその関数が= deleteと宣言された」状態であることを表す。
+
+|ユーザによる特殊関数の宣言|デフォルト<br>コンストラクタ |デストラクタ|copy<br>コンストラクタ|copy<br>代入演算子|move<br>コンストラクタ|move<br>代入演算子|
+|:------------------------:|:-------------:|:-----------:|:------------:|:------------:|:---------:|:---------:|
+|宣言無し                  | = default     | = default   | = default    | = default    | = default | = default |
+|非デフォルトコンストラクタ| 宣言なし      | = default   | = default    | = default    | = default | = default |
+|デフォルトコンストラクタ  | -             | = default   | = default    | = default    | = default | = default |
+|デストラクタ              | = default     | -           | ~~= default~~| ~~= default~~| 宣言なし  | 宣言なし  |
+|copyコンストラクタ        | 宣言なし      | = default   | -            | ~~= default~~| 宣言なし  | 宣言なし  |
+|copy代入演算子            | = default     | = default   | ~~= default~~| -            | 宣言なし  | 宣言なし  |
+|moveコンストラクタ        | 宣言なし      | = default   | = delete     | = delete     | -         | 宣言なし  |
+|move代入演算子            | = default     | = default   | = delete     | = delete     | 宣言なし  | -         |
+
+
+上記表より、下記のようなことがわかる。
+
+* ユーザが上記6メンバ関数を一切宣言しない場合、それらはコンパイラにより暗黙に宣言、定義される。
+* ユーザがcopyコンストラクタを宣言した場合、デフォルトコンストラクタは暗黙に宣言、定義されない。
+* ユーザがcopyコンストラクタを宣言した場合、copy代入演算子はコンパイラにより暗黙に宣言、
+  定義されるが、そのことは推奨されない(~~= default~~は非推奨のdefault宣言を指す)。
+* moveコンストラクタ、move代入演算子は、
+  以下のいずれもが明示的に宣言されていない場合にのみ暗黙に宣言、定義される。
+    * copyコンストラクタ
+    * copy代入演算子(operator =)
+    * moveコンストラクタ
+    * move代入演算子
+    * デストラクタ
+
+* ユーザがmoveコンストラクタまたはmove代入演算子を宣言した場合、
+  copyコンストラクタ、copy代入演算子は= deleteされる。
+
 ### POD
 PODとは、 Plain Old Dataの略語であり、
 
@@ -126,6 +197,176 @@ PODとは、 Plain Old Dataの略語であり、
 
 型がPODである場合、その型は標準レイアウト型である。
 
+### クラスのレイアウト
+クラス(やそのクラスが継承した基底クラス)が仮想関数を持たない場合、
+そのクラスは、非静的なメンバ変数が定義された順にメモリ上に配置されたレイアウトを持つ
+(CPUアーキテクチャに依存したパディング領域が変数間に挿入されることもある)。
+このようなクラスは[POD](---)
+(C++20では、[PODという用語は非推奨](https://cpprefjp.github.io/lang/cpp20/deprecate_pod.html)
+となり、トリビアル型とスタンダードレイアウト型に用語が分割された)とも呼ばれ、
+C言語の構造体のレイアウトと互換性を持つことが一般的である。
+
+クラス(やそのクラスが継承したクラス)が仮想関数を持つ場合、
+仮想関数呼び出しを行う(「[オーバーライドとオーバーロードの違い](---)」参照)
+ためのメモリレイアウトが必要になる。
+それを示すために、まずは下記のようにクラスX、Y、Zを定義する。
+
+
+```cpp
+    // @@@ example/term_explanation/class_layout_ut.cpp #0:0 begin
+```
+
+通常のC++コンパイラが作り出すX、Y、Zの概念的なメモリレイアウトは下記のようになる。
+
+![layout](plant_uml/class_layout.png)
+
+各クラスがvtblへのポインタを保持するため、このドキュメントで使用している[g++](---)では、
+sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24ではなく32となる。
+
+g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
+
+```cpp
+    // @@@ example/term_explanation/Makefile #0:0 begin
+```
+
+X、Y、Zのメモリレイアウトは以下の様に出力される。
+
+```
+    Vtable for X
+    X::_ZTV1X: 5 entries
+    0     (int (*)(...))0
+    8     (int (*)(...))(& _ZTI1X)
+    16    (int (*)(...))X::GetX
+    24    (int (*)(...))X::~X
+    32    (int (*)(...))X::~X
+
+    Class X
+       size=16 align=8
+       base size=16 base align=8
+    X (0x0x7f54bbc23a80) 0
+        vptr=((& X::_ZTV1X) + 16)
+
+    Vtable for Y
+    Y::_ZTV1Y: 6 entries
+    0     (int (*)(...))0
+    8     (int (*)(...))(& _ZTI1Y)
+    16    (int (*)(...))Y::GetX
+    24    (int (*)(...))Y::~Y
+    32    (int (*)(...))Y::~Y
+    40    (int (*)(...))Y::GetY
+
+    Class Y
+       size=24 align=8
+       base size=24 base align=8
+    Y (0x0x7f54bbc3f000) 0
+        vptr=((& Y::_ZTV1Y) + 16)
+      X (0x0x7f54bbc23d20) 0
+          primary-for Y (0x0x7f54bbc3f000)
+
+    Vtable for Z
+    Z::_ZTV1Z: 7 entries
+    0     (int (*)(...))0
+    8     (int (*)(...))(& _ZTI1Z)
+    16    (int (*)(...))Z::GetX
+    24    (int (*)(...))Z::~Z
+    32    (int (*)(...))Z::~Z
+    40    (int (*)(...))Z::GetY
+    48    (int (*)(...))Z::GetZ
+
+    Class Z
+       size=32 align=8
+       base size=32 base align=8
+    Z (0x0x7f54bbc3f068) 0
+        vptr=((& Z::_ZTV1Z) + 16)
+      Y (0x0x7f54bbc3f0d0) 0
+          primary-for Z (0x0x7f54bbc3f068)
+        X (0x0x7f54bbc43060) 0
+            primary-for Y (0x0x7f54bbc3f0d0)
+```
+
+このようなメモリレイアウトは、
+
+```cpp
+    // @@@ example/term_explanation/class_layout_ut.cpp #0:1 begin -1
+```
+
+のようなオブジェクト生成に密接に関係する。その手順を下記の疑似コードにより示す。
+
+```cpp
+    // ステップ1  メモリアロケーション
+    void* ptr = malloc(sizeof(Z));
+
+    // ステップ2  ZオブジェクトのX部分の初期化
+    X* x_ptr = (X*)ptr;
+    x_ptr->vtbl = &vtbl_for_X       // Xのコンストラクタ呼び出し処理
+    x_ptr->x_ = 1;                  // Xのコンストラクタ呼び出し処理
+
+    // ステップ3  ZオブジェクトのY部分の初期化
+    Y* y_ptr = (Y*)ptr;
+    y_ptr->vtbl = &vtbl_for_Y       // Yのコンストラクタ呼び出し処理
+    y_ptr->y_ = 2;                  // Yのコンストラクタ呼び出し処理
+
+    // ステップ4  ZオブジェクトのZ部分の初期化
+    Z* z_ptr = (Z*)ptr;
+    z_ptr->vtbl = &vtbl_for_Z       // Zのコンストラクタ呼び出し処理
+    z_ptr->z_ = 3;                  // Zのコンストラクタ呼び出し処理
+```
+
+オブジェクトの生成がこのように行われるため、Xのコンストラクタ内で仮想関数GetX()を呼び出した場合、
+その時のvtblへのポインタはXのvtblを指しており(上記ステップ2)、X::GetX()の呼び出しとなる
+(Z::GetX()の呼び出しとはならない)。
+
+なお、オブジェクトの解放は生成とは逆の順番で行われる。
+
+### オーバーライドとオーバーロードの違い
+下記例では、Base::g()がオーバーロードで、Derived::f()がオーバーライドである
+(Derived::g()はオーバーロードでもオーバーライドでもない(「[name-hiding](---)」参照))。
+
+
+```cpp
+    // @@@ example/term_explanation/override_overload_ut.cpp #0:0 begin
+```
+
+下記図の通り、
+
+* BaseのインスタンスはBase用のvtblへのポインタを内部に持ち、
+  そのvtblでBase::f()のアドレスを保持する。
+* DerivedのインスタンスはDerived用のvtblへのポインタを内部に持ち、
+  そのvtblでDerived::f()のアドレスを保持する。
+* Base::g()、Base::g(int)、
+  Derived::g()のアドレスはBaseやDerivedのインスタンスから辿ることはできない。
+
+![vtbl](plant_uml/vtbl.png)
+
+vtblとは仮想関数テーブルとも呼ばれる、仮想関数ポインタを保持するための上記のようなテーブルである
+(「[クラスのレイアウト](---)」参照)。
+
+Base::f()、Derived::f()の呼び出し選択は、オブジェクトの表層の型ではなく、実際の型により決定される。
+Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層の型により決定される。
+
+```cpp
+    // @@@ example/term_explanation/override_overload_ut.cpp #0:1 begin -1
+```
+
+上記のメンバ関数呼び出し
+
+```cpp
+    d_ref.f() 
+```
+
+がどのように解釈され、Derived::f()が選択されるかを以下に疑似コードで例示する。
+
+```cpp
+    vtbl = d_ref.vtbl             // d_refの実態はDerivedなのでvtblはDerivedのvtbl
+
+    member_func = vtbl->f         // vtbl->fはDerived::f()のアドレス
+
+    (d_ref.*member_func)(&d_ref)  // member_func()の呼び出し
+```
+
+このようなメカニズムにより仮想関数呼び出しが行われる。
+
+
 ### トリビアル型
 トリビアル型とは、
 
@@ -140,18 +381,6 @@ PODとは、 Plain Old Dataの略語であり、
 ```
 
 型がPODである場合、その型はトリビアル型である。
-
-### underlying type
-underlying typeとは、enumやenum classの汎整数表現を指定できるようにするために、
-C++11で導入されたシンタックスである。
-
-```cpp
-    // @@@ example/term_explanation/underlying_type_ut.cpp #0:0 begin
-```
-
-```cpp
-    // @@@ example/term_explanation/underlying_type_ut.cpp #0:1 begin -1
-```
 
 
 ### 不完全型
@@ -232,286 +461,7 @@ constexprとして宣言された関数の戻り値がコンパイル時に確�
     // @@@ example/term_explanation/constexpr_ut.cpp #0:6 begin -1
 ```
 
-## リテラル
-プログラムに具体的な値を与えるための基本的な即値を指す。
-例えば、1, 2, 1.0, true/false, nullptr, "literal string"など。
-
-### 生文字列リテラル
-下記の例にあるように正規表現をそのまま文字列リテラルとして表現するために、
-C++11から導入された導入されたリテラル。
-
-```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #0:0 begin
-```
-
-### 2進数リテラル
-C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
-
-```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #1:0 begin -1
-```
-
-### 数値リテラル
-C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
-
-```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #2:0 begin -1
-```
-
-### ワイド文字列
-ワイド文字列リテラルを保持する型は下記のように定義された。
-
-* char16_t: UTF-16エンコーディングのコード単位を扱う型。 u"..." というリテラルでUTF-16文字列を表す。
-* char32_t: UTF-32エンコーディングのコード単位を扱う型。 U"..." というリテラルでUTF-32文字列を表す。
-* char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
-
-```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #3:0 begin -1
-```
-
-### 16進浮動小数点数リテラル          
-16進浮動小数点数リテラルは、
-C++17から導入された浮動小数点数を16進数で表現する方法である。
-特に、ハードウェアや低レベルのプログラミングで、
-浮動小数点数の内部表現を直接扱う際に便利である
-
-```
-    一般的な形式:
-        0x[数字].[数字]p[指数]
-        0x: 16進数を表すプレフィックス
-        [数字]: 16進数の数字 (0-9, a-f, A-F)
-        .: 小数点
-        p: 指数部を表す
-        [指数]: 10進数の指数
-
-    例:
-        0x1.2p3は下記に解説する
-
-    リテラルの構成:
-        0x: 16進数の開始を示す。
-        1.2: 仮数部を表す。この部分は16進数。
-        p3: 指数部を表す。この場合、2の3乗を意味すため、つまり8。
-
-        1.2(16進数) =  1 + 2 / 16 = 1.125(10進数)
-        1.125 * 8 = 9.0
-```
-
-```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #4:0 begin -1
-```
-
-### ユーザー定義リテラル                                          
-[ユーザ定義リテラル演算子](---)により定義されたリテラルを指す。
-
-#### ユーザ定義リテラル演算子
-ユーザ定義リテラル演算子とは以下のようなものである。
-
-```cpp
-    // @@@ example/term_explanation/user_defined_literal_ut.cpp #0:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/user_defined_literal_ut.cpp #0:1 begin -1
-```
-
-#### std::string型リテラル
-"xxx"sとすることで、std::string型のリテラルを作ることができる。
-
-```cpp
-    // @@@ example/term_explanation/user_defined_literal_ut.cpp #1:0 begin -1
-```
-
-#### std::chronoのリテラル
-std::chronoのリテラルは以下のコードのように使用できる。
-
-```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #5:0 begin
-```
-
-#### std::complexリテラル
-std::complexリテラル以下のコードのように使用できる。
-
-```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #6:0 begin -1
-```
-
-### 比較演算子
-クラスの比較演算子の実装方法には、
-[メンバ比較演算子](---)、[非メンバ比較演算子](---)の2つの方法がある。
-
-#### メンバ比較演算子
-メンバ比較演算子には、[非メンバ比較演算子](---)に比べ、下記のようなメリットがある。
-
-* メンバ変数へのアクセスが容易であるため、より実装が単純になりやすい。
-* メンバ変数へのアクセスが容易であるため、パフォーマンスが向上する。
-* インライン化し易い。
-
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:0 begin
-```
-
-#### メンバ比較演算子とstd::rel_ops
-クラスに`operator==`と`operator<`の2つの演算子が定義されていれば、
-他の比較演算子 !=、<=、>、>= はこれらを基に自動的に導出できる。
-std::rel_opsでは`operator==`と`operator<=` を基に、
-他の比較演算子を機械的に生成する仕組みが提供されている。
-
-次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
-
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:1 begin -1
-```
-
-なお、std::rel_opsはC++20から導入された[三方比較演算子](---)により不要になったため、
-非推奨とされた。
-
-#### 非メンバ比較演算子
-非メンバ比較演算子には、[メンバ比較演算子](---)に比べ、下記のようなメリットがある。
-
-* クラスをよりコンパクトに記述できるが、その副作用として、
-  アクセッサやfriend宣言が必要になることがある。
-
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:0 begin
-```
-
-* 暗黙の型変換を利用した以下に示すようなシンプルな記述ができる場合がある。
-
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:1 begin -2
-```
-
-#### 非メンバ比較演算子とstd::rel_ops
-下記に示す通り、
-非メンバ比較演算子とstd::rel_opsを組み合わせることにより、
-「[メンバ比較演算子とstd::rel_ops](---)」で紹介したことと同等のことが実現できる。
-
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:2 begin -1
-```
-
-#### std::tuppleを使用した比較演算子の実装方法
-クラスのメンバが多い場合、[メンバ比較演算子](---)で示したような方法は、
-可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
-
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #2:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #2:1 begin
-```
-
-
-#### 三方比較演算子
-「[std::tuppleを使用した比較演算子の実装方法](---)」
-で示した定型のコードはコンパイラが自動生成するのがC++規格のセオリーである。
-このためC++20から導入されたのが三方比較演算子`<=>`である。
-
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #3:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #3:1 begin -1
-```
-
-定型の比較演算子では不十分である場合、三方比較演算子を実装する必要が出てくる。
-そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
-
-```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #4:0 begin
-```
-
-#### spaceship operator
-spaceship operatorとは[三方比較演算子](---)を指す。
-この名前は`<=>`が宇宙船に見えることに由来としている。
-
-## 構文
-### 属性構文             
-C++14から導入されたの属性構文は、[[属性名]]の形式で記述され、
-特定のコード要素に対する追加情報やコンパイラへの指示を与えるためのものである。
-
-|属性                 |C++Ver|効果                                               |
-|---------------------|------|---------------------------------------------------|
-|[[deprecated]]       |C++14 |関数や変数が非推奨であることを示しめす             |
-|[[maybe_unused]]     |C++17 |変数や関数が未使用である警告の抑止                 |
-|[[nodiscard]]        |C++17 |戻り値が無視されると警告                           |
-|[[fallthrough]]      |C++14 |switch文のfallthroughの警告抑止                    |
-|[[no_unique_address]]|C++20 |クラスや構造体のメンバに対して、メモリの最適化促進 |
-
-```cpp
-    // @@@ example/term_explanation/attr_ut.cpp #0:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/attr_ut.cpp #1:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/attr_ut.cpp #2:0 begin
-
-    // @@@ example/term_explanation/attr_ut.cpp #2:1 begin -1
-```
-```cpp
-    // @@@ example/term_explanation/attr_ut.cpp #3:0 begin -1
-```
-
-
 ## オブジェクトと生成
-
-### 特殊メンバ関数
-特殊メンバ関数とは下記の関数を指す。
-
-* デフォルトコンストラクタ
-* copyコンストラクタ
-* copy代入演算子
-* moveコンストラクタ
-* move代入演算子
-* デストラクタ
-
-ユーザがこれらを一切定義しない場合、または一部のみを定義する場合、
-コンパイラは、下記のテーブル等で示すルールに従い、特殊関数メンバの宣言、定義の状態をを定める。
-
-左1列目がユーザによる各関数の宣言を表し、2列目以降はユーザ宣言の影響による各関数の宣言の状態を表す。  
-下記表において、
-
-* 「= default」とは、「コンパイラによってその関数が= defaultと宣言された」状態であることを表す。
-* 「~~= default~~」とは、= defaultと同じであるが、バグが発生しやすいので推奨されない。
-* 「宣言無し」とは、「コンパイラによってその関数が= defaultと宣言された状態ではない」ことを表す。
-    * 「moveコンストラクタが= defaultと宣言された状態ではない」且つ
-      「copyコンストラクタが宣言されている」場合、
-      rvalueを使用したオブジェクトの初期化には、
-      moveコンストラクタの代わりにcopyコンストラクタが使われる。
-    * 「move代入演算子が= defaultと宣言された状態ではない」且つ
-      「copy代入演算子が宣言されている」場合、
-      rvalueを使用したオブジェクトの代入には、
-      move代入演算子の代わりにcopy代入演算子が使われる。
-* 「= delete」とは「コンパイラによってその関数が= deleteと宣言された」状態であることを表す。
-
-|ユーザによる特殊関数の宣言|デフォルト<br>コンストラクタ |デストラクタ|copy<br>コンストラクタ|copy<br>代入演算子|move<br>コンストラクタ|move<br>代入演算子|
-|:------------------------:|:-------------:|:-----------:|:------------:|:------------:|:---------:|:---------:|
-|宣言無し                  | = default     | = default   | = default    | = default    | = default | = default |
-|非デフォルトコンストラクタ| 宣言なし      | = default   | = default    | = default    | = default | = default |
-|デフォルトコンストラクタ  | -             | = default   | = default    | = default    | = default | = default |
-|デストラクタ              | = default     | -           | ~~= default~~| ~~= default~~| 宣言なし  | 宣言なし  |
-|copyコンストラクタ        | 宣言なし      | = default   | -            | ~~= default~~| 宣言なし  | 宣言なし  |
-|copy代入演算子            | = default     | = default   | ~~= default~~| -            | 宣言なし  | 宣言なし  |
-|moveコンストラクタ        | 宣言なし      | = default   | = delete     | = delete     | -         | 宣言なし  |
-|move代入演算子            | = default     | = default   | = delete     | = delete     | 宣言なし  | -         |
-
-
-上記表より、下記のようなことがわかる。
-
-* ユーザが上記6メンバ関数を一切宣言しない場合、それらはコンパイラにより暗黙に宣言、定義される。
-* ユーザがcopyコンストラクタを宣言した場合、デフォルトコンストラクタは暗黙に宣言、定義されない。
-* ユーザがcopyコンストラクタを宣言した場合、copy代入演算子はコンパイラにより暗黙に宣言、
-  定義されるが、そのことは推奨されない(~~= default~~は非推奨のdefault宣言を指す)。
-* moveコンストラクタ、move代入演算子は、
-  以下のいずれもが明示的に宣言されていない場合にのみ暗黙に宣言、定義される。
-    * copyコンストラクタ
-    * copy代入演算子(operator =)
-    * moveコンストラクタ
-    * move代入演算子
-    * デストラクタ
-
-* ユーザがmoveコンストラクタまたはmove代入演算子を宣言した場合、
-  copyコンストラクタ、copy代入演算子は= deleteされる。
 
 
 ### 初期化子リストコンストラクタ
@@ -893,132 +843,8 @@ std::shared_ptr、std::move()、[expressionと値カテゴリ|rvalue](---)の関
 なお、リファレンスの初期化をrvalueで行った場合、
 そのrvalueはリファレンスがスコープを抜けるまで存続し続ける。
 
-
-### クラスのレイアウト
-クラス(やそのクラスが継承した基底クラス)が仮想関数を持たない場合、
-そのクラスは、非静的なメンバ変数が定義された順にメモリ上に配置されたレイアウトを持つ
-(CPUアーキテクチャに依存したパディング領域が変数間に挿入されることもある)。
-このようなクラスは[POD](---)
-(C++20では、[PODという用語は非推奨](https://cpprefjp.github.io/lang/cpp20/deprecate_pod.html)
-となり、トリビアル型とスタンダードレイアウト型に用語が分割された)とも呼ばれ、
-C言語の構造体のレイアウトと互換性を持つことが一般的である。
-
-クラス(やそのクラスが継承したクラス)が仮想関数を持つ場合、
-仮想関数呼び出しを行う(「[オーバーライドとオーバーロードの違い](---)」参照)
-ためのメモリレイアウトが必要になる。
-それを示すために、まずは下記のようにクラスX、Y、Zを定義する。
-
-
-```cpp
-    // @@@ example/term_explanation/class_layout_ut.cpp #0:0 begin
-```
-
-通常のC++コンパイラが作り出すX、Y、Zの概念的なメモリレイアウトは下記のようになる。
-
-![layout](plant_uml/class_layout.png)
-
-各クラスがvtblへのポインタを保持するため、このドキュメントで使用している[g++](---)では、
-sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24ではなく32となる。
-
-g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
-
-```cpp
-    // @@@ example/term_explanation/Makefile #0:0 begin
-```
-
-X、Y、Zのメモリレイアウトは以下の様に出力される。
-
-```
-    Vtable for X
-    X::_ZTV1X: 5 entries
-    0     (int (*)(...))0
-    8     (int (*)(...))(& _ZTI1X)
-    16    (int (*)(...))X::GetX
-    24    (int (*)(...))X::~X
-    32    (int (*)(...))X::~X
-
-    Class X
-       size=16 align=8
-       base size=16 base align=8
-    X (0x0x7f54bbc23a80) 0
-        vptr=((& X::_ZTV1X) + 16)
-
-    Vtable for Y
-    Y::_ZTV1Y: 6 entries
-    0     (int (*)(...))0
-    8     (int (*)(...))(& _ZTI1Y)
-    16    (int (*)(...))Y::GetX
-    24    (int (*)(...))Y::~Y
-    32    (int (*)(...))Y::~Y
-    40    (int (*)(...))Y::GetY
-
-    Class Y
-       size=24 align=8
-       base size=24 base align=8
-    Y (0x0x7f54bbc3f000) 0
-        vptr=((& Y::_ZTV1Y) + 16)
-      X (0x0x7f54bbc23d20) 0
-          primary-for Y (0x0x7f54bbc3f000)
-
-    Vtable for Z
-    Z::_ZTV1Z: 7 entries
-    0     (int (*)(...))0
-    8     (int (*)(...))(& _ZTI1Z)
-    16    (int (*)(...))Z::GetX
-    24    (int (*)(...))Z::~Z
-    32    (int (*)(...))Z::~Z
-    40    (int (*)(...))Z::GetY
-    48    (int (*)(...))Z::GetZ
-
-    Class Z
-       size=32 align=8
-       base size=32 base align=8
-    Z (0x0x7f54bbc3f068) 0
-        vptr=((& Z::_ZTV1Z) + 16)
-      Y (0x0x7f54bbc3f0d0) 0
-          primary-for Z (0x0x7f54bbc3f068)
-        X (0x0x7f54bbc43060) 0
-            primary-for Y (0x0x7f54bbc3f0d0)
-```
-
-このようなメモリレイアウトは、
-
-```cpp
-    // @@@ example/term_explanation/class_layout_ut.cpp #0:1 begin -1
-```
-
-のようなオブジェクト生成に密接に関係する。その手順を下記の疑似コードにより示す。
-
-```cpp
-    // ステップ1  メモリアロケーション
-    void* ptr = malloc(sizeof(Z));
-
-    // ステップ2  ZオブジェクトのX部分の初期化
-    X* x_ptr = (X*)ptr;
-    x_ptr->vtbl = &vtbl_for_X       // Xのコンストラクタ呼び出し処理
-    x_ptr->x_ = 1;                  // Xのコンストラクタ呼び出し処理
-
-    // ステップ3  ZオブジェクトのY部分の初期化
-    Y* y_ptr = (Y*)ptr;
-    y_ptr->vtbl = &vtbl_for_Y       // Yのコンストラクタ呼び出し処理
-    y_ptr->y_ = 2;                  // Yのコンストラクタ呼び出し処理
-
-    // ステップ4  ZオブジェクトのZ部分の初期化
-    Z* z_ptr = (Z*)ptr;
-    z_ptr->vtbl = &vtbl_for_Z       // Zのコンストラクタ呼び出し処理
-    z_ptr->z_ = 3;                  // Zのコンストラクタ呼び出し処理
-```
-
-オブジェクトの生成がこのように行われるため、Xのコンストラクタ内で仮想関数GetX()を呼び出した場合、
-その時のvtblへのポインタはXのvtblを指しており(上記ステップ2)、X::GetX()の呼び出しとなる
-(Z::GetX()の呼び出しとはならない)。
-
-なお、オブジェクトの解放は生成とは逆の順番で行われる。
-
-
-## オブジェクトのコピー
-
-### シャローコピー
+### オブジェクトのコピー
+#### シャローコピー
 シャローコピー(浅いコピー)とは、暗黙的、
 もしくは=defaultによってコンパイラが生成するようなcopyコンストラクタ、
 copy代入演算子が行うコピーであり、[ディープコピー](---)と対比的に使われる概念である。
@@ -1049,7 +875,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
     // @@@ example/term_explanation/deep_shallow_copy_ut.cpp #1:1 begin -1
 ```
 
-### ディープコピー
+#### ディープコピー
 ディープコピーとは、[シャローコピー](---)が発生させる問題を回避したコピーである。
 
 以下に例を示す。
@@ -1062,7 +888,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
 ポインタが指しているオブジェクトを複製することにより、シャローコピーの問題を防ぐ。
 
 
-### スライシング
+#### スライシング
 オブジェクトのスライシングとは、
 
 * クラスBaseとその派生クラスDerived
@@ -1123,6 +949,246 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 ```
 
 ![スライシング配列](plant_uml/slicing_array.png)
+
+
+## リテラル
+プログラムに具体的な値を与えるための基本的な即値を指す。
+例えば、1, 2, 1.0, true/false, nullptr, "literal string"など。
+
+### 生文字列リテラル
+下記の例にあるように正規表現をそのまま文字列リテラルとして表現するために、
+C++11から導入された導入されたリテラル。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #0:0 begin
+```
+
+### 2進数リテラル
+C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #1:0 begin -1
+```
+
+### 数値リテラル
+C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #2:0 begin -1
+```
+
+### ワイド文字列
+ワイド文字列リテラルを保持する型は下記のように定義された。
+
+* char16_t: UTF-16エンコーディングのコード単位を扱う型。 u"..." というリテラルでUTF-16文字列を表す。
+* char32_t: UTF-32エンコーディングのコード単位を扱う型。 U"..." というリテラルでUTF-32文字列を表す。
+* char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #3:0 begin -1
+```
+
+### 16進浮動小数点数リテラル          
+16進浮動小数点数リテラルは、
+C++17から導入された浮動小数点数を16進数で表現する方法である。
+特に、ハードウェアや低レベルのプログラミングで、
+浮動小数点数の内部表現を直接扱う際に便利である
+
+```
+    一般的な形式:
+        0x[数字].[数字]p[指数]
+        0x: 16進数を表すプレフィックス
+        [数字]: 16進数の数字 (0-9, a-f, A-F)
+        .: 小数点
+        p: 指数部を表す
+        [指数]: 10進数の指数
+
+    例:
+        0x1.2p3は下記に解説する
+
+    リテラルの構成:
+        0x: 16進数の開始を示す。
+        1.2: 仮数部を表す。この部分は16進数。
+        p3: 指数部を表す。この場合、2の3乗を意味すため、つまり8。
+
+        1.2(16進数) =  1 + 2 / 16 = 1.125(10進数)
+        1.125 * 8 = 9.0
+```
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #4:0 begin -1
+```
+
+### ユーザー定義リテラル                                          
+[ユーザ定義リテラル演算子](---)により定義されたリテラルを指す。
+
+#### ユーザ定義リテラル演算子
+ユーザ定義リテラル演算子とは以下のようなものである。
+
+```cpp
+    // @@@ example/term_explanation/user_defined_literal_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/user_defined_literal_ut.cpp #0:1 begin -1
+```
+
+#### std::string型リテラル
+"xxx"sとすることで、std::string型のリテラルを作ることができる。
+
+```cpp
+    // @@@ example/term_explanation/user_defined_literal_ut.cpp #1:0 begin -1
+```
+
+#### std::chronoのリテラル
+std::chronoのリテラルは以下のコードのように使用できる。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #5:0 begin
+```
+
+#### std::complexリテラル
+std::complexリテラル以下のコードのように使用できる。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #6:0 begin -1
+```
+
+### 比較演算子
+クラスの比較演算子の実装方法には、
+[メンバ比較演算子](---)、[非メンバ比較演算子](---)の2つの方法がある。
+
+#### メンバ比較演算子
+メンバ比較演算子には、[非メンバ比較演算子](---)に比べ、下記のようなメリットがある。
+
+* メンバ変数へのアクセスが容易であるため、より実装が単純になりやすい。
+* メンバ変数へのアクセスが容易であるため、パフォーマンスが向上する。
+* インライン化し易い。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:0 begin
+```
+
+#### メンバ比較演算子とstd::rel_ops
+クラスに`operator==`と`operator<`の2つの演算子が定義されていれば、
+他の比較演算子 !=、<=、>、>= はこれらを基に自動的に導出できる。
+std::rel_opsでは`operator==`と`operator<=` を基に、
+他の比較演算子を機械的に生成する仕組みが提供されている。
+
+次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:1 begin -1
+```
+
+なお、std::rel_opsはC++20から導入された[三方比較演算子](---)により不要になったため、
+非推奨とされた。
+
+#### 非メンバ比較演算子
+非メンバ比較演算子には、[メンバ比較演算子](---)に比べ、下記のようなメリットがある。
+
+* クラスをよりコンパクトに記述できるが、その副作用として、
+  アクセッサやfriend宣言が必要になることがある。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:0 begin
+```
+
+* 暗黙の型変換を利用した以下に示すようなシンプルな記述ができる場合がある。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:1 begin -2
+```
+
+#### 非メンバ比較演算子とstd::rel_ops
+下記に示す通り、
+非メンバ比較演算子とstd::rel_opsを組み合わせることにより、
+「[メンバ比較演算子とstd::rel_ops](---)」で紹介したことと同等のことが実現できる。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:2 begin -1
+```
+
+#### std::tuppleを使用した比較演算子の実装方法
+クラスのメンバが多い場合、[メンバ比較演算子](---)で示したような方法は、
+可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #2:1 begin
+```
+
+
+#### 三方比較演算子
+「[std::tuppleを使用した比較演算子の実装方法](---)」
+で示した定型のコードはコンパイラが自動生成するのがC++規格のセオリーである。
+このためC++20から導入されたのが三方比較演算子`<=>`である。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #3:1 begin -1
+```
+
+定型の比較演算子では不十分である場合、三方比較演算子を実装する必要が出てくる。
+そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #4:0 begin
+```
+
+#### spaceship operator
+spaceship operatorとは[三方比較演算子](---)を指す。
+この名前は`<=>`が宇宙船に見えることに由来としている。
+
+## 構文
+### 属性構文             
+C++14から導入されたの属性構文は、[[属性名]]の形式で記述され、
+特定のコード要素に対する追加情報やコンパイラへの指示を与えるためのものである。
+
+|属性                 |C++Ver|効果                                               |
+|---------------------|------|---------------------------------------------------|
+|[[deprecated]]       |C++14 |関数や変数が非推奨であることを示しめす             |
+|[[maybe_unused]]     |C++17 |変数や関数が未使用である警告の抑止                 |
+|[[nodiscard]]        |C++17 |戻り値が無視されると警告                           |
+|[[fallthrough]]      |C++14 |switch文のfallthroughの警告抑止                    |
+|[[no_unique_address]]|C++20 |クラスや構造体のメンバに対して、メモリの最適化促進 |
+
+```cpp
+    // @@@ example/term_explanation/attr_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/attr_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/attr_ut.cpp #2:0 begin
+
+    // @@@ example/term_explanation/attr_ut.cpp #2:1 begin -1
+```
+```cpp
+    // @@@ example/term_explanation/attr_ut.cpp #3:0 begin -1
+```
+
+### 関数tryブロック
+関数tryブロックとはtry-catchを本体とした下記のような関数のブロックを指す。
+
+```cpp
+    // @@@ example/term_explanation/func_try_block.cpp #0:0 begin
+```
+
+### 範囲for文
+範囲for文は下記例のコメントで示されたようなfor文であり、
+begin()、end()によって表される範囲内のすべての要素に対して付属するブロックの処理を行う。
+
+```cpp
+    // @@@ example/term_explanation/range_for_ut.cpp #8:0 begin -2
+```
+```cpp
+    // @@@ example/term_explanation/range_for_ut.cpp #8:1 begin -2
+```
+
 
 ## name lookupと名前空間
 ここではname lookupとそれに影響を与える名前空間について解説する。
@@ -2614,91 +2680,35 @@ moveセマンティクスはcopy代入後に使用されなくなるオブジェ
     // @@@ example/term_explanation/semantics_ut.cpp #8:1 begin
 ```
 
-## C++コンパイラ
-本ドキュメントで使用するg++/clang++のバージョンは以下のとおりである。
-
-### g++
-```
-    g++ (Ubuntu 11.3.0-1ubuntu1~22.04) 11.3.0
-    Copyright (C) 2021 Free Software Foundation, Inc.
-    This is free software; see the source for copying conditions.  There is NO
-    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-```
-
-### clang++
-```
-    Ubuntu clang version 14.0.0-1ubuntu1
-    Target: x86_64-pc-linux-gnu
-    Thread model: posix
-    InstalledDir: /usr/bin
-```
-
 ## C++その他
-### オーバーライドとオーバーロードの違い
-下記例では、Base::g()がオーバーロードで、Derived::f()がオーバーライドである
-(Derived::g()はオーバーロードでもオーバーライドでもない(「[name-hiding](---)」参照))。
+### アライメント
+アライメントとは、
+データが効率的にアクセスされるために特定のメモリアドレス境界に配置される規則である。
+C++03までの規約では、アライメントのコントロールは実装依存した#pragmaなどで行っていた。
+
+[alignas](---)、
+[alignof](---)によりコンパイラの標準的な方法でアライメントのコントロールできるようになった。
 
 
-```cpp
-    // @@@ example/term_explanation/override_overload_ut.cpp #0:0 begin
-```
-
-下記図の通り、
-
-* BaseのインスタンスはBase用のvtblへのポインタを内部に持ち、
-  そのvtblでBase::f()のアドレスを保持する。
-* DerivedのインスタンスはDerived用のvtblへのポインタを内部に持ち、
-  そのvtblでDerived::f()のアドレスを保持する。
-* Base::g()、Base::g(int)、
-  Derived::g()のアドレスはBaseやDerivedのインスタンスから辿ることはできない。
-
-![vtbl](plant_uml/vtbl.png)
-
-vtblとは仮想関数テーブルとも呼ばれる、仮想関数ポインタを保持するための上記のようなテーブルである
-(「[クラスのレイアウト](---)」参照)。
-
-Base::f()、Derived::f()の呼び出し選択は、オブジェクトの表層の型ではなく、実際の型により決定される。
-Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層の型により決定される。
+#### alignof
+C++11で導入されたキーワードで、型のアライメント要求を取得するために使用する。
 
 ```cpp
-    // @@@ example/term_explanation/override_overload_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation/aliging_ut.cpp #0:0 begin -1
 ```
 
-上記のメンバ関数呼び出し
+#### alignas
+C++11で導入されたキーワードで、メモリのアライメントを指定するために使用する。
 
 ```cpp
-    d_ref.f() 
+    // @@@ example/term_explanation/aliging_ut.cpp #1:0 begin -1
 ```
-
-がどのように解釈され、Derived::f()が選択されるかを以下に疑似コードで例示する。
-
-```cpp
-    vtbl = d_ref.vtbl             // d_refの実態はDerivedなのでvtblはDerivedのvtbl
-
-    member_func = vtbl->f         // vtbl->fはDerived::f()のアドレス
-
-    (d_ref.*member_func)(&d_ref)  // member_func()の呼び出し
-```
-
-このようなメカニズムにより仮想関数呼び出しが行われる。
-
 
 ### 実引数/仮引数
 引数(もしくは実引数、argument)、仮引数(parameter)とは下記のように定義される。
 
 ```cpp
     // @@@ example/term_explanation/argument.cpp #0:0 begin
-```
-
-### 範囲for文
-範囲for文は下記例のコメントで示されたようなfor文であり、
-begin()、end()によって表される範囲内のすべての要素に対して付属するブロックの処理を行う。
-
-```cpp
-    // @@@ example/term_explanation/range_for_ut.cpp #8:0 begin -2
-```
-```cpp
-    // @@@ example/term_explanation/range_for_ut.cpp #8:1 begin -2
 ```
 
 ### ラムダ式
@@ -2714,13 +2724,6 @@ begin()、end()によって表される範囲内のすべての要素に対し�
 
 ```cpp
     // @@@ example/term_explanation/lambda.cpp #0:0 begin -1
-```
-
-### 関数tryブロック
-関数tryブロックとはtry-catchを本体とした下記のような関数のブロックを指す。
-
-```cpp
-    // @@@ example/term_explanation/func_try_block.cpp #0:0 begin
 ```
 
 ### 単純代入
@@ -2864,6 +2867,25 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
 
 ```
     ??=  ??/  ??'  ??(  ??)  ??!  ??<  ??>  ??-
+```
+
+## C++コンパイラ
+本ドキュメントで使用するg++/clang++のバージョンは以下のとおりである。
+
+### g++
+```
+    g++ (Ubuntu 11.3.0-1ubuntu1~22.04) 11.3.0
+    Copyright (C) 2021 Free Software Foundation, Inc.
+    This is free software; see the source for copying conditions.  There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
+
+### clang++
+```
+    Ubuntu clang version 14.0.0-1ubuntu1
+    Target: x86_64-pc-linux-gnu
+    Thread model: posix
+    InstalledDir: /usr/bin
 ```
 
 ## ソフトウェア一般
