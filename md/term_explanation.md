@@ -331,7 +331,7 @@ std::chronoのリテラルは以下のコードのように使用できる。
 std::complexリテラル以下のコードのように使用できる。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #6:0 begin
+    // @@@ example/term_explanation/literal_ut.cpp #6:0 begin -1
 ```
 
 ### 比較演算子
@@ -423,6 +423,34 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
 #### spaceship operator
 spaceship operatorとは[三方比較演算子](---)を指す。
 この名前は`<=>`が宇宙船に見えることに由来としている。
+
+## 構文
+### 属性構文             
+C++14から導入されたの属性構文は、[[属性名]]の形式で記述され、
+特定のコード要素に対する追加情報やコンパイラへの指示を与えるためのものである。
+
+|属性                 |C++Ver|効果                                               |
+|---------------------|------|---------------------------------------------------|
+|[[deprecated]]       |C++14 |関数や変数が非推奨であることを示しめす             |
+|[[maybe_unused]]     |C++17 |変数や関数が未使用である警告の抑止                 |
+|[[nodiscard]]        |C++17 |戻り値が無視されると警告                           |
+|[[fallthrough]]      |C++14 |switch文のfallthroughの警告抑止                    |
+|[[no_unique_address]]|C++20 |クラスや構造体のメンバに対して、メモリの最適化促進 |
+
+```cpp
+    // @@@ example/term_explanation/attr_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/attr_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/attr_ut.cpp #2:0 begin
+
+    // @@@ example/term_explanation/attr_ut.cpp #2:1 begin -1
+```
+```cpp
+    // @@@ example/term_explanation/attr_ut.cpp #3:0 begin -1
+```
 
 
 ## オブジェクトと生成

@@ -8,8 +8,6 @@
 
 #include "suppress_warning.h"
 
-TEST(RawStringLiteralTest, RegexTest) {}
-
 namespace {
 
 TEST(cpp20, raw_literal)
@@ -111,21 +109,20 @@ static_assert(1h == 3600s);  // 1時間 (1h) は 3600秒 (3600s) と等しい
 
 static_assert(1.5s == 1500ms);  // 小数点を使った時間リテラル
 // @@@ sample end
-// @@@ sample begin 6:0
 
-constexpr std::complex<double> complex1(1.0, 2.0);  // 1 + 2i
-constexpr std::complex<double> complex2(3.0, 4.0);  // 3 + 4i
+TEST(cpp20, complex_literal)
+{
+    // @@@ sample begin 6:0
 
-constexpr std::complex<double> sum = complex1 + complex2;  // 複素数の加算
-static_assert(sum.real() == 4.0);
-static_assert(sum.imag() == 6.0);
+    using namespace std::complex_literals;  // 複素数リテラルを使うための名前空間
 
-constexpr std::complex<double> diff = complex1 - complex2;  // 複素数の減算
-static_assert(diff.real() == -2.0);
-static_assert(diff.imag() == -2.0);
+    auto a = 1.0 + 2.0i;  // std::complex<double>
+    auto b = 3.0 + 4.0i;  // std::complex<double>
 
-constexpr std::complex<double> product = complex1 * complex2;  // 複素数の乗算
-static_assert(product.real() == -5.0);
-static_assert(product.imag() == 10.0);
-// @@@ sample end
+    auto result = a + b;
+    EXPECT_EQ(result.real(), 4.0);
+    EXPECT_EQ(result.imag(), 6.0);
+    EXPECT_EQ(result, 4.0 + 6.0i);
+    // @@@ sample end
+}
 }  // namespace
