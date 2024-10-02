@@ -210,3 +210,53 @@ TEST(ComparisonOp, spaceship)
     // @@@ sample end
 }
 }  // namespace use_spaceship2
+
+namespace auto_gen_member {
+// @@@ sample begin 5:0
+
+class Integer {
+public:
+    Integer(int x) noexcept : x_{x} {}
+
+    bool operator==(const Integer& other) const noexcept = default;  // 自動生成
+
+private:
+    int x_;
+};
+// @@@ sample end
+TEST(ComparisonOp, auto_gen_member)
+{
+    auto a = Integer{5};
+    auto b = Integer{10};
+    auto c = Integer{5};
+
+    ASSERT_EQ(a, c);  // a == c
+    ASSERT_NE(a, b);  // a != c
+}
+}  // namespace auto_gen_member
+
+namespace auto_gen_non_member {
+// @@@ sample begin 6:0
+
+class Integer {
+public:
+    Integer(int x) noexcept : x_{x} {}
+
+    friend bool operator==(Integer const& lhs, Integer const& rhs) noexcept;
+
+private:
+    int x_;
+};
+
+bool operator==(Integer const& lhs, Integer const& rhs) noexcept = default;  // 自動生成
+// @@@ sample end
+TEST(ComparisonOp, auto_gen_non_member)
+{
+    auto a = Integer{5};
+    auto b = Integer{10};
+    auto c = Integer{5};
+
+    ASSERT_TRUE(a == c);  // a == c
+    ASSERT_NE(a, b);      // a != c
+}
+}  // namespace auto_gen_non_member

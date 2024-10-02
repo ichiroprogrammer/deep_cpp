@@ -109,43 +109,62 @@ C++11で導入されたシンタックスである。
 * move代入演算子
 * デストラクタ
 
+以下のメンバ関数は特殊関数ではないが、C++20から特殊関数と同様に`=default`とすることで自動生成される。
+
+* [==演算子](---)  
+  クラス内のすべてのメンバが==をサポートしている場合、`= default`とすることで自動生成される。
+* [<=>演算子](---)  
+  すべてのメンバが[<=>演算子](---)での比較可能である場合、`= default`とすることで自動生成される。 
+
 ユーザがこれらを一切定義しない場合、または一部のみを定義する場合、
 コンパイラは、下記のテーブル等で示すルールに従い、特殊関数メンバの宣言、定義の状態をを定める。
 
 左1列目がユーザによる各関数の宣言を表し、2列目以降はユーザ宣言の影響による各関数の宣言の状態を表す。  
 下記表において、
 
-* 「= default」とは、「コンパイラによってその関数が= defaultと宣言された」状態であることを表す。
-* 「~~= default~~」とは、= defaultと同じであるが、バグが発生しやすいので推奨されない。
-* 「宣言無し」とは、「コンパイラによってその関数が= defaultと宣言された状態ではない」ことを表す。
-    * 「moveコンストラクタが= defaultと宣言された状態ではない」且つ
+* 「`= default`」とは、「コンパイラによってその関数が`= default`と宣言された」状態であることを表す。
+* 「~~= default~~」とは、`= default`と同じであるが、バグが発生しやすいので推奨されない。
+* 「宣言無し」とは、「コンパイラによってその関数が`= default`と宣言された状態ではない」ことを表す。
+    * 「moveコンストラクタが`= default`と宣言された状態ではない」且つ
       「copyコンストラクタが宣言されている」場合、
       rvalueを使用したオブジェクトの初期化には、
       moveコンストラクタの代わりにcopyコンストラクタが使われる。
-    * 「move代入演算子が= defaultと宣言された状態ではない」且つ
+    * 「move代入演算子が`= default`と宣言された状態ではない」且つ
       「copy代入演算子が宣言されている」場合、
       rvalueを使用したオブジェクトの代入には、
       move代入演算子の代わりにcopy代入演算子が使われる。
 * 「= delete」とは「コンパイラによってその関数が= deleteと宣言された」状態であることを表す。
 
-|ユーザによる特殊関数の宣言|デフォルト<br>コンストラクタ |デストラクタ|copy<br>コンストラクタ|copy<br>代入演算子|move<br>コンストラクタ|move<br>代入演算子|
-|:------------------------:|:-------------:|:-----------:|:------------:|:------------:|:---------:|:---------:|
-|宣言無し                  | = default     | = default   | = default    | = default    | = default | = default |
-|非デフォルトコンストラクタ| 宣言なし      | = default   | = default    | = default    | = default | = default |
-|デフォルトコンストラクタ  | -             | = default   | = default    | = default    | = default | = default |
-|デストラクタ              | = default     | -           | ~~= default~~| ~~= default~~| 宣言なし  | 宣言なし  |
-|copyコンストラクタ        | 宣言なし      | = default   | -            | ~~= default~~| 宣言なし  | 宣言なし  |
-|copy代入演算子            | = default     | = default   | ~~= default~~| -            | 宣言なし  | 宣言なし  |
-|moveコンストラクタ        | 宣言なし      | = default   | = delete     | = delete     | -         | 宣言なし  |
-|move代入演算子            | = default     | = default   | = delete     | = delete     | 宣言なし  | -         |
+|user-defined     |default ctor |dtor       |copy ctor      |copy assign    |move ctor   |move assign |`==`        |`<=>`       |
+|:---------------:|:-----------:|:---------:|:-------------:|:-------------:|:----------:|:----------:|:----------:|:----------:|
+|undeclared       | = default   | = default | = default     | = default     | = default  | = default  | undeclared | undeclared |
+|non-default ctor | undeclared  | = default | = default     | = default     | = default  | = default  | undeclared | undeclared |
+|default ctor     | -           | = default | = default     | = default     | = default  | = default  | undeclared | undeclared |
+|dtor             | = default   | -         | ~~= default~~ | ~~= default~~ | undeclared | undeclared | undeclared | undeclared |
+|copy ctor        | undeclared  | = default | -             | ~~= default~~ | undeclared | undeclared | undeclared | undeclared |
+|copy assign      | = default   | = default | ~~= default~~ | -             | undeclared | undeclared | undeclared | undeclared |
+|move ctor        | undeclared  | = default | = delete      | = delete      | -          | undeclared | undeclared | undeclared |
+|move assign      | = default   | = default | = delete      | = delete      | undeclared | -          | undeclared | undeclared |
+|`==`             | -           | -         | -             | -             | -          | -          | -          | undeclared |
+|`<=>`            | -           | -         | -             | -             | -          | -          | undeclared | -          |
+
+**テーブル注**  
+
+* ctor: コンストラクタを指す。
+* dtor: デストラクタを指す。
+* assign: 代入演算子（assignment）を指す。
+* user-defined: この列の関数がユーザによって定義されていることを指す。
+  従って、non-default ctorは、デフォルトコンストラクタでないコンストラクタが定義されている行を指す。
+* undeclared: 特定の特殊メンバ関数がユーザによって宣言されていないことを指し、
+  コンパイラによる自動生成もされていないことを指す。
+* 「~~= default~~」とは、`= default`と同様に自動生成されるが、
+  場合によっては不適切な挙動を引き起こす可能性があるため、推奨されない。
 
 
 上記表より、下記のようなことがわかる。
 
 * ユーザが上記6メンバ関数を一切宣言しない場合、それらはコンパイラにより暗黙に宣言、定義される。
 * ユーザがcopyコンストラクタを宣言した場合、デフォルトコンストラクタは暗黙に宣言、定義されない。
-* ユーザがcopyコンストラクタを宣言した場合、copy代入演算子はコンパイラにより暗黙に宣言、
-  定義されるが、そのことは推奨されない(~~= default~~は非推奨のdefault宣言を指す)。
 * moveコンストラクタ、move代入演算子は、
   以下のいずれもが明示的に宣言されていない場合にのみ暗黙に宣言、定義される。
     * copyコンストラクタ
@@ -155,7 +174,7 @@ C++11で導入されたシンタックスである。
     * デストラクタ
 
 * ユーザがmoveコンストラクタまたはmove代入演算子を宣言した場合、
-  copyコンストラクタ、copy代入演算子は= deleteされる。
+  copyコンストラクタ、copy代入演算子は`= delete`される。
 
 ### POD
 PODとは、 Plain Old Dataの略語であり、
@@ -1053,12 +1072,12 @@ std::complexリテラル以下のコードのように使用できる。
     // @@@ example/term_explanation/literal_ut.cpp #6:0 begin -1
 ```
 
-### 比較演算子
-クラスの比較演算子の実装方法には、
-[メンバ比較演算子](---)、[非メンバ比較演算子](---)の2つの方法がある。
+### ==演算子
+クラスの==演算子の実装方法には、
+[メンバ==演算子](---)、[非メンバ==演算子](---)の2つの方法がある。
 
-#### メンバ比較演算子
-メンバ比較演算子には、[非メンバ比較演算子](---)に比べ、下記のようなメリットがある。
+#### メンバ==演算子
+メンバ==演算子には、[非メンバ==演算子](---)に比べ、下記のようなメリットがある。
 
 * メンバ変数へのアクセスが容易であるため、より実装が単純になりやすい。
 * メンバ変数へのアクセスが容易であるため、パフォーマンスが向上する。
@@ -1068,23 +1087,16 @@ std::complexリテラル以下のコードのように使用できる。
     // @@@ example/term_explanation/comparison_operator_ut.cpp #0:0 begin
 ```
 
-#### メンバ比較演算子とstd::rel_ops
-クラスに`operator==`と`operator<`の2つの演算子が定義されていれば、
-他の比較演算子 !=、<=、>、>= はこれらを基に自動的に導出できる。
-std::rel_opsでは`operator==`と`operator<=` を基に、
-他の比較演算子を機械的に生成する仕組みが提供されている。
-
-次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
+すべてのメンバ変数に==演算子が定義されている場合、
+C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #5:0 begin
 ```
 
-なお、std::rel_opsはC++20から導入された[三方比較演算子](---)により不要になったため、
-非推奨とされた。
 
-#### 非メンバ比較演算子
-非メンバ比較演算子には、[メンバ比較演算子](---)に比べ、下記のようなメリットがある。
+#### 非メンバ==演算子
+非メンバ==演算子には、[メンバ==演算子](---)に比べ、下記のようなメリットがある。
 
 * クラスをよりコンパクトに記述できるが、その副作用として、
   アクセッサやfriend宣言が必要になることがある。
@@ -1099,17 +1111,33 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
     // @@@ example/term_explanation/comparison_operator_ut.cpp #1:1 begin -2
 ```
 
-#### 非メンバ比較演算子とstd::rel_ops
-下記に示す通り、
-非メンバ比較演算子とstd::rel_opsを組み合わせることにより、
-「[メンバ比較演算子とstd::rel_ops](---)」で紹介したことと同等のことが実現できる。
+すべてのメンバ変数に==演算子が定義されている場合、
+C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:2 begin -1
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #6:0 begin
 ```
 
+### 比較演算子
+比較演算子とは、[==演算子](--)の他に、!=、 <=、>、>= <、>を指す。
+C++20から導入された[<=>演算子](---)の定義により、すべてが定義される。
+
+#### std::rel_ops
+クラスに`operator==`と`operator<`の2つの演算子が定義されていれば、
+それがメンバか否かにかかわらず、他の比較演算子 !=、<=、>、>= はこれらを基に自動的に導出できる。
+std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を機械的に生成する仕組みが提供されている。
+
+次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
+
+```cpp
+    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:1 begin -1
+```
+
+なお、std::rel_opsはC++20から導入された[<=>演算子](---)により不要になったため、
+非推奨とされた。
+
 #### std::tuppleを使用した比較演算子の実装方法
-クラスのメンバが多い場合、[メンバ比較演算子](---)で示したような方法は、
+クラスのメンバが多い場合、[==演算子](---)で示したような方法は、
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
@@ -1120,10 +1148,10 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
 ```
 
 
-#### 三方比較演算子
+#### <=>演算子
 「[std::tuppleを使用した比較演算子の実装方法](---)」
 で示した定型のコードはコンパイラが自動生成するのがC++規格のセオリーである。
-このためC++20から導入されたのが三方比較演算子`<=>`である。
+このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
     // @@@ example/term_explanation/comparison_operator_ut.cpp #3:0 begin
@@ -1132,15 +1160,18 @@ std::rel_opsでは`operator==`と`operator<=` を基に、
     // @@@ example/term_explanation/comparison_operator_ut.cpp #3:1 begin -1
 ```
 
-定型の比較演算子では不十分である場合、三方比較演算子を実装する必要が出てくる。
+定型の比較演算子では不十分である場合、<=>演算子を実装する必要が出てくる。
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
     // @@@ example/term_explanation/comparison_operator_ut.cpp #4:0 begin
 ```
 
+#### 三方比較演算子
+三方比較演算子とは[<=>演算子](---)を指す。
+
 #### spaceship operator
-spaceship operatorとは[三方比較演算子](---)を指す。
+spaceship operatorとは[<=>演算子](---)を指す。
 この名前は`<=>`が宇宙船に見えることに由来としている。
 
 ## 構文
@@ -1179,14 +1210,62 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
 ```
 
 ### 範囲for文
-範囲for文は下記例のコメントで示されたようなfor文であり、
-begin()、end()によって表される範囲内のすべての要素に対して付属するブロックの処理を行う。
+範囲for文は、
 
 ```cpp
-    // @@@ example/term_explanation/range_for_ut.cpp #8:0 begin -2
+    for ( for-range-declaration : for-range-initializer ) statement
 ```
+
+このような形式で表され、C++17までは下記のような疑似コードに展開される。
+
 ```cpp
-    // @@@ example/term_explanation/range_for_ut.cpp #8:1 begin -2
+    {
+        auto && __range = for-range-initializer;
+        for ( auto __begin = begin-expr, __end = end-expr; __begin != __end; ++__begin ) {
+        for-range-declaration = *__begin;
+        statement
+      }
+    }
+```
+
+単純な範囲for文の使用例は下記の通りである。
+
+```cpp
+    // @@@ example/term_explanation/range_for_ut.cpp #0:0 begin -2
+```
+
+上記のコードは下記のように展開される。
+
+```cpp
+    // @@@ example/term_explanation/range_for_ut.cpp #0:1 begin -2
+```
+
+
+C++17以前は、上記のコードのコメントにある通り、`__begin`と`__end`が同一の型である前提であった。
+C++17以降は、この規制が緩和されたため、以下のように展開されることになった。
+
+```cpp
+    {
+        auto && __range = for-range-initializer;
+        auto __begin = begin-expr;
+        auto __end = end-expr;     // C++17までは、__begin と __endは同一である前提
+        for ( ; __begin != __end; ++__begin ) {
+            for-range-declaration = *__begin;
+            statement
+        }
+    }
+```
+
+この規制緩和により、以下のようなコードが範囲for文で記述できるようになった。
+下記のコードはこの緩和ルールの応用例である。
+
+```cpp
+    // @@@ example/term_explanation/range_for_ut.cpp #2:0 begin -2
+```
+上記のコードは下記のように展開される。
+
+```cpp
+    // @@@ example/term_explanation/range_for_ut.cpp #2:1 begin -2
 ```
 
 
