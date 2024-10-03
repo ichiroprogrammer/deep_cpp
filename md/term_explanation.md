@@ -594,82 +594,6 @@ C++11で導入された、コンストラクタの呼び出しをリスト初期
 ```
 
 
-### AAAスタイル
-このドキュメントでのAAAとは、単体テストのパターンarrange-act-assertではなく、
-almost always autoを指し、
-AAAスタイルとは、「可能な場合、型を左辺に明示して変数を宣言する代わりに、autoを使用する」
-というコーディングスタイルである。
-この用語は、Andrei Alexandrescuによって造られ、Herb Sutterによって広く推奨されている。
-
-特定の型を明示して使用する必要がない場合、下記のように書く。
-
-```cpp
-    // @@@ example/term_explanation/aaa.cpp #0:0 begin -1
-```
-
-特定の型を明示して使用する必要がある場合、下記のように書く。
-
-```cpp
-    // @@@ example/term_explanation/aaa.cpp #1:0 begin -1
-```
-
-関数の戻り値を受け取る変数を宣言する場合、下記のように書く。
-
-```cpp
-    // @@@ example/term_explanation/aaa.cpp #2:0 begin -1
-```
-
-ただし、関数の戻り値型が容易に推測しがたい下記のような場合、
-型を明示しないAAAスタイルは使うべきではない。
-
-```cpp
-    // @@@ example/term_explanation/aaa.cpp #2:1 begin -1
-```
-
-インライン関数や関数テンプレートの宣言は、下記のように書く。
-
-```cpp
-    // @@@ example/term_explanation/aaa.cpp #3:0 begin
-```
-
-ただし、インライン関数や関数テンプレートが複雑な下記のような場合、
-AAAスタイルは出来る限り避けるべきである。
-
-```cpp
-    // @@@ example/term_explanation/aaa.cpp #3:1 begin
-```
-
-このスタイルには下記のような狙いがある。
-
-* コードの安全性の向上  
-  autoで宣言された変数は未初期化にすることができないため、未初期化変数によるバグを防げる。
-  また、下記のように縮小型変換(下記では、unsignedからsignedの変換)を防ぐこともできる。
-
-```cpp
-    // @@@ example/term_explanation/aaa.cpp #4:0 begin -1
-```
-
-* コードの可読性の向上  
-  冗長なコードを排除することで、可読性の向上が見込める。
-
-* コードの保守性の向上  
-  「変数宣言時での左辺と右辺を同一の型にする」非AAAスタイルは
-  [DRYの原則](https://ja.wikipedia.org/wiki/Don%27t_repeat_yourself#:~:text=Don't%20repeat%20yourself%EF%BC%88DRY,%E3%81%A7%E3%81%AA%E3%81%84%E3%81%93%E3%81%A8%E3%82%92%E5%BC%B7%E8%AA%BF%E3%81%99%E3%82%8B%E3%80%82)
-  に反するが、この観点において、AAAスタイルはDRYの原則に沿うため、
-  コード修正時に型の変更があった場合でも、それに付随したコード修正を最小限に留められる。
-
-
-AAAスタイルでは、以下のような場合に注意が必要である。
-
-* 関数の戻り値をautoで宣言された変数で受ける場合  
-  上記で述べた通り、AAAの過剰な仕様は、可読性を下げてしまう。
-
-* autoで推論された型が直感に反する場合  
-  下記のような型推論は、直感に反する場合があるため、autoの使い方に対する習熟が必要である。
-
-```cpp
-    // @@@ example/term_explanation/aaa.cpp #5:0 begin -1
-```
 
 ### オブジェクトの所有権
 オブジェクトxがオブジェクトaの解放責務を持つ場合、
@@ -2079,6 +2003,147 @@ constexpr ifを使用することで、やや単純に記述できる。
     // @@@ example/term_explanation/constexpr_if_ut.cpp #1:2 begin
 ```
 
+### autoパラメータによる関数テンプレートの簡易定義
+この機能は、C++20から導入された。
+下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #4:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #4:1 begin -1
+```
+
+
+## 型推論
+### AAAスタイル
+このドキュメントでのAAAとは、単体テストのパターンarrange-act-assertではなく、
+almost always autoを指し、
+AAAスタイルとは、「可能な場合、型を左辺に明示して変数を宣言する代わりに、autoを使用する」
+というコーディングスタイルである。
+この用語は、Andrei Alexandrescuによって造られ、Herb Sutterによって広く推奨されている。
+
+特定の型を明示して使用する必要がない場合、下記のように書く。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #0:0 begin -1
+```
+
+特定の型を明示して使用する必要がある場合、下記のように書く。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #1:0 begin -1
+```
+
+関数の戻り値を受け取る変数を宣言する場合、下記のように書く。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #2:0 begin -1
+```
+
+ただし、関数の戻り値型が容易に推測しがたい下記のような場合、
+型を明示しないAAAスタイルは使うべきではない。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #2:1 begin -1
+```
+
+インライン関数や関数テンプレートの宣言は、下記のように書く。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #3:0 begin
+```
+
+ただし、インライン関数や関数テンプレートが複雑な下記のような場合、
+AAAスタイルは出来る限り避けるべきである。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #3:1 begin
+```
+
+このスタイルには下記のような狙いがある。
+
+* コードの安全性の向上  
+  autoで宣言された変数は未初期化にすることができないため、未初期化変数によるバグを防げる。
+  また、下記のように縮小型変換(下記では、unsignedからsignedの変換)を防ぐこともできる。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #4:0 begin -1
+```
+
+* コードの可読性の向上  
+  冗長なコードを排除することで、可読性の向上が見込める。
+
+* コードの保守性の向上  
+  「変数宣言時での左辺と右辺を同一の型にする」非AAAスタイルは
+  [DRYの原則](https://ja.wikipedia.org/wiki/Don%27t_repeat_yourself#:~:text=Don't%20repeat%20yourself%EF%BC%88DRY,%E3%81%A7%E3%81%AA%E3%81%84%E3%81%93%E3%81%A8%E3%82%92%E5%BC%B7%E8%AA%BF%E3%81%99%E3%82%8B%E3%80%82)
+  に反するが、この観点において、AAAスタイルはDRYの原則に沿うため、
+  コード修正時に型の変更があった場合でも、それに付随したコード修正を最小限に留められる。
+
+
+AAAスタイルでは、以下のような場合に注意が必要である。
+
+* 関数の戻り値をautoで宣言された変数で受ける場合  
+  上記で述べた通り、AAAの過剰な仕様は、可読性を下げてしまう。
+
+* autoで推論された型が直感に反する場合  
+  下記のような型推論は、直感に反する場合があるため、autoの使い方に対する習熟が必要である。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #5:0 begin -1
+```
+
+### decltype
+decltypeはオペランドに[expression](---)を取り、その型を算出する機能である。
+下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #0:0 begin -2
+```
+
+decltypeは、テンプレートプログラミングに多用されるが、
+クロージャ型(「[C++その他|ラムダ式](---)」参照)
+のような記述不可能な型をオブジェクトから算出できるため、
+下記例のような場合にも有用である。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #1:0 begin
+```
+
+### decltype(auto)
+decltype(auto)はC++14から導入されたdecltypeの類似機能である。
+
+auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #0:1 begin -2
+```
+
+### 関数の戻り値型auto
+C++14から導入された機能で、関数の戻り値の型をautoキーワードで宣言することで、
+コンパイラがreturn文から自動的に型を推論してくれる機能である。
+これにより、複雑な型の戻り値を持つ関数でも、より簡潔に記述できるようになる
+(「[autoパラメータによる関数テンプレートの簡易定義](---)」を参照)。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #2:1 begin -1
+```
+
+### 後置戻り値型auto
+C++14から導入された[関数の戻り値型auto](---)と似た、
+関数の戻り値の型を関数本体の後に-> autoと書くことでができる機能である。
+autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #3:1 begin -1
+```
+
 
 ## explicit
 explicitは、コンストラクタに対して付与することで、
@@ -2375,23 +2440,6 @@ rvalueの内部ハンドルを返さないようにすることが可能とな�
 ### リファレンス修飾
 [rvalue修飾](---)と[lvalue修飾](---)とを併せて、リファレンス修飾と呼ぶ。
 
-### decltype
-decltypeはオペランドに[expression](---)を取り、その型を算出する機能である。
-decltype(auto)はそのオペランドの省略形である。
-autoとdecltypeでは、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
-
-```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:0 begin -1
-```
-
-decltypeは、テンプレートプログラミングに多用されるが、
-クロージャ型(「[C++その他|ラムダ式](---)」参照)
-のような記述不可能な型をオブジェクトから算出できるため、
-下記例のような場合にも有用である。
-
-```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:1 begin
-```
 
 ## リファレンス
 ここでは、C++11から導入された
@@ -2590,7 +2638,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 数学の等号とは違い、等価を表していると考えられるが、
 上記した3つの律を守っている。従ってオーバーロードoperator==も同じ性質を守る必要がある。
 
-組み込みの==やオーバーロードoperator==のこのような性質をここでは「等価性のセマンティクス」と呼ぶ。
+組み込みの==やオーバーロード[==演算子](---)のこのような性質をここでは「等価性のセマンティクス」と呼ぶ。
 
 クラスAを下記のように定義し、
 
