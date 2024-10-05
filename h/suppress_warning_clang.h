@@ -53,8 +53,8 @@
 #define SUPPRESS_WARN_CLANG_CONVERSION_VEXING_PARSE \
     _Pragma("clang diagnostic ignored \"-Wvexing-parse\"")
 
-#define SUPPRESS_WARN_CLANG_COMP _Pragma("clang diagnostic ignored \"-Wenum-compare\"")
-#define SUPPRESS_WARN_CLANG_ENUM_COMP_SWITCH \
+#define SUPPRESS_WARN_CLANG_ENUM_COMP _Pragma("clang diagnostic ignored \"-Wenum-compare\"")
+#define SUPPRESS_WARN_CLANG_ENUM_ENUM_COMP_SWITCH \
     _Pragma("clang diagnostic ignored \"-Wenum-compare-switch\"")
 // only clang
 #define SUPPRESS_WARN_CLANG_CONST_CONV _Pragma("clang diagnostic ignored \"-Wconstant-conversion\"")
@@ -115,8 +115,8 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 
 #define SUPPRESS_WARN_CLANG_ADDRESS
 #define SUPPRESS_WARN_CLANG_ARRAY_BOUNDS
-#define SUPPRESS_WARN_CLANG_COMP
-#define SUPPRESS_WARN_CLANG_ENUM_COMP_SWITCH
+#define SUPPRESS_WARN_CLANG_ENUM_COMP
+#define SUPPRESS_WARN_CLANG_ENUM_ENUM_COMP_SWITCH
 #define SUPPRESS_WARN_CLANG_COMMENT
 #define SUPPRESS_WARN_CLANG_CONV_NULL
 #define SUPPRESS_WARN_CLANG_DEL_INCOMP

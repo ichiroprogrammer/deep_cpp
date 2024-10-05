@@ -56,7 +56,7 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
     // @@@ example/term_explanation/integral_promotion_ut.cpp #0:0 begin -1
 ```
 
-一様初期を使用することで、
+[一様初期化](---)を使用することで、
 変数定義時の算術変換による意図しない値の変換(縮小型変換)を防ぐことができる。
 
 ```cpp
@@ -86,17 +86,105 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
     // @@@ example/term_explanation/integral_promotion_ut.cpp #1:0 begin -1
 ```
 
+## enum
+C++03までのenumは定数を分かりやすい名前で定義するための記法である。
+このドキュメントでは、[スコープドenum](---)に対して、C++03までのenumを非スコープドenum、
+通常のenum、あるいは単にenumと呼ぶことがある。
+C++03までのenumには、以下のような問題があった。
+
+* スコープの制限: 名前付きスコープ内に定義するためには、クラスのメンバとして定義しなければならない。
+* 型安全性: enumの値は整数型と暗黙の変換が行われてしまう。
+* 名前空間の汚染: グローバルスコープに定義されたenumは、名前空間を汚染する。
+
+```cpp
+    // @@@ example/term_explanation/enum_ut.cpp #0:0 begin -1
+```
+
+### enum class
+enum classは通常の[enum](---)の問題を解決するためにC++11から導入された。
+
+```cpp
+    // @@@ example/term_explanation/enum_ut.cpp #1:0 begin -1
+```
+
+```cpp
+    // @@@ example/term_explanation/enum_ut.cpp #1:1 begin -1
+```
+
+### スコープドenum
+enum classは、[スコープドenum](---)と呼ばれることがある。
+
+
 ### underlying type
-underlying typeとは、enumやenum classの汎整数表現を指定できるようにするために、
-C++11で導入されたシンタックスである。
+underlying typeとは、enumやenum classの[汎整数型](---)を指定できるようにするために、
+C++11で導入されたシンタックスである。enumのサイズをユーザが定義できるため、
+特定のバイナリプロトコルとの互換性が必要な場合や、特定のハードウェアと連携する際に特に有効である。
 
 ```cpp
-    // @@@ example/term_explanation/underlying_type_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/enum_ut.cpp #2:0 begin
+```
+
+C++17までは、型安全の観点から、初期化においては、以下のコードコメントのような仕様であったが、
+C++17から導入された[std::byte](---)の利便性のため、
+underlying typeを指定したenumやenum class変数のunderlying typeインスタンスによる初期化が認められるようになった。
+
+```cpp
+    // @@@ example/term_explanation/enum_ut.cpp #2:1 begin -1
+```
+
+上記コードにもあるが、underlying typeインスタンスによる初期化を行う場合は、
+意図しない縮小型変換によるバグの発生を防ぐためにも、
+[一様初期化](---)を使用するべきだろう。
+
+一部の例外を除くとunderlying typeを指定しないenumやenum classはコンパイル時にサイズが確定できないため、
+前方宣言できないが、underlying typeを指定したenum、enum classは前方宣言することができる。
+
+```cpp
+    // @@@ example/term_explanation/enum_ut.cpp #3:0 begin
+```
+
+### std::byte
+C++17で導入されたstd::byte型は、バイト単位のデータ操作に使用され、
+整数型としての意味を持たないため、型安全性を確保する。
+uint8_t型と似ているが、uint8_t型の演算による[汎整数拡張](---)が発生しないため、
+可読性、保守性の向上が見込める。
+
+```cpp
+    // @@@ example/term_explanation/enum_ut.cpp #4:0 begin -1
+```
+
+### using enum
+名前空間のように、
+
+```cpp
+    using enum EnumType;
+```
+
+もしくは
+
+```cpp
+    using EnumType::enumerator
+```
+
+とすることで、スコープによる修飾を省略するための記法である。
+
+```cpp
+    // @@@ example/term_explanation/enum_ut.cpp #5:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/enum_ut.cpp #5:1 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation/underlying_type_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation/enum_ut.cpp #6:0 begin
 ```
+```cpp
+    // @@@ example/term_explanation/enum_ut.cpp #6:1 begin -1
+```
+
+この記法は、簡潔に記述できるものの、一方では過度な使用は、
+C++03までのenumが持っていた問題を再発生させてしまうため、
+ブロックスコープ以外での使用に関しては控え目に使用するべきだろう。
 
 ## 型とインスタンス
 ### 特殊メンバ関数
@@ -1849,7 +1937,7 @@ C++17までのテンプレートには以下のような問題があった。
   コンパイルエラーのメッセージが非常にわかりにくく、問題の原因を特定するのが困難だった。
 * テンプレートの適用範囲が不明確  
   テンプレートの使用可能な型の範囲がドキュメントやコメントでしか表現されず、
-  明確な制約がコードに反映されていなかったため、コードの意図が伝わりずらい。
+  明確な制約がコードに反映されていなかったため、コードの意図が伝わりづらい。
 * 部分特殊化やオーバーロードによる冗長性  
   特定の型に対するテンプレートの処理を制限するために、
   部分特殊化やテンプレートオーバーロードを行うことが多く、コードが冗長になりがちだった。
@@ -1927,7 +2015,7 @@ C++20から導入された「コンセプト(concepts)」は、
     // @@@ example/term_explanation/flold_expression_ut.cpp #0:3 begin 
 ```
 
-上記したような単純な例では、畳み込み式の効果はわかりずらいため、
+上記したような単純な例では、畳み込み式の効果はわかりづらいため、
 もっと複雑なで読解が困難な再帰構造を持ったコードを以下に示す。
 
 ```cpp
@@ -2169,7 +2257,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
     // @@@ example/term_explanation/explicit_ut.cpp #0:1 begin -1
 ```
 
-暗黙の型変換はわかりずらいバグを生み出してしまうことがあるため、
+暗黙の型変換はわかりづらいバグを生み出してしまうことがあるため、
 下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
 
 ```cpp
@@ -2205,7 +2293,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
 
 ### 型変換演算子のオーバーロードの型変換の抑止
 型変換演算子のオーバーロードの戻り値をさらに別の型に変換すると、
-きわめてわかりずらいバグを生み出してしまうことがある。
+きわめてわかりづらいバグを生み出してしまうことがある。
 
 ```cpp
     // @@@ example/term_explanation/explicit_ut.cpp #4:0 begin

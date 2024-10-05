@@ -47,7 +47,7 @@
     _Pragma("GCC diagnostic ignored \"-Wvexing-parse\"")
 #define SUPPRESS_WARN_GCC_ENUM_COMP_SWITCH \
     _Pragma("GCC diagnostic ignored \"-Wenum-compare-switch\"")
-#define SUPPRESS_WARN_GCC_COMP _Pragma("GCC diagnostic ignored \"-Wenum-compare\"")
+#define SUPPRESS_WARN_GCC_ENUM_COMP _Pragma("GCC diagnostic ignored \"-Wenum-compare\"")
 
 // only gcc
 #define SUPPRESS_WARN_GCC_DANGLING_ELSE _Pragma("GCC diagnostic ignored \"-Wdangling-else\"");
@@ -109,7 +109,7 @@
 #define SUPPRESS_WARN_GCC_USER_DEFINED_LITERAL
 #define SUPPRESS_WARN_GCC_CONVERSION_VEXING_PARSE
 #define SUPPRESS_WARN_GCC_ENUM_COMP_SWITCH
-#define SUPPRESS_WARN_GCC_COMP
+#define SUPPRESS_WARN_GCC_ENUM_COMP
 
 // only gcc
 #define SUPPRESS_WARN_GCC_DANGLING_ELSE
