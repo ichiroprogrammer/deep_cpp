@@ -213,8 +213,8 @@ TEST(TermExp, to_str)
     s.Set(Signal::Color::Red);  // 名前修飾が長すぎる感じがする
     s.Set(Signal::Red);         // using enum colorがあるために、簡潔に書ける
 
-    using Signal::Red;          // Redに関しては名前修飾なしで使用する
-                                // この記述によりこの名前空間でのRed識別子が使えなくなる
+    using Signal::Red;  // Redに関しては名前修飾なしで使用する
+                        // この記述によりこの名前空間でのRed識別子が使えなくなる
     s.Set(Red);
     // @@@ sample end
 

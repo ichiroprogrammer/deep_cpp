@@ -1,5 +1,5 @@
 SRCS:=\
-    aaa.cpp argument.cpp class_layout_ut.cpp constexpr_ut.cpp constructor_ut.cpp decltype_ut.cpp \
+    aaa.cpp argument.cpp class_layout_ut.cpp constructor_ut.cpp decltype_ut.cpp \
 	deep_shallow_copy_ut.cpp func_try_block.cpp interface_class.cpp flold_expression_ut.cpp \
 	implicit_conversion_ut.cpp incomplete_type_ut.cpp integral_promotion_ut.cpp \
 	generic_lambda_ut.cpp lack_of_cohesion_ut.cpp lambda.cpp pod_ut.cpp nsdmi.cpp \
@@ -12,7 +12,7 @@ SRCS:=\
     virtual_inheritance_ut.cpp most_vexing_parse_ut.cpp \
     heap_allocation_elision_ut.cpp simple_declaration_ut.cpp dangling_ut.cpp literal_ut.cpp \
     class_relation_ut.cpp  comparison_operator_ut.cpp concept_ut.cpp explicit_ut.cpp \
-	attr_ut.cpp aliging_ut.cpp enum_ut.cpp
+	attr_ut.cpp aliging_ut.cpp enum_ut.cpp const_xxx_ut.cpp
 
 SHARED:=../../
 include $(SHARED)make/env.mk

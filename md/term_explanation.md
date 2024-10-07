@@ -512,65 +512,100 @@ Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層�
 インターフェースクラスは、クラスの仕様を定義するために使用されるため、
 多くの場合、抽象基底クラスとして使用される。
 
-
 ```cpp
     // @@@ example/term_explanation/interface_class.cpp #0:0 begin
 ```
 
 ### constインスタンス
+constインスタンスは、ランタイムまたはコンパイル時に初期化され、
+その後、状態が不変であるインスタンスである。
+必ずしも以下に示すようにconstインスタンスがコンパイル時に値が定まっているわけではない。
+[constexprインスタンス](---)はconstインスタンスである。
+C++03までのコンパイラに、
+最適化の一環で`static const`インスタンスを[constexprインスタンス](---)と扱うものもあった。
 
-constインスタンスとはランタイムの初期化時に値が確定し、その後、状態が不変であるインスタンスである。
-
-### constexprインスタンスと関数
-constexprインスタンスとはコンパイル時に値が確定するインスタンスである。
-当然、ランタイム時でも不変である。
 
 ```cpp
-    // @@@ example/term_explanation/constexpr_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #0:0 begin -1
 ```
 
-constexprとして宣言された関数の戻り値がコンパイル時に確定する場合、
-その関数の呼び出し式はconstexprと扱われる。
-従って、この値はテンプレートパラメータやstatic_assertのオペランドに使用することができる。
+## constexpr
+constexprはC++11で導入されたキーワードで、
+関数や変数をコンパイル時に評価可能にする。
+これにより、定数計算がコンパイル時に行われ、
+実行時のパフォーマンスが向上し、コンパイル時にエラーを検出できることがある。
+
+### constexpr定数
+C++11以前で定数を定義する方法は、
+
+* マクロ定数
+* [enum](---)
+* static const(定数となるか否かは、コンパイラの実装依存に依存する)
+
+の方法があったが、それぞれの方法には下記のような問題がある。
+
+* マクロにはスコープが無く、`#undef`できてしまう。
+* enumには整数の定義に限られる。
+* static constに関しては、コンパイラの実装依存に依存する。
+
+こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
 
 ```cpp
-    // @@@ example/term_explanation/constexpr_ut.cpp #0:1 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/constexpr_ut.cpp #0:2 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #1:1 begin -1
 ```
 
-下記のようなリカーシブな関数でも場合によってはconstexprにできる。
-これによりこの関数の実行速度は劇的に向上する。
+
+### constexpr関数
+関数に`constexpr`をつけて宣言することで定数を定義することができる。
+constexpr関数の呼び出し式の値がコンパイル時に確定する場合、
+その値はconstexpr定数となるため、関数呼び出しが発生しないため、実行効率が向上する。
+一方で、constexpr関数の呼び出し式の値が、コンパイル時に確定しない場合、
+通常の関数呼び出しと同じになる。
 
 ```cpp
-    // @@@ example/term_explanation/constexpr_ut.cpp #0:3 begin
-```
-
-下記の単体テストが示すように、
-
-* 引数がconstexprである場合、上記constexpr関数の戻り値はconstexprになるため、
-  static_assertのオペランド式としても利用できる。
-* 引数がconstexprでない場合、上記constexpr関数は通常の関数として振舞うため、
-  戻り値はconstexprとならない。
-
-```cpp
-    // @@@ example/term_explanation/constexpr_ut.cpp #0:4 begin -1
-```
-
-下記のようにクラスのコンストラクタをconstexprとすることで、
-コンパイル時にリテラルとして振る舞うクラスを定義することができる。
-
-```cpp
-    // @@@ example/term_explanation/constexpr_ut.cpp #0:5 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/constexpr_ut.cpp #0:6 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #2:1 begin -1
+```
+
+### リテラル型
+constexpr導入後のC++11の標準では、下記の条件を満たすクラスは、
+
+* constexprコンストラクタを持つ
+* すべてのメンバ変数がリテラル型である
+* 仮想関数や仮想基底クラスを持たない
+
+constexpr定数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
+[constexprインスタンス](---)を生成できる。
+
+このようなクラスは慣習的にリテラル型(literal type)と呼ばれる。
+
+以下にリテラル型を例示する。
+
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp #3:1 begin -1
+```
+
+### constexprインスタンス
+[constexpr定数](---)を引数にして、[リテラル型](---)のconstexprコンストラクタを呼び出せば、
+constexprインスタンスを生成できる。このリテラル型を使用して下記のように[ユーザー定義リテラル](---)
+を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
+
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp #4:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp #4:1 begin -1
 ```
 
 ## オブジェクトと生成
-
-
 ### 初期化子リストコンストラクタ
 初期化子リストコンストラクタ(リスト初期化用のコンストラクタ)とは、
 {}によるリスト初期化をサポートするためのコンストラクタである。
@@ -1050,7 +1085,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
     // @@@ example/term_explanation/literal_ut.cpp #4:0 begin -1
 ```
 
-### ユーザー定義リテラル                                          
+### ユーザー定義リテラル
 [ユーザ定義リテラル演算子](---)により定義されたリテラルを指す。
 
 #### ユーザ定義リテラル演算子
@@ -3188,7 +3223,7 @@ C++でのOOPでは、DerivedはBaseのpublic継承として定義される。
 * DerivedはBaseに対して
   [リスコフの置換原則](https://ja.wikipedia.org/wiki/%E3%83%AA%E3%82%B9%E3%82%B3%E3%83%95%E3%81%AE%E7%BD%AE%E6%8F%9B%E5%8E%9F%E5%89%87)
   を守る必要がある。
-  この原則を簡単にに説明すると、
+  この原則を簡単に説明すると、
   「派生クラスのオブジェクトは、
   いつでもその基底クラスのオブジェクトと置き換えても、
   プログラムの動作に悪影響を与えずに問題が発生してはならない」という設計の制約である。
