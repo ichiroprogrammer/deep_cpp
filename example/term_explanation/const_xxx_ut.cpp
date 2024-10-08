@@ -144,4 +144,104 @@ TEST(TermExp, user_defined_literal)
     static_assert(std::is_same_v<decltype(i), Integer const>);
     // @@@ sample end
 }
+
+// @@@ sample begin 5:0
+
+constexpr uint64_t bit_mask(uint32_t max)
+{
+    return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1);
+}
+// @@@ sample end
+// @@@ sample begin 5:1
+
+constexpr uint64_t bit_mask_for(uint32_t max)
+{
+    uint64_t ret = 0;
+
+    for (auto i = 0u; i < max; ++i) {
+        ret |= 1ULL << i;
+    }
+
+    return ret;
+}
+// @@@ sample end
+
+template <uint32_t N>
+struct bit_mask_struct {
+    static constexpr uint64_t value = (1ULL << (N - 1)) | bit_mask_struct<N - 1>::value;
+};
+
+// 再帰の終了条件
+template <>
+struct bit_mask_struct<0> {
+    static constexpr uint64_t value = 0;
+};
+
+TEST(TermExp, bit_mask)
+{
+    static_assert(0b1111 == bit_mask(4));
+    static_assert(0b1111 == bit_mask_for(4));
+    static_assert(0b1111 == bit_mask_struct<4>::value);
+}
+
+namespace cpp20 {
+// @@@ sample begin 6:0
+
+consteval uint64_t bit_mask(uint32_t max)
+{
+    if (max == 0) {
+        return 0;
+    }
+    else {
+        return (1ULL << (max - 1)) | bit_mask(max - 1);
+    }
+}
+// @@@ sample end
+TEST(TermExp, bit_mask_recursive)
+{
+    // clang-format off
+    // @@@ sample begin 6:1
+
+    static_assert(0b1111'1111 == bit_mask(8));
+
+    // auto i = 8UL;         // bit_maskがconstevalであるため、コンパイルエラー
+    constexpr auto i = 8UL;  // iがconstexpであるためbit_maskががコンパイル時評価されるため、
+    auto bm = bit_mask(i);   // bit_mask(i)の呼び出しは効率的になる
+                             // bmをconsexprにするとさらに効率的になる
+
+    ASSERT_EQ(0b1111'1111, bm);
+    // @@@ sample end
+    // clang-format on
+}
+}  // namespace cpp20
+
+TEST(TermExp, constexpr_lmbda)
+{
+    // @@@ sample begin 7:0
+
+    constexpr auto factorial = [](int n) {  // constexpr ラムダの定義
+        int result = 1;
+        for (int i = 2; i <= n; ++i) {
+            result *= i;
+        }
+        return result;
+    };
+
+    constexpr int fact_5 = factorial(5); // コンパイル時に計算される
+    static_assert(fact_5 == 120);
+    // @@@ sample end
+}
+
+TEST(TermExp, constexpr_lmbda2)
+{
+    // @@@ sample begin 7:1
+
+    constexpr auto factorial = [](auto self, int n) -> int {  // リカーシブconstexprラムダ
+        return (n <= 1) ? 1 : n * self(self, n - 1);
+    };
+
+    constexpr int fact_5 = factorial(factorial, 5); // コンパイル時の評価
+    static_assert(fact_5 == 120);
+    // @@@ sample end
+}
 }  // namespace

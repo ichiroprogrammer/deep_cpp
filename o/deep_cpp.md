@@ -14281,6 +14281,8 @@ __この章の構成__
 &emsp;&emsp;&emsp; [constexpr関数](#SS_6_4_2)  
 &emsp;&emsp;&emsp; [リテラル型](#SS_6_4_3)  
 &emsp;&emsp;&emsp; [constexprインスタンス](#SS_6_4_4)  
+&emsp;&emsp;&emsp; [consteval](#SS_6_4_5)  
+&emsp;&emsp;&emsp; [constexprラムダ](#SS_6_4_6)  
 
 &emsp;&emsp; [オブジェクトと生成](#SS_6_5)  
 &emsp;&emsp;&emsp; [初期化子リストコンストラクタ](#SS_6_5_1)  
@@ -15405,6 +15407,9 @@ C++11以前で定数を定義する方法は、
     static_assert(templ.value == 5);
 ```
 
+constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_9_5)することで、
+[ill-formed](#SS_6_16_5)を使用した場合分けが可能になる。
+
 
 ### constexpr関数 <a id="SS_6_4_2"></a>
 関数に`constexpr`をつけて宣言することで定数を定義することができる。
@@ -15429,6 +15434,36 @@ constexpr関数の呼び出し式の値がコンパイル時に確定する場�
     auto const c = f(3);         // cはconstexpr定数と定義とすべき
     // constexpr auto d = g(3);  // g(3)は非constexprなのでdの初期化はコンパイルエラー
     auto const e = g(x);         // eはここで初期化して、この後不変
+```
+
+C++11の規約では、constexpr関数の制約は厳しく、
+for/if文や条件分岐のような処理を含むことができなかったため、
+下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
+
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp 148
+
+    constexpr uint64_t bit_mask(uint32_t max)
+    {
+        return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1);
+    }
+```
+このため、可読性、保守性があったため、C++14で制約が緩和され、
+さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
+
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp 155
+
+    constexpr uint64_t bit_mask_for(uint32_t max)
+    {
+        uint64_t ret = 0;
+
+        for (auto i = 0u; i < max; ++i) {
+            ret |= 1ULL << i;
+        }
+
+        return ret;
+    }
 ```
 
 ### リテラル型 <a id="SS_6_4_3"></a>
@@ -15494,6 +15529,84 @@ constexprインスタンスを生成できる。このリテラル型を使用�
     constexpr auto i = 123_i;
     static_assert(i == 123);
     static_assert(std::is_same_v<decltype(i), Integer const>);
+```
+
+### consteval <a id="SS_6_4_5"></a>
+constevalはC++20 から導入されたキーワードであり、
+常にコンパイル時に評価されることを保証する関数を定義するために使用される。
+このキーワードを使用すると、引数や関数内の処理がコンパイル時に確定できなければ、
+コンパイルエラーが発生する。constexprと異なり、ランタイム評価が許されないため、
+パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
+
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp 188
+
+    consteval uint64_t bit_mask(uint32_t max)
+    {
+        if (max == 0) {
+            return 0;
+        }
+        else {
+            return (1ULL << (max - 1)) | bit_mask(max - 1);
+        }
+    }
+```
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp 203
+
+    static_assert(0b1111'1111 == bit_mask(8));
+
+    // auto i = 8UL;         // bit_maskがconstevalであるため、コンパイルエラー
+    constexpr auto i = 8UL;  // iがconstexpであるためbit_maskががコンパイル時評価されるため、
+    auto bm = bit_mask(i);   // bit_mask(i)の呼び出しは効率的になる
+                             // bmをconsexprにするとさらに効率的になる
+
+    ASSERT_EQ(0b1111'1111, bm);
+```
+
+### constexprラムダ <a id="SS_6_4_6"></a>
+constexprラムダはC++17から導入された機能であり、以下の条件を満たした[ラムダ式](#SS_6_16_3)である。
+
+* 引数やラムダ式内の処理がコンパイル時に評価可能である必要がある。
+  すべての処理はconstexpr関数のようにコンパイル時に確定する必要があり、
+  動的な処理やランタイムでしか決定できないものは含めることができない。
+
+* ラムダ内で使用される関数や式もconstexprでなければならない。
+  たとえば、関数の呼び出しや算術演算は、コンパイル時に評価可能なものであることが求められる。
+
+* ラムダキャプチャはconstexprに適合している必要がある。
+  キャプチャする変数もコンパイル時に確定できるものに限られる。
+  動的な変数をキャプチャすると、コンパイルエラーとなる。
+
+* 例外処理 (try/catch/throw) が禁止されている。
+  constexprラムダでは、例外処理を含むことはできない。
+
+* 動的メモリの割り当て(new/delete) が禁止されている。
+  これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
+
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp 220
+
+    constexpr auto factorial = [](int n) {  // constexpr ラムダの定義
+        int result = 1;
+        for (int i = 2; i <= n; ++i) {
+            result *= i;
+        }
+        return result;
+    };
+
+    constexpr int fact_5 = factorial(5); // コンパイル時に計算される
+    static_assert(fact_5 == 120);
+```
+```cpp
+    // @@@ example/term_explanation/const_xxx_ut.cpp 237
+
+    constexpr auto factorial = [](auto self, int n) -> int {  // リカーシブconstexprラムダ
+        return (n <= 1) ? 1 : n * self(self, n - 1);
+    };
+
+    constexpr int fact_5 = factorial(factorial, 5); // コンパイル時の評価
+    static_assert(fact_5 == 120);
 ```
 
 ## オブジェクトと生成 <a id="SS_6_5"></a>
@@ -20627,6 +20740,7 @@ C++11で導入されたキーワードで、メモリのアライメントを指
 * クロージャ型とは、クロージャオブジェクトの型。
 * キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
 * ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
+* [constexprラムダ](#SS_6_4_6)
 * [ジェネリックラムダ](#SS_6_9_4)とは、C++11のラムダ式を拡張して、
   パラメータにautoを使用(型推測)できるようにした機能。
 
