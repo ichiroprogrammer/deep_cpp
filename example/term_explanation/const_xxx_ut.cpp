@@ -227,7 +227,7 @@ TEST(TermExp, constexpr_lmbda)
         return result;
     };
 
-    constexpr int fact_5 = factorial(5); // コンパイル時に計算される
+    constexpr int fact_5 = factorial(5);  // コンパイル時に計算される
     static_assert(fact_5 == 120);
     // @@@ sample end
 }
@@ -240,7 +240,7 @@ TEST(TermExp, constexpr_lmbda2)
         return (n <= 1) ? 1 : n * self(self, n - 1);
     };
 
-    constexpr int fact_5 = factorial(factorial, 5); // コンパイル時の評価
+    constexpr int fact_5 = factorial(factorial, 5);  // コンパイル時の評価
     static_assert(fact_5 == 120);
     // @@@ sample end
 }

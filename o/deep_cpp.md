@@ -7324,8 +7324,8 @@ std::enable_ifの使用例を下記に示す。
 
 実装例から明らかなように
 
-* std::enable_if\<true>::typeは[well-formed](#SS_6_16_6)
-* std::enable_if\<false>::typeは[ill-formed](#SS_6_16_5)
+* std::enable_if\<true>::typeは[well-formed](#SS_6_16_5)
+* std::enable_if\<false>::typeは[ill-formed](#SS_6_16_4)
 
 となるため、下記のコードはコンパイルできない。
 
@@ -8416,7 +8416,7 @@ SFINAEと関数テンプレート/関数のオーバーライドを使用し以�
 AreConvertibleWithoutNarrowConvはNstdで定義するため、その内部のみで用いる
 is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 
-上記を抜粋した下記のコードは「縮小型変換を発生さる{}による初期化は[ill-formed](#SS_6_16_5)になる」
+上記を抜粋した下記のコードは「縮小型変換を発生さる{}による初期化は[ill-formed](#SS_6_16_4)になる」
 ことをSFINAEに利用している。
 
 ```cpp
@@ -8826,8 +8826,8 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 
 上記で使用したstd::void_tは、テンプレートパラメータが
 
-* [ill-formed](#SS_6_16_5)ならばill-formedになる
-* [well-formed](#SS_6_16_6)ならvoidを生成する
+* [ill-formed](#SS_6_16_4)ならばill-formedになる
+* [well-formed](#SS_6_16_5)ならvoidを生成する
 
 テンプレートである。
 
@@ -14328,6 +14328,15 @@ __この章の構成__
 &emsp;&emsp;&emsp; [属性構文             ](#SS_6_7_1)  
 &emsp;&emsp;&emsp; [関数tryブロック](#SS_6_7_2)  
 &emsp;&emsp;&emsp; [範囲for文](#SS_6_7_3)  
+&emsp;&emsp;&emsp; [構造化束縛](#SS_6_7_4)  
+&emsp;&emsp;&emsp; [初期化付きif/switch文](#SS_6_7_5)  
+&emsp;&emsp;&emsp;&emsp; [初期化付きfor文(従来のfor文)](#SS_6_7_5_1)  
+&emsp;&emsp;&emsp;&emsp; [初期化付きif文](#SS_6_7_5_2)  
+&emsp;&emsp;&emsp;&emsp; [初期化付きswitch文](#SS_6_7_5_3)  
+
+&emsp;&emsp;&emsp; [ラムダ式](#SS_6_7_6)  
+&emsp;&emsp;&emsp;&emsp; [クロージャ](#SS_6_7_6_1)  
+&emsp;&emsp;&emsp;&emsp; [クロージャ型](#SS_6_7_6_2)  
 
 &emsp;&emsp; [name lookupと名前空間](#SS_6_8)  
 &emsp;&emsp;&emsp; [ルックアップ](#SS_6_8_1)  
@@ -14404,21 +14413,20 @@ __この章の構成__
 &emsp;&emsp;&emsp;&emsp; [alignas](#SS_6_16_1_2)  
 
 &emsp;&emsp;&emsp; [実引数/仮引数](#SS_6_16_2)  
-&emsp;&emsp;&emsp; [ラムダ式](#SS_6_16_3)  
-&emsp;&emsp;&emsp; [単純代入](#SS_6_16_4)  
-&emsp;&emsp;&emsp; [ill-formed](#SS_6_16_5)  
-&emsp;&emsp;&emsp; [well-formed](#SS_6_16_6)  
-&emsp;&emsp;&emsp; [one-definition rule](#SS_6_16_7)  
-&emsp;&emsp;&emsp; [ODR](#SS_6_16_8)  
-&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_16_9)  
-&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_16_10)  
-&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_16_11)  
-&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_16_12)  
-&emsp;&emsp;&emsp; [RTTI](#SS_6_16_13)  
-&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_16_14)  
-&emsp;&emsp;&emsp; [simple-declaration](#SS_6_16_15)  
-&emsp;&emsp;&emsp; [typeid](#SS_6_16_16)  
-&emsp;&emsp;&emsp; [トライグラフ](#SS_6_16_17)  
+&emsp;&emsp;&emsp; [単純代入](#SS_6_16_3)  
+&emsp;&emsp;&emsp; [ill-formed](#SS_6_16_4)  
+&emsp;&emsp;&emsp; [well-formed](#SS_6_16_5)  
+&emsp;&emsp;&emsp; [one-definition rule](#SS_6_16_6)  
+&emsp;&emsp;&emsp; [ODR](#SS_6_16_7)  
+&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_16_8)  
+&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_16_9)  
+&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_16_10)  
+&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_16_11)  
+&emsp;&emsp;&emsp; [RTTI](#SS_6_16_12)  
+&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_16_13)  
+&emsp;&emsp;&emsp; [simple-declaration](#SS_6_16_14)  
+&emsp;&emsp;&emsp; [typeid](#SS_6_16_15)  
+&emsp;&emsp;&emsp; [トライグラフ](#SS_6_16_16)  
 
 &emsp;&emsp; [C++コンパイラ](#SS_6_17)  
 &emsp;&emsp;&emsp; [g++](#SS_6_17_1)  
@@ -15408,7 +15416,7 @@ C++11以前で定数を定義する方法は、
 ```
 
 constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_9_5)することで、
-[ill-formed](#SS_6_16_5)を使用した場合分けが可能になる。
+[ill-formed](#SS_6_16_4)を使用した場合分けが可能になる。
 
 
 ### constexpr関数 <a id="SS_6_4_2"></a>
@@ -15565,7 +15573,7 @@ constevalはC++20 から導入されたキーワードであり、
 ```
 
 ### constexprラムダ <a id="SS_6_4_6"></a>
-constexprラムダはC++17から導入された機能であり、以下の条件を満たした[ラムダ式](#SS_6_16_3)である。
+constexprラムダはC++17から導入された機能であり、以下の条件を満たした[ラムダ式](#SS_6_7_6)である。
 
 * 引数やラムダ式内の処理がコンパイル時に評価可能である必要がある。
   すべての処理はconstexpr関数のようにコンパイル時に確定する必要があり、
@@ -15595,7 +15603,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
         return result;
     };
 
-    constexpr int fact_5 = factorial(5); // コンパイル時に計算される
+    constexpr int fact_5 = factorial(5);  // コンパイル時に計算される
     static_assert(fact_5 == 120);
 ```
 ```cpp
@@ -15605,7 +15613,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
         return (n <= 1) ? 1 : n * self(self, n - 1);
     };
 
-    constexpr int fact_5 = factorial(factorial, 5); // コンパイル時の評価
+    constexpr int fact_5 = factorial(factorial, 5);  // コンパイル時の評価
     static_assert(fact_5 == 120);
 ```
 
@@ -17282,6 +17290,248 @@ C++17以降は、この規制が緩和されたため、以下のように展開
     ASSERT_EQ("Hello", oss.str());  // 結果は "Hello" になるはず
 ```
 
+### 構造化束縛 <a id="SS_6_7_4"></a>
+構造化束縛はC++17 から導入されたもので、std::tuppleやstd::pair、std::arrayなど、
+構造体のメンバーを個別の変数に分解して簡潔に扱うことをできるようにするための機能である。
+
+```cpp
+    // @@@ example/term_explanation/structured_binding_ut.cpp 13
+
+        // tupleでの構造化束縛の例
+        std::tuple<int, double, std::string> tobj(1, 2.5, "Hello");
+
+        auto [i, d, s] = tobj;  // 構造化束縛を使用してタプルを分解
+
+        ASSERT_EQ(i, 1);
+        ASSERT_DOUBLE_EQ(d, 2.5);
+        ASSERT_EQ("Hello", s);
+```
+```cpp
+    // @@@ example/term_explanation/structured_binding_ut.cpp 28
+
+        // pairでの構造化束縛の例
+        std::pair<int, std::string> pobj(42, "example");
+
+        auto [i, s] = pobj;  // 構造化束縛を使用してペアを分解
+
+        ASSERT_EQ(i, 42);
+        ASSERT_EQ("example", s);
+```
+```cpp
+    // @@@ example/term_explanation/structured_binding_ut.cpp 42
+
+        struct Person {
+            std::string name;
+            int         age;
+        };
+
+        Person person{"Ichiro", 30};  // 構造体のインスタンス
+
+        auto& [name, age] = person;  // 構造化束縛を使用して構造体のメンバーを分解
+
+        static_assert(std::is_same_v<decltype(name), std::string>);  // これは正しい
+        // static_assert(std::is_same_v<decltype(name), std::string&>); これはコンパイルエラー
+        // 上記がコンパイルエラーになる理由は以下の通り。
+        //
+        // 変数宣言は、 autoを記述したあとに角カッコ内に変数名を列挙する。
+        // それぞれの変数に対する型や修飾子の指定はできない。
+        // autoの部分を const auto&のように、全体に対してCV修飾や参照を付加することはできる。
+        // それぞれの変数の型は、各要素をdecltypeしたものとなる。
+        //                        ^^^^^^^^^^^^^^ nameの型がstd::stringと評価された理由
+
+        name = "Taro";  // nameはリファレンス
+        age  = 56;      // ageはリファレンス
+        ASSERT_EQ(person.name, "Taro");
+        ASSERT_EQ(person.age, 56);
+```
+```cpp
+    // @@@ example/term_explanation/structured_binding_ut.cpp 72
+
+        auto array = std::array<int, 3>{1, 2, 3};
+
+        auto [x, y, z] = array;  // 構造化束縛を使って std::array の要素を分解
+
+        ASSERT_EQ(x, 1);
+        ASSERT_EQ(y, 2);
+        ASSERT_EQ(z, 3);
+```
+
+### 初期化付きif/switch文 <a id="SS_6_7_5"></a>
+C++17で、if文とswitc文に初期化を行う構文が導入された。
+これにより、変数をそのスコープ内で初期化し、その変数を条件式の評価に使用できる。
+初期化された変数は、if文やswitch文のスコープ内でのみ有効であり、他のスコープには影響を与えない。
+
+この構文は、従来のfor文で使用されていた初期化ステートメントを、if/switch文に拡張したものである。
+この類似性が理解しやすいように、本節では、 敢えて以下のコード例で同じ関数、同じクラスを使用し、
+対比できるようにした。
+
+- [初期化付きfor文(従来のfor文)](#SS_6_7_5_1)
+- [初期化付きif文](#SS_6_7_5_2)
+- [初期化付きswitch文](#SS_6_7_5_3)
+
+
+
+#### 初期化付きfor文(従来のfor文) <a id="SS_6_7_5_1"></a>
+下記の疑似コードは従来のfor文の構造を表す。
+
+```cpp
+    for (init-statement; condition; post-statement) {
+        // ループ処理
+    }
+```
+上記のと同様の実際のfor文のコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp 8
+
+    class OperationResult {
+    public:
+        enum class ErrorCode { NoError, ErrorPattern1, ErrorPattern2, ErrorPattern3 };
+        bool      IsError();
+        ErrorCode Get() const noexcept;
+
+    private:
+        // 何らかの定義
+    };
+
+    OperationResult DoOperation();                                 // 何らかの処理
+    void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
+```
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp 35
+
+    for (auto result = DoOperation(); result.IsError(); result = DoOperation()) {
+        RecoverOperation(result.Get());  // エラー処理
+    }
+    // 成功処理
+```
+
+#### 初期化付きif文 <a id="SS_6_7_5_2"></a>
+下記の疑似コードこの節で説明しようとしているif文の構造を表す。
+
+```cpp
+    if (init-statement; condition) {
+        // 条件がtrueの場合の処理
+    }
+```
+
+上記と同様の構造を持つ実際のif文のコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp 8
+
+    class OperationResult {
+    public:
+        enum class ErrorCode { NoError, ErrorPattern1, ErrorPattern2, ErrorPattern3 };
+        bool      IsError();
+        ErrorCode Get() const noexcept;
+
+    private:
+        // 何らかの定義
+    };
+
+    OperationResult DoOperation();                                 // 何らかの処理
+    void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
+```
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp 46
+
+    if (auto result = DoOperation(); !result.IsError()) {
+        // 成功処理
+    }
+    else {
+        RecoverOperation(result.Get());  // エラー処理
+    }
+    // resultはスコープアウトする
+```
+
+#### 初期化付きswitch文 <a id="SS_6_7_5_3"></a>
+下記の疑似コードはこの節で説明しようとしているswitch文の構造を表す。
+
+```cpp
+    switch (init-statement; condition) {
+        case value1:
+            // 条件が value1 の場合の処理
+            break;
+        case value2:
+            // 条件が value2 の場合の処理
+            break;
+        // その他のケース
+    }
+
+```
+上記と同様の構造を持つ実際のswitch文のコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp 8
+
+    class OperationResult {
+    public:
+        enum class ErrorCode { NoError, ErrorPattern1, ErrorPattern2, ErrorPattern3 };
+        bool      IsError();
+        ErrorCode Get() const noexcept;
+
+    private:
+        // 何らかの定義
+    };
+
+    OperationResult DoOperation();                                 // 何らかの処理
+    void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
+```
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp 60
+
+    using enum OperationResult::ErrorCode;
+    switch (auto result = DoOperation(); result.Get()) {
+    case ErrorPattern1:
+        RecoverOperation(result.Get());  // エラー処理
+        break;
+    // エラー処理のいくつかのパターン
+    case NoError:
+        // 成功処理
+    default:
+        assert(false);  // ここには来ないはず
+    }
+    // resultはスコープアウトする
+```
+
+### ラムダ式 <a id="SS_6_7_6"></a>
+ラムダ式に関する言葉の定義と例を示す。
+
+* ラムダ式とは、その場で関数オブジェクトを定義する式。
+* クロージャ(オブジェクト)とは、ラムダ式から生成された関数オブジェクト。
+* クロージャ型とは、クロージャオブジェクトの型。
+* キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
+* ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
+* [constexprラムダ](#SS_6_4_6)とはクロージャ型の[constexprインスタンス](#SS_6_4_4)。
+* [ジェネリックラムダ](#SS_6_9_4)とは、C++11のラムダ式を拡張して、
+  パラメータにautoを使用(型推測)できるようにした機能。
+
+```cpp
+    // @@@ example/term_explanation/lambda.cpp 10
+
+    auto a = 0;
+
+    // closureがクロージャ。それを初期化する式がラムダ式
+    // [a = a]がキャプチャ
+    // [a = a]内の右辺aは上記で定義されたa
+    // [a = a]内の左辺aは右辺aで初期化された変数。ラムダ式内で使用されるaは左辺a。
+    auto closure = [a = a](int32_t b) noexcept { return a + b; };
+
+    auto ret = closure(3);  // クロージャの実行
+
+    // g_closureはジェネリックラムダ
+    auto g_closure = [](auto t0, auto t1) { return t0 + t1; };
+
+    auto i = g_closure(1, 2);                                // t0、t1はint
+    auto s = g_closure(std::string{"1"}, std::string{"2"});  // t0、t1はstd::string
+```
+
+#### クロージャ <a id="SS_6_7_6_1"></a>
+「[ラムダ式](#SS_6_7_6)」を参照せよ。
+
+#### クロージャ型 <a id="SS_6_7_6_2"></a>
+「[ラムダ式](#SS_6_7_6)」を参照せよ。
 
 ## name lookupと名前空間 <a id="SS_6_8"></a>
 ここではname lookupとそれに影響を与える名前空間について解説する。
@@ -18482,7 +18732,7 @@ XXXの識別子が使用できる。
 ### SFINAE <a id="SS_6_9_1"></a>
 [SFINAE](https://cpprefjp.github.io/lang/cpp11/sfinae_expressions.html)
 (Substitution Failure Is Not An Errorの略称、スフィネェと読む)とは、
-「テンプレートのパラメータ置き換えに失敗した([ill-formed](#SS_6_16_5)になった)際に、
+「テンプレートのパラメータ置き換えに失敗した([ill-formed](#SS_6_16_4)になった)際に、
 即時にコンパイルエラーとはせず、置き換えに失敗したテンプレートを
 [name lookup](#SS_6_8_2)の候補から除外する」
 という言語機能である。
@@ -19275,7 +19525,7 @@ decltypeはオペランドに[expression](#SS_6_12_1)を取り、その型を算
 ```
 
 decltypeは、テンプレートプログラミングに多用されるが、
-クロージャ型(「[ラムダ式](#SS_6_16_3)」参照)
+クロージャ型(「[ラムダ式](#SS_6_7_6)」参照)
 のような記述不可能な型をオブジェクトから算出できるため、
 下記例のような場合にも有用である。
 
@@ -20413,7 +20663,7 @@ Derived用のoperator==を
     ASSERT_TRUE(d0_b_ref == d1);  // NG d0_b_refの実態はd0なのでd1と等価でない
 ```
 
-この問題は、[RTTI](#SS_6_16_13)を使った下記のようなコードで対処できる。
+この問題は、[RTTI](#SS_6_16_12)を使った下記のようなコードで対処できる。
 
 ```cpp
     // @@@ example/term_explanation/semantics_ut.cpp 203
@@ -20732,45 +20982,13 @@ C++11で導入されたキーワードで、メモリのアライメントを指
     }
 ```
 
-### ラムダ式 <a id="SS_6_16_3"></a>
-ラムダ式に関する言葉の定義と例を示す。
-
-* ラムダ式とは、その場で関数オブジェクトを定義する式。
-* クロージャ(オブジェクト)とは、ラムダ式から生成された関数オブジェクト。
-* クロージャ型とは、クロージャオブジェクトの型。
-* キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
-* ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
-* [constexprラムダ](#SS_6_4_6)
-* [ジェネリックラムダ](#SS_6_9_4)とは、C++11のラムダ式を拡張して、
-  パラメータにautoを使用(型推測)できるようにした機能。
-
-```cpp
-    // @@@ example/term_explanation/lambda.cpp 10
-
-    auto a = 0;
-
-    // closureがクロージャ。それを初期化する式がラムダ式
-    // [a = a]がキャプチャ
-    // [a = a]内の右辺aは上記で定義されたa
-    // [a = a]内の左辺aは右辺aで初期化された変数。ラムダ式内で使用されるaは左辺a。
-    auto closure = [a = a](int32_t b) noexcept { return a + b; };
-
-    auto ret = closure(3);  // クロージャの実行
-
-    // g_closureはジェネリックラムダ
-    auto g_closure = [](auto t0, auto t1) { return t0 + t1; };
-
-    auto i = g_closure(1, 2);                                // t0、t1はint
-    auto s = g_closure(std::string{"1"}, std::string{"2"});  // t0、t1はstd::string
-```
-
-### 単純代入 <a id="SS_6_16_4"></a>
+### 単純代入 <a id="SS_6_16_3"></a>
 代入は下記のように分類される。
 
 * 単純代入(=)
 * 複合代入(+=，++ 等)
 
-### ill-formed <a id="SS_6_16_5"></a>
+### ill-formed <a id="SS_6_16_4"></a>
 [標準規格と処理系](https://cpprefjp.github.io/implementation-compliance.html)に詳しい解説があるが、
 
 * well-formed(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
@@ -20782,13 +21000,13 @@ C++11で導入されたキーワードで、メモリのアライメントを指
 対象がテンプレートの場合、事情は少々異なり、[SFINAE](#SS_6_9_1)によりコンパイルできることもある。
 
 
-### well-formed <a id="SS_6_16_6"></a>
-「[ill-formed](#SS_6_16_5)」を参照せよ。
+### well-formed <a id="SS_6_16_5"></a>
+「[ill-formed](#SS_6_16_4)」を参照せよ。
 
-### one-definition rule <a id="SS_6_16_7"></a>
-「[ODR](#SS_6_16_8)」を参照せよ。
+### one-definition rule <a id="SS_6_16_6"></a>
+「[ODR](#SS_6_16_7)」を参照せよ。
 
-### ODR <a id="SS_6_16_8"></a>
+### ODR <a id="SS_6_16_7"></a>
 ODRとは、One Definition Ruleの略語であり、下記のようなことを定めている。
 
 * どの翻訳単位でも、テンプレート、型、関数、またはオブジェクトは、複数の定義を持つことができない。
@@ -20799,7 +21017,7 @@ ODRとは、One Definition Ruleの略語であり、下記のようなことを�
 [https://en.cppreference.com/w/cpp/language/definition](https://en.cppreference.com/w/cpp/language/definition)
 が参考になる。
 
-### RVO(Return Value Optimization) <a id="SS_6_16_9"></a>
+### RVO(Return Value Optimization) <a id="SS_6_16_8"></a>
 関数の戻り値がオブジェクトである場合、
 戻り値オブジェクトは、その関数の呼び出し元のオブジェクトにコピーされた後、すぐに破棄される。
 この「オブジェクトをコピーして、その後すぐにそのオブジェクトを破棄する」動作は、
@@ -20810,7 +21028,7 @@ RVOとはこのような最適化を指す。
 [C++17から規格化](https://cpprefjp.github.io/lang/cpp17/guaranteed_copy_elision.html)された。
 
 
-### SSO(Small String Optimization) <a id="SS_6_16_10"></a>
+### SSO(Small String Optimization) <a id="SS_6_16_9"></a>
 一般にstd::stringで文字列を保持する場合、newしたメモリが使用される。
 64ビット環境であれば、newしたメモリのアドレスを保持する領域は8バイトになる。
 std::stringで保持する文字列が終端の'\0'も含め8バイト以下である場合、
@@ -20819,7 +21037,7 @@ std::stringで保持する文字列が終端の'\0'も含め8バイト以下で�
 
 SOOとはこのような最適化を指す。
 
-### heap allocation elision <a id="SS_6_16_11"></a>
+### heap allocation elision <a id="SS_6_16_10"></a>
 C++11までの仕様では、new式によるダイナミックメモリアロケーションはコードに書かれた通りに、
 実行されなければならず、ひとまとめにしたり省略したりすることはできなかった。
 つまり、ヒープ割り当てに対する最適化は認められなかった。
@@ -20867,7 +21085,7 @@ new/deleteの呼び出しをまとめたり省略したりすることができ�
 ダイナミックメモリアロケーションが1回に抑えられるため、メモリアクセスが高速化される。
 
 
-### Most Vexing Parse <a id="SS_6_16_12"></a>
+### Most Vexing Parse <a id="SS_6_16_11"></a>
 Most Vexing Parse(最も困惑させる構文解析)とは、C++の文法に関連する問題で、
 Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつけたことに由来する。
 
@@ -20899,7 +21117,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 このような問題を回避できる。
 
 
-### RTTI <a id="SS_6_16_13"></a>
+### RTTI <a id="SS_6_16_12"></a>
 RTTI(Run-time Type Information)とは、プログラム実行中のオブジェクトの型を導出するための機能であり、
 具体的には下記の3つの要素を指す。
 
@@ -20987,10 +21205,10 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     // ASSERT_THROW(dynamic_cast<NonPolymorphic_Derived&>(b_ref_b), std::bad_cast);
 ```
 
-### Run-time Type Information <a id="SS_6_16_14"></a>
-「[RTTI](#SS_6_16_13)」を参照せよ。
+### Run-time Type Information <a id="SS_6_16_13"></a>
+「[RTTI](#SS_6_16_12)」を参照せよ。
 
-### simple-declaration <a id="SS_6_16_15"></a>
+### simple-declaration <a id="SS_6_16_14"></a>
 このための記述が
 [simple-declaration](https://cpprefjp.github.io/lang/cpp17/selection_statements_with_initializer.html)
 とは、C++17から導入された
@@ -21024,10 +21242,10 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     }
 ```
 
-### typeid <a id="SS_6_16_16"></a>
-「[RTTI](#SS_6_16_13)」を参照せよ。
+### typeid <a id="SS_6_16_15"></a>
+「[RTTI](#SS_6_16_12)」を参照せよ。
 
-### トライグラフ <a id="SS_6_16_17"></a>
+### トライグラフ <a id="SS_6_16_16"></a>
 トライグラフとは、2つの疑問符とその後に続く1文字によって表される、下記の文字列である。
 
 ```

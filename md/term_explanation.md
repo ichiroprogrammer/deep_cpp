@@ -1373,6 +1373,118 @@ C++17以降は、この規制が緩和されたため、以下のように展開
     // @@@ example/term_explanation/range_for_ut.cpp #2:1 begin -2
 ```
 
+### 構造化束縛
+構造化束縛はC++17 から導入されたもので、std::tuppleやstd::pair、std::arrayなど、
+構造体のメンバーを個別の変数に分解して簡潔に扱うことをできるようにするための機能である。
+
+```cpp
+    // @@@ example/term_explanation/structured_binding_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/structured_binding_ut.cpp #0:1 begin
+```
+```cpp
+    // @@@ example/term_explanation/structured_binding_ut.cpp #0:2 begin
+```
+```cpp
+    // @@@ example/term_explanation/structured_binding_ut.cpp #0:3 begin
+```
+
+### 初期化付きif/switch文
+C++17で、if文とswitc文に初期化を行う構文が導入された。
+これにより、変数をそのスコープ内で初期化し、その変数を条件式の評価に使用できる。
+初期化された変数は、if文やswitch文のスコープ内でのみ有効であり、他のスコープには影響を与えない。
+
+この構文は、従来のfor文で使用されていた初期化ステートメントを、if/switch文に拡張したものである。
+この類似性が理解しやすいように、本節では、 敢えて以下のコード例で同じ関数、同じクラスを使用し、
+対比できるようにした。
+
+- [初期化付きfor文(従来のfor文)](---)
+- [初期化付きif文](---)
+- [初期化付きswitch文](---)
+
+
+
+#### 初期化付きfor文(従来のfor文)
+下記の疑似コードは従来のfor文の構造を表す。
+
+```cpp
+    for (init-statement; condition; post-statement) {
+        // ループ処理
+    }
+```
+上記のと同様の実際のfor文のコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #1:0 begin -1
+```
+
+#### 初期化付きif文
+下記の疑似コードこの節で説明しようとしているif文の構造を表す。
+
+```cpp
+    if (init-statement; condition) {
+        // 条件がtrueの場合の処理
+    }
+```
+
+上記と同様の構造を持つ実際のif文のコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #1:1 begin -1
+```
+
+#### 初期化付きswitch文
+下記の疑似コードはこの節で説明しようとしているswitch文の構造を表す。
+
+```cpp
+    switch (init-statement; condition) {
+        case value1:
+            // 条件が value1 の場合の処理
+            break;
+        case value2:
+            // 条件が value2 の場合の処理
+            break;
+        // その他のケース
+    }
+
+```
+上記と同様の構造を持つ実際のswitch文のコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #1:2 begin -1
+```
+
+### ラムダ式
+ラムダ式に関する言葉の定義と例を示す。
+
+* ラムダ式とは、その場で関数オブジェクトを定義する式。
+* クロージャ(オブジェクト)とは、ラムダ式から生成された関数オブジェクト。
+* クロージャ型とは、クロージャオブジェクトの型。
+* キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
+* ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
+* [constexprラムダ](---)とはクロージャ型の[constexprインスタンス](---)。
+* [ジェネリックラムダ](---)とは、C++11のラムダ式を拡張して、
+  パラメータにautoを使用(型推測)できるようにした機能。
+
+```cpp
+    // @@@ example/term_explanation/lambda.cpp #0:0 begin -1
+```
+
+#### クロージャ
+「[ラムダ式](---)」を参照せよ。
+
+#### クロージャ型
+「[ラムダ式](---)」を参照せよ。
 
 ## name lookupと名前空間
 ここではname lookupとそれに影響を与える名前空間について解説する。
@@ -2283,7 +2395,7 @@ decltypeはオペランドに[expression](---)を取り、その型を算出す�
 ```
 
 decltypeは、テンプレートプログラミングに多用されるが、
-クロージャ型(「[C++その他|ラムダ式](---)」参照)
+クロージャ型(「[ラムダ式](---)」参照)
 のような記述不可能な型をオブジェクトから算出できるため、
 下記例のような場合にも有用である。
 
@@ -3017,22 +3129,6 @@ C++11で導入されたキーワードで、メモリのアライメントを指
 
 ```cpp
     // @@@ example/term_explanation/argument.cpp #0:0 begin
-```
-
-### ラムダ式
-ラムダ式に関する言葉の定義と例を示す。
-
-* ラムダ式とは、その場で関数オブジェクトを定義する式。
-* クロージャ(オブジェクト)とは、ラムダ式から生成された関数オブジェクト。
-* クロージャ型とは、クロージャオブジェクトの型。
-* キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
-* ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
-* [constexprラムダ](---)
-* [ジェネリックラムダ](---)とは、C++11のラムダ式を拡張して、
-  パラメータにautoを使用(型推測)できるようにした機能。
-
-```cpp
-    // @@@ example/term_explanation/lambda.cpp #0:0 begin -1
 ```
 
 ### 単純代入
