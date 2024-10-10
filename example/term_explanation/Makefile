@@ -2,7 +2,7 @@ SRCS:=\
     aaa.cpp argument.cpp class_layout_ut.cpp constructor_ut.cpp decltype_ut.cpp \
 	deep_shallow_copy_ut.cpp func_try_block.cpp interface_class.cpp flold_expression_ut.cpp \
 	implicit_conversion_ut.cpp incomplete_type_ut.cpp integral_promotion_ut.cpp \
-	generic_lambda_ut.cpp lack_of_cohesion_ut.cpp lambda.cpp pod_ut.cpp nsdmi.cpp \
+	generic_lambda_ut.cpp lack_of_cohesion_ut.cpp lambda.cpp trivial_ut.cpp nsdmi.cpp \
     name_hiding.cpp name_lookup_adl_ut.cpp name_lookup_ut.cpp namespace_ut.cpp \
     override_overload_ut.cpp range_for_ut.cpp ref_collapsing_ut.cpp rtti_ut.cpp \
     rvalue_lvalue_ut.cpp semantics_ut.cpp slice_ut.cpp spurious_wakeup_ut.cpp \

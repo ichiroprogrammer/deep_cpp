@@ -264,45 +264,82 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 * ユーザがmoveコンストラクタまたはmove代入演算子を宣言した場合、
   copyコンストラクタ、copy代入演算子は`= delete`される。
 
-### POD
-PODとは、 Plain Old Dataの略語であり、
+### トリビアル型
+トリビアル型とは、
+
+* 全ての特殊メンバ関数がデフォルトである。
+* バーチャル関数や仮想継承を持たない。
+* 基底クラスがある場合、基底クラスもトリビアルである。
+
+「型Tがトリビアルであること」と「以下の行がコンパイルできること」は等価である。
 
 ```cpp
-    std::is_pod<T>::value
+    static_assert(std::is_trivial_v<T>);
 ```
 
-がtrueとなる型Tを指す。
+下記のコードはその使用例である。
+
+```cpp
+    // @@@ example/term_explanation/trivial_ut.cpp #0:3 begin -2
+```
+
+
+### 標準レイアウト型
+「型Tが標準レイアウトであること」と「以下の行がコンパイルできること」は等価である。
+
+```cpp
+    static_assert(std::is_standard_layout_v<T>);
+```
+
+下記のコードはその使用例である。
+
+```cpp
+    // @@@ example/term_explanation/trivial_ut.cpp #0:2 begin -2
+```
+
+### POD
+PODとは、 Plain Old Dataの略語であり、
+「型TがPODであること」と「以下の行がコンパイルできること」は等価である。
+
+```cpp
+    static_assert(std::is_pod_v<T>);  // is_podはC++20から非推奨
+```
+
 「型が[トリビアル型](---)且つ[標準レイアウト型](---)であること」と
 「型が[POD](---)であること」は等価であるため、C++20では、
 [PODという用語は非推奨](https://cpprefjp.github.io/lang/cpp20/deprecate_pod.html)となった。
 従って、std::is_pod_vは以下のように置き換えられるべきである。
 
 ```cpp
-    // @@@ example/term_explanation/pod_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/trivial_ut.cpp #0:0 begin
 ```
 
 下記のコードは置き換えられたstd::is_pod_vの使用例である。
 
 ```cpp
-    // @@@ example/term_explanation/pod_ut.cpp #0:1 begin -2
+    // @@@ example/term_explanation/trivial_ut.cpp #0:1 begin -2
 ```
 
 上記からわかる通り、POD型とは概ね、C言語と互換性のある型を指すと思って良い。
 
-### 標準レイアウト型
-標準レイアウト型とは、
+
+### 不完全型
+不完全型とは、型のサイズや構造が不明な型を指す。
+以下のis_completeで示したテンプレート定数で、不完全型か否かを判定できる。
 
 ```cpp
-    std::is_standard_layout<T>::value
+    // @@@ example/term_explanation/incomplete_type_ut.cpp #0:0 begin
 ```
-
-がtrueとなる型Tを指す。下記のコードはその使用例である。
-
 ```cpp
-    // @@@ example/term_explanation/pod_ut.cpp #0:2 begin -2
+    // @@@ example/term_explanation/incomplete_type_ut.cpp #1:0 begin -2
+```
+```cpp
+    // @@@ example/term_explanation/incomplete_type_ut.cpp #1:1 begin -2
 ```
 
-型がPODである場合、その型は標準レイアウト型である。
+### 完全型
+[不完全型](---)ではない型を指す。
+
 
 ### クラスのレイアウト
 クラス(やそのクラスが継承した基底クラス)が仮想関数を持たない場合、
@@ -473,33 +510,6 @@ Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層�
 
 このようなメカニズムにより仮想関数呼び出しが行われる。
 
-
-### トリビアル型
-トリビアル型とは、
-
-```cpp
-    std::is_trivial<T>::value
-```
-
-がtrueとなる型Tを指す。下記のコードはその使用例である。
-
-```cpp
-    // @@@ example/term_explanation/pod_ut.cpp #0:3 begin -2
-```
-
-型がPODである場合、その型はトリビアル型である。
-
-
-### 不完全型
-不完全型とは、型のサイズや構造が不明な型を指す。
-下記のような場合、不完全型となる。
-
-```cpp
-    // @@@ example/term_explanation/incomplete_type_ut.cpp #0:0 begin -1
-```
-
-### 完全型
-[不完全型](---)ではない型を指す。
 
 ### ポリモーフィックなクラス
 ポリモーフィックなクラスとは、仮想関数を持つクラスを指す。
@@ -2448,7 +2458,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 
 - [単一引数のコンストラクタを持つクラスの暗黙の型変換抑止](---)
 - [暗黙の型変換抑止](---)
-- [型変換演算子のオーバーロードの型変換の抑止](---)
+- [explicit type operator()](---)
 - [explicit(COND)](---)
 
 ### 単一引数のコンストラクタを持つクラスの暗黙の型変換抑止
@@ -2496,9 +2506,10 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
     // @@@ example/term_explanation/explicit_ut.cpp #3:1 begin -1
 ```
 
-### 型変換演算子のオーバーロードの型変換の抑止
+### explicit type operator()
 型変換演算子のオーバーロードの戻り値をさらに別の型に変換すると、
-きわめてわかりづらいバグを生み出してしまうことがある。
+きわめてわかりづらいバグを生み出してしまうことがあるため、
+この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
 
 ```cpp
     // @@@ example/term_explanation/explicit_ut.cpp #4:0 begin
