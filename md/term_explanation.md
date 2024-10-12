@@ -1474,7 +1474,77 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     // @@@ example/term_explanation/if_switch_init_ut.cpp #1:2 begin -1
 ```
 
-### ラムダ式
+# 言語機能
+## コルーチン
+コルーチンはC++20から導入された機能であり、以下の新しいキーワードによりサポートされる。
+
+* [co_await](---)
+* [co_return](---)
+* [co_yield](---)
+
+### co_await
+co_awaitはコルーチンの非同期操作の一時停止と再開に使用される。
+co_waitとco_returnを使用したコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/co_await_ut.cpp #0:0 begin
+```
+以下単体テストコードによりに上記コルーチンの動作を示す。
+
+```cpp
+    // @@@ example/term_explanation/co_await_ut.cpp #0:1 begin -1
+```
+
+上記のコルーチンと同じ機能を持つクラスのco_await/co_returnを使わない実装を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/co_await_ut.cpp #1:0 begin
+```
+
+このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
+
+```cpp
+    // @@@ example/term_explanation/co_await_ut.cpp #1:1 begin -1
+```
+
+C++20から導入されたco_await、co_return、TaskとC++17以前の機能のみを使用したコードの対比によって、
+コルーチンのサポート機能により実装が容易になることが理解できるだろう。
+
+### co_return
+co_returnはコルーチンの終了時に値を返すために使用される。
+co_returnは通常[co_await](---)と同時に使われることが多い。
+
+### co_yield
+co_yieldはコルーチンから値を返しつつ、
+次の再開ポイントまで処理を中断する。これはジェネレーターの実装に便利である。
+
+```cpp
+    // @@@ example/term_explanation/co_yield_ut.cpp #0:0 begin
+```
+このテストを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/co_yield_ut.cpp #0:1 begin -1
+```
+
+[co_await](---)、co_returnの例でみたように、
+co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yieldを使わない実装を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/co_yield_ut.cpp #1:0 begin
+```
+
+このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
+
+```cpp
+    // @@@ example/term_explanation/co_yield_ut.cpp #1:1 begin -1
+```
+
+C++20から導入されたco_await、co_return、TaskとC++17以前の機能のみを使用したコードの対比によって、
+コルーチンのサポート機能により実装が容易になることが理解できるだろう。
+
+
+## ラムダ式
 ラムダ式に関する言葉の定義と例を示す。
 
 * ラムダ式とは、その場で関数オブジェクトを定義する式。
@@ -1490,10 +1560,10 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     // @@@ example/term_explanation/lambda.cpp #0:0 begin -1
 ```
 
-#### クロージャ
+### クロージャ
 「[ラムダ式](---)」を参照せよ。
 
-#### クロージャ型
+### クロージャ型
 「[ラムダ式](---)」を参照せよ。
 
 ## name lookupと名前空間

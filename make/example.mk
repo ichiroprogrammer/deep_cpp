@@ -65,7 +65,7 @@ $(O)%.o : %.s
 	$(CXX) -c -o $@ $<
 
 $(D)%.d : %.cpp
-	$(CXX) -I$(GTEST_INC) -I$(SHARED)h -I../h -E -MM -w $< | sed -e 's@^\([^ ]\)@$$(O)\1@g'  > $@
+	$(CXX) -I$(GTEST_INC) -I$(SHARED)h -I../h $(CCFLAGS)  -E -MM -w $< | sed -e 's@^\([^ ]\)@$$(O)\1@g'  > $@
 
 $(D)%.d : %.c
 	$(CC) -I$(SHARED)h -I../h -E -MM -w $< | sed -e 's@^\([^ ]\)@$$(O)\1@g' > $@
