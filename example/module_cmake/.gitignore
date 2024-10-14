@@ -1,0 +1,6 @@
+main
+*.o
+*.pcm
+build/
+CMakeFiles/
+CMakeCache.txt
