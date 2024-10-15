@@ -11,15 +11,18 @@
 
 ## 改訂履歴 <a id="SS_1_1"></a>
 * V20.01
-    * モジュールの解説
-    * コルーチンの説明
-    * std::enable_ifをコンセプトを使用しリファクタリング
-    * 畳み込み式の解説
-    * テンプレートのテクニックに畳み込み式の使用
-    * explicitの解説
-    * コンセプトの解説
-    * 比較演算子の解説
-    * <=>の導入
+    * templateメタプログラミング
+        * 浮動小数点IsEqual
+        * FixedPoint
+        * std::enable_ifをコンセプトを使用しリファクタリング
+    * 用語説明追加
+        * モジュール
+        * コルーチン
+        * 畳み込み式
+        * テンプレートのテクニックに畳み込み式の使用
+        * explicit
+        * コンセプト
+        * <=>
 
 * V18.07
     * 静的な文字列オブジェクトの強化
@@ -5704,17 +5707,22 @@ __この章の構成__
 &emsp;&emsp;&emsp; [Nstd::SafeIndexのoperator\<\<の開発](#SS_4_4_3)  
 &emsp;&emsp;&emsp; [コンテナ用Nstd::operator\<\<の開発](#SS_4_4_4)  
 
-&emsp;&emsp; [ログ取得ライブラリの開発2](#SS_4_5)  
-&emsp;&emsp; [その他のテンプレートテクニック](#SS_4_6)  
-&emsp;&emsp;&emsp; [ユニバーサルリファレンスとstd::forward](#SS_4_6_1)  
-&emsp;&emsp;&emsp; [ジェネリックラムダによる関数内での関数テンプレートの定義](#SS_4_6_2)  
-&emsp;&emsp;&emsp; [クラステンプレートと継承の再帰構造](#SS_4_6_3)  
-&emsp;&emsp;&emsp; [意図しないname lookupの防止](#SS_4_6_4)  
-&emsp;&emsp;&emsp; [Nstd::Type2Strの開発](#SS_4_6_5)  
-&emsp;&emsp;&emsp; [静的な文字列オブジェクト](#SS_4_6_6)  
-&emsp;&emsp;&emsp; [関数型をテンプレートパラメータで使う](#SS_4_6_7)  
+&emsp;&emsp; [Nstdライブラリの開発3](#SS_4_5)  
+&emsp;&emsp;&emsp; [浮動小数点の比較](#SS_4_5_1)  
+&emsp;&emsp;&emsp; [固定小数点クラス](#SS_4_5_2)  
+&emsp;&emsp;&emsp; [固定小数点リテラル](#SS_4_5_3)  
 
-&emsp;&emsp; [注意点まとめ](#SS_4_7)  
+&emsp;&emsp; [ログ取得ライブラリの開発2](#SS_4_6)  
+&emsp;&emsp; [その他のテンプレートテクニック](#SS_4_7)  
+&emsp;&emsp;&emsp; [ユニバーサルリファレンスとstd::forward](#SS_4_7_1)  
+&emsp;&emsp;&emsp; [ジェネリックラムダによる関数内での関数テンプレートの定義](#SS_4_7_2)  
+&emsp;&emsp;&emsp; [クラステンプレートと継承の再帰構造](#SS_4_7_3)  
+&emsp;&emsp;&emsp; [意図しないname lookupの防止](#SS_4_7_4)  
+&emsp;&emsp;&emsp; [Nstd::Type2Strの開発](#SS_4_7_5)  
+&emsp;&emsp;&emsp; [静的な文字列オブジェクト](#SS_4_7_6)  
+&emsp;&emsp;&emsp; [関数型をテンプレートパラメータで使う](#SS_4_7_7)  
+
+&emsp;&emsp; [注意点まとめ](#SS_4_8)  
   
   
 
@@ -10442,7 +10450,404 @@ range_put_to_sep<>()を用意した。
     }
 ```
 
-## ログ取得ライブラリの開発2 <a id="SS_4_5"></a>
+## Nstdライブラリの開発3 <a id="SS_4_5"></a>
+### 浮動小数点の比較 <a id="SS_4_5_1"></a>
+浮動小数点の演算には下記に示したような問題が起こり得るため、単純な==の比較はできない。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp 9
+
+    // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
+    constexpr auto a = 0.01F;  // 0.0000001010001111...
+    constexpr auto b = 0.04F;  // 0.0000101000111101...
+
+    ASSERT_FALSE(0.05F == a + b);  // a + b == 0.05Fは一般には成立しない。
+```
+
+この問題に対処するのが以下のコードである。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp 17
+
+    float epsilon  = std::abs(0.05F - (a + b));
+    bool  is_equal = epsilon <= std::numeric_limits<float>::epsilon();
+    ASSERT_TRUE(is_equal);
+```
+
+単なる浮動小数変数の比較にこのようなコードを書くのは間違えやすいし、非効率であるため、
+下記のような関数(float用とdouble用)で対処することが一般的である。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp 25
+
+    namespace Nstd {
+
+    /// @brief float比較用関数
+    bool is_equal_f(float lhs, float rhs) noexcept
+    {
+        return std::abs(lhs - rhs) <= std::numeric_limits<float>::epsilon();
+    }
+
+    /// @brief double比較用関数
+    bool is_equal_d(double lhs, double rhs) noexcept
+    {
+        return std::abs(lhs - rhs) <= std::numeric_limits<double>::epsilon();
+    }
+```
+実際に使う場面を以下に示す。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp 44
+
+    // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
+    constexpr auto a = 0.01F;  // 0.0000001010001111...
+    constexpr auto b = 0.04F;  // 0.0000101000111101...
+
+    // floatの比較はis_equal_fのような関数を使う。
+    bool is_equal = Nstd::is_equal_f(0.05F, a + b);
+    ASSERT_TRUE(is_equal);
+```
+
+一見これで万事うまくいくように見えるが、そうは行かないことを以下の例で示す。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp 59
+
+    // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
+    constexpr auto a = 0.01F;  // 0.0000001010001111...
+    constexpr auto b = 0.04F;  // 0.0000101000111101...
+
+    // a + bはfloatの精度のまま、is_equal_dの引数の型であるdoubleに昇格される。
+    // 一方、0.05はdoubleであるため(循環小数をdoubleの精度で切り捨てた値であるため)、
+    // a + b(floatの精度の値)と0.05の差はdoubleのepsilonを超える。
+    //  ASSERT_TRUE(is_equal_d(0.05, a + b));  // NG
+    ASSERT_FALSE(Nstd::is_equal_d(0.05, a + b));
+```
+
+dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるため、このような問題が起こり得る。
+これに対処する方法を以下に示す。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp 74
+
+    namespace Nstd {
+    // is_equal_dを改良して、引数の型が統一されていない呼び出しをコンパイルエラーにできるようにした。
+    /// @fn bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
+    /// @brief 浮動小数点比較用関数
+    template <typename FLOAT_0, typename FLOAT_1>
+    bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
+    {
+        static_assert(std::is_floating_point_v<FLOAT_0>);
+        static_assert(std::is_same_v<FLOAT_0, FLOAT_1>);
+
+        return std::abs(lhs - rhs) <= std::numeric_limits<FLOAT_0>::epsilon();
+    }
+    }  // namespace Nstd
+```
+
+この関数のテストは以下の通りである。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp 92
+
+    // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
+    constexpr auto a = 0.01F;  // 0.0000001010001111...
+    constexpr auto b = 0.04F;  // 0.0000101000111101...
+
+    // a + bはfloatであり、0.05はdoubleであるため、下記コードはコンパイルできない。
+    // ASSERT_TRUE(Nstd::is_equal(0.05, a + b));
+    ASSERT_TRUE(Nstd::is_equal(0.05F, a + b));  // OK リテラルに型を指定して、引数の型を統一
+```
+
+通常の浮動小数の比較は相対誤差を指定できる必要性がある場合が多いため、
+さらに下記のように拡張変更した。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp 107
+
+    /// @fn bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
+    /// @brief 浮動小数点比較用関数
+    /// 相対誤差を考慮して、lhs と rhs の絶対値に基づくトレランスの範囲内での比較を行う。
+    /// これにより、数値の大小に関わらず、適切な誤差で比較できる。
+    template <typename FLOAT_0, typename FLOAT_1>
+    bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs,
+                  FLOAT_0 tolerance = std::numeric_limits<FLOAT_0>::epsilon()) noexcept
+    {
+        static_assert(std::is_floating_point_v<FLOAT_0>);
+        static_assert(std::is_same_v<FLOAT_0, FLOAT_1>);
+
+        return std::abs(lhs - rhs) <= tolerance * std::max(std::abs(lhs), std::abs(rhs));
+    }
+```
+
+この関数のテストは以下の通りである。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp 127
+
+    float a = 1000000.0F;
+    float b = 1000000.1F;
+
+    ASSERT_FALSE(Nstd::is_equal(a, b));       // a, bはほぼ同じだが。
+    ASSERT_TRUE(Nstd::is_equal(a, b, 0.1F));  // 相対誤差を指定できる。
+```
+
+### 固定小数点クラス <a id="SS_4_5_2"></a>
+以上で見てきたように浮動小数点の扱いはやや面倒であるため、
+浮動小数点のダイナミックレンジが必要な場合以外では安易に浮動小数点を使うべきでない。
+
+従って、intやlong等のダイナミックレンジで表現できる1未満の値が必要な場合、
+intやlongの値を100倍などのスケーリングして使うのが、浮動小数点の微妙な問題を避ける手段となる。
+スケーリングとは、
+整数型変数変数のスケーリングとは、intやlongの値を、
+特定の倍率で拡大することで小数点以下の値を扱う方法を指す。
+例えば、100倍にスケーリングして「1.23」を「123」として整数で表現するようする。
+この方法は浮動小数点の代わりに使えるが、
+スケーリング値を常に意識する必要があり、コードの可読性や保守性に影響を与える問題がある。
+
+以下に示す固定小数点クラス(FixedPoint)はこれらの問題を解決できる。
+
+```cpp
+    // @@@ example/template/fixed_point.h 7
+
+    namespace Nstd {
+    /// @class FixedPoint
+    /// @brief BASIC_TYPEで指定する基本型のビット長を持つ固定小数点を扱うためのクラス
+    /// @tparam BASIC_TYPE       全体のビット長や、符号を指定するための整数型
+    /// @tparam FRACTION_BIT_NUM 小数点保持のためのビット長
+    template <typename BASIC_TYPE, uint32_t FRACTION_BIT_NUM>
+    class FixedPoint {
+    public:
+        constexpr FixedPoint(BASIC_TYPE                                integer  = 0,
+                             typename std::make_unsigned_t<BASIC_TYPE> fraction = 0) noexcept
+            : value_{get_init_value(integer, fraction)}
+        {
+            // signedに対する右ビットシフトの仕様が、算術右ビットシフトでないと
+            // このクラスは成立しない。下記のstatic_assertはその確認。
+            static_assert(IsSigned() ? (-1 >> 1 == -1) : true, "need logical right bit sift");
+
+            // BASIC_TYPEをcharにすることは認めない。
+            static_assert(!std::is_same_v<BASIC_TYPE, char>, "BASIC_TYPE should not be char");
+        }
+
+        // 以下、特殊メンバ定義
+        ~FixedPoint()                                = default;
+        FixedPoint(FixedPoint const&)                = default;
+        FixedPoint& operator=(FixedPoint const&)     = default;
+        FixedPoint(FixedPoint&&) noexcept            = default;
+        FixedPoint& operator=(FixedPoint&&) noexcept = default;
+
+        // 以下、インターフェース定義
+        constexpr BASIC_TYPE GetValue() const noexcept { return value_; }
+        constexpr BASIC_TYPE GetInteger() const noexcept { return value_ >> fraction_bit_num_; }
+        constexpr BASIC_TYPE GetFraction() const noexcept { return value_ & fraction_bit_mask_; }
+
+        /// @fn bool ToFloatPoint() const noexcept
+        /// @brief doubleに変換する
+        constexpr double ToFloatPoint() const noexcept
+        {
+            return GetInteger() + (static_cast<double>(GetFraction()) / (fraction_bit_mask_ + 1));
+        }
+
+        /// @fn    std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept
+        /// @brief 小数部のビット長を返す
+        constexpr typename std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept
+        {
+            return fraction_bit_mask_;
+        }
+
+        /// @fn    std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept
+        /// @brief 整数部のビット長を返す
+        constexpr typename std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept
+        {
+            return integer_bit_mask_;
+        }
+
+        static constexpr bool IsSigned() noexcept { return std::is_signed_v<BASIC_TYPE>; }
+
+        static constexpr bool IsUnsigned() noexcept { return std::is_unsigned_v<BASIC_TYPE>; }
+
+        /// @fn    以下operator @=の定義
+        FixedPoint& operator+=(FixedPoint rhs) noexcept
+        {
+            value_ += rhs.value_;
+            return *this;
+        }
+
+        FixedPoint& operator-=(FixedPoint rhs) noexcept
+        {
+            value_ -= rhs.value_;
+            return *this;
+        }
+
+        FixedPoint& operator*=(FixedPoint rhs) noexcept
+        {
+            value_ *= rhs.value_ >> fraction_bit_num_;
+            return *this;
+        }
+
+        FixedPoint& operator/=(FixedPoint rhs) noexcept
+        {
+            using T = std::conditional_t<IsSigned(), int64_t, uint64_t>;
+
+            value_ = (static_cast<T>(value_) << fraction_bit_num_) / rhs.value_;
+
+            return *this;
+        }
+
+    private:
+        BASIC_TYPE value_;  // FixedPointの実際の値
+
+        static constexpr uint32_t bit_mask(uint32_t bit_len) noexcept
+        {
+            if (bit_len == 0) {
+                return 0x0;
+            }
+
+            return bit_mask(bit_len - 1) | (0x01 << (bit_len - 1));
+        }
+
+        static constexpr uint32_t fraction_bit_num_{FRACTION_BIT_NUM};
+        static constexpr uint32_t fraction_bit_mask_{bit_mask(fraction_bit_num_)};
+        static constexpr uint32_t integer_bit_num_{sizeof(BASIC_TYPE) * 8 - FRACTION_BIT_NUM};
+        static constexpr uint32_t integer_bit_mask_{bit_mask(integer_bit_num_) << fraction_bit_num_};
+
+        static constexpr BASIC_TYPE get_init_value(BASIC_TYPE integer, BASIC_TYPE fraction) noexcept
+        {
+            // 本来は左シフト<<を使いたいが、signedに対しての<<ランタイム実装依存であるので、
+            // return (integer << fraction_bit_num_) | fraction;
+
+            return (integer * (fraction_bit_mask_ + 1)) | fraction;
+        }
+
+        /// 以下比較演算子の定義
+
+    #if __cplusplus >= 202002L  // C++20の機能を使用するコード
+        friend auto operator<=>(FixedPoint lhs, FixedPoint rhs) noexcept = default;
+    #else  // C++17までのコード
+        friend bool operator==(FixedPoint lhs, FixedPoint rhs) noexcept
+        {
+            return lhs.value_ == rhs.value_;
+        }
+
+        friend bool operator!=(FixedPoint lhs, FixedPoint rhs) noexcept { return !(lhs == rhs); }
+
+        friend bool operator>(FixedPoint lhs, FixedPoint rhs) noexcept
+        {
+            return lhs.value_ > rhs.value_;
+        }
+
+        friend bool operator>=(FixedPoint lhs, FixedPoint rhs) noexcept
+        {
+            return (lhs > rhs) || (lhs == rhs);
+        }
+
+        friend bool operator<(FixedPoint lhs, FixedPoint rhs) noexcept { return (rhs > lhs); }
+
+        friend bool operator<=(FixedPoint lhs, FixedPoint rhs) noexcept
+        {
+            return (lhs < rhs) || (lhs == rhs);
+        }
+    #endif
+
+        /// @fn FixedPoint operator+(FixedPoint lhs, FixedPoint rhs) noexcept
+        /// @brief FixedPoint() + intのようなオーバーロードを作るためにあえてfriend
+        friend FixedPoint operator+(FixedPoint lhs, FixedPoint rhs) noexcept
+        {
+            lhs += rhs;
+            return lhs;
+        }
+
+        friend FixedPoint operator-(FixedPoint lhs, FixedPoint rhs) noexcept
+        {
+            lhs -= rhs;
+            return lhs;
+        }
+
+        friend FixedPoint operator*(FixedPoint lhs, FixedPoint rhs) noexcept
+        {
+            lhs *= rhs;
+            return lhs;
+        }
+
+        friend FixedPoint operator/(FixedPoint lhs, FixedPoint rhs) noexcept
+        {
+            lhs /= rhs;
+            return lhs;
+        }
+    };
+```
+
+FixedPointの単体テストコードを以下に示す。
+
+```cpp
+    // @@@ example/template/fixed_point_ut.cpp 21
+
+    // 以下は、FixedPoint<>の使用例である。
+    using FP4 = Nstd::FixedPoint<uint8_t, 4>;  // 基本型uint8_t、小数点4ビット
+    auto fp0  = FP4{};
+
+    ASSERT_FALSE(fp0.IsSigned());
+    ASSERT_TRUE(fp0.IsUnsigned());
+
+    fp0 = 7;    ASSERT_EQ(7, fp0);
+    fp0 = 7;    ASSERT_NE(6, fp0);
+    fp0 += 2;   ASSERT_EQ(FP4{9}, fp0);         
+                ASSERT_DOUBLE_EQ(9.0, fp0.ToFloatPoint());
+    fp0 /= 2;   ASSERT_EQ((FP4{4, 8}), fp0);    
+                ASSERT_DOUBLE_EQ(4.5, fp0.ToFloatPoint());
+    fp0 /= 2;   ASSERT_EQ((FP4{2, 4}), fp0);    
+                ASSERT_DOUBLE_EQ(2.25, fp0.ToFloatPoint());
+    fp0 *= 4;   ASSERT_EQ(FP4{9}, fp0);
+    fp0 += 7;   ASSERT_EQ(FP4{0}, fp0);
+```
+
+### 固定小数点リテラル <a id="SS_4_5_3"></a>
+[固定小数点クラス](#SS_4_5_2)のようなクラス定義には、以下に示すようにユーザ定義リテラルを定義し、
+使い勝手のよい環境をユーザに提供するべきである。
+
+```cpp
+    // @@@ example/template/fixed_point.h 179
+
+    namespace Nstd {
+    namespace fixed_point_literals {
+    // FixedPoint<int32_t, 8> 用のユーザ定義リテラル
+    FixedPoint<int32_t, 8> operator"" _fxp(unsigned long long int val)
+    {
+        // 整数部分を取り、FixedPoint<int32_t, 8>のインスタンスを作成
+        return FixedPoint<int32_t, 8>(static_cast<int32_t>(val));
+    }
+
+    FixedPoint<int32_t, 8> operator"" _fxp(long double val)
+    {
+        // 浮動小数点数からFixedPoint<int32_t, 8>のインスタンスを作成
+        int32_t integer_part  = static_cast<int32_t>(val);
+        int32_t fraction_part = static_cast<int32_t>((val - integer_part) * 256);  // 2^8 = 256
+        return FixedPoint<int32_t, 8>(integer_part, fraction_part);
+    }
+    }  // namespace fixed_point_literals
+    }  // namespace Nstd
+```
+
+以上のコードの単体テストを以下に示す。これにより使用方も明らかになるだろう。
+
+```cpp
+    // @@@ example/template/fixed_point_ut.cpp 171
+
+    using namespace Nstd::fixed_point_literals;
+
+    auto a = 123_fxp;  // 整数リテラル
+
+    EXPECT_EQ(a.GetInteger(), 123);
+    EXPECT_EQ(a.GetFraction(), 0);  // 小数部は0のはず
+
+    auto b      = 50.25_fxp;
+    auto result = a + b;
+
+    EXPECT_NEAR(result.ToFloatPoint(), 173.25, 0.01);
+```
+
+## ログ取得ライブラリの開発2 <a id="SS_4_6"></a>
 ログ取得ライブラリでの問題は「Logging名前空間が依存してよい名前空間」に
 
 ```cpp
@@ -10582,10 +10987,10 @@ range_put_to_sep<>()を用意した。
 これでログ取得ライブラリは完成したと言って良いだろう。
 
 
-## その他のテンプレートテクニック <a id="SS_4_6"></a>
+## その他のテンプレートテクニック <a id="SS_4_7"></a>
 ここでは、これまでの議論の対象にならなかったテンプレートのテクニックや注意点について記述する。
 
-### ユニバーサルリファレンスとstd::forward <a id="SS_4_6_1"></a>
+### ユニバーサルリファレンスとstd::forward <a id="SS_4_7_1"></a>
 2個の文字列からstd::vector\<std::string>を生成する下記のような関数について考える。
 
 ```cpp
@@ -10907,7 +11312,7 @@ constなlvalueリファレンスとして扱うべきである。
 
 なお、ユニバーサルリファレンスは、[リファレンスcollapsing](#SS_7_9_4)の一機能としても理解できる。
 
-### ジェネリックラムダによる関数内での関数テンプレートの定義 <a id="SS_4_6_2"></a>
+### ジェネリックラムダによる関数内での関数テンプレートの定義 <a id="SS_4_7_2"></a>
 下記のようなクラスとoperator<<があった場合を考える。
 
 ```cpp
@@ -10980,7 +11385,7 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
 この記法は[ジェネリックラムダ](#SS_7_5_4)と呼ばれる。
 この機能により関数の中で関数テンプレートと同等のものが定義できるようになった。
 
-#### ジェネリックラムダの内部構造 <a id="SS_4_6_2_1"></a>
+#### ジェネリックラムダの内部構造 <a id="SS_4_7_2_1"></a>
 ジェネリックラムダは下記のように使用することができる。
 
 ```cpp
@@ -11036,7 +11441,7 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
     ASSERT_EQ("1\n2.71\nhehe\n", oss.str());
 ```
 
-#### std::variantとジェネリックラムダ <a id="SS_4_6_2_2"></a>
+#### std::variantとジェネリックラムダ <a id="SS_4_7_2_2"></a>
 unionは、オブジェクトを全く無関係な複数の型に切り替えることができるため、
 これが必要な場面では有用な機能であるが、未定義動作を誘発してしまう問題がある。
 この対策としてC++17で導入されたものが、std::variantである。
@@ -11256,13 +11661,13 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
     ASSERT_EQ('C', ret);
 ```
 
-### クラステンプレートと継承の再帰構造 <a id="SS_4_6_3"></a>
+### クラステンプレートと継承の再帰構造 <a id="SS_4_7_3"></a>
 クラステンプレートと継承の再帰構造はCRTPと呼ばれる。
 このコードパターンについては、
 「[CRTP(curiously recurring template pattern)](#SS_3_21)」で説明している。
 
 
-### 意図しないname lookupの防止 <a id="SS_4_6_4"></a>
+### 意図しないname lookupの防止 <a id="SS_4_7_4"></a>
 下記のようにクラスや関数テンプレートが定義されている場合を考える。
 
 ```cpp
@@ -11376,13 +11781,13 @@ lookupによるバグの混入を起こしてしまうことがある。
 
 こういったname lookup、特にADLの問題に対処する方法は、
 
-* [ジェネリックすぎるテンプレートを書かない](#SS_4_6_4_1)
-* [ADLが本当に必要でない限り名前を修飾する](#SS_4_6_4_2)
-* [ADL Firewallを使う](#SS_4_6_4_3)
+* [ジェネリックすぎるテンプレートを書かない](#SS_4_7_4_1)
+* [ADLが本当に必要でない限り名前を修飾する](#SS_4_7_4_2)
+* [ADL Firewallを使う](#SS_4_7_4_3)
 
 のようにいくつか考えられる。これらについて以下で説明を行う。
 
-#### ジェネリックすぎるテンプレートを書かない <a id="SS_4_6_4_1"></a>
+#### ジェネリックすぎるテンプレートを書かない <a id="SS_4_7_4_1"></a>
 ここでの「ジェネリックすぎるテンプレート」とは、
 シンタックス的には適用範囲が広いにもかかわらず、セマンティクス的な適用範囲は限られているものを指す。
 従って下記のような関数テンプレートを指す概念ではない。
@@ -11434,7 +11839,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 ```
 
 ジェネリックなis_equalが必要であれば下記単体テストのように
-[ジェネリックラムダによる関数内での関数テンプレートの定義](#SS_4_6_2)を行えばよい。
+[ジェネリックラムダによる関数内での関数テンプレートの定義](#SS_4_7_2)を行えばよい。
 こうすることでその適用範囲はそれを定義した関数内に留まる。
 
 ```cpp
@@ -11470,7 +11875,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 その状況でのもっとも単純は方法を選ぶべきだろう(が、何が単純かも一概に決めることは難しい)。
 
 
-#### ADLが本当に必要でない限り名前を修飾する <a id="SS_4_6_4_2"></a>
+#### ADLが本当に必要でない限り名前を修飾する <a id="SS_4_7_4_2"></a>
 下記のコードについて考える。
 
 ```cpp
@@ -11557,7 +11962,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
 修飾することをルール化することはできない。場合に合わせた運用が唯一の解となる。
 
 
-#### ADL Firewallを使う <a id="SS_4_6_4_3"></a>
+#### ADL Firewallを使う <a id="SS_4_7_4_3"></a>
 下記のコードについて考える。
 
 ```cpp
@@ -11636,7 +12041,7 @@ std::vectorオブジェクトをstd::stringに変換する。
 これが意図通りなら問題ないが、
 ここでは「新たに追加した関数テンプレートApp::operator<<はstd::vector\<App::XY>用ではなかった」
 としよう。その場合、これは意図しないADLによるバグの混入となる。
-「[ジェネリックすぎるテンプレートを書かない](#SS_4_6_4_1)」
+「[ジェネリックすぎるテンプレートを書かない](#SS_4_7_4_1)」
 で述べたように追加した関数テンプレートの適用範囲が広すぎることが原因であるが、
 XY型から生成されたオブジェクト(std::vector\<App::XY>も含む)によるADLのため、
 Appの宣言がname lookupの対象になったことにも原因がある。
@@ -11675,7 +12080,7 @@ App内でusing XYを宣言したことで、これまで通りApp::XYが使え�
 このようなテクニックをADL firewallと呼ぶ。
 
 
-### Nstd::Type2Strの開発 <a id="SS_4_6_5"></a>
+### Nstd::Type2Strの開発 <a id="SS_4_7_5"></a>
 「[Nstdライブラリの開発](#SS_4_2)」等で行ったメタ関数の実装は、
 
 * 入り組んだ<>や()の対応漏れ
@@ -11774,7 +12179,7 @@ typeid::name()が返す文字列リテラルは引数の型の文字列表現を
     ASSERT_EQ("int (&) [3]", Nstd::Type2Str<decltype(r)>());
 ```
 
-### 静的な文字列オブジェクト <a id="SS_4_6_6"></a>
+### 静的な文字列オブジェクト <a id="SS_4_7_6"></a>
 std::stringは文字列を扱うことにおいて、非常に有益なクラスではあるが、
 コンパイル時に文字列が決定できる場合でも、動的にメモリを確保する。
 
@@ -11825,7 +12230,7 @@ std::stringは文字列を扱うことにおいて、非常に有益なクラス
 
 このような問題を回避するために、ここでは静的に文字列を扱うためのクラスStaticStringを開発する。
 
-#### StaticStringのヘルパークラスの開発 <a id="SS_4_6_6_1"></a>
+#### StaticStringのヘルパークラスの開発 <a id="SS_4_7_6_1"></a>
 StaticStringオブジェクトは、char配列をメンバとして持つが、
 コンパイル時に解決できる配列の初期化にはパラメータパックが利用できる。
 そのパラメータパック生成クラスを下記のように定義する。
@@ -11911,7 +12316,7 @@ StaticStringオブジェクトは、char配列をメンバとして持つが、
 上記とほぼ同様のクラステンプレートstd::index_sequence、std::make_index_sequenceが、
 utilityで定義されているため、以下ではこれらを使用する。
 
-#### StaticStringの開発 <a id="SS_4_6_6_2"></a>
+#### StaticStringの開発 <a id="SS_4_7_6_2"></a>
 StaticStringはすでに示したテクニックを使い、下記のように定義できる。
 
 ```cpp
@@ -12213,7 +12618,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
     ASSERT_EQ(ss2 + ss8, ss);  // 元に戻す。+、= が使用される。
 ```
 
-#### 整数をStaticStringに変換する関数の開発 <a id="SS_4_6_6_3"></a>
+#### 整数をStaticStringに変換する関数の開発 <a id="SS_4_7_6_3"></a>
 コンパイル時に__LINE__をStaticStringに変換できれば、
 ファイル位置をStaticStringで表現できるため、
 ここではその変換関数Int2StaticString\<>()の実装を行う。
@@ -12292,8 +12697,8 @@ Int2StaticString\<>()が得られる。
     ASSERT_EQ(std::to_string(line_num), ns.String());
 ```
 
-#### ファイル位置を静的に保持したエクセプションクラスの開発 <a id="SS_4_6_6_4"></a>
-「[静的な文字列オブジェクト](#SS_4_6_6)」で見たように、
+#### ファイル位置を静的に保持したエクセプションクラスの開発 <a id="SS_4_7_6_4"></a>
+「[静的な文字列オブジェクト](#SS_4_7_6)」で見たように、
 ファイル位置を動的に保持するエクセプションクラスは使い勝手が悪い。
 ここでは、その問題を解決するためのExceptionクラスの実装を示す。
 
@@ -12405,7 +12810,7 @@ Exceptionクラスの利便性をさらに高めるため、下記の定義を�
     ASSERT_TRUE(caught);
 ```
 
-### 関数型をテンプレートパラメータで使う <a id="SS_4_6_7"></a>
+### 関数型をテンプレートパラメータで使う <a id="SS_4_7_7"></a>
 ここで使う「関数型」とは、
 
 * 関数へのポインタの型
@@ -12726,7 +13131,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 ソースコード全域からアクセスできるようにするとプロジェクトの開発効率が少しだけ高まる。
 
 
-## 注意点まとめ <a id="SS_4_7"></a>
+## 注意点まとめ <a id="SS_4_8"></a>
 本章では、テンプレートメタプログラミングのテクニックや注意点について解説したが、
 本章の情報量は多く、また他の章で行ったものもあるため以下にそれらをまとめる。
 
@@ -12745,7 +13150,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
   パラメータパックの処理の順番に気を付ける(「[前から演算するパラメータパック](#SS_4_1_3_2)」参照)。
 
 * [ADL](#SS_7_4_5)を利用しない場合、テンプレートで使う識別子は名前空間名やthis->等で修飾する
-  (「[意図しないname lookupの防止](#SS_4_6_4)」参照)。
+  (「[意図しないname lookupの防止](#SS_4_7_4)」参照)。
 
 * テンプレートのインターフェースではないが、実装の都合上ヘッダファイルに記述する定義は、
   "namespace Inner\_"を使用し、非公開であることを明示する。
@@ -12757,7 +13162,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
   。
 
 * ユニバーサルリファレンス引数を他の関数に渡すのであれば、std::forwardを使う
-  (「[ユニバーサルリファレンス](#SS_7_9_1)」、「[ユニバーサルリファレンスとstd::forward](#SS_4_6_1)」参照)。
+  (「[ユニバーサルリファレンス](#SS_7_9_1)」、「[ユニバーサルリファレンスとstd::forward](#SS_4_7_1)」参照)。
 
 * 関数テンプレートとその特殊化はソースコード上なるべく近い位置で定義する
   (「[two phase name lookup](#SS_7_4_3)」参照)。
@@ -12801,13 +13206,13 @@ C++17からサポートされた「クラステンプレートのテンプレー
 ```
 
 * ユニバーサルリファレンスを持つ関数テンプレートをオーバーロードしない。
-  「[ユニバーサルリファレンスとstd::forward](#SS_4_6_1)」で述べたように、
+  「[ユニバーサルリファレンスとstd::forward](#SS_4_7_1)」で述べたように、
   ユニバーサルリファレンスはオーバーロードするためのものではなく、
   lvalue、rvalue両方を受け取ることができる関数テンプレートを、
   オーバーロードを使わずに実現するための記法である。
 
 * テンプレートに関数型オブジェクトを渡す場合、リファレンスの付け忘れに気を付ける
-  (「[関数型をテンプレートパラメータで使う](#SS_4_6_7)」
+  (「[関数型をテンプレートパラメータで使う](#SS_4_7_7)」
   参照)。
 
 * 意図しないテンプレートパラメータによるインスタンス化の防止や、
@@ -13091,7 +13496,7 @@ malloc/freeにリアルタイム性がない原因は、
 によって実装することにする。
 
 まずは、MPoolを下記に示す
-(「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_6_6_4)」参照)。
+(「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_7_6_4)」参照)。
 
 ```cpp
     // @@@ example/dynamic_memory_allocation/mpool.h 12
@@ -13315,7 +13720,7 @@ MPoolFixedの単体テストは、下記のようになる。
 ```
 
 上記テストで使用したMPoolBadAllocは下記のように定義されたクラスであり
-(「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_6_6_4)」参照)、
+(「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_7_6_4)」参照)、
 
 ```cpp
     // @@@ example/h/nstd_exception.h 11

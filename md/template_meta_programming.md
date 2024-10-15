@@ -2467,6 +2467,103 @@ range_put_to_sep<>()を用意した。
     // @@@ example/template/nstd_put_to_ut.cpp #3:0 begin -1
 ```
 
+## Nstdライブラリの開発3
+### 浮動小数点の比較
+浮動小数点の演算には下記に示したような問題が起こり得るため、単純な==の比較はできない。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp #0:0 begin -1
+```
+
+この問題に対処するのが以下のコードである。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp #0:1 begin -1
+```
+
+単なる浮動小数変数の比較にこのようなコードを書くのは間違えやすいし、非効率であるため、
+下記のような関数(float用とdouble用)で対処することが一般的である。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp #1:0 begin
+```
+実際に使う場面を以下に示す。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp #1:1 begin -1
+```
+
+一見これで万事うまくいくように見えるが、そうは行かないことを以下の例で示す。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp #1:2 begin -1
+```
+
+dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるため、このような問題が起こり得る。
+これに対処する方法を以下に示す。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp #2:0 begin
+```
+
+この関数のテストは以下の通りである。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp #2:1 begin -1
+```
+
+通常の浮動小数の比較は相対誤差を指定できる必要性がある場合が多いため、
+さらに下記のように拡張変更した。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp #3:0 begin
+```
+
+この関数のテストは以下の通りである。
+
+```cpp
+    // @@@ example/template/nstd_float_ut.cpp #3:1 begin -1
+```
+
+### 固定小数点クラス
+以上で見てきたように浮動小数点の扱いはやや面倒であるため、
+浮動小数点のダイナミックレンジが必要な場合以外では安易に浮動小数点を使うべきでない。
+
+従って、intやlong等のダイナミックレンジで表現できる1未満の値が必要な場合、
+intやlongの値を100倍などのスケーリングして使うのが、浮動小数点の微妙な問題を避ける手段となる。
+スケーリングとは、
+整数型変数変数のスケーリングとは、intやlongの値を、
+特定の倍率で拡大することで小数点以下の値を扱う方法を指す。
+例えば、100倍にスケーリングして「1.23」を「123」として整数で表現するようする。
+この方法は浮動小数点の代わりに使えるが、
+スケーリング値を常に意識する必要があり、コードの可読性や保守性に影響を与える問題がある。
+
+以下に示す固定小数点クラス(FixedPoint)はこれらの問題を解決できる。
+
+```cpp
+    // @@@ example/template/fixed_point.h #0:0 begin
+```
+
+FixedPointの単体テストコードを以下に示す。
+
+```cpp
+    // @@@ example/template/fixed_point_ut.cpp #0:0 begin -1
+```
+
+### 固定小数点リテラル
+[固定小数点クラス](---)のようなクラス定義には、以下に示すようにユーザ定義リテラルを定義し、
+使い勝手のよい環境をユーザに提供するべきである。
+
+```cpp
+    // @@@ example/template/fixed_point.h #0:1 begin
+```
+
+以上のコードの単体テストを以下に示す。これにより使用方も明らかになるだろう。
+
+```cpp
+    // @@@ example/template/fixed_point_ut.cpp #0:1 begin -1
+```
+
 ## ログ取得ライブラリの開発2
 ログ取得ライブラリでの問題は「Logging名前空間が依存してよい名前空間」に
 
