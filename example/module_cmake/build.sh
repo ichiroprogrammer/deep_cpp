@@ -70,6 +70,8 @@ while getopts ":aCcdeghij:" flag; do
     esac
 done
 
+cd $BASE_DIR
+
 $CHECK_ENCODING && find_not_utf8
 $CLEAN && cmd_launcher "rm -rf build"
 cmd_launcher format
