@@ -108,9 +108,18 @@ TEST(TemplateMethod, table)
 
 namespace TemplateTemplateMethod {
 
+// clang-format off
 // @@@ sample begin 1:0
 
-template <typename T>  // Tは下記のXxxDataFormatterXmlのようなクラス
+template <typename T>
+concept DataFormattable = requires(T t, const XxxData& xxx_data) {
+    { t.Header() } -> std::convertible_to<std::string>;
+    { t.Body(xxx_data) } -> std::convertible_to<std::string>;
+    { t.Footer() } -> std::convertible_to<std::string>;
+};
+// clang-format on
+
+template <DataFormattable T>  // TはDataFormattableに制約される
 class XxxDataFormatter : private T {
 public:
     std::string ToString(XxxData const& xxx_data) const

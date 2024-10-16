@@ -27,8 +27,8 @@
 * V18.07
     * 静的な文字列オブジェクトの強化
 
+## このドキュメントの構成 <a id="SS_1_2"></a>
 ___
-__このドキュメントの構成__
 
 * [SOLID](#SS_2)
 * [デザインパターン](#SS_3)
@@ -47,6 +47,8 @@ SOLIDとは、オブジェクト指向(OOD/OOP)プログラミングにおいて
 * [リスコフの置換原則(LSP)](#SS_2_3)
 * [インターフェース分離の原則(ISP)](#SS_2_4)
 * [依存関係逆転の原則(DIP)](#SS_2_5)
+
+[このドキュメントの構成](#SS_1_2)に戻る。  
 
 ## 単一責任の原則(SRP) <a id="SS_2_1"></a>
 単一責任の原則(SRP, Single Responsibility Principle)とは、
@@ -809,7 +811,10 @@ ServerNGとClientNGの双方向依存関係は、ClientOKからServerOKへの単
 猿になり不要に複雑なソースコードを書かないために、デザインパターン、イデオム等を使用する場合、
 本当にそれが必要か吟味し、不要な場所への適用を避けなければならない。
 
+[このドキュメントの構成](#SS_1_2)に戻る。  
+
 ___
+
 __この章の構成__
 
 &emsp;&emsp; [ガード節](#SS_3_1)  
@@ -3292,9 +3297,16 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 下記のコードはそのような実装例である。
 
 ```cpp
-    // @@@ example/design_pattern/template_method_ut.cpp 111
+    // @@@ example/design_pattern/template_method_ut.cpp 112
 
-    template <typename T>  // Tは下記のXxxDataFormatterXmlのようなクラス
+    template <typename T>
+    concept DataFormattable = requires(T t, const XxxData& xxx_data) {
+        { t.Header() } -> std::convertible_to<std::string>;
+        { t.Body(xxx_data) } -> std::convertible_to<std::string>;
+        { t.Footer() } -> std::convertible_to<std::string>;
+    };
+
+    template <DataFormattable T>  // TはDataFormattableに制約される
     class XxxDataFormatter : private T {
     public:
         std::string ToString(XxxData const& xxx_data) const
@@ -3341,7 +3353,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 上記の単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/design_pattern/template_method_ut.cpp 159
+    // @@@ example/design_pattern/template_method_ut.cpp 168
 
         auto xml = XxxDataFormatterXml{};
 
@@ -4995,17 +5007,17 @@ CRTPとは、
 
     class File final : public AcceptableFileEntity<File> {  // CRTPでクローンを解消
     public:
-        File(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
+        explicit File(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
     };
 
     class Dir final : public AcceptableFileEntity<Dir> {  // CRTPでクローンを解消
     public:
-        Dir(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
+        explicit Dir(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
     };
 
     class OtherEntity final : public AcceptableFileEntity<OtherEntity> {  // CRTPでクローンを解消
     public:
-        OtherEntity(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
+        explicit OtherEntity(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
     };
 ```
 
@@ -5677,7 +5689,10 @@ C言語のqsort()のように強引なキャストを使い、この増加をあ
 ログ取得ライブラリやSTLを応用したNstdライブラリの実装を通して、
 これらのテクニックや、使用上の注意点について解説する。
 
+[このドキュメントの構成](#SS_1_2)に戻る。  
+
 ___
+
 __この章の構成__
 
 &emsp;&emsp; [ログ取得ライブラリの開発](#SS_4_1)  
@@ -13247,6 +13262,8 @@ new/deleteは通常malloc/freeを使って実装されているため同じ問�
 
 本章では、この問題を回避するための技法を紹介する。
 
+[このドキュメントの構成](#SS_1_2)に戻る。  
+
 ___
 __この章の構成__
 
@@ -14653,7 +14670,10 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 
 この章では、このドキュメントで使用する用語の解説をする。
 
+[このドキュメントの構成](#SS_1_2)に戻る。  
+
 ___
+
 __この章の構成__
 
 &emsp;&emsp; [組み込み型とインスタンス](#SS_6_1)  

@@ -59,17 +59,17 @@ private:
 
 class File final : public AcceptableFileEntity<File> {  // CRTPでクローンを解消
 public:
-    File(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
+    explicit File(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
 };
 
 class Dir final : public AcceptableFileEntity<Dir> {  // CRTPでクローンを解消
 public:
-    Dir(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
+    explicit Dir(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
 };
 
 class OtherEntity final : public AcceptableFileEntity<OtherEntity> {  // CRTPでクローンを解消
 public:
-    OtherEntity(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
+    explicit OtherEntity(std::string pathname) : AcceptableFileEntity{std::move(pathname)} {}
 };
 // @@@ sample end
 
