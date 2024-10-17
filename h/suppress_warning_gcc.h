@@ -11,6 +11,7 @@
 #define SUPPRESS_WARN_GCC_CONV_NULL _Pragma("GCC diagnostic ignored \"-Wconversion-null\"")
 #define SUPPRESS_WARN_GCC_DEL_INCOMP _Pragma("GCC diagnostic ignored \"-Wdelete-incomplete\"")
 #define SUPPRESS_WARN_GCC_EMPTY_BODY _Pragma("GCC diagnostic ignored \"-Wempty-body\"")
+#define SUPPRESS_WARN_GCC_DEPRECATED _Pragma("GCC diagnostic ignored \"-Wdeprecated\"")
 #define SUPPRESS_WARN_GCC_DEPRECATED_COPY _Pragma("GCC diagnostic ignored \"-Wdeprecated-copy\"")
 #define SUPPRESS_WARN_GCC_DEPRECATED_DECL \
     _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"");
@@ -53,7 +54,6 @@
 #define SUPPRESS_WARN_GCC_CAST_FUNC_TYPE _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
 #define SUPPRESS_WARN_GCC_CATCH_ASSIGN _Pragma("GCC diagnostic ignored \"-Wcatch-value=\"")
 #define SUPPRESS_WARN_GCC_CLASS_MEMACCESS _Pragma("GCC diagnostic ignored \"-Wclass-memaccess\"")
-#define SUPPRESS_WARN_GCC_DEPRECATED _Pragma("GCC diagnostic ignored \"-Wdeprecated\"")
 #define SUPPRESS_WARN_GCC_INACCESSIBLE_BASE \
     _Pragma("GCC diagnostic ignored \"-Winaccessible-base\"")
 #define SUPPRESS_WARN_GCC_ENUM_COMP _Pragma("GCC diagnostic ignored \"-Wenum-compare\"")
@@ -81,6 +81,7 @@
 #define SUPPRESS_WARN_GCC_CONV_NULL
 #define SUPPRESS_WARN_GCC_DEL_INCOMP
 #define SUPPRESS_WARN_GCC_EMPTY_BODY
+#define SUPPRESS_WARN_GCC_DEPRECATED
 #define SUPPRESS_WARN_GCC_DEPRECATED_COPY
 #define SUPPRESS_WARN_GCC_DEPRECATED_DECL
 #define SUPPRESS_WARN_GCC_FORMAT_SEC

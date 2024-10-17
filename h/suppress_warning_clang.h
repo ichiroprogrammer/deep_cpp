@@ -16,6 +16,7 @@
 #define SUPPRESS_WARN_CLANG_IGNORE_QUAL _Pragma("clang diagnostic ignored \"-Wignored-qualifiers\"")
 #define SUPPRESS_WARN_CLANG_MISLEADING_INDENT \
     _Pragma("clang diagnostic ignored \"-Wmisleading-indentation\"")
+#define SUPPRESS_WARN_CLANG_DEPRECATED _Pragma("clang diagnostic ignored \"-Wdeprecated\"")
 #define SUPPRESS_WARN_CLANG_DEPRECATED_COPY \
     _Pragma("clang diagnostic ignored \"-Wdeprecated-copy\"")
 #define SUPPRESS_WARN_CLANG_DEPRECATED_DECL \
