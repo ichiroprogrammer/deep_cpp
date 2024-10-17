@@ -20149,7 +20149,7 @@ C++17から、
 この機能がないC++14までは以下のように記述する必要があった。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp 12
+    // @@@ example/term_explanation/template_ut.cpp 13
 
     auto a = std::vector<int>{1, 2, 3};
 
@@ -20159,7 +20159,7 @@ C++17から、
 これに対して、この機能により、以下のようにシンプルに記述できるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp 23
+    // @@@ example/term_explanation/template_ut.cpp 24
 
     auto a = std::vector{1, 2, 3};
 
@@ -20170,7 +20170,7 @@ C++17から、
 変数テンプレートとは、C++17から導入され、下記のコード示したような機能である。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp 31
+    // @@@ example/term_explanation/template_ut.cpp 32
 
 template <typename T>
 struct is_void {
@@ -20200,17 +20200,17 @@ static_assert(!is_void_v<int>);
 
 ### エイリアステンプレート <a id="SS_6_10_7"></a>
 エイリアステンプレート(alias templates)とはC++11から導入され、
-テンプレートによって型の別名を定義する機能である。
+下記のコード例で示したようにテンプレートによって型の別名を定義する機能である。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp 55
+    // @@@ example/term_explanation/template_ut.cpp 56
 
-    using IntVector = std::vector<int>; // std::vector<int> のエイリアスを定義
+    using IntVector = std::vector<int>;  // std::vector<int> のエイリアスを定義
 
-    template <typename T> //エイリアステンプレートを定義
+    template <typename T>  //エイリアステンプレートを定義
     using Vec = std::vector<T>;
 
-    static_assert(std::is_same_t<IntVector, Vec<int>>); // Vec<int> == std::vector<int>
+    static_assert(std::is_same_v<IntVector, Vec<int>>);  // Vec<int> == std::vector<int>
 ```
 
 ### constexpr if文 <a id="SS_6_10_8"></a>

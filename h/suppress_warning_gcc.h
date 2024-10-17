@@ -45,8 +45,6 @@
 #define SUPPRESS_WARN_GCC_SWITCH _Pragma("GCC diagnostic ignored \"-Wswitch\"")
 #define SUPPRESS_WARN_GCC_CONVERSION_VEXING_PARSE \
     _Pragma("GCC diagnostic ignored \"-Wvexing-parse\"")
-#define SUPPRESS_WARN_GCC_ENUM_COMP_SWITCH \
-    _Pragma("GCC diagnostic ignored \"-Wenum-compare-switch\"")
 #define SUPPRESS_WARN_GCC_ENUM_COMP _Pragma("GCC diagnostic ignored \"-Wenum-compare\"")
 
 // only gcc

@@ -1,3 +1,4 @@
+#include <type_traits>
 #include <vector>
 
 #include "gtest_wrapper.h"
@@ -54,11 +55,11 @@ static_assert(!is_void_v<int>);
 
 // @@@ sample begin 2:0
 
-using IntVector = std::vector<int>; // std::vector<int> のエイリアスを定義
+using IntVector = std::vector<int>;  // std::vector<int> のエイリアスを定義
 
-template <typename T> //エイリアステンプレートを定義
+template <typename T>  //エイリアステンプレートを定義
 using Vec = std::vector<T>;
 
-static_assert(std::is_same_t<IntVector, Vec<int>>); // Vec<int> == std::vector<int>
+static_assert(std::is_same_v<IntVector, Vec<int>>);  // Vec<int> == std::vector<int>
 // @@@ sample end
-}// namespace
+}  // namespace

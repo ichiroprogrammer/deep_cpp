@@ -107,6 +107,8 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
     _Pragma("clang diagnostic ignored \"-Wunneeded-internal-declaration\"")
 #define SUPPRESS_WARN_CLANG_UNUSED_PRIVATE_FIELD \
     _Pragma("clang diagnostic ignored \"-Wunused-private-field\"")
+#define SUPPRESS_WARN_CLANG_ENUM_COMP_SWITCH \
+    _Pragma("GCC diagnostic ignored \"-Wenum-compare-switch\"")
 
 #else
 
@@ -178,6 +180,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_UNUSED_CONST_VAR
 #define SUPPRESS_WARN_CLANG_UNUSED_INTERNAL_DECL
 #define SUPPRESS_WARN_CLANG_UNUSED_PRIVATE_FIELD
+#define SUPPRESS_WARN_CLANG_ENUM_COMP_SWITCH
 
 #endif
     // @@@ sample end
