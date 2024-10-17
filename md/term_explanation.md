@@ -2409,6 +2409,15 @@ C++17から、
 なお、変数テンプレートはconstexprと定義されるが、
 「定数テンプレート」ではなく変数テンプレートである。
 
+
+### エイリアステンプレート
+エイリアステンプレート(alias templates)とはC++11から導入され、
+下記のコード例で示したようにテンプレートによって型の別名を定義する機能である。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp #2:0 begin
+```
+
 ### constexpr if文
 C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/if_constexpr.html)とは、
 文を条件付きコンパイルすることができるようにするための制御構文である。

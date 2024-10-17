@@ -14799,8 +14799,9 @@ __この章の構成__
 &emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_6_10_4)  
 &emsp;&emsp;&emsp; [クラステンプレートのテンプレート引数推論](#SS_6_10_5)  
 &emsp;&emsp;&emsp; [変数テンプレート](#SS_6_10_6)  
-&emsp;&emsp;&emsp; [constexpr if文](#SS_6_10_7)  
-&emsp;&emsp;&emsp; [autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_8)  
+&emsp;&emsp;&emsp; [エイリアステンプレート](#SS_6_10_7)  
+&emsp;&emsp;&emsp; [constexpr if文](#SS_6_10_8)  
+&emsp;&emsp;&emsp; [autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_9)  
 
 &emsp;&emsp; [型推論](#SS_6_11)  
 &emsp;&emsp;&emsp; [AAAスタイル](#SS_6_11_1)  
@@ -15892,7 +15893,7 @@ C++11以前で定数を定義する方法は、
     static_assert(templ.value == 5);
 ```
 
-constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_10_7)することで、
+constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_10_8)することで、
 [ill-formed](#SS_6_17_4)を使用した場合分けが可能になる。
 
 
@@ -20169,7 +20170,7 @@ C++17から、
 変数テンプレートとは、C++17から導入され、下記のコード示したような機能である。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp 32
+    // @@@ example/term_explanation/template_ut.cpp 31
 
 template <typename T>
 struct is_void {
@@ -20196,7 +20197,23 @@ static_assert(!is_void_v<int>);
 なお、変数テンプレートはconstexprと定義されるが、
 「定数テンプレート」ではなく変数テンプレートである。
 
-### constexpr if文 <a id="SS_6_10_7"></a>
+
+### エイリアステンプレート <a id="SS_6_10_7"></a>
+エイリアステンプレート(alias templates)とはC++11から導入され、
+テンプレートによって型の別名を定義する機能である。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp 55
+
+    using IntVector = std::vector<int>; // std::vector<int> のエイリアスを定義
+
+    template <typename T> //エイリアステンプレートを定義
+    using Vec = std::vector<T>;
+
+    static_assert(std::is_same_t<IntVector, Vec<int>>); // Vec<int> == std::vector<int>
+```
+
+### constexpr if文 <a id="SS_6_10_8"></a>
 C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/if_constexpr.html)とは、
 文を条件付きコンパイルすることができるようにするための制御構文である。
 
@@ -20315,7 +20332,7 @@ constexpr ifを使用することで、やや単純に記述できる。
     }
 ```
 
-### autoパラメータによる関数テンプレートの簡易定義 <a id="SS_6_10_8"></a>
+### autoパラメータによる関数テンプレートの簡易定義 <a id="SS_6_10_9"></a>
 この機能は、C++20から導入された。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
@@ -20689,7 +20706,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 C++14から導入された機能で、関数の戻り値の型をautoキーワードで宣言することで、
 コンパイラがreturn文から自動的に型を推論してくれる機能である。
 これにより、複雑な型の戻り値を持つ関数でも、より簡潔に記述できるようになる
-(「[autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_8)」を参照)。
+(「[autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_9)」を参照)。
 
 ```cpp
     // @@@ example/term_explanation/decltype_ut.cpp 82
