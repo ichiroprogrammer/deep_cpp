@@ -9,6 +9,8 @@ SOLIDとは、オブジェクト指向(OOD/OOP)プログラミングにおいて
 
 [このドキュメントの構成](---)に戻る。  
 
+___
+
 ## 単一責任の原則(SRP)
 単一責任の原則(SRP, Single Responsibility Principle)とは、
 
