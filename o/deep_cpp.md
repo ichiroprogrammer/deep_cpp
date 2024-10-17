@@ -14837,6 +14837,7 @@ __この章の構成__
 &emsp;&emsp;&emsp; [no-fail保証](#SS_6_15_1)  
 &emsp;&emsp;&emsp; [強い保証](#SS_6_15_2)  
 &emsp;&emsp;&emsp; [基本保証](#SS_6_15_3)  
+&emsp;&emsp;&emsp; [noexcept](#SS_6_15_4)  
 
 &emsp;&emsp; [シンタックス、セマンティクス](#SS_6_16)  
 &emsp;&emsp;&emsp; [等価性のセマンティクス](#SS_6_16_1)  
@@ -21508,8 +21509,18 @@ danglingポインタとは、[danglingリファレンス](#SS_6_14_5)と同じ�
 ## エクセプション安全性の保証 <a id="SS_6_15"></a>
 関数のエクセプション発生時の安全性の保証には以下の3つのレベルが規定されている。
 
+* [no-fail保証](#SS_6_15_1)
+* [強い保証](#SS_6_15_2)
+* [基本保証](#SS_6_15_3)
+
 ### no-fail保証 <a id="SS_6_15_1"></a>
 「no-fail保証」を満たす関数はエクセプションをthrowしない。
+no-failを保証する関数は、
+[noexcept](#SS_6_15_4)を使用してエクセプションを発生させないことを明示できる。
+
+標準テンプレートクラスのパラメータとして使用するクラスのメンバ関数には、
+正確にnoexceptの宣言をしないと、
+テンプレートクラスのメンバ関数によってはパフォーマンスを起こしてしまう可能性がある。
 
 ### 強い保証 <a id="SS_6_15_2"></a>
 「強い保証」を満たす関数は、この関数がエクセプションによりスコープから外れた場合でも、
@@ -21517,9 +21528,87 @@ danglingポインタとは、[danglingリファレンス](#SS_6_14_5)と同じ�
 従って、この関数呼び出しは成功したか、完全な無効だったかのどちらかになる。
 
 ### 基本保証 <a id="SS_6_15_3"></a>
-「基本保障」を満たす関数は、この関数がエクセプションによりスコープから外れた場合でも、
+「基本保証」を満たす関数は、この関数がエクセプションによりスコープから外れた場合でも、
 メモリ等のリソースリークは起こさず、
 オブジェクトは(変更されたかもしれないが)引き続き使えることを保証する。
+
+### noexcept <a id="SS_6_15_4"></a>
+C++11で導入されたnoexceptキーワードには、以下の2つの意味がある。
+
+* C++03までのthrowキーワードによる例外仕様の代替。
+  関数がどの例外を送出する可能性があるかを列挙するのではなく、
+  例外を送出する可能性があるかないかのみを指定する。
+
+* sizeofと同じような形式で使用されるのような演算子としてのnoexceptは、
+  noexcept(expression)の形式使用され、
+  expressionがエクセプションを送出しないと宣言されている場合(noexceptと宣言された関数の呼び出し)、
+  noexcept(expression)は静的にtrueとなる。
+
+以下に上記のコード例を示す。
+
+```cpp
+    // @@@ example/term_explanation/noexcept_ut.cpp 11
+
+    std::string f_noexcept() noexcept  // エクセプションを発生させない
+    {
+        return "No exceptions here!";
+    }
+
+    std::string f_except() noexcept(false)  // エクセプションを発生させる
+    {
+        throw std::runtime_error{"always throw"};
+
+        return "No exceptions here!";
+    }
+
+    // noexcept or noexcept(false)と宣言しない限りnoexceptでない
+    std::string f_except2()  // エクセプションを発生させる
+    {
+        throw std::runtime_error{"always throw"};
+
+        return "No exceptions here!";
+    }
+```
+```cpp
+    // @@@ example/term_explanation/noexcept_ut.cpp 37
+
+    static_assert(noexcept(f_noexcept()));  // エクセプションを発生させる可能性の確認
+    static_assert(!noexcept(f_except()));   // エクセプションを発生させない可能性の確認
+    static_assert(!noexcept(f_except2()));  // エクセプションを発生させない可能性の確認
+
+    ASSERT_EQ(f_noexcept(), "No exceptions here!");  // 動作確認
+    ASSERT_THROW(f_except(), std::runtime_error);    // エクセプションの発生確認
+    ASSERT_THROW(f_except2(), std::runtime_error);   // エクセプションの発生確認
+```
+
+演算子としてのnoexceptはテンプレートで頻繁に使用されるため、以下にそのような例を示す。
+
+```cpp
+    // @@@ example/term_explanation/noexcept_ut.cpp 50
+
+    class PossiblyThrow {  // オブジェクト生成でエクセプションの発生可能性あり
+    public:
+        PossiblyThrow() {}
+    };
+
+    // テンプレート型Tがnoexceptで生成可能なら、関数もnoexceptにする
+    template <typename T>
+    void t_f(T const&) noexcept(std::is_nothrow_constructible_v<T>)
+    {
+        // Tを生成して、何らかの処理を行う
+    }
+```
+```cpp
+    // @@@ example/term_explanation/noexcept_ut.cpp 67
+
+    auto i = int{};
+    auto p = PossiblyThrow{};
+
+    static_assert(!std::is_nothrow_constructible_v<PossiblyThrow>);
+    static_assert(std::is_nothrow_constructible_v<decltype(i)>);
+    static_assert(noexcept(t_f(i)));
+    static_assert(!noexcept(t_f(p)));
+```
 
 
 ## シンタックス、セマンティクス <a id="SS_6_16"></a>

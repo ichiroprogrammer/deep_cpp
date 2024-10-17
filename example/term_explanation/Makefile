@@ -13,7 +13,7 @@ SRCS:=\
     heap_allocation_elision_ut.cpp simple_declaration_ut.cpp dangling_ut.cpp literal_ut.cpp \
     class_relation_ut.cpp  comparison_operator_ut.cpp concept_ut.cpp explicit_ut.cpp \
 	attr_ut.cpp aliging_ut.cpp enum_ut.cpp const_xxx_ut.cpp if_switch_init_ut.cpp \
-	co_await_ut.cpp  co_yield_ut.cpp template_ut.cpp
+	co_await_ut.cpp  co_yield_ut.cpp template_ut.cpp noexcept_ut.cpp
 
 SHARED:=../../
 include $(SHARED)make/env.mk
