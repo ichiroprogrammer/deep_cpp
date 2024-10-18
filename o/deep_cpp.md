@@ -14722,7 +14722,11 @@ __この章の構成__
 &emsp;&emsp;&emsp; [継承コンストラクタ](#SS_6_5_2)  
 &emsp;&emsp;&emsp; [委譲コンストラクタ](#SS_6_5_3)  
 &emsp;&emsp;&emsp; [非explitなコンストラクタによる暗黙の型変換](#SS_6_5_4)  
-&emsp;&emsp;&emsp; [NSDMI](#SS_6_5_5)  
+&emsp;&emsp;&emsp; [非静的なメンバ変数の初期化](#SS_6_5_5)  
+&emsp;&emsp;&emsp;&emsp; [NSDMI](#SS_6_5_5_1)  
+&emsp;&emsp;&emsp;&emsp; [初期化子リストでの初期化](#SS_6_5_5_2)  
+&emsp;&emsp;&emsp;&emsp; [コンストラクタ内での非静的なメンバ変数の初期値の代入](#SS_6_5_5_3)  
+
 &emsp;&emsp;&emsp; [一様初期化](#SS_6_5_6)  
 &emsp;&emsp;&emsp; [オブジェクトの所有権](#SS_6_5_7)  
 &emsp;&emsp;&emsp;&emsp; [オブジェクトの排他所有](#SS_6_5_7_1)  
@@ -16349,13 +16353,23 @@ std::stringは暗黙の型変換を許して良く、(多くの場合)Personに�
 クラスPersonと同様に、
 ほとんどのユーザ定義クラスには非explitなコンストラクタによる暗黙の型変換は必要ない。
 
+### 非静的なメンバ変数の初期化 <a id="SS_6_5_5"></a>
+非静的なメンバ変数の初期化には下記の3つの方法がある。
 
-### NSDMI <a id="SS_6_5_5"></a>
+* [NSDMI](#SS_6_5_5_1)
+* [初期化子リストでの初期化](#SS_6_5_5_2)
+* [コンストラクタ内での非静的なメンバ変数の初期値の代入](#SS_6_5_5_3)
+
+同一変数に対して、
+「[NSDMI](#SS_6_5_5_1)」と「[初期化子リストでの初期化](#SS_6_5_5_2)」
+が行われた場合、その変数に対するNSDMIは行われない。
+
+#### NSDMI <a id="SS_6_5_5_1"></a>
 NSDMIとは、non-static data member initializerの略語であり、
 下記のような非静的なメンバ変数の初期化子を指す。
 
 ```cpp
-    // @@@ example/term_explanation/nsdmi.cpp 8
+    // @@@ example/term_explanation/nsdmi.cpp 9
 
     class A {
     public:
@@ -16367,6 +16381,52 @@ NSDMIとは、non-static data member initializerの略語であり、
         int32_t     a_;
         int32_t     b_ = 0;        // NSDMI
         std::string str_{"init"};  // NSDMI
+    };
+```
+
+#### 初期化子リストでの初期化 <a id="SS_6_5_5_2"></a>
+「非静的メンバ変数をコンストラクタの本体よりも前に初期化する」言語機能である。
+メンバ変数は宣言された順序で初期化されるため、
+初期化子リストでの順序は、実際の初期化の順序とは関係がない。
+
+この機能を使うことで、メンバ変数の初期化処理が簡素に記述できる。
+constメンバ変数は、初期化子リストでの初期化か[NSDMI](#SS_6_5_5_1)でしか初期化できない。
+
+```cpp
+    // @@@ example/term_explanation/nsdmi.cpp 25
+
+    class A {
+    public:
+        A(int a, int b) : a_{a}, v_{a, b, 3}  // 非静的なメンバ初期化子による初期化
+        {
+        }
+
+    private:
+        int              a_;
+        std::vector<int> v_;
+    };
+```
+
+#### コンストラクタ内での非静的なメンバ変数の初期値の代入 <a id="SS_6_5_5_3"></a>
+この方法は単なる代入でありメンバ変数の初期化ではない。
+
+[NSDMI](#SS_6_5_5_1)、
+[初期化子リストでの初期化](#SS_6_5_5_2)で初期化できない変数を未初期化でない状態にするための唯一の方法である。
+
+```cpp
+    // @@@ example/term_explanation/nsdmi.cpp 40
+
+    class A {
+    public:
+        A(int a, int b)
+        {
+            a_ = b;                     // 非静的なメンバのコンストラクタでの代入
+            v_ = std::vector{a, b, 3};  // 非静的なメンバのコンストラクタでの代入
+        }
+
+    private:
+        int              a_;
+        std::vector<int> v_;
     };
 ```
 
@@ -16430,8 +16490,6 @@ C++11で導入された、コンストラクタの呼び出しをリスト初期
     double d{1};  // 縮小型変換は起こらないのでコンパイル可能
     // int i2{d};  // 縮小型変換のため、コンパイルエラー
 ```
-
-
 
 ### オブジェクトの所有権 <a id="SS_6_5_7"></a>
 オブジェクトxがオブジェクトaの解放責務を持つ場合、
