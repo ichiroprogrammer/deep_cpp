@@ -3201,7 +3201,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     // @@@ example/template/nstd_static_string_ut.cpp #1:0 begin -1
 ```
 
-[非explitなコンストラクタによる暗黙の型変換](---)
+[非explicitなコンストラクタによる暗黙の型変換](---)
 を利用した文字列リテラルからStaticStringオブジェクトへの変換は、
 StaticStringがテンプレートであるため機能せず、上記のように書く必要がある。
 
