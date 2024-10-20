@@ -2583,7 +2583,7 @@ decltypeはオペランドに[expression](---)を取り、その型を算出す�
 下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:0 begin -2
+    // @@@ example/term_explanation/decltype_ut.cpp #0:0 begin -1
 ```
 
 decltypeは、テンプレートプログラミングに多用されるが、
@@ -2592,7 +2592,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
 下記例のような場合にも有用である。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/decltype_ut.cpp #0:1 begin
 ```
 
 ### decltype(auto)
@@ -2601,7 +2601,22 @@ decltype(auto)はC++14から導入されたdecltypeの類似機能である。
 auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:1 begin -2
+    // @@@ example/term_explanation/decltype_ut.cpp #0:2 begin -1
+```
+
+### 戻り値型を後置する関数宣言
+関数の戻り値型後置構文は戻り値型をプレースホルダ(auto)にして、
+実際の型を->で示して型推論させるシンタックスを指す。実際には関数テンプレートで使用されることが多い。
+コード例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #1:0 begin
+```
+
+この構文をC++11から導入された理由は以下のコードを見れば明らかだろう。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #1:1 begin
 ```
 
 ### 関数の戻り値型auto

@@ -1,5 +1,7 @@
 #include <sstream>
 #include <string_view>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "gtest_wrapper.h"
@@ -8,42 +10,22 @@ namespace DecltypeSample {
 namespace {
 TEST(Decltype, aut_decltype)
 {
-    {
-        // @@@ sample begin 0:0
+    // @@@ sample begin 0:0
 
-        int32_t  x{3};
-        int32_t& r{x};
+    int32_t  x{3};
+    int32_t& r{x};
 
-        auto        a = r;  // aの型はint32_t
-        decltype(r) b = r;  // bの型はint32_t&
+    auto        a = r;  // aの型はint32_t
+    decltype(r) b = r;  // bの型はint32_t&
 
-        // std::is_sameはオペランドの型が同じか否かを返すメタ関数
-        static_assert(std::is_same_v<decltype(a), int>);
-        static_assert(std::is_same_v<decltype(b), int&>);
-        // @@@ sample end
-        ASSERT_EQ(3, a);
-    }
-    {
-        // @@@ sample begin 0:1
-
-        int32_t  x{3};
-        int32_t& r{x};
-
-        auto           a = r;  // aの型はint32_t
-        decltype(r)    b = r;  // bの型はint32_t&
-        decltype(auto) c = r;  // cの型はint32_t&   C++14からサポート
-                               // decltype(auto)は、decltypeに右辺の式を与えるための構文
-
-        // std::is_sameはオペランドの型が同じか否かを返すメタ関数
-        static_assert(std::is_same_v<decltype(a), int>);
-        static_assert(std::is_same_v<decltype(b), int&>);
-        static_assert(std::is_same_v<decltype(c), int&>);
-        // @@@ sample end
-        ASSERT_EQ(3, a);
-    }
+    // std::is_sameはオペランドの型が同じか否かを返すメタ関数
+    static_assert(std::is_same_v<decltype(a), int>);
+    static_assert(std::is_same_v<decltype(b), int&>);
+    // @@@ sample end
+    ASSERT_EQ(3, a);
 }
-}  // namespace
-// @@@ sample begin 1:0
+
+// @@@ sample begin 0:1
 
 //  本来ならばA::dataは、
 //      * A::Aでメモリ割り当て
@@ -76,6 +58,56 @@ void do_something(size_t len)
 }
 // @@@ sample end
 
+TEST(Decltype, aut_decltype2)
+{
+    // @@@ sample begin 0:2
+
+    int32_t  x{3};
+    int32_t& r{x};
+
+    auto           a = r;  // aの型はint32_t
+    decltype(r)    b = r;  // bの型はint32_t&
+    decltype(auto) c = r;  // cの型はint32_t&   C++14からサポート
+                           // decltype(auto)は、decltypeに右辺の式を与えるための構文
+
+    // std::is_sameはオペランドの型が同じか否かを返すメタ関数
+    static_assert(std::is_same_v<decltype(a), int>);
+    static_assert(std::is_same_v<decltype(b), int&>);
+    static_assert(std::is_same_v<decltype(c), int&>);
+    // @@@ sample end
+    ASSERT_EQ(3, a);
+}
+}  // namespace
+namespace func_return_type_decucation {
+// @@@ sample begin 1:0
+
+template <typename T, typename U>
+auto add(T a, U b) -> decltype(a + b)
+{
+    return a + b;
+}
+
+static_assert(std::is_same_v<decltype(add(1, 2)), int>);  // addの戻り値型はintに型推論
+static_assert(std::is_same_v<decltype(add(1u, 2u)), uint32_t>);  // addの戻り値型はintに型推論
+static_assert(std::is_same_v<decltype(add(std::string{"str"}, "2")),
+                             std::string>);  // addの戻り値型はstd::stringに型推論
+// @@@ sample end
+}  // namespace func_return_type_decucation
+namespace not_usefunc_return_type_decucation {
+// @@@ sample begin 1:1
+
+template <typename T, typename U>  // 戻り値型を後置する関数宣言
+decltype(std::declval<T>() + std::declval<T>()) add(T a, U b)
+{
+    return a + b;
+}
+
+static_assert(std::is_same_v<decltype(add(1, 2)), int>);  // addの戻り値型はintに型推論
+static_assert(std::is_same_v<decltype(add(1u, 2u)), uint32_t>);  // addの戻り値型はintに型推論
+static_assert(std::is_same_v<decltype(add(std::string{"str"}, "2")),
+                             std::string>);  // addの戻り値型はstd::stringに型推論
+// @@@ sample end
+}  // namespace not_usefunc_return_type_decucation
 namespace {
 TEST(Decltype, decltype_unique_ptr) { do_something(10); }
 

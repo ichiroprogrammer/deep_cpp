@@ -14816,8 +14816,9 @@ __この章の構成__
 &emsp;&emsp;&emsp; [AAAスタイル](#SS_6_11_1)  
 &emsp;&emsp;&emsp; [decltype](#SS_6_11_2)  
 &emsp;&emsp;&emsp; [decltype(auto)](#SS_6_11_3)  
-&emsp;&emsp;&emsp; [関数の戻り値型auto](#SS_6_11_4)  
-&emsp;&emsp;&emsp; [後置戻り値型auto](#SS_6_11_5)  
+&emsp;&emsp;&emsp; [戻り値型を後置する関数宣言](#SS_6_11_4)  
+&emsp;&emsp;&emsp; [関数の戻り値型auto](#SS_6_11_5)  
+&emsp;&emsp;&emsp; [後置戻り値型auto](#SS_6_11_6)  
 
 &emsp;&emsp; [explicit](#SS_6_12)  
 &emsp;&emsp;&emsp; [暗黙の型変換抑止](#SS_6_12_1)  
@@ -20404,12 +20405,12 @@ constexpr ifを使用することで、やや単純に記述できる。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp 149
+    // @@@ example/term_explanation/decltype_ut.cpp 181
 
     auto add(auto lhs, auto rhs) { return lhs + rhs; }
 ```
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp 156
+    // @@@ example/term_explanation/decltype_ut.cpp 188
 
     ASSERT_EQ(add(1, 2), 3);
 
@@ -20697,7 +20698,7 @@ decltypeはオペランドに[expression](#SS_6_13_1)を取り、その型を算
 下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp 12
+    // @@@ example/term_explanation/decltype_ut.cpp 13
 
     int32_t  x{3};
     int32_t& r{x};
@@ -20716,7 +20717,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
 下記例のような場合にも有用である。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp 46
+    // @@@ example/term_explanation/decltype_ut.cpp 28
 
     //  本来ならばA::dataは、
     //      * A::Aでメモリ割り当て
@@ -20753,7 +20754,7 @@ decltype(auto)はC++14から導入されたdecltypeの類似機能である。
 auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp 27
+    // @@@ example/term_explanation/decltype_ut.cpp 63
 
     int32_t  x{3};
     int32_t& r{x};
@@ -20769,14 +20770,51 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
     static_assert(std::is_same_v<decltype(c), int&>);
 ```
 
-### 関数の戻り値型auto <a id="SS_6_11_4"></a>
+### 戻り値型を後置する関数宣言 <a id="SS_6_11_4"></a>
+関数の戻り値型後置構文は戻り値型をプレースホルダ(auto)にして、
+実際の型を->で示して型推論させるシンタックスを指す。実際には関数テンプレートで使用されることが多い。
+コード例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp 82
+
+    template <typename T, typename U>
+    auto add(T a, U b) -> decltype(a + b)
+    {
+        return a + b;
+    }
+
+    static_assert(std::is_same_v<decltype(add(1, 2)), int>);  // addの戻り値型はintに型推論
+    static_assert(std::is_same_v<decltype(add(1u, 2u)), uint32_t>);  // addの戻り値型はintに型推論
+    static_assert(std::is_same_v<decltype(add(std::string{"str"}, "2")),
+                                 std::string>);  // addの戻り値型はstd::stringに型推論
+```
+
+この構文をC++11から導入された理由は以下のコードを見れば明らかだろう。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp 97
+
+    template <typename T, typename U>  // 戻り値型を後置する関数宣言
+    decltype(std::declval<T>() + std::declval<T>()) add(T a, U b)
+    {
+        return a + b;
+    }
+
+    static_assert(std::is_same_v<decltype(add(1, 2)), int>);  // addの戻り値型はintに型推論
+    static_assert(std::is_same_v<decltype(add(1u, 2u)), uint32_t>);  // addの戻り値型はintに型推論
+    static_assert(std::is_same_v<decltype(add(std::string{"str"}, "2")),
+                                 std::string>);  // addの戻り値型はstd::stringに型推論
+```
+
+### 関数の戻り値型auto <a id="SS_6_11_5"></a>
 C++14から導入された機能で、関数の戻り値の型をautoキーワードで宣言することで、
 コンパイラがreturn文から自動的に型を推論してくれる機能である。
 これにより、複雑な型の戻り値を持つ関数でも、より簡潔に記述できるようになる
 (「[autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_9)」を参照)。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp 82
+    // @@@ example/term_explanation/decltype_ut.cpp 114
 
     // 戻り値型autoが使えないと下記のような宣言が必要
     // std::vector<std::string> split(std::string_view str, char delimiter)
@@ -20804,7 +20842,7 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
     }
 ```
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp 112
+    // @@@ example/term_explanation/decltype_ut.cpp 144
 
     auto result = split("hello,world", ',');
 
@@ -20813,20 +20851,20 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
     ASSERT_EQ(result[1], "world");
 ```
 
-### 後置戻り値型auto <a id="SS_6_11_5"></a>
-C++14から導入された[関数の戻り値型auto](#SS_6_11_4)と似た、
+### 後置戻り値型auto <a id="SS_6_11_6"></a>
+C++14から導入された[関数の戻り値型auto](#SS_6_11_5)と似た、
 関数の戻り値の型を関数本体の後に-> autoと書くことでができる機能である。
 autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp 122
+    // @@@ example/term_explanation/decltype_ut.cpp 154
 
     int16_t gvalue = 1;
 
     auto getValue(int16_t a) -> auto& { return gvalue += a; }
 ```
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp 131
+    // @@@ example/term_explanation/decltype_ut.cpp 163
 
     auto           ret1 = getValue(10);
     decltype(auto) ret2 = getValue(0);
