@@ -47,6 +47,7 @@
 #define SUPPRESS_WARN_GCC_CONVERSION_VEXING_PARSE \
     _Pragma("GCC diagnostic ignored \"-Wvexing-parse\"")
 #define SUPPRESS_WARN_GCC_ENUM_COMP _Pragma("GCC diagnostic ignored \"-Wenum-compare\"")
+#define SUPPRESS_WARN_GCC_EXCEPTIONS _Pragma("GCC diagnostic ignored \"-Wexceptions\"")
 
 // only gcc
 #define SUPPRESS_WARN_GCC_DANGLING_ELSE _Pragma("GCC diagnostic ignored \"-Wdangling-else\"");
@@ -56,7 +57,6 @@
 #define SUPPRESS_WARN_GCC_CLASS_MEMACCESS _Pragma("GCC diagnostic ignored \"-Wclass-memaccess\"")
 #define SUPPRESS_WARN_GCC_INACCESSIBLE_BASE \
     _Pragma("GCC diagnostic ignored \"-Winaccessible-base\"")
-#define SUPPRESS_WARN_GCC_ENUM_COMP _Pragma("GCC diagnostic ignored \"-Wenum-compare\"")
 #define SUPPRESS_WARN_GCC_TYPE_LIMITS _Pragma("GCC diagnostic ignored \"-Wtype-limits\"")
 #define SUPPRESS_WARN_GCC_FALLTHROUGH _Pragma("GCC diagnostic ignored \"-Wimplicit-fallthrough\"")
 #define SUPPRESS_WARN_GCC_INACCESS_BASE _Pragma("GCC diagnostic ignored \"-Winaccessible-base\"")
@@ -108,7 +108,6 @@
 #define SUPPRESS_WARN_GCC_USER_DEFINED_LITERAL
 #define SUPPRESS_WARN_GCC_CONVERSION_VEXING_PARSE
 #define SUPPRESS_WARN_GCC_ENUM_COMP_SWITCH
-#define SUPPRESS_WARN_GCC_ENUM_COMP
 
 // only gcc
 #define SUPPRESS_WARN_GCC_DANGLING_ELSE
@@ -119,6 +118,7 @@
 #define SUPPRESS_WARN_GCC_DEPRECATED
 #define SUPPRESS_WARN_GCC_INACCESSIBLE_BASE
 #define SUPPRESS_WARN_GCC_ENUM_COMP
+#define SUPPRESS_WARN_GCC_EXCEPTIONS
 #define SUPPRESS_WARN_GCC_FALLTHROUGH
 #define SUPPRESS_WARN_GCC_INACCESS_BASE
 #define SUPPRESS_WARN_GCC_TYPE_LIMITS
