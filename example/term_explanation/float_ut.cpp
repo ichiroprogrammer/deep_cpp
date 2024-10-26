@@ -35,26 +35,40 @@ TEST(ExpTerm, epsilon)
     // @@@ sample end
 }
 
+int   global_zero{0};
+float div(float a, float b) noexcept { return a / b; }
+
 TEST(ExpTerm, float_error)
 {
     // @@@ sample begin 2:0
 
-    std::feclearexcept(FE_ALL_EXCEPT);  // 全ての例外フラグをクリア
+    std::feclearexcept(FE_ALL_EXCEPT);  // エラーをクリア
 
-    double result0 = 1.0 / 0.0;                    // ゼロ除算を引き起こす
-    EXPECT_TRUE(std::fetestexcept(FE_DIVBYZERO));  // ゼロ除算例外が発生したか確認
+    div(1.0F, 0.0F);  // 関数の中で0除算するが、終了シグナルは発生しない
+    ASSERT_TRUE(std::fetestexcept(FE_ALL_EXCEPT) & FE_DIVBYZERO);  // 0除算
 
-    std::feclearexcept(FE_ALL_EXCEPT);  // 全ての例外フラグをクリア
+    std::feclearexcept(FE_ALL_EXCEPT);  // エラーをクリア
 
-    double result1 = std::numeric_limits<double>::max() * 10.0;  // 最大値を超えてオーバーフロー
-    EXPECT_TRUE(std::fetestexcept(FE_OVERFLOW));  // オーバーフロー例外が発生したか確認
+    div(std::numeric_limits<double>::max(), 1);
 
-    std::feclearexcept(FE_ALL_EXCEPT);  // 全ての例外フラグをクリア
+    auto const excepts = std::fetestexcept(FE_ALL_EXCEPT);
 
-    double result2 = std::pow(10.0, -308);         // アンダーフローを引き起こす
-    EXPECT_TRUE(std::fetestexcept(FE_UNDERFLOW));  // アンダーフロー例外が発生したか確認
+    ASSERT_FALSE(excepts & FE_DIVBYZERO);  // 0除算
+    ASSERT_TRUE(excepts & FE_INEXACT);     // 演算が不正確
+    ASSERT_FALSE(excepts & FE_INVALID);    // 不正な操作
+    ASSERT_TRUE(excepts & FE_OVERFLOW);    // 演算がオーバーフローを起こした
+    ASSERT_FALSE(excepts & FE_UNDERFLOW);  // 演算がアンダーフローを起こした
+
+    std::feclearexcept(FE_ALL_EXCEPT);  // エラーをクリア
+
+    auto const a = 1.0F / global_zero;  // global_zero == 0
+    ASSERT_TRUE(std::isinf(a));
+
+    auto const b = std::sqrt(-1);
+    auto const c = std::sqrt(-1);
+    ASSERT_TRUE(std::isnan(b));
+    ASSERT_FALSE(b == c);  // NaN == NaNは常にfalse
     // @@@ sample end
-    IGNORE_UNUSED_VAR(result0, result1, result2);
 }
 
 }  // namespace float_term_exp
