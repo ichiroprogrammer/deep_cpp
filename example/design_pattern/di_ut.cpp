@@ -7,7 +7,6 @@
 namespace {
 // @@@ sample begin 0:0
 
-/// @class Depended
 /// @brief NotDIや、DIから依存されるクラス
 class Depended {
     // @@@ ignore begin
@@ -23,7 +22,6 @@ private:
     // @@@ ignore end
 };
 
-/// @class NotDI
 /// @brief NotDIを使わない例。そのため、NotDIは、Dependedのインスタンスに依存している。
 class NotDI {
 public:
@@ -38,7 +36,6 @@ private:
 
 // @@@ sample begin 0:1
 
-/// @class DI
 /// @brief DIを使う例。そのため、DIは、Dependedの型に依存している。
 class DI {
 public:

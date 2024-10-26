@@ -7,7 +7,6 @@
 // @@@ sample begin 0:0
 
 namespace Nstd {
-/// @class FixedPoint
 /// @brief BASIC_TYPEで指定する基本型のビット長を持つ固定小数点を扱うためのクラス
 /// @tparam BASIC_TYPE       全体のビット長や、符号を指定するための整数型
 /// @tparam FRACTION_BIT_NUM 小数点保持のためのビット長
@@ -38,21 +37,18 @@ public:
     constexpr BASIC_TYPE GetInteger() const noexcept { return value_ >> fraction_bit_num_; }
     constexpr BASIC_TYPE GetFraction() const noexcept { return value_ & fraction_bit_mask_; }
 
-    /// @fn bool ToFloatPoint() const noexcept
     /// @brief doubleに変換する
     constexpr double ToFloatPoint() const noexcept
     {
         return GetInteger() + (static_cast<double>(GetFraction()) / (fraction_bit_mask_ + 1));
     }
 
-    /// @fn    std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept
     /// @brief 小数部のビット長を返す
     constexpr typename std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept
     {
         return fraction_bit_mask_;
     }
 
-    /// @fn    std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept
     /// @brief 整数部のビット長を返す
     constexpr typename std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept
     {
@@ -63,7 +59,7 @@ public:
 
     static constexpr bool IsUnsigned() noexcept { return std::is_unsigned_v<BASIC_TYPE>; }
 
-    /// @fn    以下operator @=の定義
+    /// @brief    以下operator @=の定義
     FixedPoint& operator+=(FixedPoint rhs) noexcept
     {
         value_ += rhs.value_;
@@ -146,7 +142,6 @@ private:
     }
 #endif
 
-    /// @fn FixedPoint operator+(FixedPoint lhs, FixedPoint rhs) noexcept
     /// @brief FixedPoint() + intのようなオーバーロードを作るためにあえてfriend
     friend FixedPoint operator+(FixedPoint lhs, FixedPoint rhs) noexcept
     {

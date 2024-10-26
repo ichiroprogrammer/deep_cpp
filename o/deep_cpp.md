@@ -324,7 +324,6 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
 ```cpp
     // @@@ example/solid/lsp.h 5
 
-    /// @class Rectangle
     /// @brief (0, 0) からの矩形を表す
     class Rectangle {
     public:
@@ -348,7 +347,6 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
         int y_;
     };
 
-    /// @class Rectangle
     /// @brief (0, 0) からの正方形を表す
     class Square : public Rectangle {
     public:
@@ -860,7 +858,6 @@ ___
 ```cpp
     // @@@ example/design_pattern/guard_ut.cpp 24
 
-    /// @fn int32_t SequentialA(char const (&a)[3])
     /// @brief a(配列へのリファレンス)の要素について、先頭から'a'が続く数を返す
     /// @param 配列へのリファレンス
     int32_t SequentialA(char const (&a)[3]) noexcept
@@ -888,7 +885,7 @@ ___
 一方で、上記と同じロジックである下記関数を一目で理解できない人も稀である。
 
 ```cpp
-    // @@@ example/design_pattern/guard_ut.cpp 78
+    // @@@ example/design_pattern/guard_ut.cpp 77
 
     int32_t SequentialA(char const (&a)[3]) noexcept
     {
@@ -911,7 +908,7 @@ ___
 もう一例、(ガード節導入の効果が前例ほど明確でない)ガード節を使っていないコードを示す。
 
 ```cpp
-    // @@@ example/design_pattern/guard_ut.cpp 49
+    // @@@ example/design_pattern/guard_ut.cpp 48
 
     std::optional<std::vector<uint32_t>> PrimeNumbers(uint32_t max_num)
     {
@@ -939,7 +936,7 @@ ___
 上記にガード節を適用した例を下記する。
 
 ```cpp
-    // @@@ example/design_pattern/guard_ut.cpp 95
+    // @@@ example/design_pattern/guard_ut.cpp 94
 
     std::optional<std::vector<uint32_t>> PrimeNumbers(uint32_t max_num)
     {
@@ -2092,7 +2089,6 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 ```cpp
     // @@@ h/scoped_guard.h 7
 
-    /// @class ScopedGuard
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
     template <std::invocable F>  // Fが呼び出し可能であることを制約
@@ -2259,13 +2255,11 @@ C++11では、std::future, std::promise, std::asyncによって実現できる�
 ```cpp
     // @@@ example/design_pattern/di_ut.cpp 8
 
-    /// @class Depended
     /// @brief NotDIや、DIから依存されるクラス
     class Depended {
         ...
     };
 
-    /// @class NotDI
     /// @brief NotDIを使わない例。そのため、NotDIは、Dependedのインスタンスに依存している。
     class NotDI {
     public:
@@ -2282,9 +2276,8 @@ C++11では、std::future, std::promise, std::asyncによって実現できる�
 この場合、クラスDIは、クラスDependedの型にのみ依存する。
 
 ```cpp
-    // @@@ example/design_pattern/di_ut.cpp 39
+    // @@@ example/design_pattern/di_ut.cpp 37
 
-    /// @class DI
     /// @brief DIを使う例。そのため、DIは、Dependedの型に依存している。
     class DI {
     public:
@@ -2735,7 +2728,6 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```cpp
     // @@@ example/design_pattern/state_machine_new.h 6
 
-    /// @class ThreadNewStyleState
     /// @brief ThreadNewStyleのステートを表す基底クラス
     class ThreadNewStyleState {
     public:
@@ -2780,7 +2772,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_new.h 52
+    // @@@ example/design_pattern/state_machine_new.h 51
 
     class ThreadNewStyle final {
     public:
@@ -2897,7 +2889,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 複雑な状態管理が必要な場合には使えないが、単純な状態管理で十分な場合には便利なパターンである。
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_new.h 77
+    // @@@ example/design_pattern/state_machine_new.h 76
 
     class ThreadNewStyle2 final {
     public:
@@ -3082,7 +3074,6 @@ Templateメソッドは、雛形の形式(書式等)を定めるメンバ関数(
 ```cpp
     // @@@ example/design_pattern/template_method.h 6
 
-    /// @class XxxData
     /// @brief 何かのデータを入れる箱
     struct XxxData {
         int a;
@@ -3090,7 +3081,6 @@ Templateメソッドは、雛形の形式(書式等)を定めるメンバ関数(
         int c;
     };
 
-    /// @class XxxDataFormatterIF
     /// @brief data_storer_if.cppに定義すべきだが、サンプルであるため便宜上同じファイルで定義する
     ///        データフォーマットを行うクラスのインターフェースクラス
     class XxxDataFormatterIF {
@@ -3146,7 +3136,6 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
 ```cpp
     // @@@ example/design_pattern/template_method.cpp 8
 
-    /// @class XxxDataFormatterXml
     /// @brief XxxDataをXmlに変換
     class XxxDataFormatterXml final : public XxxDataFormatterIF {
         ...
@@ -3169,7 +3158,6 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
         static inline std::string const footer_{"</XxxDataFormatterXml>\n"};
     };
 
-    /// @class XxxDataFormatterCsv
     /// @brief XxxDataをCsvに変換
     class XxxDataFormatterCsv final : public XxxDataFormatterIF {
         ...
@@ -3186,7 +3174,6 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
         static inline std::string const footer_{};
     };
 
-    /// @class XxxDataFormatterTable
     /// @brief XxxDataをTableに変換
     class XxxDataFormatterTable final : public XxxDataFormatterIF {
         ...
@@ -3415,7 +3402,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 といった効果がある。
 
 ```cpp
-    // @@@ example/design_pattern/template_method.h 73
+    // @@@ example/design_pattern/template_method.h 71
 
     enum class XxxDataFormatterMethod {
         Xml,
@@ -3423,7 +3410,6 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
         Table,
     };
 
-    /// @fn XxxDataFormatterFactory
     /// @brief std::unique_ptrで保持されたXxxDataFormatterIFオブジェクトを生成するFactory関数
     /// @param method XxxDataFormatterMethodのいずれか
     /// @return std::unique_ptr<const XxxDataFormatterIF>
@@ -3432,7 +3418,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 ```
 
 ```cpp
-    // @@@ example/design_pattern/template_method.cpp 109
+    // @@@ example/design_pattern/template_method.cpp 106
 
     std::unique_ptr<XxxDataFormatterIF const> XxxDataFormatterFactory(XxxDataFormatterMethod method)
     {
@@ -3508,7 +3494,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 この例ではその必要はないため、ヒープを使用しないFactory関数の例を下記する。
 
 ```cpp
-    // @@@ example/design_pattern/template_method.cpp 126
+    // @@@ example/design_pattern/template_method.cpp 123
 
     XxxDataFormatterIF const& XxxDataFormatterFactory2(XxxDataFormatterMethod method) noexcept
     {
@@ -3719,9 +3705,8 @@ Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを�
 次に示したのは「[Factory](#SS_3_16)」の例にこのパターンを適応したコードである。
 
 ```cpp
-    // @@@ example/design_pattern/template_method.h 16
+    // @@@ example/design_pattern/template_method.h 15
 
-    /// @class XxxDataFormatterIF
     /// @brief data_storer_if.cppに定義すべきだが、サンプルであるため便宜上同じファイルで定義する
     ///        データフォーマットを行うクラスのインターフェースクラス
     class XxxDataFormatterIF {
@@ -3741,7 +3726,7 @@ Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを�
 ```
 
 ```cpp
-    // @@@ example/design_pattern/template_method.cpp 147
+    // @@@ example/design_pattern/template_method.cpp 144
 
     XxxDataFormatterIF const& XxxDataFormatterIF::Xml() noexcept
     {
@@ -3902,7 +3887,6 @@ Proxyとは代理人という意味で、
 ```cpp
     // @@@ example/design_pattern/proxy_ut.cpp 17
 
-    /// @fn bare_client
     /// @brief 非同期サービスを隠蔽していないBareServerを使用したときのクライアントの例
     std::vector<std::string> bare_client(BareServer& bs)
     {
@@ -4010,9 +3994,8 @@ BareServerWrapperがむき出しの通信をラップしたことで、bare_wrap
 bare_client()に比べてシンプルになったことがわかる。
 
 ```cpp
-    // @@@ example/design_pattern/proxy_ut.cpp 57
+    // @@@ example/design_pattern/proxy_ut.cpp 56
 
-    /// @fn bare_wrapper_client
     /// @brief BareServerを使いやすくラップしたBareServerWrapperを使用したときのクライアントの例
     std::vector<std::string> bare_wrapper_client(BareServerWrapper& bsw)
     {
@@ -4080,9 +4063,8 @@ Packet{}やpipe等の通信の詳細がwrapped_server.cppの無名名前空間�
 WrappedServerの使用例を下記する。当然ながらbare_wrapper_client()とほぼ同様になる。
 
 ```cpp
-    // @@@ example/design_pattern/proxy_ut.cpp 77
+    // @@@ example/design_pattern/proxy_ut.cpp 75
 
-    /// @fn wrapped_client
     /// @brief 非同期サービスを隠蔽しているWrappedServerを使用したときのクライアントの例
     std::vector<std::string> wrapped_client(WrappedServer& ws)
     {
@@ -4190,8 +4172,6 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 ```cpp
     // @@@ example/design_pattern/find_files_old_style.cpp 9
 
-    /// @fn std::vector<std::string> find_files_recursively(std::string const& path,
-    ///                                                     FindCondition condition)
     /// @brief 条件にマッチしたファイルをリカーシブに探して返す
     /// @param path      リカーシブにディレクトリをたどるための起点となるパス
     /// @param condition どのようなファイルかを指定する
@@ -4282,10 +4262,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     /// @brief find_files_recursively仮引数conditionの型(関数オブジェクトの型)
     using find_condition = std::function<bool(std::filesystem::path const&)>;
 
-    // Strategyパターン
-    /// @fn std::vector<std::string> find_files_recursively(std::string const& path,
-    ///                                                     find_condition     condition);
-    /// @brief 条件にマッチしたファイルをリカーシブに探索して返す
+    /// @brief Strategyパターン。条件にマッチしたファイルをリカーシブに探索して返す
     /// @param path      リカーシブにディレクトリを辿るための起点となるパス
     /// @param condition 探索するファイルの条件
     /// @return 条件にマッチしたファイルをstd::vector<std::string>で返す
@@ -4363,7 +4340,6 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         ASSERT_EQ(f_expect, f_actual);
     }
 
-    /// @fn bool condition_func(std::filesystem::path const& path)
     /// @brief find_files_recursivelyの第2仮引数に渡すためのファイル属性を決める関数
     bool condition_func(std::filesystem::path const& path)
     {
@@ -4384,7 +4360,6 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         ASSERT_EQ(f_expect, f_actual);
     }
 
-    /// @class ConditionFunctor
     /// @brief
     ///  find_files_recursivelyの第2仮引数に渡すためのファイル属性を決める関数オブジェクトクラス。
     ///  検索条件に状態が必要な場合、関数オブジェクトを使うとよい。
@@ -4393,7 +4368,6 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         ConditionFunctor()  = default;
         ~ConditionFunctor() = default;
 
-        /// @fn bool operator()(std::filesystem::path const& path)
         /// @brief 先頭が'f'のファイルを最大2つまで探す
         bool operator()(std::filesystem::path const& path)
         {
@@ -4427,7 +4401,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 なお、上記find_files_recursivelyの第2パラメータをテンプレートパラメータとすることで、
 
 ```cpp
-    // @@@ example/design_pattern/find_files_strategy.h 23
+    // @@@ example/design_pattern/find_files_strategy.h 20
 
     // ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
     namespace Inner_ {
@@ -4617,7 +4591,6 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 ```cpp
     // @@@ example/design_pattern/visitor.cpp 42
 
-    /// @class FileEntity
     /// @brief
     ///  ファイルシステムの構成物(ファイル、ディレクトリ等)を表すクラスの基底クラス
     class FileEntity {
@@ -4691,7 +4664,7 @@ Printerのアルゴリズム関数が増えれば、この繰り返しはそれ�
 これをポリモーフィズムの導入で解決した例を示す。
 
 ```cpp
-    // @@@ example/design_pattern/visitor.cpp 143
+    // @@@ example/design_pattern/visitor.cpp 142
 
     class FileEntity {
     public:
@@ -4803,7 +4776,7 @@ PrintPathname2のようなFileEntityのインターフェースが増えてし�
 ```
 
 ```cpp
-    // @@@ example/design_pattern/visitor.cpp 219
+    // @@@ example/design_pattern/visitor.cpp 218
 
     void PathnamePrinter1::Visit(File const& file) { std::cout << file.Pathname(); }
     void PathnamePrinter1::Visit(Dir const& dir) { std::cout << dir.Pathname() + "/"; }
@@ -4893,7 +4866,7 @@ FileEntityVisitorから派生するクラスを下記クラス図が示すよう
 ```
 
 ```cpp
-    // @@@ example/design_pattern/visitor.cpp 246
+    // @@@ example/design_pattern/visitor.cpp 245
 
     void TestablePathnamePrinter1::Visit(File const& file) { ostream_ << file.Pathname(); }
     void TestablePathnamePrinter1::Visit(Dir const& dir) { ostream_ << dir.Pathname() + "/"; }
@@ -5039,7 +5012,6 @@ ViewがObserverNである。
 ```cpp
     // @@@ example/design_pattern/observer_ng.h 6
 
-    /// @class ObserberNG_N
     /// @brief SubjectNGからの変更通知をUpdate()で受け取る。
     ///        Observerパターンを使用しない例。
     class ObserverNG_0 {
@@ -5172,7 +5144,6 @@ ViewがObserverNである。
 ```cpp
     // @@@ example/design_pattern/observer_ok.h 3
 
-    /// @class ObserverOK_0
     /// @brief SubjectOKからの変更通知をUpdate()で受け取る。
     ///        Observerパターンの使用例。
     class ObserverOK_0 : public Observer {
@@ -5216,7 +5187,6 @@ ViewがObserverNである。
 ```cpp
     // @@@ example/design_pattern/subject_ok.h 8
 
-    /// @class SubjectOK
     /// @brief 監視されるクラス。SetNumでの状態変更をObserverOK_Nに通知する。
     ///        Observerパターンの使用例。
     class SubjectOK final {
@@ -5245,7 +5215,6 @@ ViewがObserverNである。
         ...
     };
 
-    /// @class Observer
     /// @brief SubjectOKを監視するクラスの基底クラス
     class Observer {
     public:
@@ -10565,7 +10534,6 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 
     namespace Nstd {
     // is_equal_dを改良して、引数の型が統一されていない呼び出しをコンパイルエラーにできるようにした。
-    /// @fn bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
     /// @brief 浮動小数点比較用関数
     template <typename FLOAT_0, typename FLOAT_1>
     bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
@@ -10581,7 +10549,7 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 この関数のテストは以下の通りである。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 92
+    // @@@ example/template/nstd_float_ut.cpp 91
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -10596,9 +10564,8 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 さらに下記のように拡張変更した。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 107
+    // @@@ example/template/nstd_float_ut.cpp 106
 
-    /// @fn bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
     /// @brief 浮動小数点比較用関数
     /// 相対誤差を考慮して、lhs と rhs の絶対値に基づくトレランスの範囲内での比較を行う。
     /// これにより、数値の大小に関わらず、適切な誤差で比較できる。
@@ -10616,7 +10583,7 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 この関数のテストは以下の通りである。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 127
+    // @@@ example/template/nstd_float_ut.cpp 125
 
     float a = 1000000.0F;
     float b = 1000000.1F;
@@ -10644,7 +10611,6 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
     // @@@ example/template/fixed_point.h 7
 
     namespace Nstd {
-    /// @class FixedPoint
     /// @brief BASIC_TYPEで指定する基本型のビット長を持つ固定小数点を扱うためのクラス
     /// @tparam BASIC_TYPE       全体のビット長や、符号を指定するための整数型
     /// @tparam FRACTION_BIT_NUM 小数点保持のためのビット長
@@ -10675,21 +10641,18 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
         constexpr BASIC_TYPE GetInteger() const noexcept { return value_ >> fraction_bit_num_; }
         constexpr BASIC_TYPE GetFraction() const noexcept { return value_ & fraction_bit_mask_; }
 
-        /// @fn bool ToFloatPoint() const noexcept
         /// @brief doubleに変換する
         constexpr double ToFloatPoint() const noexcept
         {
             return GetInteger() + (static_cast<double>(GetFraction()) / (fraction_bit_mask_ + 1));
         }
 
-        /// @fn    std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept
         /// @brief 小数部のビット長を返す
         constexpr typename std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept
         {
             return fraction_bit_mask_;
         }
 
-        /// @fn    std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept
         /// @brief 整数部のビット長を返す
         constexpr typename std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept
         {
@@ -10700,7 +10663,7 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
 
         static constexpr bool IsUnsigned() noexcept { return std::is_unsigned_v<BASIC_TYPE>; }
 
-        /// @fn    以下operator @=の定義
+        /// @brief    以下operator @=の定義
         FixedPoint& operator+=(FixedPoint rhs) noexcept
         {
             value_ += rhs.value_;
@@ -10783,7 +10746,6 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
         }
     #endif
 
-        /// @fn FixedPoint operator+(FixedPoint lhs, FixedPoint rhs) noexcept
         /// @brief FixedPoint() + intのようなオーバーロードを作るためにあえてfriend
         friend FixedPoint operator+(FixedPoint lhs, FixedPoint rhs) noexcept
         {
@@ -10840,7 +10802,7 @@ FixedPointの単体テストコードを以下に示す。
 使い勝手のよい環境をユーザに提供するべきである。
 
 ```cpp
-    // @@@ example/template/fixed_point.h 179
+    // @@@ example/template/fixed_point.h 174
 
     namespace Nstd {
     namespace fixed_point_literals {
@@ -10888,7 +10850,6 @@ FixedPointの単体テストコードを以下に示す。
     // @@@ example/template/rational.h 10
 
     namespace Nstd {
-    /// @class Rational
     /// @brief ユーザー指定の型で分数を扱うためのクラス
     /// @tparam T 基本の整数型（デフォルトはint32_t）
     template <std::signed_integral T = int32_t>
@@ -10904,7 +10865,7 @@ FixedPointの単体テストコードを以下に示す。
         T getNumerator() const noexcept { return value_.num; }
         T getDenominator() const noexcept { return value_.deno; }
 
-        /// @fn 2項演算子の定義
+        /// @brief 2項演算子(四則演算)の定義
         Rational operator+(const Rational& rhs) const noexcept
         {
             T num  = value_.num * rhs.value_.deno + rhs.value_.num * value_.deno;
@@ -10926,7 +10887,7 @@ FixedPointの単体テストコードを以下に示す。
             return Rational(value_.num * rhs.value_.deno, value_.deno * rhs.value_.num);
         }
 
-        /// @fn 複合代入演算子
+        /// @brief 複合代入演算子(四則演算)の定義
         Rational& operator+=(Rational const& rhs)
         {
             *this = *this + rhs;
@@ -10950,25 +10911,25 @@ FixedPointの単体テストコードを以下に示す。
             return *this;
         }
 
-        /// @fn 単項演算子の定義
+        /// @brief 単項演算子の定義
         constexpr Rational operator+() const noexcept { return *this; }
         constexpr Rational operator-() const noexcept { return Rational{-value_.num, value_.deno}; }
 
-        /// @fn 比較演算子の定義
+        /// @brief 比較演算子の定義
         friend bool operator==(Rational const& lhs, Rational const& rhs) noexcept = default;
         friend auto operator<=>(Rational const& lhs, Rational const& rhs) noexcept
         {
             return (lhs.value_.num * rhs.value_.deno) <=> (rhs.value_.num * lhs.value_.deno);
         }
 
-        /// fn put-to演算子の定義
+        /// @brief put-to演算子の定義
         friend std::ostream& operator<<(std::ostream& os, const Rational& rhs)
         {
             return (rhs.value_.deno == 1) ? os << rhs.value_.num
                                           : os << rhs.value_.num << "/" << rhs.value_.deno;
         }
 
-        /// @fn doubleへの変換演算子
+        /// @brief doubleへの変換演算子
         /// @brief doubleで表現可能な場合のみ利用可能
         template <typename U = T>
         explicit operator double() const noexcept requires std::is_convertible_v<U, double>
@@ -10983,7 +10944,6 @@ FixedPointの単体テストコードを以下に示す。
             friend bool operator==(rational_t const& lhs, rational_t const& rhs) noexcept = default;
         };
 
-        /// @fn reduce
         /// @brief num/denoを約分して、rational_tで返す
         static rational_t reduce(T num, T deno) noexcept
         {
@@ -11033,12 +10993,12 @@ FixedPointの単体テストコードを以下に示す。
 [有理数クラス](#SS_4_5_4)に対して、有理数リテラルを定義するべきである。
 
 ```cpp
-    // @@@ example/template/rational.h 130
+    // @@@ example/template/rational.h 128
 
     namespace Nstd {
-    /// @fn  Rational<int32_t>をユーザ定義リテラルとして扱うためのオペレータ
-    /// @brief _rn: rational number
-    /// @param N/Mの形式
+    /// @brief Rational<int32_t>をユーザ定義リテラルとして扱うためのオペレータ
+    ///        _rn: rational number
+    ///  @param N/Mの形式の文字列リテラル
     Rational<int32_t> operator"" _rn(char const* str, size_t)
     {
         std::string_view input{str};
@@ -12923,7 +12883,6 @@ Int2StaticString\<>()が得られる。
 ```cpp
     // @@@ example/h/nstd_exception.h 11
 
-    /// @class Exception
     /// @brief StaticString<>を使ったエクセプションクラス
     ///        下記のMAKE_EXCEPTIONを使い生成
     /// @tparam E   std::exceptionから派生したエクセプションクラス
@@ -12945,7 +12904,7 @@ Int2StaticString\<>()が得られる。
 StaticStringと同様に、このままでは不便であるため、下記の関数を定義する。
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 31
+    // @@@ example/h/nstd_exception.h 30
 
     namespace Inner_ {
     template <typename E, template <size_t> class STATIC_STR, size_t N>
@@ -12986,7 +12945,7 @@ StaticStringと同様に、このままでは不便であるため、下記の�
 Exceptionクラスの利便性をさらに高めるため、下記の定義を行う。
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 49
+    // @@@ example/h/nstd_exception.h 48
 
     #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
 ```
@@ -13165,7 +13124,6 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 ```cpp
     // @@@ h/scoped_guard.h 7
 
-    /// @class ScopedGuard
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
     template <std::invocable F>  // Fが呼び出し可能であることを制約
@@ -13189,7 +13147,6 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 ```cpp
     // @@@ h/scoped_guard.h 7
 
-    /// @class ScopedGuard
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
     template <std::invocable F>  // Fが呼び出し可能であることを制約
@@ -13294,7 +13251,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 これを回避するためには下記のような関数テンプレートを用意すればよい。
 
 ```cpp
-    // @@@ h/scoped_guard.h 31
+    // @@@ h/scoped_guard.h 30
 
     template <typename F>
     ScopedGuard<F> MakeScopedGuard(F&& f) noexcept
@@ -13948,7 +13905,6 @@ MPoolFixedの単体テストは、下記のようになる。
 ```cpp
     // @@@ example/h/nstd_exception.h 11
 
-    /// @class Exception
     /// @brief StaticString<>を使ったエクセプションクラス
     ///        下記のMAKE_EXCEPTIONを使い生成
     /// @tparam E   std::exceptionから派生したエクセプションクラス
@@ -18384,7 +18340,6 @@ co_waitとco_returnを使用したコードを以下に示す。
         /// @struct promise_type
         /// @brief コルーチンのライフサイクルを管理する構造体
         struct promise_type {
-            /// @fn Task get_return_object()
             /// @brief コルーチンから Task 型のオブジェクトを返す関数
             /// @return Taskオブジェクト
             Task get_return_object()
@@ -18392,38 +18347,31 @@ co_waitとco_returnを使用したコードを以下に示す。
                 return Task{std::coroutine_handle<promise_type>::from_promise(*this)};
             }
 
-            /// @fn std::suspend_always initial_suspend()
             /// @brief コルーチンの最初のサスペンドポイント
             /// @return 常にサスペンドするオブジェクトを返す
             std::suspend_always initial_suspend() { return {}; }
 
-            /// @fn std::suspend_always final_suspend() noexcept
             /// @brief コルーチンの最後のサスペンドポイント
             /// @return 常にサスペンドするオブジェクトを返す
             std::suspend_always final_suspend() noexcept { return {}; }
 
-            /// @fn void unhandled_exception()
             /// @brief コルーチン内で例外が発生した場合に呼び出される
             /// @details コルーチン内で未処理の例外が発生した場合に、プロセスを終了する
             void unhandled_exception() { std::exit(1); }
 
-            /// @fn void return_void()
             /// @brief コルーチンが終了した際に呼び出される
             /// @details co_return で値が返されない場合に呼び出されるが、何も行わない
             void return_void() {}
         };
 
-        /// @fn Task(std::coroutine_handle<promise_type> h)
         /// @brief Task のコンストラクタ
         /// @param h コルーチンハンドル
         Task(std::coroutine_handle<promise_type> h) : coro{h} {}
 
-        /// @fn std::string get_value()
         /// @brief コルーチンの呼び出し回数に基づいた文字列を返す
         /// @return 呼び出し回数に応じた "call X" という文字列
         std::string get_value() { return "call " + std::to_string(called); }
 
-        /// @fn bool resume()
         /// @brief コルーチンを再開する
         /// @details コルーチンが終了していなければ再開し、呼び出し回数をカウントする
         /// @return コルーチンが完了していなければ true、完了していれば false
@@ -18437,7 +18385,6 @@ co_waitとco_returnを使用したコードを以下に示す。
             return false;  // すでに完了している場合は false を返す
         }
 
-        /// @fn ~Task()
         /// @brief Task のデストラクタ
         /// @details コルーチンハンドルが有効であれば破棄する
         ~Task()
@@ -18450,7 +18397,6 @@ co_waitとco_returnを使用したコードを以下に示す。
         uint32_t                            called = 0;  ///< コルーチンが再開された回数
     };
 
-    /// @fn Task gen_coroutine()
     /// @brief コルーチンを生成する関数
     /// @return Taskオブジェクト
     Task gen_coroutine()
@@ -18463,7 +18409,7 @@ co_waitとco_returnを使用したコードを以下に示す。
 以下単体テストコードによりに上記コルーチンの動作を示す。
 
 ```cpp
-    // @@@ example/term_explanation/co_await_ut.cpp 98
+    // @@@ example/term_explanation/co_await_ut.cpp 88
 
     Task    task  = gen_coroutine();  // gen_coroutine から Task オブジェクトを生成
     int32_t calls = 0;
@@ -18494,7 +18440,7 @@ co_waitとco_returnを使用したコードを以下に示す。
 上記のコルーチンと同じ機能を持つクラスのco_await/co_returnを使わない実装を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/co_await_ut.cpp 128
+    // @@@ example/term_explanation/co_await_ut.cpp 118
 
     /// @enum CoroutineState
     /// @brief ManualCoroutine の状態を表す enum 型
@@ -18505,11 +18451,9 @@ co_waitとco_returnを使用したコードを以下に示す。
         Finished           ///< コルーチンが完了した状態
     };
 
-    /// @class ManualCoroutine
     /// @brief コルーチンの状態を保持し、進行を管理するためのクラス
     class ManualCoroutine {
     public:
-        /// @fn bool resume()
         /// @brief コルーチンの代わりに状態を進行させる関数
         /// @details コルーチンの状態に基づいて進行し、コルーチンのように振る舞う
         /// @return コルーチンが継続可能なら true、終了していれば false を返す
@@ -18536,7 +18480,6 @@ co_waitとco_returnを使用したコードを以下に示す。
             return false;
         }
 
-        /// @fn std::string get_value()
         /// @brief 呼び出し回数に基づいた文字列を返す
         /// @return "call X" という形式の文字列（X は呼び出し回数）
         std::string get_value() { return "call " + std::to_string(called); }
@@ -18550,7 +18493,7 @@ co_waitとco_returnを使用したコードを以下に示す。
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    // @@@ example/term_explanation/co_await_ut.cpp 183
+    // @@@ example/term_explanation/co_await_ut.cpp 170
 
     auto    manual_coroutine = ManualCoroutine{};
     int32_t calls            = 0;
@@ -18610,7 +18553,6 @@ co_yieldはコルーチンから値を返しつつ、
         struct promise_type {
             T current_value;
 
-            /// @fn Generator get_return_object()
             /// @brief コルーチンから Generator 型のオブジェクトを返す関数
             /// @return Generatorオブジェクト
             Generator get_return_object()
@@ -18618,17 +18560,14 @@ co_yieldはコルーチンから値を返しつつ、
                 return Generator{std::coroutine_handle<promise_type>::from_promise(*this)};
             }
 
-            /// @fn std::suspend_always initial_suspend()
             /// @brief コルーチンの最初のサスペンドポイント
             /// @return 常にサスペンドするオブジェクトを返す
             std::suspend_always initial_suspend() { return {}; }
 
-            /// @fn std::suspend_always final_suspend() noexcept
             /// @brief コルーチンの最後のサスペンドポイント
             /// @return 常にサスペンドするオブジェクトを返す
             std::suspend_always final_suspend() noexcept { return {}; }
 
-            /// @fn std::suspend_always yield_value(T value)
             /// @brief コルーチンで値を生成するためのサスペンドポイント
             /// @param value 生成された値
             /// @return 常にサスペンドするオブジェクトを返す
@@ -18638,16 +18577,13 @@ co_yieldはコルーチンから値を返しつつ、
                 return {};
             }
 
-            /// @fn void unhandled_exception()
             /// @brief コルーチン内で例外が発生した場合に呼び出される
             void unhandled_exception() { std::exit(1); }
 
-            /// @fn void return_void()
             /// @brief コルーチンの終了時に呼び出される
             void return_void() {}
         };
 
-        /// @fn bool move_next()
         /// @brief コルーチンを再開し、次の値を生成する
         /// @return 次の値が生成された場合は true、終了した場合は false
         bool move_next()
@@ -18659,7 +18595,6 @@ co_yieldはコルーチンから値を返しつつ、
             return false;
         }
 
-        /// @fn T current_value() const
         /// @brief 現在の値を取得する
         /// @return 現在の値
         T current_value() const { return coro.promise().current_value; }
@@ -18679,7 +18614,6 @@ co_yieldはコルーチンから値を返しつつ、
         std::coroutine_handle<promise_type> coro;
     };
 
-    /// @fn Generator<int> filter_even(Generator<int> input)
     /// @brief 偶数のみをフィルタリングする
     /// @param input フィルタ対象の Generator
     /// @return フィルタ後の Generator
@@ -18692,7 +18626,6 @@ co_yieldはコルーチンから値を返しつつ、
         }
     }
 
-    /// @fn Generator<int> double_values(Generator<int> input)
     /// @brief 値を2倍に変換する
     /// @param input 変換対象の Generator
     /// @return 変換後の Generator
@@ -18703,7 +18636,6 @@ co_yieldはコルーチンから値を返しつつ、
         }
     }
 
-    /// @fn Generator<int> generate_numbers(int start, int end)
     /// @brief 数値の範囲を生成する
     /// @param start 開始値
     /// @param end 終了値
@@ -18718,7 +18650,7 @@ co_yieldはコルーチンから値を返しつつ、
 このテストを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/co_yield_ut.cpp 141
+    // @@@ example/term_explanation/co_yield_ut.cpp 130
 
     // 数値を生成し、それをパイプライン処理に通す
     auto numbers         = generate_numbers(1, 10);
@@ -18744,9 +18676,8 @@ co_yieldはコルーチンから値を返しつつ、
 co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yieldを使わない実装を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/co_yield_ut.cpp 166
+    // @@@ example/term_explanation/co_yield_ut.cpp 155
 
-    /// @class Generator
     /// @brief コルーチンを使わずにデータを逐次的に提供するジェネレータークラス
     template <typename T>
     class Generator {
@@ -18755,7 +18686,6 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
         /// @param data 生成対象のデータ
         Generator(std::vector<T>&& data) : data_(std::move(data)), current_index_(0) {}
 
-        /// @fn bool move_next()
         /// @brief 次の値があるかを確認し、次の値に進む
         /// @return 次の値が存在する場合は true、存在しない場合は false
         bool move_next()
@@ -18767,7 +18697,6 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
             return false;
         }
 
-        /// @fn T current_value() const
         /// @brief 現在の値を取得する
         /// @return 現在の値
         T current_value() const
@@ -18783,7 +18712,6 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
         size_t         current_index_;  ///< 現在のインデックス
     };
 
-    /// @fn Generator<int> filter_even(const Generator<int>& input)
     /// @brief 偶数のみをフィルタリングする
     /// @param input フィルタ対象の Generator
     /// @return フィルタ後の Generator
@@ -18800,7 +18728,6 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
         return Generator<int>(std::move(filtered));
     }
 
-    /// @fn Generator<int> double_values(const Generator<int>& input)
     /// @brief 値を2倍に変換する
     /// @param input 変換対象の Generator
     /// @return 変換後の Generator
@@ -18815,7 +18742,6 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
         return Generator<int>(std::move(doubled));
     }
 
-    /// @fn Generator<int> generate_numbers(int start, int end)
     /// @brief 数値の範囲を生成する
     /// @param start 開始値
     /// @param end 終了値
@@ -18833,7 +18759,7 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    // @@@ example/term_explanation/co_yield_ut.cpp 254
+    // @@@ example/term_explanation/co_yield_ut.cpp 237
 
     // 数値を生成し、それをパイプライン処理に通す
     auto numbers         = generate_numbers(1, 10);

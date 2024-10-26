@@ -7,7 +7,6 @@
 namespace {
 // @@@ sample begin 0:0
 
-/// @class XxxDataFormatterXml
 /// @brief XxxDataをXmlに変換
 class XxxDataFormatterXml final : public XxxDataFormatterIF {
     // @@@ ignore begin
@@ -35,7 +34,6 @@ private:
     static inline std::string const footer_{"</XxxDataFormatterXml>\n"};
 };
 
-/// @class XxxDataFormatterCsv
 /// @brief XxxDataをCsvに変換
 class XxxDataFormatterCsv final : public XxxDataFormatterIF {
     // @@@ ignore begin
@@ -58,7 +56,6 @@ private:
     static inline std::string const footer_{};
 };
 
-/// @class XxxDataFormatterTable
 /// @brief XxxDataをTableに変換
 class XxxDataFormatterTable final : public XxxDataFormatterIF {
     // @@@ ignore begin

@@ -41,7 +41,6 @@ namespace WorstPattern {
 
 // @@@ sample begin 0:0
 
-/// @class FileEntity
 /// @brief
 ///  ファイルシステムの構成物(ファイル、ディレクトリ等)を表すクラスの基底クラス
 class FileEntity {

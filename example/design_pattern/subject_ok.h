@@ -7,7 +7,6 @@ class Observer;
 
 // @@@ sample begin 0:0
 
-/// @class SubjectOK
 /// @brief 監視されるクラス。SetNumでの状態変更をObserverOK_Nに通知する。
 ///        Observerパターンの使用例。
 class SubjectOK final {
@@ -43,7 +42,6 @@ private:
     // @@@ ignore end
 };
 
-/// @class Observer
 /// @brief SubjectOKを監視するクラスの基底クラス
 class Observer {
 public:

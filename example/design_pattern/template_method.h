@@ -5,7 +5,6 @@
 
 // @@@ sample begin 0:0
 
-/// @class XxxData
 /// @brief 何かのデータを入れる箱
 struct XxxData {
     int a;
@@ -15,7 +14,6 @@ struct XxxData {
 // @@@ sample end
 // @@@ sample begin 0:1
 
-/// @class XxxDataFormatterIF
 /// @brief data_storer_if.cppに定義すべきだが、サンプルであるため便宜上同じファイルで定義する
 ///        データフォーマットを行うクラスのインターフェースクラス
 class XxxDataFormatterIF {
@@ -78,7 +76,6 @@ enum class XxxDataFormatterMethod {
     Table,
 };
 
-/// @fn XxxDataFormatterFactory
 /// @brief std::unique_ptrで保持されたXxxDataFormatterIFオブジェクトを生成するFactory関数
 /// @param method XxxDataFormatterMethodのいずれか
 /// @return std::unique_ptr<const XxxDataFormatterIF>
@@ -86,7 +83,6 @@ enum class XxxDataFormatterMethod {
 std::unique_ptr<XxxDataFormatterIF const> XxxDataFormatterFactory(XxxDataFormatterMethod method);
 // @@@ sample end
 
-/// @fn XxxDataFormatterFactory2
 /// @brief const XxxDataFormatterIFオブジェクトのリファレンスを返すFactory関数
 /// @param method XxxDataFormatterMethodのいずれか
 /// @return const XxxDataFormatterIF

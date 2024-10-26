@@ -10,7 +10,6 @@
 // @@@ sample begin 0:0
 
 namespace Nstd {
-/// @class Rational
 /// @brief ユーザー指定の型で分数を扱うためのクラス
 /// @tparam T 基本の整数型（デフォルトはint32_t）
 template <std::signed_integral T = int32_t>
@@ -26,7 +25,7 @@ public:
     T getNumerator() const noexcept { return value_.num; }
     T getDenominator() const noexcept { return value_.deno; }
 
-    /// @fn 2項演算子の定義
+    /// @brief 2項演算子(四則演算)の定義
     Rational operator+(const Rational& rhs) const noexcept
     {
         T num  = value_.num * rhs.value_.deno + rhs.value_.num * value_.deno;
@@ -48,7 +47,7 @@ public:
         return Rational(value_.num * rhs.value_.deno, value_.deno * rhs.value_.num);
     }
 
-    /// @fn 複合代入演算子
+    /// @brief 複合代入演算子(四則演算)の定義
     Rational& operator+=(Rational const& rhs)
     {
         *this = *this + rhs;
@@ -72,25 +71,25 @@ public:
         return *this;
     }
 
-    /// @fn 単項演算子の定義
+    /// @brief 単項演算子の定義
     constexpr Rational operator+() const noexcept { return *this; }
     constexpr Rational operator-() const noexcept { return Rational{-value_.num, value_.deno}; }
 
-    /// @fn 比較演算子の定義
+    /// @brief 比較演算子の定義
     friend bool operator==(Rational const& lhs, Rational const& rhs) noexcept = default;
     friend auto operator<=>(Rational const& lhs, Rational const& rhs) noexcept
     {
         return (lhs.value_.num * rhs.value_.deno) <=> (rhs.value_.num * lhs.value_.deno);
     }
 
-    /// fn put-to演算子の定義
+    /// @brief put-to演算子の定義
     friend std::ostream& operator<<(std::ostream& os, const Rational& rhs)
     {
         return (rhs.value_.deno == 1) ? os << rhs.value_.num
                                       : os << rhs.value_.num << "/" << rhs.value_.deno;
     }
 
-    /// @fn doubleへの変換演算子
+    /// @brief doubleへの変換演算子
     /// @brief doubleで表現可能な場合のみ利用可能
     template <typename U = T>
     explicit operator double() const noexcept requires std::is_convertible_v<U, double>
@@ -105,7 +104,6 @@ private:
         friend bool operator==(rational_t const& lhs, rational_t const& rhs) noexcept = default;
     };
 
-    /// @fn reduce
     /// @brief num/denoを約分して、rational_tで返す
     static rational_t reduce(T num, T deno) noexcept
     {
@@ -130,9 +128,9 @@ private:
 // @@@ sample begin 0:1
 
 namespace Nstd {
-/// @fn  Rational<int32_t>をユーザ定義リテラルとして扱うためのオペレータ
-/// @brief _rn: rational number
-/// @param N/Mの形式
+/// @brief Rational<int32_t>をユーザ定義リテラルとして扱うためのオペレータ
+///        _rn: rational number
+///  @param N/Mの形式の文字列リテラル
 Rational<int32_t> operator"" _rn(char const* str, size_t)
 {
     std::string_view input{str};

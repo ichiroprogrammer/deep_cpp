@@ -10,10 +10,7 @@
 /// @brief find_files_recursively仮引数conditionの型(関数オブジェクトの型)
 using find_condition = std::function<bool(std::filesystem::path const&)>;
 
-// Strategyパターン
-/// @fn std::vector<std::string> find_files_recursively(std::string const& path,
-///                                                     find_condition     condition);
-/// @brief 条件にマッチしたファイルをリカーシブに探索して返す
+/// @brief Strategyパターン。条件にマッチしたファイルをリカーシブに探索して返す
 /// @param path      リカーシブにディレクトリを辿るための起点となるパス
 /// @param condition 探索するファイルの条件
 /// @return 条件にマッチしたファイルをstd::vector<std::string>で返す

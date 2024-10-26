@@ -6,7 +6,6 @@ namespace Nstd {
 
 // @@@ sample begin 0:0
 
-/// @class ScopedGuard
 /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
 ///
 template <std::invocable F>  // Fが呼び出し可能であることを制約

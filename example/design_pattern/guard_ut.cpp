@@ -23,7 +23,6 @@ namespace NotGuard {
 
 // @@@ sample begin 0:0
 
-/// @fn int32_t SequentialA(char const (&a)[3])
 /// @brief a(配列へのリファレンス)の要素について、先頭から'a'が続く数を返す
 /// @param 配列へのリファレンス
 int32_t SequentialA(char const (&a)[3]) noexcept

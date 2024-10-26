@@ -5,7 +5,6 @@ class SubjectNG;
 
 // @@@ sample begin 0:0
 
-/// @class ObserberNG_N
 /// @brief SubjectNGからの変更通知をUpdate()で受け取る。
 ///        Observerパターンを使用しない例。
 class ObserverNG_0 {

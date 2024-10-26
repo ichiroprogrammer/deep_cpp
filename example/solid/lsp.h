@@ -4,7 +4,6 @@
 
 // @@@ sample begin 0:0
 
-/// @class Rectangle
 /// @brief (0, 0) からの矩形を表す
 class Rectangle {
 public:
@@ -45,7 +44,6 @@ private:
     int y_;
 };
 
-/// @class Rectangle
 /// @brief (0, 0) からの正方形を表す
 class Square : public Rectangle {
 public:

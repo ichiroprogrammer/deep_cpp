@@ -75,7 +75,6 @@ namespace fake {
 
 namespace Nstd {
 // is_equal_dを改良して、引数の型が統一されていない呼び出しをコンパイルエラーにできるようにした。
-/// @fn bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
 /// @brief 浮動小数点比較用関数
 template <typename FLOAT_0, typename FLOAT_1>
 bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
@@ -106,7 +105,6 @@ namespace Nstd {
 //
 // @@@ sample begin 3:0
 
-/// @fn bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
 /// @brief 浮動小数点比較用関数
 /// 相対誤差を考慮して、lhs と rhs の絶対値に基づくトレランスの範囲内での比較を行う。
 /// これにより、数値の大小に関わらず、適切な誤差で比較できる。

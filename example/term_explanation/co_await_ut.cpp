@@ -16,7 +16,6 @@ public:
     /// @struct promise_type
     /// @brief コルーチンのライフサイクルを管理する構造体
     struct promise_type {
-        /// @fn Task get_return_object()
         /// @brief コルーチンから Task 型のオブジェクトを返す関数
         /// @return Taskオブジェクト
         Task get_return_object()
@@ -24,38 +23,31 @@ public:
             return Task{std::coroutine_handle<promise_type>::from_promise(*this)};
         }
 
-        /// @fn std::suspend_always initial_suspend()
         /// @brief コルーチンの最初のサスペンドポイント
         /// @return 常にサスペンドするオブジェクトを返す
         std::suspend_always initial_suspend() { return {}; }
 
-        /// @fn std::suspend_always final_suspend() noexcept
         /// @brief コルーチンの最後のサスペンドポイント
         /// @return 常にサスペンドするオブジェクトを返す
         std::suspend_always final_suspend() noexcept { return {}; }
 
-        /// @fn void unhandled_exception()
         /// @brief コルーチン内で例外が発生した場合に呼び出される
         /// @details コルーチン内で未処理の例外が発生した場合に、プロセスを終了する
         void unhandled_exception() { std::exit(1); }
 
-        /// @fn void return_void()
         /// @brief コルーチンが終了した際に呼び出される
         /// @details co_return で値が返されない場合に呼び出されるが、何も行わない
         void return_void() {}
     };
 
-    /// @fn Task(std::coroutine_handle<promise_type> h)
     /// @brief Task のコンストラクタ
     /// @param h コルーチンハンドル
     Task(std::coroutine_handle<promise_type> h) : coro{h} {}
 
-    /// @fn std::string get_value()
     /// @brief コルーチンの呼び出し回数に基づいた文字列を返す
     /// @return 呼び出し回数に応じた "call X" という文字列
     std::string get_value() { return "call " + std::to_string(called); }
 
-    /// @fn bool resume()
     /// @brief コルーチンを再開する
     /// @details コルーチンが終了していなければ再開し、呼び出し回数をカウントする
     /// @return コルーチンが完了していなければ true、完了していれば false
@@ -69,7 +61,6 @@ public:
         return false;  // すでに完了している場合は false を返す
     }
 
-    /// @fn ~Task()
     /// @brief Task のデストラクタ
     /// @details コルーチンハンドルが有効であれば破棄する
     ~Task()
@@ -82,7 +73,6 @@ private:
     uint32_t                            called = 0;  ///< コルーチンが再開された回数
 };
 
-/// @fn Task gen_coroutine()
 /// @brief コルーチンを生成する関数
 /// @return Taskオブジェクト
 Task gen_coroutine()
@@ -136,11 +126,9 @@ enum class CoroutineState {
     Finished           ///< コルーチンが完了した状態
 };
 
-/// @class ManualCoroutine
 /// @brief コルーチンの状態を保持し、進行を管理するためのクラス
 class ManualCoroutine {
 public:
-    /// @fn bool resume()
     /// @brief コルーチンの代わりに状態を進行させる関数
     /// @details コルーチンの状態に基づいて進行し、コルーチンのように振る舞う
     /// @return コルーチンが継続可能なら true、終了していれば false を返す
@@ -167,7 +155,6 @@ public:
         return false;
     }
 
-    /// @fn std::string get_value()
     /// @brief 呼び出し回数に基づいた文字列を返す
     /// @return "call X" という形式の文字列（X は呼び出し回数）
     std::string get_value() { return "call " + std::to_string(called); }

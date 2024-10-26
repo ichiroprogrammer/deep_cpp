@@ -10,7 +10,6 @@ namespace Nstd {
 
 // @@@ sample begin 0:0
 
-/// @class Exception
 /// @brief StaticString<>を使ったエクセプションクラス
 ///        下記のMAKE_EXCEPTIONを使い生成
 /// @tparam E   std::exceptionから派生したエクセプションクラス

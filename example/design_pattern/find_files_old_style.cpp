@@ -8,8 +8,6 @@ namespace fs = std::filesystem;
 
 // @@@ sample begin 0:0
 
-/// @fn std::vector<std::string> find_files_recursively(std::string const& path,
-///                                                     FindCondition condition)
 /// @brief 条件にマッチしたファイルをリカーシブに探して返す
 /// @param path      リカーシブにディレクトリをたどるための起点となるパス
 /// @param condition どのようなファイルかを指定する

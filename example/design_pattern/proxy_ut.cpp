@@ -16,7 +16,6 @@ namespace {
 
 // @@@ sample begin 0:0
 
-/// @fn bare_client
 /// @brief 非同期サービスを隠蔽していないBareServerを使用したときのクライアントの例
 std::vector<std::string> bare_client(BareServer& bs)
 {
@@ -56,7 +55,6 @@ std::vector<std::string> bare_client(BareServer& bs)
 
 // @@@ sample begin 0:1
 
-/// @fn bare_wrapper_client
 /// @brief BareServerを使いやすくラップしたBareServerWrapperを使用したときのクライアントの例
 std::vector<std::string> bare_wrapper_client(BareServerWrapper& bsw)
 {
@@ -76,7 +74,6 @@ std::vector<std::string> bare_wrapper_client(BareServerWrapper& bsw)
 
 // @@@ sample begin 0:2
 
-/// @fn wrapped_client
 /// @brief 非同期サービスを隠蔽しているWrappedServerを使用したときのクライアントの例
 std::vector<std::string> wrapped_client(WrappedServer& ws)
 {

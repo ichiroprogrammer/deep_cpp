@@ -114,7 +114,6 @@ TEST(Strategy, strategy_lamda)
     ASSERT_EQ(f_expect, f_actual);
 }
 
-/// @fn bool condition_func(std::filesystem::path const& path)
 /// @brief find_files_recursivelyの第2仮引数に渡すためのファイル属性を決める関数
 bool condition_func(std::filesystem::path const& path)
 {
@@ -137,7 +136,6 @@ TEST(Strategy, strategy_func_pointer)
     ASSERT_EQ(f_expect, f_actual);
 }
 
-/// @class ConditionFunctor
 /// @brief
 ///  find_files_recursivelyの第2仮引数に渡すためのファイル属性を決める関数オブジェクトクラス。
 ///  検索条件に状態が必要な場合、関数オブジェクトを使うとよい。
@@ -146,7 +144,6 @@ public:
     ConditionFunctor()  = default;
     ~ConditionFunctor() = default;
 
-    /// @fn bool operator()(std::filesystem::path const& path)
     /// @brief 先頭が'f'のファイルを最大2つまで探す
     bool operator()(std::filesystem::path const& path)
     {

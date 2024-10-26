@@ -30,7 +30,6 @@ public:
     struct promise_type {
         T current_value;
 
-        /// @fn Generator get_return_object()
         /// @brief コルーチンから Generator 型のオブジェクトを返す関数
         /// @return Generatorオブジェクト
         Generator get_return_object()
@@ -38,17 +37,14 @@ public:
             return Generator{std::coroutine_handle<promise_type>::from_promise(*this)};
         }
 
-        /// @fn std::suspend_always initial_suspend()
         /// @brief コルーチンの最初のサスペンドポイント
         /// @return 常にサスペンドするオブジェクトを返す
         std::suspend_always initial_suspend() { return {}; }
 
-        /// @fn std::suspend_always final_suspend() noexcept
         /// @brief コルーチンの最後のサスペンドポイント
         /// @return 常にサスペンドするオブジェクトを返す
         std::suspend_always final_suspend() noexcept { return {}; }
 
-        /// @fn std::suspend_always yield_value(T value)
         /// @brief コルーチンで値を生成するためのサスペンドポイント
         /// @param value 生成された値
         /// @return 常にサスペンドするオブジェクトを返す
@@ -58,16 +54,13 @@ public:
             return {};
         }
 
-        /// @fn void unhandled_exception()
         /// @brief コルーチン内で例外が発生した場合に呼び出される
         void unhandled_exception() { std::exit(1); }
 
-        /// @fn void return_void()
         /// @brief コルーチンの終了時に呼び出される
         void return_void() {}
     };
 
-    /// @fn bool move_next()
     /// @brief コルーチンを再開し、次の値を生成する
     /// @return 次の値が生成された場合は true、終了した場合は false
     bool move_next()
@@ -79,7 +72,6 @@ public:
         return false;
     }
 
-    /// @fn T current_value() const
     /// @brief 現在の値を取得する
     /// @return 現在の値
     T current_value() const { return coro.promise().current_value; }
@@ -99,7 +91,6 @@ private:
     std::coroutine_handle<promise_type> coro;
 };
 
-/// @fn Generator<int> filter_even(Generator<int> input)
 /// @brief 偶数のみをフィルタリングする
 /// @param input フィルタ対象の Generator
 /// @return フィルタ後の Generator
@@ -112,7 +103,6 @@ Generator<int> filter_even(Generator<int> input)
     }
 }
 
-/// @fn Generator<int> double_values(Generator<int> input)
 /// @brief 値を2倍に変換する
 /// @param input 変換対象の Generator
 /// @return 変換後の Generator
@@ -123,7 +113,6 @@ Generator<int> double_values(Generator<int> input)
     }
 }
 
-/// @fn Generator<int> generate_numbers(int start, int end)
 /// @brief 数値の範囲を生成する
 /// @param start 開始値
 /// @param end 終了値
@@ -165,7 +154,6 @@ TEST(ExpTerm, use_co_yield)
 namespace no_use_coroutine_pipeline {
 // @@@ sample begin 1:0
 
-/// @class Generator
 /// @brief コルーチンを使わずにデータを逐次的に提供するジェネレータークラス
 template <typename T>
 class Generator {
@@ -174,7 +162,6 @@ public:
     /// @param data 生成対象のデータ
     Generator(std::vector<T>&& data) : data_(std::move(data)), current_index_(0) {}
 
-    /// @fn bool move_next()
     /// @brief 次の値があるかを確認し、次の値に進む
     /// @return 次の値が存在する場合は true、存在しない場合は false
     bool move_next()
@@ -186,7 +173,6 @@ public:
         return false;
     }
 
-    /// @fn T current_value() const
     /// @brief 現在の値を取得する
     /// @return 現在の値
     T current_value() const
@@ -202,7 +188,6 @@ private:
     size_t         current_index_;  ///< 現在のインデックス
 };
 
-/// @fn Generator<int> filter_even(const Generator<int>& input)
 /// @brief 偶数のみをフィルタリングする
 /// @param input フィルタ対象の Generator
 /// @return フィルタ後の Generator
@@ -219,7 +204,6 @@ Generator<int> filter_even(const Generator<int>& input)
     return Generator<int>(std::move(filtered));
 }
 
-/// @fn Generator<int> double_values(const Generator<int>& input)
 /// @brief 値を2倍に変換する
 /// @param input 変換対象の Generator
 /// @return 変換後の Generator
@@ -234,7 +218,6 @@ Generator<int> double_values(const Generator<int>& input)
     return Generator<int>(std::move(doubled));
 }
 
-/// @fn Generator<int> generate_numbers(int start, int end)
 /// @brief 数値の範囲を生成する
 /// @param start 開始値
 /// @param end 終了値

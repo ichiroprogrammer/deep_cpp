@@ -5,7 +5,6 @@
 
 // @@@ sample begin 0:0
 
-/// @class ThreadNewStyleState
 /// @brief ThreadNewStyleのステートを表す基底クラス
 class ThreadNewStyleState {
 public:

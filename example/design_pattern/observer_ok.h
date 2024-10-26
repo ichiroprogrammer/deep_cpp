@@ -2,7 +2,6 @@
 
 // @@@ sample begin 0:0
 
-/// @class ObserverOK_0
 /// @brief SubjectOKからの変更通知をUpdate()で受け取る。
 ///        Observerパターンの使用例。
 class ObserverOK_0 : public Observer {
