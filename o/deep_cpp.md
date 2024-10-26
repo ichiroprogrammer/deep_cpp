@@ -5723,10 +5723,12 @@ __この章の構成__
 &emsp;&emsp;&emsp; [Nstd::SafeIndexのoperator\<\<の開発](#SS_4_4_3)  
 &emsp;&emsp;&emsp; [コンテナ用Nstd::operator\<\<の開発](#SS_4_4_4)  
 
-&emsp;&emsp; [Nstdライブラリの開発3](#SS_4_5)  
+&emsp;&emsp; [Nstdライブラリの開発3(浮動小数点関連)](#SS_4_5)  
 &emsp;&emsp;&emsp; [浮動小数点の比較](#SS_4_5_1)  
 &emsp;&emsp;&emsp; [固定小数点クラス](#SS_4_5_2)  
 &emsp;&emsp;&emsp; [固定小数点リテラル](#SS_4_5_3)  
+&emsp;&emsp;&emsp; [有理数クラス](#SS_4_5_4)  
+&emsp;&emsp;&emsp; [有理数リテラル](#SS_4_5_5)  
 
 &emsp;&emsp; [ログ取得ライブラリの開発2](#SS_4_6)  
 &emsp;&emsp; [その他のテンプレートテクニック](#SS_4_7)  
@@ -10470,7 +10472,18 @@ range_put_to_sep<>()を用意した。
     }
 ```
 
-## Nstdライブラリの開発3 <a id="SS_4_5"></a>
+## Nstdライブラリの開発3(浮動小数点関連) <a id="SS_4_5"></a>
+[浮動小数点型](#SS_6_1_5)を頻繁に使用するソフトウェアの開発を行うに場合、
+ソースコードの中で、場当たり的に浮動小数点型を使用すると、
+[浮動小数点の誤差](#SS_6_1_5_2)や[浮動小数点の演算エラー](#SS_6_1_5_4)
+にまつわるバグの修正に多くの工数をロスしてしまうことになる。
+
+これらの課題に対処するため、この節は浮動小数点演算によるバグを未然に防ぎ、
+精度を確保するための機能を提供することを目的としている。
+[浮動小数点の比較](#SS_4_5_1)方法や、
+浮動小数点を避けて高精度な演算を実現する[固定小数点クラス](#SS_4_5_2)および[有理数クラス](#SS_4_5_4)を導入し、
+さらにそれらを簡単に使用できるリテラル表記もサポートしている。
+
 ### 浮動小数点の比較 <a id="SS_4_5_1"></a>
 浮動小数点の演算には下記に示したような問題が起こり得るため、単純な==の比較はできない。
 
@@ -10865,6 +10878,191 @@ FixedPointの単体テストコードを以下に示す。
     auto result = a + b;
 
     EXPECT_NEAR(result.ToFloatPoint(), 173.25, 0.01);
+```
+
+### 有理数クラス <a id="SS_4_5_4"></a>
+[固定小数点クラス](#SS_4_5_2)では精度が足りず、浮動小数点を使用したくない場合、
+以下のコードで示す有理数クラスがちょうどよい選択となることがある。
+
+```cpp
+    // @@@ example/template/rational.h 10
+
+    namespace Nstd {
+    /// @class Rational
+    /// @brief ユーザー指定の型で分数を扱うためのクラス
+    /// @tparam T 基本の整数型（デフォルトはint32_t）
+    template <std::signed_integral T = int32_t>
+    class Rational {
+    public:
+        using underlying_type_t = T;
+
+        /// @brief コンストラクタ
+        /// @param num 分子
+        /// @param deno 分母
+        constexpr Rational(T num, T deno = 1) : value_{reduce(num, deno)} {}
+
+        T getNumerator() const noexcept { return value_.num; }
+        T getDenominator() const noexcept { return value_.deno; }
+
+        /// @fn 2項演算子の定義
+        Rational operator+(const Rational& rhs) const noexcept
+        {
+            T num  = value_.num * rhs.value_.deno + rhs.value_.num * value_.deno;
+            T deno = value_.deno * rhs.value_.deno;
+            return Rational{num, deno};
+        }
+        Rational operator-(const Rational& rhs) const noexcept
+        {
+            T num  = value_.num * rhs.value_.deno - rhs.value_.num * value_.deno;
+            T deno = value_.deno * rhs.value_.deno;
+            return Rational{num, deno};
+        }
+        Rational operator*(const Rational& rhs) const noexcept
+        {
+            return Rational{value_.num * rhs.value_.num, value_.deno * rhs.value_.deno};
+        }
+        Rational operator/(const Rational& rhs) const noexcept
+        {
+            return Rational(value_.num * rhs.value_.deno, value_.deno * rhs.value_.num);
+        }
+
+        /// @fn 複合代入演算子
+        Rational& operator+=(Rational const& rhs)
+        {
+            *this = *this + rhs;
+            return *this;
+        }
+
+        Rational& operator-=(Rational const& rhs)
+        {
+            *this = *this - rhs;
+            return *this;
+        }
+        Rational& operator*=(Rational const& rhs)
+        {
+            *this = *this * rhs;
+            return *this;
+        }
+
+        Rational& operator/=(Rational const& rhs)
+        {
+            *this = *this / rhs;
+            return *this;
+        }
+
+        /// @fn 単項演算子の定義
+        constexpr Rational operator+() const noexcept { return *this; }
+        constexpr Rational operator-() const noexcept { return Rational{-value_.num, value_.deno}; }
+
+        /// @fn 比較演算子の定義
+        friend bool operator==(Rational const& lhs, Rational const& rhs) noexcept = default;
+        friend auto operator<=>(Rational const& lhs, Rational const& rhs) noexcept
+        {
+            return (lhs.value_.num * rhs.value_.deno) <=> (rhs.value_.num * lhs.value_.deno);
+        }
+
+        /// fn put-to演算子の定義
+        friend std::ostream& operator<<(std::ostream& os, const Rational& rhs)
+        {
+            return (rhs.value_.deno == 1) ? os << rhs.value_.num
+                                          : os << rhs.value_.num << "/" << rhs.value_.deno;
+        }
+
+        /// @fn doubleへの変換演算子
+        /// @brief doubleで表現可能な場合のみ利用可能
+        template <typename U = T>
+        explicit operator double() const noexcept requires std::is_convertible_v<U, double>
+        {
+            return static_cast<double>(value_.num) / static_cast<double>(value_.deno);
+        }
+
+    private:
+        struct rational_t {
+            T           num;
+            T           deno;
+            friend bool operator==(rational_t const& lhs, rational_t const& rhs) noexcept = default;
+        };
+
+        /// @fn reduce
+        /// @brief num/denoを約分して、rational_tで返す
+        static rational_t reduce(T num, T deno) noexcept
+        {
+            T const gcd = std::gcd(num, deno);
+
+            num /= gcd;
+            deno /= gcd;
+
+            if (deno < 0) {  // 分母を正に保つ
+                return {-num, -deno};
+            }
+            else {
+                return {num, deno};
+            }
+        }
+
+    private:
+        rational_t value_;
+    };
+    }  // namespace Nstd
+```
+```cpp
+    // @@@ example/template/rational_ut.cpp 12
+
+    auto       r1    = Rational{1, 2};
+    const auto r1_sv = r1;
+    auto       r2    = Rational{1, 3};
+
+    ASSERT_GE(r1, r2);
+
+    r1 += r2;  // operator+
+    ASSERT_EQ((Rational{5, 6}), r1);
+    r1 = r1_sv;
+
+    r1 -= r2;
+    ASSERT_EQ((Rational{1, 6}), r1);
+    r1 = r1_sv;
+
+    auto oss = std::ostringstream{};
+    oss << r1;
+    ASSERT_EQ("1/2", oss.str());  // operator<<
+```
+
+### 有理数リテラル <a id="SS_4_5_5"></a>
+[固定小数点クラス](#SS_4_5_2)に対して、[固定小数点リテラル](#SS_4_5_3)を定義したように、
+使い勝手のよい環境をユーザに提供するために、
+[有理数クラス](#SS_4_5_4)に対して、有理数リテラルを定義するべきである。
+
+```cpp
+    // @@@ example/template/rational.h 130
+
+    namespace Nstd {
+    /// @fn  Rational<int32_t>をユーザ定義リテラルとして扱うためのオペレータ
+    /// @brief _rn: rational number
+    /// @param N/Mの形式
+    Rational<int32_t> operator"" _rn(char const* str, size_t)
+    {
+        std::string_view input{str};
+        size_t           sep = input.find('/');
+
+        if (sep == std::string::npos) {
+            throw std::invalid_argument("invalid formt for user-defined rational number");
+        }
+
+        int32_t num  = std::stoi(str);
+        int32_t deno = std::stoi(input.substr(sep + 1).data());
+
+        return {num, deno};
+    }
+    }  // namespace Nstd
+```
+```cpp
+    // @@@ example/template/rational_ut.cpp 55
+
+    auto r1 = "1/2"_rn;
+    auto r2 = "1/3"_rn;
+
+    ASSERT_GE(r1, r2);
+    ASSERT_DOUBLE_EQ(static_cast<double>(r1), 0.5);
 ```
 
 ## ログ取得ライブラリの開発2 <a id="SS_4_6"></a>
@@ -14690,11 +14888,10 @@ __この章の構成__
 &emsp;&emsp;&emsp; [浮動小数点型](#SS_6_1_5)  
 &emsp;&emsp;&emsp;&emsp; [浮動小数点型のダイナミックレンジ](#SS_6_1_5_1)  
 &emsp;&emsp;&emsp;&emsp; [浮動小数点の誤差](#SS_6_1_5_2)  
-&emsp;&emsp;&emsp;&emsp; [epsilon](#SS_6_1_5_3)  
+&emsp;&emsp;&emsp;&emsp; [イプシロン](#SS_6_1_5_3)  
 &emsp;&emsp;&emsp;&emsp; [浮動小数点の演算エラー](#SS_6_1_5_4)  
 
-&emsp;&emsp;&emsp; [浮動小数点の主なエラー](#SS_6_1_6)  
-&emsp;&emsp;&emsp; [汎整数拡張](#SS_6_1_7)  
+&emsp;&emsp;&emsp; [汎整数拡張](#SS_6_1_6)  
 
 &emsp;&emsp; [enum](#SS_6_2)  
 &emsp;&emsp;&emsp; [enum class](#SS_6_2_1)  
@@ -14954,7 +15151,7 @@ ___
 C++における算術変換とは、算術演算の1つのオペランドが他のオペランドと同じ型でない場合、
 1つのオペランドを他のオペランドと同じ型に変換するプロセスのことを指す。
 
-算術変換は、[汎整数拡張](#SS_6_1_7)と通常算術変換に分けられる。
+算術変換は、[汎整数拡張](#SS_6_1_6)と通常算術変換に分けられる。
 
 ```cpp
     // @@@ example/term_explanation/integral_promotion_ut.cpp 11
@@ -15050,7 +15247,7 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 * `double`
 * `long double`
 
-浮動小数点の使用は、IEEE 754標準に基づき定められている。
+浮動小数点の仕様は、IEEE 754標準に準拠している。
 この標準は、浮動小数点演算の表現方法、精度、丸め方法、および例外処理を規定しており、
 広く使用されている。
 
@@ -15071,63 +15268,45 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 正確に表現できないことがある。これにより、計算結果がわずかに異なる値を返す場合がある。
 浮動小数点誤差は、特に計算の繰り返しや桁数の多い計算で顕著になる。
 
-以下に示すコードにより誤差が発生することを示す。
+以下のコードにより誤差が容易に発生することを示す。
 
 ```cpp
-    // @@@ example/term_explanation/noexcept_ut.cpp 11
+    // @@@ example/term_explanation/float_ut.cpp 12
 
-std::string f_noexcept() noexcept  // エクセプションを発生させない
-{
-    return "No exceptions here!";
-}
+    // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
+    constexpr auto a = 0.01F;  // 0.0000001010001111...
+    constexpr auto b = 0.04F;  // 0.0000101000111101...
 
-std::string f_except() noexcept(false)  // エクセプションを発生させる
-{
-    throw std::runtime_error{"always throw"};
-
-    return "No exceptions here!";
-}
-
-// noexcept or noexcept(false)と宣言しない限りnoexceptでない
-std::string f_except2()  // エクセプションを発生させる
-{
-    throw std::runtime_error{"always throw"};
-
-    return "No exceptions here!";
-}
+    //  ASSERT_EQ(0.05F, a + b);  // NG  a + b == 0.05Fは一般には成立しない。
+    ASSERT_NE(0.05F, a + b);
 ```
 
-#### epsilon <a id="SS_6_1_5_3"></a>
-イプシロンとは、ある浮動小数点数に対して「1」を加えた時に、
+#### イプシロン <a id="SS_6_1_5_3"></a>
+イプシロン(epsilon)とは、ある浮動小数点数に対して「1」を加えた時に、
 異なる値として識別できる最小の差分を指す。
 つまり、イプシロンは浮動小数点数の精度を示す尺度である。
 
 任意の浮動小数点変数a, bがあり、`|a - b| <= epsilon`であった場合、
 浮動小数点の仕組みではa、bの差が無いものと考えて、aとbが同値であると考えることが一般的である。
 
-epsilonを使用した浮動小数点変数の同値判定のコード例を以下に示す。
+イプシロンを使用した浮動小数点変数の同値判定のコード例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/noexcept_ut.cpp 50
+    // @@@ example/term_explanation/float_ut.cpp 24
 
-class PossiblyThrow {  // オブジェクト生成でエクセプションの発生可能性あり
-public:
-    PossiblyThrow() {}
-};
+    // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
+    constexpr auto a = 0.01F;  // 0.0000001010001111...
+    constexpr auto b = 0.04F;  // 0.0000101000111101...
 
-// テンプレート型Tがnoexceptで生成可能なら、関数もnoexceptにする
-template <typename T>
-void t_f(T const&) noexcept(std::is_nothrow_constructible_v<T>)
-{
-    // Tを生成して、何らかの処理を行う
-}
+    bool is_equal = 0.05F == (a + b);
+    ASSERT_FALSE(is_equal);  // is_equalはtrueにはならない
+
+    bool is_nearly_equal = std::abs(0.05F - (a + b)) <= std::numeric_limits<float>::epsilon();
+    ASSERT_TRUE(is_nearly_equal);  // 浮動小数点の同値はこのように判定する
 ```
-
 
 #### 浮動小数点の演算エラー <a id="SS_6_1_5_4"></a>
 浮動小数点の演算は以下のようなエラーを生じることがある。
-
-### 浮動小数点の主なエラー <a id="SS_6_1_6"></a>
 
 | エラーの種類   | 説明                                                                           | 例                           |
 |:---------------|:-------------------------------------------------------------------------------|:-----------------------------|
@@ -15138,10 +15317,35 @@ void t_f(T const&) noexcept(std::is_nothrow_constructible_v<T>)
 | オーバーフロー | 型が表現可能な最大値を超えると無限大（`inf`）として扱われる。                  | `std::pow(10.0, 308)`        |
 | アンダーフロー | 型の最小値より小さい数値は0または非常に小さな値として表現され、精度が失われる。| `std::pow(10.0, -308)`       |
 
+浮動小数点の演算エラーの検出コード例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/float_ut.cpp 40
+
+    std::feclearexcept(FE_ALL_EXCEPT);  // 全ての例外フラグをクリア
+
+    double result0 = 1.0 / 0.0;                    // ゼロ除算を引き起こす
+    EXPECT_TRUE(std::fetestexcept(FE_DIVBYZERO));  // ゼロ除算例外が発生したか確認
+
+    std::feclearexcept(FE_ALL_EXCEPT);  // 全ての例外フラグをクリア
+
+    double result1 = std::numeric_limits<double>::max() * 10.0;  // 最大値を超えてオーバーフロー
+    EXPECT_TRUE(std::fetestexcept(FE_OVERFLOW));  // オーバーフロー例外が発生したか確認
+
+    std::feclearexcept(FE_ALL_EXCEPT);  // 全ての例外フラグをクリア
+
+    double result2 = std::pow(10.0, -308);         // アンダーフローを引き起こす
+    EXPECT_TRUE(std::fetestexcept(FE_UNDERFLOW));  // アンダーフロー例外が発生したか確認
+```
+
+なお、上記のコードで使用した`std::fetestexcept`は一般にスレッドセーフである。
+`std::fetestexcept`がスレッドセーフでない処理系では、浮動小数演算エラーの検出は、
+実質的には不可能になってしまうため、
+浮動小数演算を複数コンテキストで行うソフトウェアの開発する場合、
+処理系の選択に注意が必要である。
 
 
-
-### 汎整数拡張 <a id="SS_6_1_7"></a>
+### 汎整数拡張 <a id="SS_6_1_6"></a>
 bool、char、signed char、unsigned char、short、unsigned short型の変数が、
 算術のオペランドとして使用される場合、
 
@@ -15300,7 +15504,7 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 ### std::byte <a id="SS_6_2_4"></a>
 C++17で導入されたstd::byte型は、バイト単位のデータ操作に使用され、
 整数型としての意味を持たないため、型安全性を確保する。
-uint8_t型と似ているが、uint8_t型の演算による[汎整数拡張](#SS_6_1_7)が発生しないため、
+uint8_t型と似ているが、uint8_t型の演算による[汎整数拡張](#SS_6_1_6)が発生しないため、
 可読性、保守性の向上が見込める。
 
 ```cpp

@@ -13,7 +13,7 @@ SRCS:=\
     func_type_ut.cpp etc_ut.cpp variant_ut.cpp \
     nstd_seq_ut.cpp nstd_static_string_ut.cpp nstd_static_string_num_ut.cpp \
 	nstd_exception_ut.cpp nstd_static_string_path_ut.cpp nstd_concepts_ut.cpp \
-	nstd_float_ut.cpp fixed_point_ut.cpp
+	nstd_float_ut.cpp fixed_point_ut.cpp rational_ut.cpp
 
 SHARED:=../../
 include $(SHARED)make/env.mk
