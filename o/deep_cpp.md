@@ -7325,7 +7325,7 @@ std::enable_ifの使用例を下記に示す。
 
 実装例から明らかなように
 
-* std::enable_if\<true>::typeは[well-formed](#SS_6_17_5)
+* std::enable_if\<true>::typeは[well-formed](#SS_6_17_8)
 * std::enable_if\<false>::typeは[ill-formed](#SS_6_17_4)
 
 となるため、下記のコードはコンパイルできない。
@@ -8828,7 +8828,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 上記で使用したstd::void_tは、テンプレートパラメータが
 
 * [ill-formed](#SS_6_17_4)ならばill-formedになる
-* [well-formed](#SS_6_17_5)ならvoidを生成する
+* [well-formed](#SS_6_17_8)ならvoidを生成する
 
 テンプレートである。
 
@@ -15024,18 +15024,21 @@ __この章の構成__
 &emsp;&emsp;&emsp; [実引数/仮引数](#SS_6_17_2)  
 &emsp;&emsp;&emsp; [単純代入](#SS_6_17_3)  
 &emsp;&emsp;&emsp; [ill-formed](#SS_6_17_4)  
-&emsp;&emsp;&emsp; [well-formed](#SS_6_17_5)  
-&emsp;&emsp;&emsp; [one-definition rule](#SS_6_17_6)  
-&emsp;&emsp;&emsp; [ODR](#SS_6_17_7)  
-&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_17_8)  
-&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_17_9)  
-&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_17_10)  
-&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_17_11)  
-&emsp;&emsp;&emsp; [RTTI](#SS_6_17_12)  
-&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_17_13)  
-&emsp;&emsp;&emsp; [simple-declaration](#SS_6_17_14)  
-&emsp;&emsp;&emsp; [typeid](#SS_6_17_15)  
-&emsp;&emsp;&emsp; [トライグラフ](#SS_6_17_16)  
+&emsp;&emsp;&emsp; [未定義動作](#SS_6_17_5)  
+&emsp;&emsp;&emsp; [未規定動作](#SS_6_17_6)  
+&emsp;&emsp;&emsp; [未定義動作と未規定動作](#SS_6_17_7)  
+&emsp;&emsp;&emsp; [well-formed](#SS_6_17_8)  
+&emsp;&emsp;&emsp; [one-definition rule](#SS_6_17_9)  
+&emsp;&emsp;&emsp; [ODR](#SS_6_17_10)  
+&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_17_11)  
+&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_17_12)  
+&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_17_13)  
+&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_17_14)  
+&emsp;&emsp;&emsp; [RTTI](#SS_6_17_15)  
+&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_17_16)  
+&emsp;&emsp;&emsp; [simple-declaration](#SS_6_17_17)  
+&emsp;&emsp;&emsp; [typeid](#SS_6_17_18)  
+&emsp;&emsp;&emsp; [トライグラフ](#SS_6_17_19)  
 
 &emsp;&emsp; [C++コンパイラ](#SS_6_18)  
 &emsp;&emsp;&emsp; [g++](#SS_6_18_1)  
@@ -22223,7 +22226,7 @@ Derived用のoperator==を
     ASSERT_TRUE(d0_b_ref == d1);  // NG d0_b_refの実態はd0なのでd1と等価でない
 ```
 
-この問題は、[RTTI](#SS_6_17_12)を使った下記のようなコードで対処できる。
+この問題は、[RTTI](#SS_6_17_15)を使った下記のようなコードで対処できる。
 
 ```cpp
     // @@@ example/term_explanation/semantics_ut.cpp 203
@@ -22559,14 +22562,56 @@ C++11で導入されたキーワードで、メモリのアライメントを指
 プログラムがill-formedになった場合、通常はコンパイルエラーになるが、
 対象がテンプレートの場合、事情は少々異なり、[SFINAE](#SS_6_10_1)によりコンパイルできることもある。
 
+### 未定義動作 <a id="SS_6_17_5"></a>
+未定義動作(Undefined Behavior)とは、
+C++標準が特定の操作や状況に対して一切の制約を設けないケースである。
+未定義動作が発生すると、プログラムの実行結果が予測できなくなり、
+何が起こるかはコンパイラや環境によって異なる。
+未定義動作を含むコードは、クラッシュやセキュリティの問題を引き起こす可能性がある。
 
-### well-formed <a id="SS_6_17_5"></a>
+```cpp
+    // @@@ example/term_explanation/undefined_ut.cpp 14
+
+    int a = 42;
+    int b = 0;
+    int c = a / b;  // 未定義動作 - ゼロ除算
+
+    int arr[]{1, 2, 3};
+    int x = arr[index];  // 未定義動作 - index>2の場合、配列範囲外アクセス
+
+```
+
+### 未規定動作 <a id="SS_6_17_6"></a>
+未規定動作(Unspecified Behavior)とは、C++標準がある操作の動作を完全には決めておらず、
+複数の許容可能な選択肢がある場合でのコードの動作を指す。
+未規定動作は、実装ごとに異なる可能性があり、標準は少なくとも「何らかの合理的な結果」を保証する。
+つまり、動作が特定の範囲で予測可能だが、正確な挙動が処理系の実装に依存することになる。
+
+```cpp
+    // @@@ example/term_explanation/undefined_ut.cpp 35
+
+    enum class MyEnum : int { Value1 = 1, Value2 = 256 };
+    int value = static_cast<int8_t>(MyEnum::Value2);  // 未規定 - 256はint8_tとして表現できない
+
+    auto a      = int{5};
+    auto lambda = [](auto a0, auto a1) { return a0 / a1; };
+    auto result = lambda(a++, a++);  // 未規定 - 引数評価の順序が決まっていない
+```
+
+### 未定義動作と未規定動作 <a id="SS_6_17_7"></a>
+| 種類            |定義                                                               | 例                               | 結果                           |
+|-----------------|-------------------------------------------------------------------|----------------------------------|--------------------------------|
+|[未定義動作](#SS_6_17_5)|C++標準が全く保証しない動作                                        | ゼロ除算、配列範囲外アクセス     | 予測不能(クラッシュなど)       |
+|[未規定動作](#SS_6_17_6)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
+
+
+### well-formed <a id="SS_6_17_8"></a>
 「[ill-formed](#SS_6_17_4)」を参照せよ。
 
-### one-definition rule <a id="SS_6_17_6"></a>
-「[ODR](#SS_6_17_7)」を参照せよ。
+### one-definition rule <a id="SS_6_17_9"></a>
+「[ODR](#SS_6_17_10)」を参照せよ。
 
-### ODR <a id="SS_6_17_7"></a>
+### ODR <a id="SS_6_17_10"></a>
 ODRとは、One Definition Ruleの略語であり、下記のようなことを定めている。
 
 * どの翻訳単位でも、テンプレート、型、関数、またはオブジェクトは、複数の定義を持つことができない。
@@ -22577,7 +22622,7 @@ ODRとは、One Definition Ruleの略語であり、下記のようなことを�
 [https://en.cppreference.com/w/cpp/language/definition](https://en.cppreference.com/w/cpp/language/definition)
 が参考になる。
 
-### RVO(Return Value Optimization) <a id="SS_6_17_8"></a>
+### RVO(Return Value Optimization) <a id="SS_6_17_11"></a>
 関数の戻り値がオブジェクトである場合、
 戻り値オブジェクトは、その関数の呼び出し元のオブジェクトにコピーされた後、すぐに破棄される。
 この「オブジェクトをコピーして、その後すぐにそのオブジェクトを破棄する」動作は、
@@ -22588,7 +22633,7 @@ RVOとはこのような最適化を指す。
 [C++17から規格化](https://cpprefjp.github.io/lang/cpp17/guaranteed_copy_elision.html)された。
 
 
-### SSO(Small String Optimization) <a id="SS_6_17_9"></a>
+### SSO(Small String Optimization) <a id="SS_6_17_12"></a>
 一般にstd::stringで文字列を保持する場合、newしたメモリが使用される。
 64ビット環境であれば、newしたメモリのアドレスを保持する領域は8バイトになる。
 std::stringで保持する文字列が終端の'\0'も含め8バイト以下である場合、
@@ -22597,7 +22642,7 @@ std::stringで保持する文字列が終端の'\0'も含め8バイト以下で�
 
 SOOとはこのような最適化を指す。
 
-### heap allocation elision <a id="SS_6_17_10"></a>
+### heap allocation elision <a id="SS_6_17_13"></a>
 C++11までの仕様では、new式によるダイナミックメモリアロケーションはコードに書かれた通りに、
 実行されなければならず、ひとまとめにしたり省略したりすることはできなかった。
 つまり、ヒープ割り当てに対する最適化は認められなかった。
@@ -22645,7 +22690,7 @@ new/deleteの呼び出しをまとめたり省略したりすることができ�
 ダイナミックメモリアロケーションが1回に抑えられるため、メモリアクセスが高速化される。
 
 
-### Most Vexing Parse <a id="SS_6_17_11"></a>
+### Most Vexing Parse <a id="SS_6_17_14"></a>
 Most Vexing Parse(最も困惑させる構文解析)とは、C++の文法に関連する問題で、
 Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつけたことに由来する。
 
@@ -22677,7 +22722,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 このような問題を回避できる。
 
 
-### RTTI <a id="SS_6_17_12"></a>
+### RTTI <a id="SS_6_17_15"></a>
 RTTI(Run-time Type Information)とは、プログラム実行中のオブジェクトの型を導出するための機能であり、
 具体的には下記の3つの要素を指す。
 
@@ -22765,10 +22810,10 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     // ASSERT_THROW(dynamic_cast<NonPolymorphic_Derived&>(b_ref_b), std::bad_cast);
 ```
 
-### Run-time Type Information <a id="SS_6_17_13"></a>
-「[RTTI](#SS_6_17_12)」を参照せよ。
+### Run-time Type Information <a id="SS_6_17_16"></a>
+「[RTTI](#SS_6_17_15)」を参照せよ。
 
-### simple-declaration <a id="SS_6_17_14"></a>
+### simple-declaration <a id="SS_6_17_17"></a>
 このための記述が
 [simple-declaration](https://cpprefjp.github.io/lang/cpp17/selection_statements_with_initializer.html)
 とは、C++17から導入された
@@ -22802,10 +22847,10 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     }
 ```
 
-### typeid <a id="SS_6_17_15"></a>
-「[RTTI](#SS_6_17_12)」を参照せよ。
+### typeid <a id="SS_6_17_18"></a>
+「[RTTI](#SS_6_17_15)」を参照せよ。
 
-### トライグラフ <a id="SS_6_17_16"></a>
+### トライグラフ <a id="SS_6_17_19"></a>
 トライグラフとは、2つの疑問符とその後に続く1文字によって表される、下記の文字列である。
 
 ```
