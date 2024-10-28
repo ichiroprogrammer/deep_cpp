@@ -7325,8 +7325,8 @@ std::enable_ifの使用例を下記に示す。
 
 実装例から明らかなように
 
-* std::enable_if\<true>::typeは[well-formed](#SS_6_17_8)
-* std::enable_if\<false>::typeは[ill-formed](#SS_6_17_4)
+* std::enable_if\<true>::typeは[well-formed](#SS_6_17_9)
+* std::enable_if\<false>::typeは[ill-formed](#SS_6_17_5)
 
 となるため、下記のコードはコンパイルできない。
 
@@ -8417,7 +8417,7 @@ SFINAEと関数テンプレート/関数のオーバーライドを使用し以�
 AreConvertibleWithoutNarrowConvはNstdで定義するため、その内部のみで用いる
 is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 
-上記を抜粋した下記のコードは「縮小型変換を発生さる{}による初期化は[ill-formed](#SS_6_17_4)になる」
+上記を抜粋した下記のコードは「縮小型変換を発生さる{}による初期化は[ill-formed](#SS_6_17_5)になる」
 ことをSFINAEに利用している。
 
 ```cpp
@@ -8827,8 +8827,8 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 
 上記で使用したstd::void_tは、テンプレートパラメータが
 
-* [ill-formed](#SS_6_17_4)ならばill-formedになる
-* [well-formed](#SS_6_17_8)ならvoidを生成する
+* [ill-formed](#SS_6_17_5)ならばill-formedになる
+* [well-formed](#SS_6_17_9)ならvoidを生成する
 
 テンプレートである。
 
@@ -15021,24 +15021,25 @@ __この章の構成__
 &emsp;&emsp;&emsp;&emsp; [alignof](#SS_6_17_1_1)  
 &emsp;&emsp;&emsp;&emsp; [alignas](#SS_6_17_1_2)  
 
-&emsp;&emsp;&emsp; [実引数/仮引数](#SS_6_17_2)  
-&emsp;&emsp;&emsp; [単純代入](#SS_6_17_3)  
-&emsp;&emsp;&emsp; [ill-formed](#SS_6_17_4)  
-&emsp;&emsp;&emsp; [未定義動作](#SS_6_17_5)  
-&emsp;&emsp;&emsp; [未規定動作](#SS_6_17_6)  
-&emsp;&emsp;&emsp; [未定義動作と未規定動作](#SS_6_17_7)  
-&emsp;&emsp;&emsp; [well-formed](#SS_6_17_8)  
-&emsp;&emsp;&emsp; [one-definition rule](#SS_6_17_9)  
-&emsp;&emsp;&emsp; [ODR](#SS_6_17_10)  
-&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_17_11)  
-&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_17_12)  
-&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_17_13)  
-&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_17_14)  
-&emsp;&emsp;&emsp; [RTTI](#SS_6_17_15)  
-&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_17_16)  
-&emsp;&emsp;&emsp; [simple-declaration](#SS_6_17_17)  
-&emsp;&emsp;&emsp; [typeid](#SS_6_17_18)  
-&emsp;&emsp;&emsp; [トライグラフ](#SS_6_17_19)  
+&emsp;&emsp;&emsp; [演算子のオペランドの評価順位](#SS_6_17_2)  
+&emsp;&emsp;&emsp; [実引数/仮引数](#SS_6_17_3)  
+&emsp;&emsp;&emsp; [単純代入](#SS_6_17_4)  
+&emsp;&emsp;&emsp; [ill-formed](#SS_6_17_5)  
+&emsp;&emsp;&emsp; [未定義動作](#SS_6_17_6)  
+&emsp;&emsp;&emsp; [未規定動作](#SS_6_17_7)  
+&emsp;&emsp;&emsp; [未定義動作と未規定動作](#SS_6_17_8)  
+&emsp;&emsp;&emsp; [well-formed](#SS_6_17_9)  
+&emsp;&emsp;&emsp; [one-definition rule](#SS_6_17_10)  
+&emsp;&emsp;&emsp; [ODR](#SS_6_17_11)  
+&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_17_12)  
+&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_17_13)  
+&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_17_14)  
+&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_17_15)  
+&emsp;&emsp;&emsp; [RTTI](#SS_6_17_16)  
+&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_17_17)  
+&emsp;&emsp;&emsp; [simple-declaration](#SS_6_17_18)  
+&emsp;&emsp;&emsp; [typeid](#SS_6_17_19)  
+&emsp;&emsp;&emsp; [トライグラフ](#SS_6_17_20)  
 
 &emsp;&emsp; [C++コンパイラ](#SS_6_18)  
 &emsp;&emsp;&emsp; [g++](#SS_6_18_1)  
@@ -16190,7 +16191,7 @@ C++11以前で定数を定義する方法は、
 ```
 
 constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_10_8)することで、
-[ill-formed](#SS_6_17_4)を使用した場合分けが可能になる。
+[ill-formed](#SS_6_17_5)を使用した場合分けが可能になる。
 
 
 ### constexpr関数 <a id="SS_6_4_2"></a>
@@ -20099,7 +20100,7 @@ XXXの識別子が使用できる。
 ### SFINAE <a id="SS_6_10_1"></a>
 [SFINAE](https://cpprefjp.github.io/lang/cpp11/sfinae_expressions.html)
 (Substitution Failure Is Not An Errorの略称、スフィネェと読む)とは、
-「テンプレートのパラメータ置き換えに失敗した([ill-formed](#SS_6_17_4)になった)際に、
+「テンプレートのパラメータ置き換えに失敗した([ill-formed](#SS_6_17_5)になった)際に、
 即時にコンパイルエラーとはせず、置き換えに失敗したテンプレートを
 [name lookup](#SS_6_9_2)の候補から除外する」
 という言語機能である。
@@ -22226,7 +22227,7 @@ Derived用のoperator==を
     ASSERT_TRUE(d0_b_ref == d1);  // NG d0_b_refの実態はd0なのでd1と等価でない
 ```
 
-この問題は、[RTTI](#SS_6_17_15)を使った下記のようなコードで対処できる。
+この問題は、[RTTI](#SS_6_17_16)を使った下記のようなコードで対処できる。
 
 ```cpp
     // @@@ example/term_explanation/semantics_ut.cpp 203
@@ -22526,7 +22527,56 @@ C++11で導入されたキーワードで、メモリのアライメントを指
     ASSERT_EQ(alignof(int), 4);           // アライメントが正しいか確認
 ```
 
-### 実引数/仮引数 <a id="SS_6_17_2"></a>
+### 演算子のオペランドの評価順位 <a id="SS_6_17_2"></a>
+
+C++17で、演算子のオペランドに対する評価順序が明確に規定された。
+それに対し、C++14までは、演算子のオペランド部分式の評価順序は[未規定動作](#SS_6_17_7)であった。
+以下の表で示す演算子に関しては、オペランドaがオペランドbよりも先に評価される。
+
+| 演算子               |説明                                                                   |
+|:---------------------|:----------------------------------------------------------------------|
+| a.b                  |メンバアクセス演算子                                                   |
+| a->b                 |ポインタメンバアクセス演算子                                           |
+| a->\*b               |メンバポインタアクセス演算子                                           |
+| a(b1,  b2, b3)       |関数呼び出し、引数リストの評価順序は規定外)                            |
+| b @= a               |代入演算子 = や複合代入演算子。@は+,-,/,&,\|など                       |
+| a[b]                 |配列アクセス                                                           |
+| a << b               |ビットシフト左演算子                                                   |
+| a >> b               |ビットシフト右演算子                                                   |
+
+C++11以前では、以下のコードの評価順序は未規定であったが、上記の通り定義された。
+
+```cpp
+    // @@@ example/term_explanation/etc_ut.cpp 22
+
+    int i = 0;
+    int y = (i = 1) * x + (i = 2);
+
+    a(b1, b2, b3);  // b1, b2, b3の評価順序は規定外
+```
+
+関数呼び出しにおける引数の式の評価順序は、上記の例a(b1, b2, b3)での評価順序は、
+不定順で序列化される。これは、b1, b2, b3 が特定の順序で評価される保証はなく、
+例えば b3, b2, b1 の順に評価されたり、
+b2, b3, b1 で評価される可能性があることを意味する。
+一方で一度評価が開始された場合、部分式間でインターリーブ（交差実行されることはない。
+つまり、b1 の評価が完全に終わる前に b2 や b3 の評価が開始されることはない。
+
+条件演算子式`condition ? expr1 : expr2`については、
+最初の部分であるconditionがまず評価される。
+conditionの評価結果に基づき、expr1または expr2 のどちらかが選択され、選択された側だけが評価される。  
+
+```cpp
+    // @@@ example/term_explanation/etc_ut.cpp 31
+
+    int a      = 1;
+    int b      = 2;
+    int result = (a < b) ? func1() : func2();
+```
+
+なお、単項演算子のオペランドは1つであるため、優先順位の定義は不要である。
+
+### 実引数/仮引数 <a id="SS_6_17_3"></a>
 引数(もしくは実引数、argument)、仮引数(parameter)とは下記のように定義される。
 
 ```cpp
@@ -22545,13 +22595,13 @@ C++11で導入されたキーワードで、メモリのアライメントを指
     }
 ```
 
-### 単純代入 <a id="SS_6_17_3"></a>
+### 単純代入 <a id="SS_6_17_4"></a>
 代入は下記のように分類される。
 
 * 単純代入(=)
 * 複合代入(+=，++ 等)
 
-### ill-formed <a id="SS_6_17_4"></a>
+### ill-formed <a id="SS_6_17_5"></a>
 [標準規格と処理系](https://cpprefjp.github.io/implementation-compliance.html)に詳しい解説があるが、
 
 * well-formed(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
@@ -22562,7 +22612,7 @@ C++11で導入されたキーワードで、メモリのアライメントを指
 プログラムがill-formedになった場合、通常はコンパイルエラーになるが、
 対象がテンプレートの場合、事情は少々異なり、[SFINAE](#SS_6_10_1)によりコンパイルできることもある。
 
-### 未定義動作 <a id="SS_6_17_5"></a>
+### 未定義動作 <a id="SS_6_17_6"></a>
 未定義動作(Undefined Behavior)とは、
 C++標準が特定の操作や状況に対して一切の制約を設けないケースである。
 未定義動作が発生すると、プログラムの実行結果が予測できなくなり、
@@ -22581,7 +22631,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 
 ```
 
-### 未規定動作 <a id="SS_6_17_6"></a>
+### 未規定動作 <a id="SS_6_17_7"></a>
 未規定動作(Unspecified Behavior)とは、C++標準がある操作の動作を完全には決めておらず、
 複数の許容可能な選択肢がある場合でのコードの動作を指す。
 未規定動作は、実装ごとに異なる可能性があり、標準は少なくとも「何らかの合理的な結果」を保証する。
@@ -22598,20 +22648,20 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
     auto result = lambda(a++, a++);  // 未規定 - 引数評価の順序が決まっていない
 ```
 
-### 未定義動作と未規定動作 <a id="SS_6_17_7"></a>
+### 未定義動作と未規定動作 <a id="SS_6_17_8"></a>
 | 種類            |定義                                                               | 例                               | 結果                           |
 |-----------------|-------------------------------------------------------------------|----------------------------------|--------------------------------|
-|[未定義動作](#SS_6_17_5)|C++標準が全く保証しない動作                                        | ゼロ除算、配列範囲外アクセス     | 予測不能(クラッシュなど)       |
-|[未規定動作](#SS_6_17_6)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
+|[未定義動作](#SS_6_17_6)|C++標準が全く保証しない動作                                        | ゼロ除算、配列範囲外アクセス     | 予測不能(クラッシュなど)       |
+|[未規定動作](#SS_6_17_7)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
 
 
-### well-formed <a id="SS_6_17_8"></a>
-「[ill-formed](#SS_6_17_4)」を参照せよ。
+### well-formed <a id="SS_6_17_9"></a>
+「[ill-formed](#SS_6_17_5)」を参照せよ。
 
-### one-definition rule <a id="SS_6_17_9"></a>
-「[ODR](#SS_6_17_10)」を参照せよ。
+### one-definition rule <a id="SS_6_17_10"></a>
+「[ODR](#SS_6_17_11)」を参照せよ。
 
-### ODR <a id="SS_6_17_10"></a>
+### ODR <a id="SS_6_17_11"></a>
 ODRとは、One Definition Ruleの略語であり、下記のようなことを定めている。
 
 * どの翻訳単位でも、テンプレート、型、関数、またはオブジェクトは、複数の定義を持つことができない。
@@ -22622,7 +22672,7 @@ ODRとは、One Definition Ruleの略語であり、下記のようなことを�
 [https://en.cppreference.com/w/cpp/language/definition](https://en.cppreference.com/w/cpp/language/definition)
 が参考になる。
 
-### RVO(Return Value Optimization) <a id="SS_6_17_11"></a>
+### RVO(Return Value Optimization) <a id="SS_6_17_12"></a>
 関数の戻り値がオブジェクトである場合、
 戻り値オブジェクトは、その関数の呼び出し元のオブジェクトにコピーされた後、すぐに破棄される。
 この「オブジェクトをコピーして、その後すぐにそのオブジェクトを破棄する」動作は、
@@ -22633,7 +22683,7 @@ RVOとはこのような最適化を指す。
 [C++17から規格化](https://cpprefjp.github.io/lang/cpp17/guaranteed_copy_elision.html)された。
 
 
-### SSO(Small String Optimization) <a id="SS_6_17_12"></a>
+### SSO(Small String Optimization) <a id="SS_6_17_13"></a>
 一般にstd::stringで文字列を保持する場合、newしたメモリが使用される。
 64ビット環境であれば、newしたメモリのアドレスを保持する領域は8バイトになる。
 std::stringで保持する文字列が終端の'\0'も含め8バイト以下である場合、
@@ -22642,7 +22692,7 @@ std::stringで保持する文字列が終端の'\0'も含め8バイト以下で�
 
 SOOとはこのような最適化を指す。
 
-### heap allocation elision <a id="SS_6_17_13"></a>
+### heap allocation elision <a id="SS_6_17_14"></a>
 C++11までの仕様では、new式によるダイナミックメモリアロケーションはコードに書かれた通りに、
 実行されなければならず、ひとまとめにしたり省略したりすることはできなかった。
 つまり、ヒープ割り当てに対する最適化は認められなかった。
@@ -22690,7 +22740,7 @@ new/deleteの呼び出しをまとめたり省略したりすることができ�
 ダイナミックメモリアロケーションが1回に抑えられるため、メモリアクセスが高速化される。
 
 
-### Most Vexing Parse <a id="SS_6_17_14"></a>
+### Most Vexing Parse <a id="SS_6_17_15"></a>
 Most Vexing Parse(最も困惑させる構文解析)とは、C++の文法に関連する問題で、
 Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつけたことに由来する。
 
@@ -22722,7 +22772,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 このような問題を回避できる。
 
 
-### RTTI <a id="SS_6_17_15"></a>
+### RTTI <a id="SS_6_17_16"></a>
 RTTI(Run-time Type Information)とは、プログラム実行中のオブジェクトの型を導出するための機能であり、
 具体的には下記の3つの要素を指す。
 
@@ -22810,10 +22860,10 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     // ASSERT_THROW(dynamic_cast<NonPolymorphic_Derived&>(b_ref_b), std::bad_cast);
 ```
 
-### Run-time Type Information <a id="SS_6_17_16"></a>
-「[RTTI](#SS_6_17_15)」を参照せよ。
+### Run-time Type Information <a id="SS_6_17_17"></a>
+「[RTTI](#SS_6_17_16)」を参照せよ。
 
-### simple-declaration <a id="SS_6_17_17"></a>
+### simple-declaration <a id="SS_6_17_18"></a>
 このための記述が
 [simple-declaration](https://cpprefjp.github.io/lang/cpp17/selection_statements_with_initializer.html)
 とは、C++17から導入された
@@ -22847,10 +22897,10 @@ dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のよ
     }
 ```
 
-### typeid <a id="SS_6_17_18"></a>
-「[RTTI](#SS_6_17_15)」を参照せよ。
+### typeid <a id="SS_6_17_19"></a>
+「[RTTI](#SS_6_17_16)」を参照せよ。
 
-### トライグラフ <a id="SS_6_17_19"></a>
+### トライグラフ <a id="SS_6_17_20"></a>
 トライグラフとは、2つの疑問符とその後に続く1文字によって表される、下記の文字列である。
 
 ```
