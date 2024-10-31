@@ -50,6 +50,8 @@
 #define SUPPRESS_WARN_GCC_EXCEPTIONS _Pragma("GCC diagnostic ignored \"-Wexceptions\"")
 
 // only gcc
+#define SUPPRESS_WARN_GCC_UNUSED_BUT_SET_VAR \
+    _Pragma("GCC diagnostic ignored \"-Wunused-but-set-variable\"");
 #define SUPPRESS_WARN_GCC_DANGLING_ELSE _Pragma("GCC diagnostic ignored \"-Wdangling-else\"");
 #define SUPPRESS_WARN_GCC_FORMAT_EQ _Pragma("GCC diagnostic ignored \"-Wformat=\"")
 #define SUPPRESS_WARN_GCC_CAST_FUNC_TYPE _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
@@ -110,6 +112,7 @@
 #define SUPPRESS_WARN_GCC_ENUM_COMP_SWITCH
 
 // only gcc
+#define SUPPRESS_WARN_GCC_UNUSED_BUT_SET_VAR
 #define SUPPRESS_WARN_GCC_DANGLING_ELSE
 #define SUPPRESS_WARN_GCC_FORMAT_EQ
 #define SUPPRESS_WARN_GCC_CAST_FUNC_TYPE
