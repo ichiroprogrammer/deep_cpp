@@ -30,7 +30,7 @@ void processValues()
 [[nodiscard]] int computeResult() { return 42; }
 // @@@ sample end
 
-TEST(cpp20, attr)
+TEST(ExpTerm, attr)
 {
     SUPPRESS_WARN_GCC_BEGIN;
     _Pragma("GCC diagnostic ignored \"-Wunused-result\"");

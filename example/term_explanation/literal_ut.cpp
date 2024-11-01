@@ -10,7 +10,7 @@
 
 namespace {
 
-TEST(cpp20, raw_literal)
+TEST(ExpTerm, raw_literal)
 {
     // @@@ sample begin 0:0
 
@@ -31,7 +31,7 @@ TEST(cpp20, raw_literal)
     }
     // @@@ sample end
 }
-TEST(cpp20, binary_literal)
+TEST(ExpTerm, binary_literal)
 {
     // @@@ sample begin 1:0
 
@@ -53,7 +53,7 @@ TEST(cpp20, binary_literal)
     // @@@ sample end
 }
 
-TEST(cpp20, wide_string)
+TEST(ExpTerm, wide_string)
 {
     // @@@ sample begin 3:0
 
@@ -73,7 +73,7 @@ TEST(cpp20, wide_string)
     IGNORE_UNUSED_VAR(utf16_str, utf16_string, utf32_str, utf32_str, utf8_string, utf8_str);
 }
 
-TEST(cpp20, hex_float)
+TEST(ExpTerm, hex_float)
 {
     // @@@ sample begin 4:0
 
@@ -110,7 +110,7 @@ static_assert(1h == 3600s);  // 1時間 (1h) は 3600秒 (3600s) と等しい
 static_assert(1.5s == 1500ms);  // 小数点を使った時間リテラル
 // @@@ sample end
 
-TEST(cpp20, complex_literal)
+TEST(ExpTerm, complex_literal)
 {
     // @@@ sample begin 6:0
 

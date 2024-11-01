@@ -16,7 +16,7 @@ struct A {
 
 A f(A a) { return a; };
 // @@@ sample end
-TEST(cpp20, explicit)
+TEST(ExpTerm, explicit)
 {
     // @@@ sample begin 0:1
 
@@ -40,7 +40,7 @@ struct A {
 
 A f(A a) { return a; };
 // @@@ sample end
-TEST(cpp20, explicit)
+TEST(ExpTerm, explicit)
 {
     // @@@ sample begin 1:1
 
@@ -65,7 +65,7 @@ A    f(A a) { return a; };
 bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
 // @@@ sample end
 
-TEST(cpp20, explicit)
+TEST(ExpTerm, explicit)
 {
     // @@@ sample begin 2:1
 
@@ -91,7 +91,7 @@ A    f(A a) { return a; };
 bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
 // @@@ sample end
 
-TEST(cpp20, explicit)
+TEST(ExpTerm, explicit)
 {
     // @@@ sample begin 3:1
 
@@ -118,7 +118,7 @@ struct A {
 };
 // @@@ sample end
 
-TEST(cpp20, explicit)
+TEST(ExpTerm, explicit)
 {
     // @@@ sample begin 4:1
 
@@ -145,7 +145,7 @@ struct A {
 };
 // @@@ sample end
 
-TEST(cpp20, explicit)
+TEST(ExpTerm, explicit)
 {
     // @@@ sample begin 5:1
 
@@ -166,7 +166,7 @@ struct S {
     T value;
 };
 // @@@ sample end
-TEST(cpp20, explicit_cond)
+TEST(ExpTerm, explicit_cond)
 {
     // clang-format off
     // @@@ sample begin 6:1
@@ -200,7 +200,7 @@ private:
 };
 // @@@ sample end
 
-TEST(cpp20, explicit_cond2)
+TEST(ExpTerm, explicit_cond2)
 {
     // @@@ sample begin 7:1
 

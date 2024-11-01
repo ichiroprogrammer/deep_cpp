@@ -18,7 +18,7 @@ T add(T a, T b)
 }
 // @@@ sample end
 
-TEST(cpp20, concept)
+TEST(ExpTerm, concept)
 {
     // @@@ sample begin 0:1
 
@@ -57,7 +57,7 @@ T add(T a, T b)
 }
 // @@@ sample end
 
-TEST(cpp20, concept)
+TEST(ExpTerm, concept)
 {
     // @@@ sample begin 1:1
 
@@ -91,7 +91,7 @@ bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
 }
 // @@@ sample end
 
-TEST(cpp20, use_static_assert)
+TEST(ExpTerm, use_static_assert)
 {
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -115,7 +115,7 @@ bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
 }
 // @@@ sample end
 
-TEST(cpp20, use_concept)
+TEST(ExpTerm, use_concept)
 {
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -141,7 +141,7 @@ bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
 
 // @@@ sample end
 
-TEST(cpp20, use_requires)
+TEST(ExpTerm, use_requires)
 {
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
