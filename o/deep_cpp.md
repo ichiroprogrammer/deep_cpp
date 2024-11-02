@@ -64,7 +64,7 @@ ___
 その出力という二つの責務を持つため、SRP違反である。
 
 ```cpp
-    // @@@ example/solid/srp_ut.cpp 27
+    //  example/solid/srp_ut.cpp 27
 
     class SentenceHolderNotSRP {
     public:
@@ -92,7 +92,7 @@ ___
 下記のコメントで示す通り、単体テストの実施が困難になる。
 
 ```cpp
-    // @@@ example/solid/srp_ut.cpp 53
+    //  example/solid/srp_ut.cpp 53
 
     auto not_srp = SentenceHolderNotSRP{};
 
@@ -118,7 +118,7 @@ ___
 Output()に分離したコード実装例を下記する。
 
 ```cpp
-    // @@@ example/solid/srp_ut.cpp 75
+    //  example/solid/srp_ut.cpp 75
 
     class SentenceHolderSRP {
     public:
@@ -145,7 +145,7 @@ Output()に分離したコード実装例を下記する。
 下記のコードで示したように、この分離の効果で単体テストの実施が容易になった。
 
 ```cpp
-    // @@@ example/solid/srp_ut.cpp 101
+    //  example/solid/srp_ut.cpp 101
 
     auto srp = SentenceHolderSRP{};
 
@@ -172,7 +172,7 @@ Output()に分離したコード実装例を下記する。
 まずは、アンチパターンから示す。
 
 ```cpp
-    // @@@ example/solid/ocp_ut.cpp 14
+    //  example/solid/ocp_ut.cpp 14
 
     class TransactorGoogle {
     public:
@@ -257,7 +257,7 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
 下記にこのクラス図に従ったコードを示す。
 
 ```cpp
-    // @@@ example/solid/ocp_ut.cpp 122
+    //  example/solid/ocp_ut.cpp 122
 
     class TransactorIF {
     public:
@@ -322,7 +322,7 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
 <!-- pu:plant_uml/rectangle_square.pu--><p><img src="data:image/png;base64,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" /></p>
 
 ```cpp
-    // @@@ example/solid/lsp.h 5
+    //  example/solid/lsp.h 5
 
     /// @brief (0, 0) からの矩形を表す
     class Rectangle {
@@ -368,7 +368,7 @@ Rectangleのテストでは問題は起こらないが、同じことをSquare�
 (下記例ではASSERT_DEATHを使用しアボートすることを確認している)。
 
 ```cpp
-    // @@@ example/solid/lsp_ut.cpp 13
+    //  example/solid/lsp_ut.cpp 13
 
     void SetX(Rectangle& rect, int x) noexcept { rect.SetX(x); }
 
@@ -398,7 +398,7 @@ SetX()は仮引数で渡されたオブジェクトの実際の型がわから�
 従って、 新しいSetX()のコード実装例は以下のようになる。
 
 ```cpp
-    // @@@ example/solid/lsp_ut.cpp 32
+    //  example/solid/lsp_ut.cpp 32
 
     void SetX(Rectangle& rect, int x) noexcept
     {
@@ -432,7 +432,7 @@ Rectangleの全派生クラスに依存した、変更に弱い関数となる�
 下記のように修正することができる。
 
 ```cpp
-    // @@@ example/solid/lsp_ut.cpp 61
+    //  example/solid/lsp_ut.cpp 61
 
     void SetX(Rectangle& rect, int x) noexcept
     {
@@ -509,7 +509,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
 その実装、使用例を下記に示す。
 
 ```cpp
-    // @@@ example/solid/dip_server_ng.h 10
+    //  example/solid/dip_server_ng.h 10
 
     namespace ServerNG {
     class Server {
@@ -522,7 +522,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
 ```
 
 ```cpp
-    // @@@ example/solid/dip_server_ng.cpp 6
+    //  example/solid/dip_server_ng.cpp 6
 
     namespace ServerNG {
     namespace {
@@ -568,7 +568,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
 ```
 
 ```cpp
-    // @@@ example/solid/dip_client_ng.h 10
+    //  example/solid/dip_client_ng.h 10
 
     namespace ClientNG {
     class Client {
@@ -589,7 +589,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
 ```
 
 ```cpp
-    // @@@ example/solid/dip_client_ng.cpp 3
+    //  example/solid/dip_client_ng.cpp 3
 
     namespace ClientNG {
     std::string Client::GetString(uint32_t num)
@@ -612,7 +612,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
 ```
 
 ```cpp
-    // @@@ example/solid/dip_ut.cpp 11
+    //  example/solid/dip_ut.cpp 11
 
     TEST(DIP, ng_pattern)
     {
@@ -642,7 +642,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
 次にDIPに従い上記コードを改善した例を示す。
 
 ```cpp
-    // @@@ example/solid/dip_server_ok.h 7
+    //  example/solid/dip_server_ok.h 7
 
     namespace ServerOK {
     class ClientIF {
@@ -665,7 +665,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
 ```
 
 ```cpp
-    // @@@ example/solid/dip_server_ok.cpp 5
+    //  example/solid/dip_server_ok.cpp 5
 
     namespace ServerOK {
     namespace {
@@ -711,7 +711,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
 ```
 
 ```cpp
-    // @@@ example/solid/dip_client_ok.h 10
+    //  example/solid/dip_client_ok.h 10
 
     namespace ClientOK {
     class Client : public ServerOK::ClientIF {
@@ -726,7 +726,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
 ```
 
 ```cpp
-    // @@@ example/solid/dip_client_ok.cpp 3
+    //  example/solid/dip_client_ok.cpp 3
 
     namespace ClientOK {
     std::string Client::GetString(uint32_t num)
@@ -749,7 +749,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
 ```
 
 ```cpp
-    // @@@ example/solid/dip_ut.cpp 28
+    //  example/solid/dip_ut.cpp 28
 
     // 使用方法は、ServerNG, ClientNGと同じ。
     TEST(DIP, ok_pattern)
@@ -856,7 +856,7 @@ ___
 まずは、ガード節を使っていない例を上げる。
 
 ```cpp
-    // @@@ example/design_pattern/guard_ut.cpp 24
+    //  example/design_pattern/guard_ut.cpp 24
 
     /// @brief a(配列へのリファレンス)の要素について、先頭から'a'が続く数を返す
     /// @param 配列へのリファレンス
@@ -885,7 +885,7 @@ ___
 一方で、上記と同じロジックである下記関数を一目で理解できない人も稀である。
 
 ```cpp
-    // @@@ example/design_pattern/guard_ut.cpp 77
+    //  example/design_pattern/guard_ut.cpp 77
 
     int32_t SequentialA(char const (&a)[3]) noexcept
     {
@@ -908,7 +908,7 @@ ___
 もう一例、(ガード節導入の効果が前例ほど明確でない)ガード節を使っていないコードを示す。
 
 ```cpp
-    // @@@ example/design_pattern/guard_ut.cpp 48
+    //  example/design_pattern/guard_ut.cpp 48
 
     std::optional<std::vector<uint32_t>> PrimeNumbers(uint32_t max_num)
     {
@@ -936,7 +936,7 @@ ___
 上記にガード節を適用した例を下記する。
 
 ```cpp
-    // @@@ example/design_pattern/guard_ut.cpp 94
+    //  example/design_pattern/guard_ut.cpp 94
 
     std::optional<std::vector<uint32_t>> PrimeNumbers(uint32_t max_num)
     {
@@ -978,7 +978,7 @@ ___
 修正や拡張等に関しても脆弱であるため、避けるべきである。
 
 ```cpp
-    // @@@ example/design_pattern/enum_operator.h 6
+    //  example/design_pattern/enum_operator.h 6
 
     class Animal {
     public:
@@ -997,7 +997,7 @@ ___
 ```
 
 ```cpp
-    // @@@ example/design_pattern/enum_operator_ut.cpp 13
+    //  example/design_pattern/enum_operator_ut.cpp 13
 
     Animal dolphin{Animal::PhisicalAbility::Swim};  // OK
     ASSERT_EQ(Animal::PhisicalAbility::Swim, dolphin.GetPhisicalAbility());
@@ -1010,7 +1010,7 @@ enumによるビットマスク表現を使用して型チェックを強化し�
 このテクニックは、STLのインターフェースとしても使用されている強力なイデオムである。
 
 ```cpp
-    // @@@ example/design_pattern/enum_operator.h 30
+    //  example/design_pattern/enum_operator.h 30
 
     class Animal {
     public:
@@ -1053,7 +1053,7 @@ enumによるビットマスク表現を使用して型チェックを強化し�
 ```
 
 ```cpp
-    // @@@ example/design_pattern/enum_operator_ut.cpp 28
+    //  example/design_pattern/enum_operator_ut.cpp 28
 
     // コンストラクタの仮引数の型が厳密になったためコンパイル不可
     // これにより誤用を防ぐ
@@ -1092,7 +1092,7 @@ a.hをインクルードするファイルをコンパイルする度にそのST
 下記は、Pimplイデオム未使用の、std::stringに依存したクラスStringHolderOldの例である。
 
 ```cpp
-    // @@@ example/design_pattern/string_holder_old.h 3
+    //  example/design_pattern/string_holder_old.h 3
     // このファイルには<string>が必要
 
     #include <memory>
@@ -1111,7 +1111,7 @@ a.hをインクルードするファイルをコンパイルする度にそのST
 ```
 
 ```cpp
-    // @@@ example/design_pattern/string_holder_old.cpp 1
+    //  example/design_pattern/string_holder_old.cpp 1
 
     #include "string_holder_old.h"
 
@@ -1126,7 +1126,7 @@ a.hをインクルードするファイルをコンパイルする度にそのST
 下記は、上記クラスStringHolderOldにPimplイデオムを適用したクラスStringHolderNewの例である。
 
 ```cpp
-    // @@@ example/design_pattern/string_holder_new.h 3
+    //  example/design_pattern/string_holder_new.h 3
     // このファイルには<string>は不要
 
     #include <memory>
@@ -1146,7 +1146,7 @@ a.hをインクルードするファイルをコンパイルする度にそのST
 ```
 
 ```cpp
-    // @@@ example/design_pattern/string_holder_new.cpp 1
+    //  example/design_pattern/string_holder_new.cpp 1
     // このファイルには<string>が必要
 
     #include <string>
@@ -1345,7 +1345,7 @@ publicメンバ変数とそれにアクセスするソースコードは典型�
 このようなコードを禁じるのが一般的なプラクティスである。
 
 ```cpp
-    // @@@ example/design_pattern/accessor_ut.cpp 8
+    //  example/design_pattern/accessor_ut.cpp 8
 
     class A {  // アンチパターン
     public:
@@ -1367,7 +1367,7 @@ publicメンバ変数とそれにアクセスするソースコードは典型�
 このような場合に適用するがのこのイデオムである。
 
 ```cpp
-    // @@@ example/design_pattern/accessor_ut.cpp 28
+    //  example/design_pattern/accessor_ut.cpp 28
 
     class A {  // Accessorの実装例
     public:
@@ -1407,7 +1407,7 @@ publicメンバ変数とそれにアクセスするソースコードは典型�
 下記はその典型的なアンチパターンである。
 
 ```cpp
-    // @@@ example/design_pattern/accessor_ut.cpp 62
+    //  example/design_pattern/accessor_ut.cpp 62
 
     class A {  // Accessorを使用して細かすぎる制御をしてしまうアンチパターン
     public:
@@ -1469,7 +1469,7 @@ a.DoSomething()の実行においても、それが必要かどうかはオブ�
 この考えに基づいた修正ソースコードを下記に示す。
 
 ```cpp
-    // @@@ example/design_pattern/accessor_ut.cpp 130
+    //  example/design_pattern/accessor_ut.cpp 130
 
     class A {  // 上記アンチパターンからChange()とIsChanged()を削除し、状態の隠蔽レベルを強化
     public:
@@ -1529,7 +1529,7 @@ setterを使用する場合、上記のように処理の隠蔽化には特に�
 下記に示すコードは、そのような場合の上記4関数の実装例である。
 
 ```cpp
-    // @@@ example/design_pattern/no_copy_and_swap_ut.cpp 8
+    //  example/design_pattern/no_copy_and_swap_ut.cpp 8
 
     class NoCopyAndSwap final {
     public:
@@ -1597,7 +1597,7 @@ setterを使用する場合、上記のように処理の隠蔽化には特に�
 実装例を以下に示す。
 
 ```cpp
-    // @@@ example/design_pattern/copy_and_swap_ut.cpp 6
+    //  example/design_pattern/copy_and_swap_ut.cpp 6
 
     class CopyAndSwap final {
     public:
@@ -1696,7 +1696,7 @@ immutableとして扱うことができる。
 下記は、オブジェクトコピーによるスライシングを起こしてしまう例である。
 
 ```cpp
-    // @@@ example/design_pattern/clone_ut.cpp 8
+    //  example/design_pattern/clone_ut.cpp 8
 
     class BaseSlicing {
     public:
@@ -1736,7 +1736,7 @@ immutableとして扱うことができる。
 下記は、上記にcloneイデオムを適用した例である。
 
 ```cpp
-    // @@@ example/design_pattern/clone_ut.cpp 50
+    //  example/design_pattern/clone_ut.cpp 50
 
     // スライシングを起こさないようにコピー演算子の代わりにClone()を実装。
     class BaseNoSlicing {
@@ -1794,7 +1794,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 下記のようにクラスBaseが定義されているとする。
 
 ```cpp
-    // @@@ example/design_pattern/nvi_ut.cpp 7
+    //  example/design_pattern/nvi_ut.cpp 7
 
     class Base {
     public:
@@ -1814,7 +1814,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 また、このクラスから派生した下記のクラスDerivedもBase::DoSomething()に依存する。
 
 ```cpp
-    // @@@ example/design_pattern/nvi_ut.cpp 26
+    //  example/design_pattern/nvi_ut.cpp 26
 
     class Derived : public Base {
     public:
@@ -1834,7 +1834,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 これを用いた上記2クラスのリファクタリング例を以下に示す。
 
 ```cpp
-    // @@@ example/design_pattern/nvi_ut.cpp 57
+    //  example/design_pattern/nvi_ut.cpp 57
 
     class Base {
     public:
@@ -1866,7 +1866,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 それに従わない下記のようなクラスとその派生クラス
 
 ```cpp
-    // @@@ example/design_pattern/nvi_ut.cpp 105
+    //  example/design_pattern/nvi_ut.cpp 105
 
     class NotNviBase {
     public:
@@ -1891,7 +1891,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 メンバ関数の振る舞いがその表層型に依存してしまう問題を持つことになる。
 
 ```cpp
-    // @@@ example/design_pattern/nvi_ut.cpp 129
+    //  example/design_pattern/nvi_ut.cpp 129
 
     NotNviDerived const d;
     NotNviBase const&   d_ref = d;
@@ -1915,7 +1915,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 下記のようにNVIに従わせることでこのような問題に対処できる。
 
 ```cpp
-    // @@@ example/design_pattern/nvi_ut.cpp 148
+    //  example/design_pattern/nvi_ut.cpp 148
     class NviBase {
     public:
         std::string Name(bool mangled = false) const { return name(mangled); }
@@ -1940,7 +1940,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 下記の単体テストにより、この問題の解消が確認できる。
 
 ```cpp
-    // @@@ example/design_pattern/nvi_ut.cpp 173
+    //  example/design_pattern/nvi_ut.cpp 173
 
     NviBase const    b;
     NviDerived const d;
@@ -1972,7 +1972,7 @@ RAIIに従わないとメモリリークを防ぐことは困難である。
 下記は、関数終了付近でdeleteする素朴なコードである。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 19
+    //  example/design_pattern/raii_ut.cpp 19
 
     // Aは外部の変数をリファレンスcounter_として保持し、
     //  * コンストラクタ呼び出し時に++counter_
@@ -2006,7 +2006,7 @@ RAIIに従わないとメモリリークを防ぐことは困難である。
 エクセプションが発生しメモリリークしてしまう。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 72
+    //  example/design_pattern/raii_ut.cpp 72
 
     auto object_counter = 0U;
 
@@ -2020,7 +2020,7 @@ RAIIに従わないとメモリリークを防ぐことは困難である。
 以下は、std::unique_ptrによってRAIIを導入し、この問題に対処した例である。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 84
+    //  example/design_pattern/raii_ut.cpp 84
 
     char use_RAII_for_memory(size_t index, uint32_t& object_counter)
     {
@@ -2039,7 +2039,7 @@ RAIIに従わないとメモリリークを防ぐことは困難である。
 エクセプション発生時にもstd::unique_ptrによる自動解放によりメモリリークは発生しない。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 101
+    //  example/design_pattern/raii_ut.cpp 101
 
     auto object_counter = 0U;
 
@@ -2056,7 +2056,7 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 下記は、生成したソケットを関数終了付近でcloseする素朴なコードである。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 112
+    //  example/design_pattern/raii_ut.cpp 112
 
     // RAIIをしない例
     // 複数のclose()を書くような関数は、リソースリークを起こしやすい。
@@ -2087,7 +2087,7 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 このような場合には、下記するようなリソース解放用クラス
 
 ```cpp
-    // @@@ h/scoped_guard.h 7
+    //  h/scoped_guard.h 7
 
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
@@ -2110,7 +2110,7 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 を使用し、下記のようにすることで安全なコードをすっきりと書くことができる。
 
 ```cpp
-    // @@@ example/design_pattern/raii_ut.cpp 139
+    //  example/design_pattern/raii_ut.cpp 139
 
     // RAIIをScopedGuardで行った例。
     // close()が自動実行されるためにリソース解放を忘れない。
@@ -2146,7 +2146,7 @@ C++11では、std::future, std::promise, std::asyncによって実現できる�
 まずは、C++03以前のスタイルから示す。
 
 ```cpp
-    // @@@ example/design_pattern/future_ut.cpp 11
+    //  example/design_pattern/future_ut.cpp 11
 
     int do_something(std::string_view str0, std::string_view str1) noexcept
     {
@@ -2191,7 +2191,7 @@ C++11では、std::future, std::promise, std::asyncによって実現できる�
 次にFutureパターンによって上記をリファクタリングした例を示す。
 
 ```cpp
-    // @@@ example/design_pattern/future_ut.cpp 45
+    //  example/design_pattern/future_ut.cpp 45
 
     TEST(Future, new_style)
     {
@@ -2253,7 +2253,7 @@ C++11では、std::future, std::promise, std::asyncによって実現できる�
 クラスNotDIの単体テストにデータベースが必要になる」ことからも容易に理解できる。
 
 ```cpp
-    // @@@ example/design_pattern/di_ut.cpp 8
+    //  example/design_pattern/di_ut.cpp 8
 
     /// @brief NotDIや、DIから依存されるクラス
     class Depended {
@@ -2276,7 +2276,7 @@ C++11では、std::future, std::promise, std::asyncによって実現できる�
 この場合、クラスDIは、クラスDependedの型にのみ依存する。
 
 ```cpp
-    // @@@ example/design_pattern/di_ut.cpp 37
+    //  example/design_pattern/di_ut.cpp 37
 
     /// @brief DIを使う例。そのため、DIは、Dependedの型に依存している。
     class DI {
@@ -2535,7 +2535,7 @@ UNIT_TESTを定義しない実際のコードの評価にはならない。
 以下は、Singletonの実装例である。
 
 ```cpp
-    // @@@ example/design_pattern/singleton_ut.cpp 7
+    //  example/design_pattern/singleton_ut.cpp 7
 
     class Singleton final {
     public:
@@ -2622,7 +2622,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 この構造でも問題ないともいえる。
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_old.h 4
+    //  example/design_pattern/state_machine_old.h 4
 
     extern std::string_view ThreadOldStyleStateStr() noexcept;
     extern void             ThreadOldStyleRun();
@@ -2631,7 +2631,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_old.cpp 6
+    //  example/design_pattern/state_machine_old.cpp 6
 
     namespace {
     enum class ThreadOldStyleState {
@@ -2689,7 +2689,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_ut.cpp 15
+    //  example/design_pattern/state_machine_ut.cpp 15
 
     // ステートのテスト。仕様書よりも単体テストでその仕様や使用法を記述したほうが正確に理解できる。
     TEST(StateMachine, old_style)
@@ -2726,7 +2726,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 次に上記クラス図の実装例を示す。
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_new.h 6
+    //  example/design_pattern/state_machine_new.h 6
 
     /// @brief ThreadNewStyleのステートを表す基底クラス
     class ThreadNewStyleState {
@@ -2772,7 +2772,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_new.h 51
+    //  example/design_pattern/state_machine_new.h 51
 
     class ThreadNewStyle final {
     public:
@@ -2799,7 +2799,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_new.cpp 10
+    //  example/design_pattern/state_machine_new.cpp 10
 
     class ThreadNewStyleState_Idle final : public ThreadNewStyleState {
         ...
@@ -2846,7 +2846,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_ut.cpp 57
+    //  example/design_pattern/state_machine_ut.cpp 57
 
     TEST(StateMachine, new_style)
     {
@@ -2889,7 +2889,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 複雑な状態管理が必要な場合には使えないが、単純な状態管理で十分な場合には便利なパターンである。
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_new.h 76
+    //  example/design_pattern/state_machine_new.h 76
 
     class ThreadNewStyle2 final {
     public:
@@ -2924,7 +2924,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_new.cpp 106
+    //  example/design_pattern/state_machine_new.cpp 106
 
     void ThreadNewStyle2::run_idle()
     {
@@ -2972,7 +2972,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```
 
 ```cpp
-    // @@@ example/design_pattern/state_machine_ut.cpp 95
+    //  example/design_pattern/state_machine_ut.cpp 95
 
     TEST(StateMachine, new_style2)
     {
@@ -2998,7 +2998,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 というような典型的な条件文を削減するためのパターンである。
 
 ```cpp
-    // @@@ example/design_pattern/null_object_ut.cpp 7
+    //  example/design_pattern/null_object_ut.cpp 7
 
     class A {
     public:
@@ -3026,7 +3026,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 上記例にNull Objectパターンを適用した例を下記する。
 
 ```cpp
-    // @@@ example/design_pattern/null_object_ut.cpp 41
+    //  example/design_pattern/null_object_ut.cpp 41
 
     class A {
     public:
@@ -3072,7 +3072,7 @@ Templateメソッドは、雛形の形式(書式等)を定めるメンバ関数(
 以下に実装例を示す。
 
 ```cpp
-    // @@@ example/design_pattern/template_method.h 6
+    //  example/design_pattern/template_method.h 6
 
     /// @brief 何かのデータを入れる箱
     struct XxxData {
@@ -3134,7 +3134,7 @@ Templateメソッドは、雛形の形式(書式等)を定めるメンバ関数(
 header()、body()、footer()をオーバーライドすることで、それぞれの機能を実現している。
 
 ```cpp
-    // @@@ example/design_pattern/template_method.cpp 8
+    //  example/design_pattern/template_method.cpp 8
 
     /// @brief XxxDataをXmlに変換
     class XxxDataFormatterXml final : public XxxDataFormatterIF {
@@ -3199,7 +3199,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
 以下の単体テストで、これらのクラスの振る舞いを示す。
 
 ```cpp
-    // @@@ example/design_pattern/template_method_ut.cpp 6
+    //  example/design_pattern/template_method_ut.cpp 6
 
     TEST(TemplateMethod, xml)
     {
@@ -3287,7 +3287,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 下記のコードはそのような実装例である。
 
 ```cpp
-    // @@@ example/design_pattern/template_method_ut.cpp 112
+    //  example/design_pattern/template_method_ut.cpp 112
 
     template <typename T>
     concept DataFormattable = requires(T t, const XxxData& xxx_data) {
@@ -3343,7 +3343,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 上記の単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/design_pattern/template_method_ut.cpp 168
+    //  example/design_pattern/template_method_ut.cpp 168
 
         auto xml = XxxDataFormatterXml{};
 
@@ -3402,7 +3402,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 といった効果がある。
 
 ```cpp
-    // @@@ example/design_pattern/template_method.h 71
+    //  example/design_pattern/template_method.h 71
 
     enum class XxxDataFormatterMethod {
         Xml,
@@ -3418,7 +3418,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 ```
 
 ```cpp
-    // @@@ example/design_pattern/template_method.cpp 106
+    //  example/design_pattern/template_method.cpp 106
 
     std::unique_ptr<XxxDataFormatterIF const> XxxDataFormatterFactory(XxxDataFormatterMethod method)
     {
@@ -3439,7 +3439,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 以下に上記クラスの単体テストを示す。
 
 ```cpp
-    // @@@ example/design_pattern/template_method_factory_ut.cpp 7
+    //  example/design_pattern/template_method_factory_ut.cpp 7
 
     TEST(Factory, xml)
     {
@@ -3494,7 +3494,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 この例ではその必要はないため、ヒープを使用しないFactory関数の例を下記する。
 
 ```cpp
-    // @@@ example/design_pattern/template_method.cpp 123
+    //  example/design_pattern/template_method.cpp 123
 
     XxxDataFormatterIF const& XxxDataFormatterFactory2(XxxDataFormatterMethod method) noexcept
     {
@@ -3671,7 +3671,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを複数、生成するためのパターンである。
 
 ```cpp
-    // @@@ example/design_pattern/enum_operator.h 82
+    //  example/design_pattern/enum_operator.h 82
 
     class Mammals : public Animal {  // 哺乳類
     public:
@@ -3705,7 +3705,7 @@ Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを�
 次に示したのは「[Factory](#SS_3_16)」の例にこのパターンを適応したコードである。
 
 ```cpp
-    // @@@ example/design_pattern/template_method.h 15
+    //  example/design_pattern/template_method.h 15
 
     /// @brief data_storer_if.cppに定義すべきだが、サンプルであるため便宜上同じファイルで定義する
     ///        データフォーマットを行うクラスのインターフェースクラス
@@ -3726,7 +3726,7 @@ Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを�
 ```
 
 ```cpp
-    // @@@ example/design_pattern/template_method.cpp 144
+    //  example/design_pattern/template_method.cpp 144
 
     XxxDataFormatterIF const& XxxDataFormatterIF::Xml() noexcept
     {
@@ -3777,7 +3777,7 @@ Proxyとは代理人という意味で、
 まずは、内部構造を外部公開しているの醜悪なサーバの実装例である。
 
 ```cpp
-    // @@@ example/design_pattern/bare_server.h 5
+    //  example/design_pattern/bare_server.h 5
 
     enum class Cmd {
         SayHello,
@@ -3814,7 +3814,7 @@ Proxyとは代理人という意味で、
 ```
 
 ```cpp
-    // @@@ example/design_pattern/bare_server.cpp 9
+    //  example/design_pattern/bare_server.cpp 9
 
     namespace {
     bool cmd_dispatch(int wfd, Cmd cmd) noexcept
@@ -3885,7 +3885,7 @@ Proxyとは代理人という意味で、
 このような構造は、機能追加、保守作業を非効率、困難にするアンチパターンである。
 
 ```cpp
-    // @@@ example/design_pattern/proxy_ut.cpp 17
+    //  example/design_pattern/proxy_ut.cpp 17
 
     /// @brief 非同期サービスを隠蔽していないBareServerを使用したときのクライアントの例
     std::vector<std::string> bare_client(BareServer& bs)
@@ -3927,7 +3927,7 @@ Proxyとは代理人という意味で、
 次に、このむき出しの構造をラッピングする例を示す(このようなラッピングをFacadeパターンと呼ぶ)。
 
 ```cpp
-    // @@@ example/design_pattern/bare_server_wrapper.h 6
+    //  example/design_pattern/bare_server_wrapper.h 6
 
     enum class Cmd;  // C++11からenumは前方宣言できる。
     class BareServer;
@@ -3948,7 +3948,7 @@ Proxyとは代理人という意味で、
 ```
 
 ```cpp
-    // @@@ example/design_pattern/bare_server_wrapper.cpp 8
+    //  example/design_pattern/bare_server_wrapper.cpp 8
 
     BareServerWrapper::BareServerWrapper() : bare_server_{std::make_unique<BareServer>()} {}
 
@@ -3994,7 +3994,7 @@ BareServerWrapperがむき出しの通信をラップしたことで、bare_wrap
 bare_client()に比べてシンプルになったことがわかる。
 
 ```cpp
-    // @@@ example/design_pattern/proxy_ut.cpp 56
+    //  example/design_pattern/proxy_ut.cpp 56
 
     /// @brief BareServerを使いやすくラップしたBareServerWrapperを使用したときのクライアントの例
     std::vector<std::string> bare_wrapper_client(BareServerWrapper& bsw)
@@ -4019,7 +4019,7 @@ Packet{}やpipe等の通信の詳細がwrapped_server.cppの無名名前空間�
 クラスの隠蔽性が強化されたことで、より機能追加、保守が容易になった。
 
 ```cpp
-    // @@@ example/design_pattern/wrapped_server.h 5
+    //  example/design_pattern/wrapped_server.h 5
 
     class WrappedServer {
     public:
@@ -4043,7 +4043,7 @@ Packet{}やpipe等の通信の詳細がwrapped_server.cppの無名名前空間�
 ```
 
 ```cpp
-    // @@@ example/design_pattern/wrapped_server.cpp 8
+    //  example/design_pattern/wrapped_server.cpp 8
 
     namespace {
     enum class Cmd {
@@ -4063,7 +4063,7 @@ Packet{}やpipe等の通信の詳細がwrapped_server.cppの無名名前空間�
 WrappedServerの使用例を下記する。当然ながらbare_wrapper_client()とほぼ同様になる。
 
 ```cpp
-    // @@@ example/design_pattern/proxy_ut.cpp 75
+    //  example/design_pattern/proxy_ut.cpp 75
 
     /// @brief 非同期サービスを隠蔽しているWrappedServerを使用したときのクライアントの例
     std::vector<std::string> wrapped_client(WrappedServer& ws)
@@ -4087,7 +4087,7 @@ WrappedServerが提供する機能はスレッド間通信を含むため処理�
 そのコストを削減する例を下記する。
 
 ```cpp
-    // @@@ example/design_pattern/wrapped_server_proxy.h 7
+    //  example/design_pattern/wrapped_server_proxy.h 7
 
     class WrappedServerProxy final : public WrappedServer {
     public:
@@ -4101,7 +4101,7 @@ WrappedServerが提供する機能はスレッド間通信を含むため処理�
 ```
 
 ```cpp
-    // @@@ example/design_pattern/wrapped_server_proxy.cpp 7
+    //  example/design_pattern/wrapped_server_proxy.cpp 7
 
     std::string WrappedServerProxy::say_hello()
     {
@@ -4158,7 +4158,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 まずは、拡張性のない実装例を示す。
 
 ```cpp
-    // @@@ example/design_pattern/find_files_old_style.h 4
+    //  example/design_pattern/find_files_old_style.h 4
 
     /// @enum FindCondition
     /// find_files_recursivelyの条件
@@ -4170,7 +4170,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 ```
 
 ```cpp
-    // @@@ example/design_pattern/find_files_old_style.cpp 9
+    //  example/design_pattern/find_files_old_style.cpp 9
 
     /// @brief 条件にマッチしたファイルをリカーシブに探して返す
     /// @param path      リカーシブにディレクトリをたどるための起点となるパス
@@ -4215,7 +4215,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 ```
 
 ```cpp
-    // @@@ example/design_pattern/find_files_ut.cpp 29
+    //  example/design_pattern/find_files_ut.cpp 29
 
     TEST(Strategy, old_style)
     {
@@ -4256,7 +4256,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 下記は、この関数にStrategyパターンを適用したものである。
 
 ```cpp
-    // @@@ example/design_pattern/find_files_strategy.h 7
+    //  example/design_pattern/find_files_strategy.h 7
 
     /// @typedef find_condition
     /// @brief find_files_recursively仮引数conditionの型(関数オブジェクトの型)
@@ -4271,7 +4271,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 ```
 
 ```cpp
-    // @@@ example/design_pattern/find_files_strategy.cpp 6
+    //  example/design_pattern/find_files_strategy.cpp 6
 
     std::vector<std::string> find_files_recursively(std::string const& path, find_condition condition)
     {
@@ -4298,7 +4298,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 ```
 
 ```cpp
-    // @@@ example/design_pattern/find_files_ut.cpp 69
+    //  example/design_pattern/find_files_ut.cpp 69
 
     TEST(Strategy, strategy_lamda)
     {
@@ -4401,7 +4401,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 なお、上記find_files_recursivelyの第2パラメータをテンプレートパラメータとすることで、
 
 ```cpp
-    // @@@ example/design_pattern/find_files_strategy.h 20
+    //  example/design_pattern/find_files_strategy.h 20
 
     // ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
     namespace Inner_ {
@@ -4445,7 +4445,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 このようなオールドスタイルなコードは様々な開発阻害要因になるため、避けるべきである。
 
 ```cpp
-    // @@@ example/design_pattern/strategy_shipping_ut.cpp 11
+    //  example/design_pattern/strategy_shipping_ut.cpp 11
 
     class X {
     public:
@@ -4472,7 +4472,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     };
 ```
 ```cpp
-    // @@@ example/design_pattern/strategy_shipping_ut.cpp 43
+    //  example/design_pattern/strategy_shipping_ut.cpp 43
 
     X x;
 
@@ -4482,7 +4482,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 このコードは、Strategyを使用し以下のようにすることで、改善することができる。
 
 ```cpp
-    // @@@ example/design_pattern/strategy_shipping_ut.cpp 56
+    //  example/design_pattern/strategy_shipping_ut.cpp 56
 
     class ShippingOp {
     public:
@@ -4508,7 +4508,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     };
 ```
 ```cpp
-    // @@@ example/design_pattern/strategy_shipping_ut.cpp 81
+    //  example/design_pattern/strategy_shipping_ut.cpp 81
 
     class ShippingOp_Japan : public ShippingOp {
     public:
@@ -4521,7 +4521,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     };
 ```
 ```cpp
-    // @@@ example/design_pattern/strategy_shipping_ut.cpp 100
+    //  example/design_pattern/strategy_shipping_ut.cpp 100
 
     X                x;
     ShippingOp_Japan sj;
@@ -4532,7 +4532,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 あるいは、[DI(dependency injection)](#SS_3_11)と組み合わせて、下記のような改善も有用である。
 
 ```cpp
-    // @@@ example/design_pattern/strategy_shipping_ut.cpp 112
+    //  example/design_pattern/strategy_shipping_ut.cpp 112
 
     class ShippingOp {
     public:
@@ -4559,7 +4559,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     };
 ```
 ```cpp
-    // @@@ example/design_pattern/strategy_shipping_ut.cpp 138
+    //  example/design_pattern/strategy_shipping_ut.cpp 138
 
     class ShippingOp_Japan : public ShippingOp {
     public:
@@ -4572,7 +4572,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     };
 ```
 ```cpp
-    // @@@ example/design_pattern/strategy_shipping_ut.cpp 157
+    //  example/design_pattern/strategy_shipping_ut.cpp 157
 
     X x{std::unique_ptr<ShippingOp>(new ShippingOp_Japan)};
 
@@ -4589,7 +4589,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 例を示す。
 
 ```cpp
-    // @@@ example/design_pattern/visitor.cpp 42
+    //  example/design_pattern/visitor.cpp 42
 
     /// @brief
     ///  ファイルシステムの構成物(ファイル、ディレクトリ等)を表すクラスの基底クラス
@@ -4664,7 +4664,7 @@ Printerのアルゴリズム関数が増えれば、この繰り返しはそれ�
 これをポリモーフィズムの導入で解決した例を示す。
 
 ```cpp
-    // @@@ example/design_pattern/visitor.cpp 142
+    //  example/design_pattern/visitor.cpp 142
 
     class FileEntity {
     public:
@@ -4720,7 +4720,7 @@ PrintPathname2のようなFileEntityのインターフェースが増えてし�
 上記例にVisitorを適用してリファクタリングした例を示す。
 
 ```cpp
-    // @@@ example/design_pattern/visitor.h 9
+    //  example/design_pattern/visitor.h 9
 
     class FileEntityVisitor {
     public:
@@ -4776,7 +4776,7 @@ PrintPathname2のようなFileEntityのインターフェースが増えてし�
 ```
 
 ```cpp
-    // @@@ example/design_pattern/visitor.cpp 218
+    //  example/design_pattern/visitor.cpp 218
 
     void PathnamePrinter1::Visit(File const& file) { std::cout << file.Pathname(); }
     void PathnamePrinter1::Visit(Dir const& dir) { std::cout << dir.Pathname() + "/"; }
@@ -4822,7 +4822,7 @@ PrintPathname2のようなFileEntityのインターフェースが増えてし�
 なお、上記の抜粋である下記コード
 
 ```cpp
-    // @@@ example/design_pattern/visitor.h 39
+    //  example/design_pattern/visitor.h 39
 
     virtual void Accept(FileEntityVisitor& visitor) const override { visitor.Visit(*this); }
 ```
@@ -4838,7 +4838,7 @@ FileEntityVisitorから派生するクラスを下記クラス図が示すよう
 <!-- pu:plant_uml/visitor_ut.pu--><p><img src="data:image/png;base64,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" /></p>
 
 ```cpp
-    // @@@ example/design_pattern/visitor.h 72
+    //  example/design_pattern/visitor.h 72
 
     class TestablePrinter : public FileEntityVisitor {
     public:
@@ -4866,7 +4866,7 @@ FileEntityVisitorから派生するクラスを下記クラス図が示すよう
 ```
 
 ```cpp
-    // @@@ example/design_pattern/visitor.cpp 245
+    //  example/design_pattern/visitor.cpp 245
 
     void TestablePathnamePrinter1::Visit(File const& file) { ostream_ << file.Pathname(); }
     void TestablePathnamePrinter1::Visit(Dir const& dir) { ostream_ << dir.Pathname() + "/"; }
@@ -4886,7 +4886,7 @@ FileEntityVisitorから派生するクラスを下記クラス図が示すよう
 ```
 
 ```cpp
-    // @@@ example/design_pattern/visitor_ut.cpp 28
+    //  example/design_pattern/visitor_ut.cpp 28
 
     TEST(Visitor, testable_visitor)
     {
@@ -4927,7 +4927,7 @@ FileEntityVisitorから派生するクラスを下記クラス図が示すよう
 CRTPとは、
 
 ```cpp
-    // @@@ example/design_pattern/crtp_ut.cpp 8
+    //  example/design_pattern/crtp_ut.cpp 8
 
     template <typename T>
     class Base {
@@ -4944,7 +4944,7 @@ CRTPとは、
 このパターンを用いて、「[Visitor](#SS_3_20)」のFileEntityの3つの派生クラスが持つコードクローン
 
 ```cpp
-    // @@@ example/design_pattern/visitor.h 39
+    //  example/design_pattern/visitor.h 39
 
     virtual void Accept(FileEntityVisitor& visitor) const override { visitor.Visit(*this); }
 ```
@@ -4952,7 +4952,7 @@ CRTPとは、
 を解消した例を以下に示す。
 
 ```cpp
-    // @@@ example/design_pattern/crtp.h 31
+    //  example/design_pattern/crtp.h 31
 
     class FileEntity {  // VisitorのFileEntityと同じ
     public:
@@ -5010,7 +5010,7 @@ ViewがObserverNである。
 まずは、このパターンを使用しない実装例を示す。
 
 ```cpp
-    // @@@ example/design_pattern/observer_ng.h 6
+    //  example/design_pattern/observer_ng.h 6
 
     /// @brief SubjectNGからの変更通知をUpdate()で受け取る。
     ///        Observerパターンを使用しない例。
@@ -5039,7 +5039,7 @@ ViewがObserverNである。
 ```
 
 ```cpp
-    // @@@ example/design_pattern/observer_ng.cpp 6
+    //  example/design_pattern/observer_ng.cpp 6
 
     void ObserverNG_1::Update(SubjectNG const& subject)
     {
@@ -5053,7 +5053,7 @@ ViewがObserverNである。
 ```
 
 ```cpp
-    // @@@ example/design_pattern/subject_ng.h 9
+    //  example/design_pattern/subject_ng.h 9
 
     /// @class SubjectNG
     /// @brief 監視されるクラス。SetNumでの状態変更をObserverNG_Nに通知する。
@@ -5071,7 +5071,7 @@ ViewがObserverNである。
 ```
 
 ```cpp
-    // @@@ example/design_pattern/subject_ng.cpp 4
+    //  example/design_pattern/subject_ng.cpp 4
 
     void SubjectNG::SetNum(uint32_t num)
     {
@@ -5093,7 +5093,7 @@ ViewがObserverNである。
 ```
 
 ```cpp
-    // @@@ example/design_pattern/observer_ut.cpp 15
+    //  example/design_pattern/observer_ut.cpp 15
 
     struct ObserverNG_0_Test : ObserverNG_0 {  // テスト用クラス
         virtual void Update(SubjectNG const& subject) final
@@ -5142,7 +5142,7 @@ ViewがObserverNである。
 (Subjectを抽象クラスにすることもあるが、下記例ではSubjectを具象クラスにしている)を示す。
 
 ```cpp
-    // @@@ example/design_pattern/observer_ok.h 3
+    //  example/design_pattern/observer_ok.h 3
 
     /// @brief SubjectOKからの変更通知をUpdate()で受け取る。
     ///        Observerパターンの使用例。
@@ -5166,7 +5166,7 @@ ViewがObserverNである。
 ```
 
 ```cpp
-    // @@@ example/design_pattern/observer_ok.cpp 5
+    //  example/design_pattern/observer_ok.cpp 5
 
     void ObserverOK_0::update(SubjectOK const& subject)
     {
@@ -5185,7 +5185,7 @@ ViewがObserverNである。
 ```
 
 ```cpp
-    // @@@ example/design_pattern/subject_ok.h 8
+    //  example/design_pattern/subject_ok.h 8
 
     /// @brief 監視されるクラス。SetNumでの状態変更をObserverOK_Nに通知する。
     ///        Observerパターンの使用例。
@@ -5229,7 +5229,7 @@ ViewがObserverNである。
 ```
 
 ```cpp
-    // @@@ example/design_pattern/subject_ok.cpp 3
+    //  example/design_pattern/subject_ok.cpp 3
 
     void SubjectOK::Attach(Observer& observer_to_attach) { observers_.push_back(&observer_to_attach); }
 
@@ -5248,7 +5248,7 @@ ViewがObserverNである。
 ```
 
 ```cpp
-    // @@@ example/design_pattern/observer_ut.cpp 51
+    //  example/design_pattern/observer_ut.cpp 51
 
     struct ObserverOK_Test : Observer {  // テスト用クラス
         virtual void update(SubjectOK const& subject) final
@@ -5354,7 +5354,7 @@ ViewはModelの[Observer](#SS_3_22)であるため、ModelはViewへ依存しな
 C++では、Pointのコードは下記のように表すことが一般的である。
 
 ```cpp
-    // @@@ example/design_pattern/class_ut.cpp 7
+    //  example/design_pattern/class_ut.cpp 7
 
     class Point {
     public:
@@ -5390,7 +5390,7 @@ C++では、Pointのコードは下記のように表すことが一般的であ
 この単体テストは、下記のようになる。
 
 ```cpp
-    // @@@ example/design_pattern/class_ut.cpp 42
+    //  example/design_pattern/class_ut.cpp 42
 
     Point a{1, 2};
 
@@ -5415,7 +5415,7 @@ C++では、Pointのコードは下記のように表すことが一般的であ
 これをCで表した場合、下記のようになる。
 
 ```cpp
-    // @@@ example/design_pattern/class_ut.cpp 124
+    //  example/design_pattern/class_ut.cpp 124
 
     struct Point {
         int x;
@@ -5461,7 +5461,7 @@ C++のメンバ関数はプログラマから見えない引数thisを持つ。
 この単体テストは、下記のようになる。
 
 ```cpp
-    // @@@ example/design_pattern/class_ut.cpp 164
+    //  example/design_pattern/class_ut.cpp 164
 
     Point a = Point_Construct(1, 2);
 
@@ -5487,7 +5487,7 @@ C++のメンバ関数はプログラマから見えない引数thisを持つ。
 Pointから派生したクラスPoint3DのC++での実装を以下に示す。
 
 ```cpp
-    // @@@ example/design_pattern/class_ut.cpp 65
+    //  example/design_pattern/class_ut.cpp 65
 
     class Point3D : public Point {
     public:
@@ -5521,7 +5521,7 @@ Pointから派生したクラスPoint3DのC++での実装を以下に示す。
 この単体テストは、下記のようになる。
 
 ```cpp
-    // @@@ example/design_pattern/class_ut.cpp 98
+    //  example/design_pattern/class_ut.cpp 98
 
     auto  a = Point3D{1, 2, 3};
     auto& b = a;
@@ -5547,7 +5547,7 @@ Pointから派生したクラスPoint3DのC++での実装を以下に示す。
 これをCで実装したものが下記である。
 
 ```cpp
-    // @@@ example/design_pattern/class_ut.cpp 188
+    //  example/design_pattern/class_ut.cpp 188
 
     struct Point3D {
         Point point;
@@ -5581,7 +5581,7 @@ Pointから派生したクラスPoint3DのC++での実装を以下に示す。
 この単体テストは、下記のようになる。
 
 ```cpp
-    // @@@ example/design_pattern/class_ut.cpp 221
+    //  example/design_pattern/class_ut.cpp 221
 
     Point3D a = Point3D_Construct(1, 2, 3);
     Point*  b = &a.point;
@@ -5797,7 +5797,7 @@ C++11で導入されたパラメータパックはやや複雑なシンタック
 次のような単体テストをパスする関数テンプレートsumをパラメータパックで実装することを考える。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 26
+    //  example/template/parameter_pack_ut.cpp 26
 
     ASSERT_EQ(1, sum(1));
     ASSERT_EQ(3, sum(1, 2));
@@ -5821,7 +5821,7 @@ sumの要件は、
 のようなものになるため、関数テンプレートsumは下記のように書ける。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 9
+    //  example/template/parameter_pack_ut.cpp 9
 
     template <typename HEAD>
     int sum(HEAD head)
@@ -5881,7 +5881,7 @@ sum(3)は1つ目のsumにマッチするため、最終的には下記のよう�
 これで基本的な要件は満たしたが、このsumでは下記のようなコードもコンパイルできてしまう。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 43
+    //  example/template/parameter_pack_ut.cpp 43
 
     ASSERT_EQ(2, sum(1, true, false));
 ```
@@ -5891,7 +5891,7 @@ sum(3)は1つ目のsumにマッチするため、最終的には下記のよう�
 合わせてそれも修正する。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 53
+    //  example/template/parameter_pack_ut.cpp 53
 
     template <typename HEAD>
     auto sum(HEAD head)
@@ -5912,7 +5912,7 @@ sum(3)は1つ目のsumにマッチするため、最終的には下記のよう�
     }
 ```
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 83
+    //  example/template/parameter_pack_ut.cpp 83
 
     // boolを除く算術型のみ認めるため、下記はコンパイルできない。
     // ASSERT_EQ(2, sum(1, true, false));
@@ -5956,7 +5956,7 @@ valueをtrueで初期化するクラステンプレートであり、 type_trait
 C++17で導入された畳みこみ式を用い、以下の様に簡潔に記述することもできる。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 123
+    //  example/template/parameter_pack_ut.cpp 123
 
     template <typename... ARGS>
     auto sum(ARGS... args)
@@ -5965,7 +5965,7 @@ C++17で導入された畳みこみ式を用い、以下の様に簡潔に記述
     }
 ```
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 134
+    //  example/template/parameter_pack_ut.cpp 134
 
     ASSERT_EQ(1, sum(1));
     ASSERT_EQ(3, sum(1, 2));
@@ -5992,7 +5992,7 @@ C++17で導入された畳みこみ式を用い、以下の様に簡潔に記述
 これまでのsumに代えて下記のようなproduct(掛け算)を考える。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 149
+    //  example/template/parameter_pack_ut.cpp 149
 
     template <typename HEAD>
     auto product(HEAD head)
@@ -6016,7 +6016,7 @@ C++17で導入された畳みこみ式を用い、以下の様に簡潔に記述
 このコードの単体テストは、
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 173
+    //  example/template/parameter_pack_ut.cpp 173
 
     ASSERT_EQ(1, product(100, 0.1, 0.1));
 ```
@@ -6027,7 +6027,7 @@ std::numeric_limits<>::epsilonを使用していないため
 、このテストはパスしない。一方で、以下のテストはパスする。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 178
+    //  example/template/parameter_pack_ut.cpp 178
 
     ASSERT_EQ(1, product(0.1, 0.1, 100));
 
@@ -6042,7 +6042,7 @@ std::numeric_limits<>::epsilonを使用していないため
 ということで、productを前から演算するように修正する。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 196
+    //  example/template/parameter_pack_ut.cpp 196
 
     template <typename HEAD>
     auto product(HEAD head)
@@ -6067,7 +6067,7 @@ HEAD、TAILに加えHEAD2を導入することで、前からの演算を実装�
 (引数が一つのproductに変更はない)。当然ながら、これにより、
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 220
+    //  example/template/parameter_pack_ut.cpp 220
 
     ASSERT_EQ(1, product(100, 0.1, 0.1));
 ```
@@ -6075,7 +6075,7 @@ HEAD、TAILに加えHEAD2を導入することで、前からの演算を実装�
 はパスし、下記はパスしなくなる。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp 225
+    //  example/template/parameter_pack_ut.cpp 225
 
     ASSERT_EQ(1, product(0.1, 0.1, 100));
 
@@ -6087,7 +6087,7 @@ HEAD、TAILに加えHEAD2を導入することで、前からの演算を実装�
 パラメータパックを使用したログ取得コードは以下のようになる。
 
 ```cpp
-    // @@@ example/template/logger_0.h 48
+    //  example/template/logger_0.h 48
 
     #define LOGGER_P(...) Logging::Logger::Inst().Set(__FILE__, __LINE__)
     #define LOGGER(...) Logging::Logger::Inst().Set(__FILE__, __LINE__, __VA_ARGS__)
@@ -6101,7 +6101,7 @@ gcc拡張を使えば、LOGGER_PとLOGGERを統一できるが、そのような
 Loggerクラスの実装は、下記のようになる。
 
 ```cpp
-    // @@@ example/template/logger_0.h 6
+    //  example/template/logger_0.h 6
 
     namespace Logging {
     class Logger {
@@ -6154,7 +6154,7 @@ Loggerクラスの実装は、下記のようになる。
 次に、どのように動作するのかを単体テストで示す。
 
 ```cpp
-    // @@@ example/template/logger_0_ut.cpp 16
+    //  example/template/logger_0_ut.cpp 16
 
     auto a = 1;
     auto b = std::string{"b"};
@@ -6178,7 +6178,7 @@ Loggerクラスの実装は、下記のようになる。
 そういった修正を避けている。
 
 ```cpp
-    // @@@ example/template/logger_ut.h 4
+    //  example/template/logger_ut.h 4
 
     inline std::string line_to_str(uint32_t line)
     {
@@ -6216,7 +6216,7 @@ Loggerクラスの実装は、下記のようになる。
 下記のようなユーザが定義した名前空間とクラスを用いることがほとんどである。
 
 ```cpp
-    // @@@ example/template/app_ints.h 12
+    //  example/template/app_ints.h 12
 
     namespace App {
 
@@ -6234,7 +6234,7 @@ Loggerクラスの実装は、下記のようになる。
 
 
 ```cpp
-    // @@@ example/template/logger_0_ut.cpp 42
+    //  example/template/logger_0_ut.cpp 42
 
     auto x = App::X{"name", 3};
 
@@ -6258,7 +6258,7 @@ Logging::Logger::set_innerがコンパイルできなければならない。
 の実装が必要条件となる。App::Xでは下記のようなコードになる。
 
 ```cpp
-    // @@@ example/template/app_ints.h 28
+    //  example/template/app_ints.h 28
 
     namespace App {
 
@@ -6298,7 +6298,7 @@ name lookupの原則に従い、App::Xの宣言は、App::operator<<より前に
 まずは、この認識の誤りを下記のコードで説明する。
 
 ```cpp
-    // @@@ example/template/logger_0_ut.cpp 68
+    //  example/template/logger_0_ut.cpp 68
 
     namespace App2 {
     class X {
@@ -6384,7 +6384,7 @@ App3::operator<<は発見されない(繰り返すが、インスタン化の場
 アプリケーションの開発では、下記のように宣言された型エイリアスを使うことは珍しくない。
 
 ```cpp
-    // @@@ example/template/app_ints.h 6
+    //  example/template/app_ints.h 6
 
     namespace App {
     using Ints_t = std::vector<int>;
@@ -6394,7 +6394,7 @@ App3::operator<<は発見されない(繰り返すが、インスタン化の場
 そのoperator<<を下記のように定義したとする。
 
 ```cpp
-    // @@@ example/template/logger_0_ut.cpp 109
+    //  example/template/logger_0_ut.cpp 109
 
     namespace App {
     std::ostream& operator<<(std::ostream& os, Ints_t const& ints)
@@ -6413,7 +6413,7 @@ App3::operator<<は発見されない(繰り返すが、インスタン化の場
 単体テストは下記のように書けるが、残念ながらコンパイルエラーになり、
 
 ```cpp
-    // @@@ example/template/logger_0_ut.cpp 131
+    //  example/template/logger_0_ut.cpp 131
 
     auto ints = App::Ints_t{1, 2, 3};
 
@@ -6445,7 +6445,7 @@ LOGGERからApp::operator<<を使う場合の単体テストは下記のよう�
 前記単体テスト同様にコンパイルできない。
 
 ```cpp
-    // @@@ example/template/logger_0_ints_ut.h 8
+    //  example/template/logger_0_ints_ut.h 8
 
     auto ints = App::Ints_t{1, 2, 3};
 
@@ -6477,14 +6477,14 @@ LOGGERからApp::operator<<を使う場合の単体テストは下記のよう�
 下記はその変更を行ったコードである。
 
 ```cpp
-    // @@@ example/template/app_ints.h 6
+    //  example/template/app_ints.h 6
 
     namespace App {
     using Ints_t = std::vector<int>;
     }
 ```
 ```cpp
-    // @@@ example/template/logger_0_std_ut.cpp 11
+    //  example/template/logger_0_std_ut.cpp 11
 
     namespace std {  // operator<<の定義をstdで行う
     ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
@@ -6516,14 +6516,14 @@ Loggerを宣言しているLoggingの3つである。
 ここでは、下記のコードのようにグローバル名前空間内でのoperator<<の宣言を試す。
 
 ```cpp
-    // @@@ example/template/app_ints.h 6
+    //  example/template/app_ints.h 6
 
     namespace App {
     using Ints_t = std::vector<int>;
     }
 ```
 ```cpp
-    // @@@ example/template/logger_0_global_ut.cpp 10
+    //  example/template/logger_0_global_ut.cpp 10
 
     // グローバル名前空間
     std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
@@ -6588,14 +6588,14 @@ clang++は「LOGGERの前にoperator<<を宣言せよ」と言っている。
 同様のことをLoggingで試す。
 
 ```cpp
-    // @@@ example/template/app_ints.h 6
+    //  example/template/app_ints.h 6
 
     namespace App {
     using Ints_t = std::vector<int>;
     }
 ```
 ```cpp
-    // @@@ example/template/logger_0_logging_ut.cpp 10
+    //  example/template/logger_0_logging_ut.cpp 10
 
     namespace Logging {  // operator<<の定義をLoggingで行う
     std::ostream& operator<<(std::ostream& os, App::Ints_t const& ints)
@@ -6631,7 +6631,7 @@ App::Ints_t用のoperator<<がLogging::Logger::set_inner内でname lookup出来�
 これを実現するために、次のコードを試してみる。
 
 ```cpp
-    // @@@ example/template/logger_0_struct_ut.cpp 10
+    //  example/template/logger_0_struct_ut.cpp 10
 
     namespace App {                     // Ints_tの宣言はApp
     struct Ints_t : std::vector<int> {  // エイリアスではなく、継承を使う
@@ -6678,14 +6678,14 @@ LOGGERの中でname lookupできる、エイリアスApp::Ints_tのoperator<<の
 
 
 ```cpp
-    // @@@ example/template/app_ints.h 6
+    //  example/template/app_ints.h 6
 
     namespace App {
     using Ints_t = std::vector<int>;
     }
 ```
 ```cpp
-    // @@@ example/template/logger_0_no_put_to_ut.cpp 10
+    //  example/template/logger_0_no_put_to_ut.cpp 10
 
     namespace App {  // App::Ints_tのoperator<<とToStringをApp内で定義
     namespace {      // operator<<は外部から使わない
@@ -6717,7 +6717,7 @@ LOGGERの中でname lookupできる、エイリアスApp::Ints_tのoperator<<の
 当然だが、恥を忍んで受け入れたコードにも単体テストは必要である。
 
 ```cpp
-    // @@@ example/template/logger_0_no_put_to_ut.cpp 44
+    //  example/template/logger_0_no_put_to_ut.cpp 44
 
     auto ints = App::Ints_t{1, 2, 3};
 
@@ -6769,7 +6769,7 @@ App::ToString()によりstd::stringへ変換する必要があり、残念なイ
 その場合、下記のようにさらに一般化するのが良いだろう。
 
 ```cpp
-    // @@@ example/template/nstd_0.h 4
+    //  example/template/nstd_0.h 4
 
     namespace Nstd {
 
@@ -6800,7 +6800,7 @@ App::ToString()によりstd::stringへ変換する必要があり、残念なイ
 その単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_0_ut.cpp 13
+    //  example/template/nstd_0_ut.cpp 13
 
     auto const ints = App::Ints_t{1, 2, 3};
 
@@ -6841,7 +6841,7 @@ std::vector、std::basic_string、std::array等の配列型コンテナは、
 下記のコードのようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 10
+    //  example/template/safe_vector_ut.cpp 10
 
 namespace Nstd {
 
@@ -6867,7 +6867,7 @@ struct SafeVector : std::vector<T> {
 である。単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 30
+    //  example/template/safe_vector_ut.cpp 30
 
     {
         auto v = Nstd::SafeVector<int>(10);  // ()での初期化
@@ -6905,7 +6905,7 @@ std::arrayがあるため、それらにも範囲チェックを導入する。
 std::basic_stringはstd::vectorとほぼ同様に下記のようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 62
+    //  example/template/safe_vector_ut.cpp 62
     namespace Nstd {
 
     struct SafeString : std::string {
@@ -6926,7 +6926,7 @@ std::stringはstd::basic_string\<char>のエイリアスであるため、
 この単体テストはSafeVectorの場合と同様に下記のようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 80
+    //  example/template/safe_vector_ut.cpp 80
 
     {
         auto s = Nstd::SafeString{"0123456789"};
@@ -6947,7 +6947,7 @@ std::arrayでは少々事情が異なるが、
 std::vectorのコードパターンをそのまま適用すると下記のようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 101
+    //  example/template/safe_vector_ut.cpp 101
 
     namespace Nstd {
 
@@ -6967,7 +6967,7 @@ std::vectorのコードパターンをそのまま適用すると下記のよう
 ただし、この実装には問題がある。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 122
+    //  example/template/safe_vector_ut.cpp 122
 
     auto sa_not_init = Nstd::SafeArray<int, 3>{};
 
@@ -6978,7 +6978,7 @@ std::vectorのコードパターンをそのまま適用すると下記のよう
 上記コードでは、その問題が露見することはないが、以下のコードはコンパイルできない。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 132
+    //  example/template/safe_vector_ut.cpp 132
 
     // std::initializer_listを引数とするコンストラクタが未定義
     auto sa_init = Nstd::SafeArray<int, 3>{1, 2, 3};
@@ -7000,7 +7000,7 @@ std::arrayにはデフォルトで自動生成される
 この問題に対処したのが以下のコードである。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 146
+    //  example/template/safe_vector_ut.cpp 146
 
     namespace Nstd {
 
@@ -7027,7 +7027,7 @@ std::arrayにはデフォルトで自動生成される
 このコンストラクタによりパスするようになった。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 181
+    //  example/template/safe_vector_ut.cpp 181
     {
         auto sa_init = Nstd::SafeArray<int, 3>{1, 2, 3};
 
@@ -7053,7 +7053,7 @@ std::arrayにはデフォルトで自動生成される
 この効果を生み出した上記を抜粋した下記のコードには解説が必要だろう。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 155
+    //  example/template/safe_vector_ut.cpp 155
 
     template <typename... ARGS>  // コンストラクタを定義
     SafeArray(ARGS... args) : base_type{args...}
@@ -7081,7 +7081,7 @@ SafeArrayにはメンバ変数が存在しないため、
 上記SafeArrayの初期化子リストコンストラクタは以下のようなコードを許可しない。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 213
+    //  example/template/safe_vector_ut.cpp 213
     {
         auto sa_init = Nstd::SafeArray<int, 3>{1.0, 2, 3};
 
@@ -7145,7 +7145,7 @@ std::true_type/std::false_typeは真/偽を返すSTLメタ関数群の戻り型�
 これらは、下記で確かめられる通り、後述する[std::integral_constant](#SS_4_3_1_2)を使い定義されている。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 13
+    //  example/template/type_traits_ut.cpp 13
 
     // std::is_same_vの2パラメータが同一であれば、std::is_same_v<> == true
     static_assert(std::is_same_v<std::integral_constant<bool, true>, std::true_type>);
@@ -7155,7 +7155,7 @@ std::true_type/std::false_typeは真/偽を返すSTLメタ関数群の戻り型�
 それぞれの型が持つvalue定数は、下記のように定義されている。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 20
+    //  example/template/type_traits_ut.cpp 20
 
     static_assert(std::true_type::value, "must be true");
     static_assert(!std::false_type::value, "must be false");
@@ -7167,7 +7167,7 @@ true/falseのメタ関数版と考えれば、追々理解できるだろう。
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 29
+    //  example/template/type_traits_ut.cpp 29
 
     // 引数の型がintに変換できるかどうかを判定する関数
     // decltypeの中でのみ使用されるため、定義は不要
@@ -7178,7 +7178,7 @@ true/falseのメタ関数版と考えれば、追々理解できるだろう。
 上記の単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 40
+    //  example/template/type_traits_ut.cpp 40
 
     static_assert(decltype(IsCovertibleToInt(1))::value);
     static_assert(decltype(IsCovertibleToInt(1u))::value);
@@ -7208,7 +7208,7 @@ std::integral_constantは
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 62
+    //  example/template/type_traits_ut.cpp 62
 
     using int3 = std::integral_constant<int, 3>;
 
@@ -7238,7 +7238,7 @@ std::integral_constantは
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 99
+    //  example/template/type_traits_ut.cpp 99
 
     static_assert(std::is_same<int, int>::value);
     static_assert(std::is_same<int, int32_t>::value);   // 64ビットg++/clang++
@@ -7251,14 +7251,14 @@ std::integral_constantは
 下記のように定義されている。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 90
+    //  example/template/type_traits_ut.cpp 90
 
     template <typename T, typename U>
     constexpr bool is_same_v{std::is_same<T, U>::value};
 ```
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 108
+    //  example/template/type_traits_ut.cpp 108
 
     static_assert(is_same_v<int, int>);
     static_assert(is_same_v<int, int32_t>);   // 64ビットg++/clang++
@@ -7280,7 +7280,7 @@ std::integral_constantは
 std::is_base_ofを使うことで下記のようにstd::is_sameの基底クラス確認することもできる。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 117
+    //  example/template/type_traits_ut.cpp 117
 
     static_assert(std::is_base_of_v<std::true_type, std::is_same<int, int>>);
     static_assert(std::is_base_of_v<std::false_type, std::is_same<int, char>>);
@@ -7296,7 +7296,7 @@ std::enable_ifは、bool値である第1テンプレートパラメータが
 下記のコードはクラステンプレートの特殊化を用いたstd::enable_ifの実装例である。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 124
+    //  example/template/type_traits_ut.cpp 124
 
     template <bool T_F, typename T = void>
     struct enable_if;
@@ -7317,7 +7317,7 @@ std::enable_ifは、bool値である第1テンプレートパラメータが
 std::enable_ifの使用例を下記に示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 148
+    //  example/template/type_traits_ut.cpp 148
 
     static_assert(std::is_same_v<void, std::enable_if_t<true>>);
     static_assert(std::is_same_v<int, std::enable_if_t<true, int>>);
@@ -7331,7 +7331,7 @@ std::enable_ifの使用例を下記に示す。
 となるため、下記のコードはコンパイルできない。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 155
+    //  example/template/type_traits_ut.cpp 155
 
     // 下記はill-formedとなるため、コンパイルできない。
     static_assert(std::is_same_v<void, std::enable_if_t<false>>);
@@ -7354,7 +7354,7 @@ std::conditionalは、bool値である第1テンプレートパラメータが
 下記のコードはクラステンプレートの特殊化を用いたstd::conditionalの実装例である。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 164
+    //  example/template/type_traits_ut.cpp 164
 
     template <bool T_F, typename, typename>
     struct conditional;
@@ -7376,7 +7376,7 @@ std::conditionalは、bool値である第1テンプレートパラメータが
 std::conditionalの使用例を下記に示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 189
+    //  example/template/type_traits_ut.cpp 189
 
     static_assert(std::is_same_v<int, std::conditional_t<true, int, char>>);
     static_assert(std::is_same_v<char, std::conditional_t<false, int, char>>);
@@ -7393,7 +7393,7 @@ std::is_voidはテンプレートパラメータの型が
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp 82
+    //  example/template/type_traits_ut.cpp 82
 
     static_assert(std::is_void<void>::value);
     static_assert(!std::is_void<int>::value);
@@ -7435,7 +7435,7 @@ std::is_voidはテンプレートパラメータの型が
 関数テンプレートの特殊化を使用したis_void_fの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 8
+    //  example/template/is_void_ut.cpp 8
 
     template <typename T>
     constexpr bool is_void_f() noexcept
@@ -7456,7 +7456,7 @@ std::is_voidはテンプレートパラメータの型が
 単純なので解説は不要だろう。これらの単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 28
+    //  example/template/is_void_ut.cpp 28
 
     static_assert(!is_void_f_v<int>);
     static_assert(!is_void_f_v<std::string>);
@@ -7476,7 +7476,7 @@ std::is_voidはテンプレートパラメータの型が
 クラステンプレートの特殊化を使用したis_void_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 36
+    //  example/template/is_void_ut.cpp 36
 
     template <typename T>
     struct is_void_s {
@@ -7495,7 +7495,7 @@ std::is_voidはテンプレートパラメータの型が
 is_void_fと同様に単純なので解説は不要だろう。これらの単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 54
+    //  example/template/is_void_ut.cpp 54
 
     static_assert(!is_void_s_v<int>);
     static_assert(!is_void_s_v<std::string>);
@@ -7507,7 +7507,7 @@ is_void_fと同様に単純なので解説は不要だろう。これらの単�
 [SFINAE](#SS_6_10_1)を使用した関数テンプレートis_void_sfinae_fの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 62
+    //  example/template/is_void_ut.cpp 62
 
     namespace Inner_ {
 
@@ -7568,7 +7568,7 @@ is_void_sfinae_fはこの性質を利用し、
 となる。念のため単体テストを示すと下記のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 97
+    //  example/template/is_void_ut.cpp 97
 
     static_assert(!is_void_sfinae_f_v<int>);
     static_assert(!is_void_sfinae_f_v<std::string>);
@@ -7588,7 +7588,7 @@ is_void_sfinae_f_detectorのようなテンプレートに関しては大変都�
 is_void_sfinae_fは下記のように実装することも可能である。この場合、名前空間Inner\_は不要になる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 106
+    //  example/template/is_void_ut.cpp 106
 
     template <typename T>
     class is_void_sfinae_f {
@@ -7619,7 +7619,7 @@ is_void_sfinae_fは下記のように実装することも可能である。こ�
 ```
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 138
+    //  example/template/is_void_ut.cpp 138
 
     static_assert(!is_void_sfinae_f_v<int>);
     static_assert(!is_void_sfinae_f_v<std::string>);
@@ -7631,7 +7631,7 @@ is_void_sfinae_fは下記のように実装することも可能である。こ�
 [SFINAE](#SS_6_10_1)を使用したクラステンプレートis_void_sfinae_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 147
+    //  example/template/is_void_ut.cpp 147
 
     namespace Inner_ {
     template <typename T>
@@ -7663,7 +7663,7 @@ is_void_sfinae_sの特殊化が[name lookup](#SS_6_9_2)の対象の中に見つ�
 2つ目のis_void_sfinae_sは、上記を抜粋した下記のコード
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 163
+    //  example/template/is_void_ut.cpp 163
 
     // T != voidの場合、ill-formed
     // T == voidの場合、well-formedでvoid*&生成
@@ -7703,7 +7703,7 @@ T != voidの場合、 2つ目のis_void_sfinae_sはill-formedになり、name lo
 となる。以下の単体テストによって、このことを確かめることができる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 180
+    //  example/template/is_void_ut.cpp 180
 
     static_assert(!is_void_sfinae_s_v<int>);
     static_assert(std::is_base_of_v<std::false_type, is_void_sfinae_s<int>>);
@@ -7718,7 +7718,7 @@ T != voidの場合、 2つ目のis_void_sfinae_sはill-formedになり、name lo
 上記コードのように「プライマリテンプレートのデフォルトパラメータ」と、
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 163
+    //  example/template/is_void_ut.cpp 163
 
     // T != voidの場合、ill-formed
     // T == voidの場合、well-formedでvoid*&生成
@@ -7737,7 +7737,7 @@ SFINAEとクラステンプレートの特殊化を組み合わせたメタ関�
 以下の実装で使用した[same_as](#SS_4_3_3_6)は\<concepts>で定義されているコンセプトと同様のものである。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 193
+    //  example/template/is_void_ut.cpp 193
 
     template <typename T>
     struct is_void_concept_s : std::false_type {
@@ -7749,7 +7749,7 @@ SFINAEとクラステンプレートの特殊化を組み合わせたメタ関�
     };
 ```
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 207
+    //  example/template/is_void_ut.cpp 207
 
     static_assert(!is_void_concept_s<int>::value);
     static_assert(std::is_base_of_v<std::false_type, is_void_concept_s<int>>);
@@ -7764,7 +7764,7 @@ SFINAEとクラステンプレートの特殊化を組み合わせたメタ関�
 下記に示した通り、テンプレート特殊化はクラスのみなく定数に対しても使用することができる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 220
+    //  example/template/is_void_ut.cpp 220
 
     template <typename T>
     constexpr bool is_void_concept_s_v = false;
@@ -7777,7 +7777,7 @@ SFINAEとクラステンプレートの特殊化を組み合わせたメタ関�
 以下に示した通り、[is_void_sfinae_s](#SS_4_3_2_4)の実装で示した定数テンプレートのテストと同様になっている。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 232
+    //  example/template/is_void_ut.cpp 232
 
     static_assert(!is_void_concept_s_v<int>);
     static_assert(!is_void_concept_s_v<std::string>);
@@ -7789,7 +7789,7 @@ SFINAEとクラステンプレートの特殊化を組み合わせたメタ関�
 is_void_ena_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 240
+    //  example/template/is_void_ut.cpp 240
     template <typename T, typename = void>
     struct is_void_ena_s : std::false_type {
     };
@@ -7808,7 +7808,7 @@ is_void_ena_sの実装は以下のようになる。
 この例では、「[is_void_sfinae_s](#SS_4_3_2_4)の実装」の
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 163
+    //  example/template/is_void_ut.cpp 163
 
     // T != voidの場合、ill-formed
     // T == voidの場合、well-formedでvoid*&生成
@@ -7818,7 +7818,7 @@ is_void_ena_sの実装は以下のようになる。
 で示したSFINAEの処理を上記を抜粋した下記のコード
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 250
+    //  example/template/is_void_ut.cpp 250
 
     typename std::enable_if_t<is_void_f<T>()>
 ```
@@ -7829,7 +7829,7 @@ std::enable_ifの値パラメータis_void_f\<T>()は、「[is_void_f](#SS_4_3_2
 単体テストは、「[is_void_sfinae_s](#SS_4_3_2_4)の実装」で示したものとほぼ同様で、以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 264
+    //  example/template/is_void_ut.cpp 264
 
     static_assert(!is_void_ena_s_v<int>);
     static_assert(std::is_base_of_v<std::false_type, is_void_ena_s<int>>);
@@ -7846,7 +7846,7 @@ std::enable_ifの値パラメータis_void_f\<T>()は、「[is_void_f](#SS_4_3_2
 [std::conditional](#SS_4_3_1_5)と関数テンプレートの特殊化を使用したis_void_cond_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 277
+    //  example/template/is_void_ut.cpp 277
     template <typename T>
     struct is_void_cond_s : std::conditional_t<is_void_f<T>(), std::true_type, std::false_type> {
     };
@@ -7860,7 +7860,7 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](#SS_4_3
 下記単体テストからわかる通り、「[is_void_sfinae_s](#SS_4_3_2_4)の実装」と同じ機能を備えている。
 
 ```cpp
-    // @@@ example/template/is_void_ut.cpp 288
+    //  example/template/is_void_ut.cpp 288
 
     static_assert(!is_void_cond_s_v<int>);
     static_assert(std::is_base_of_v<std::false_type, is_void_cond_s<int>>);
@@ -7900,7 +7900,7 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](#SS_4_3
 関数テンプレートのオーバーロードを用いたis_same_fの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 9
+    //  example/template/is_same_ut.cpp 9
 
     template <typename T, typename U>
     constexpr bool is_same_f_helper(T const*, U const*) noexcept
@@ -7927,7 +7927,7 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](#SS_4_3
 すでに述べたように関数テンプレートの部分特殊化は言語仕様として認められておらず、
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 34
+    //  example/template/is_same_ut.cpp 34
 
     template <typename T, typename U>
     constexpr bool is_same_f()
@@ -7960,7 +7960,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 52
+    //  example/template/is_same_ut.cpp 52
 
     static_assert(!is_same_f_v<int, void>);
     static_assert(is_same_f_v<int, int>);
@@ -7972,7 +7972,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 定数テンプレートの特殊化を用いたis_same_vの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 61
+    //  example/template/is_same_ut.cpp 61
 
     template <typename T, typename U>
     constexpr bool is_same_v{false};
@@ -7984,7 +7984,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 単純であるため、解説は不要だろう。 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 72
+    //  example/template/is_same_ut.cpp 72
 
     static_assert(!is_same_v<int, void>);
     static_assert(is_same_v<int, int>);
@@ -7997,7 +7997,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 クラステンプレートの特殊化を用いたis_same_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 81
+    //  example/template/is_same_ut.cpp 81
 
     template <class T, class U>
     struct is_same_s : std::false_type {
@@ -8014,7 +8014,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 「[is_same_v](#SS_4_3_3_2)の実装」と同様に単純であるため、解説は不要だろう。 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 97
+    //  example/template/is_same_ut.cpp 97
 
     static_assert(!is_same_s_v<int, void>);
     static_assert(is_same_s_v<int, int>);
@@ -8027,7 +8027,7 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 SFINAEと関数テンプレート/関数のオーバーロードを用いたis_same_sfinae_f実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 106
+    //  example/template/is_same_ut.cpp 106
 
     namespace Inner_ {
     template <typename T, typename U>
@@ -8054,7 +8054,7 @@ SFINAEと関数テンプレート/関数のオーバーロードを用いたis_s
 上記の抜粋である下記コードのコメントで示したように、
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 112
+    //  example/template/is_same_ut.cpp 112
 
     -> decltype(t = u, u = t, bool{})  // T != Uの場合、t = u, u = tはill-formed
                                        // T == Uの場合、well-formedでbool型生成
@@ -8068,7 +8068,7 @@ T == Uの場合は、関数テンプレートis_same_sfinae_f_detectorが選択�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 136
+    //  example/template/is_same_ut.cpp 136
 
     static_assert(!is_same_sfinae_f_v<int, void>);
     static_assert(is_same_sfinae_f_v<int, int>);
@@ -8080,7 +8080,7 @@ T == Uの場合は、関数テンプレートis_same_sfinae_f_detectorが選択�
 SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 144
+    //  example/template/is_same_ut.cpp 144
 
     namespace Inner_ {
     template <typename T>
@@ -8109,7 +8109,7 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 172
+    //  example/template/is_same_ut.cpp 172
 
     static_assert(!is_same_sfinae_s_v<int, void>);
     static_assert(is_same_sfinae_s_v<int, int>);
@@ -8122,7 +8122,7 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
 よりリファクタリングしたコードを以下に示す。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 181
+    //  example/template/is_same_ut.cpp 181
 
     template <typename T, typename U>
     concept same_as = requires(T const* t, U const* u)
@@ -8134,7 +8134,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 下記のテストから明らかな通り、ほぼ同様に同様に使用することができる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 203
+    //  example/template/is_same_ut.cpp 203
 
     static_assert(!same_as<int, void>);
     static_assert(same_as<int, int>);
@@ -8145,7 +8145,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 「[is_same_s](#SS_4_3_3_3)」で紹介した特殊化のテクニックを下記のように使用することができる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 189
+    //  example/template/is_same_ut.cpp 189
 
     template <typename T, typename U>
     struct is_same_concept_s : std::false_type {
@@ -8157,7 +8157,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
     };
 ```
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 210
+    //  example/template/is_same_ut.cpp 210
 
     static_assert(!is_same_concept_s<int, void>::value);
     static_assert(is_same_concept_s<int, int>::value);
@@ -8171,7 +8171,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 すでに示したis_same_sを使用し、
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 231
+    //  example/template/is_same_ut.cpp 231
 
     static_assert(is_same_s_v<std::string, std::basic_string<char>>);
     static_assert(!is_same_s_v<std::string, std::basic_string<signed char>>);
@@ -8181,7 +8181,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 以下に示したコードのようにテンプレートテンプレートパラメータを使うことでも実装できる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 219
+    //  example/template/is_same_ut.cpp 219
 
     template <typename T, template <class...> class TEMPL, typename... ARGS>
     struct is_same_templ : is_same_sfinae_s<T, TEMPL<ARGS...>> {
@@ -8196,7 +8196,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 使用例を兼ねた単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 236
+    //  example/template/is_same_ut.cpp 236
 
     static_assert(is_same_templ_v<std::string, std::basic_string, char>);
     static_assert(!is_same_templ_v<std::string, std::basic_string, signed char>);
@@ -8205,7 +8205,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 これを応用したエイリアステンプレート
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 243
+    //  example/template/is_same_ut.cpp 243
 
     template <typename T>
     using gen_std_string = is_same_templ<std::string, std::basic_string, T>;
@@ -8217,7 +8217,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 は与えられたテンプレートパラメータがstd::stringを生成するかどうかを判定することができる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp 254
+    //  example/template/is_same_ut.cpp 254
 
     static_assert(gen_std_string_v<char>);
     static_assert(!gen_std_string_v<signed char>);
@@ -8235,7 +8235,7 @@ IsSameSomeOfはこれまでの例とは少々異なり、
 このようなIsSameSomeOfの実装はは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 13
+    //  example/template/nstd_type_traits.h 13
 
     namespace Nstd {
     // コンセプト: 複数の型のいずれかがTと同じかどうかをチェック
@@ -8261,7 +8261,7 @@ Usが複数だった場合、[畳み込み式](--)を使用し上記の処理を
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 14
+    //  example/template/nstd_type_traits_ut.cpp 14
 
     static_assert(!Nstd::IsSameSomeOfV<int, int8_t, int16_t, uint16_t>);
     static_assert(Nstd::IsSameSomeOfV<int, int8_t, int16_t, uint16_t, int32_t>);
@@ -8277,7 +8277,7 @@ OneOfは、[IsSameSomeOf](#SS_4_3_3_8)同様の機能を持つコンセプトで
 OneOfの実装にはシンプルに記述するための[畳み込み式](#SS_6_10_3)を使用した。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 51
+    //  h/nstd_concepts.h 51
 
     template <typename T, typename... Us>
     concept OneOf = (std::same_as<T, Us> || ...);
@@ -8285,7 +8285,7 @@ OneOfの実装にはシンプルに記述するための[畳み込み式](#SS_6_
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 27
+    //  example/template/nstd_type_traits_ut.cpp 27
 
     static_assert(!Nstd::OneOf<int, int8_t, int16_t, uint16_t>);
     static_assert(Nstd::OneOf<int, int8_t, int16_t, uint16_t, int32_t>);
@@ -8322,7 +8322,7 @@ std::is_convertible\<FROM, TO>は、
 AreConvertibleの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 34
+    //  example/template/nstd_type_traits.h 34
 
     namespace Nstd {
     namespace Inner_ {
@@ -8364,7 +8364,7 @@ AreConvertibleの実装は以下のようになる。
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 40
+    //  example/template/nstd_type_traits_ut.cpp 40
 
     static_assert(Nstd::AreConvertibleV<int, int8_t, int16_t, int>);
     static_assert(Nstd::AreConvertibleV<int, char, int, int>);
@@ -8384,7 +8384,7 @@ AreConvertibleWithoutNarrowConvに対しis_convertible_without_narrow_convが必
 SFINAEと関数テンプレート/関数のオーバーライドを使用し以下のように実装できる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 68
+    //  example/template/nstd_type_traits.h 68
 
     namespace Nstd {
     namespace Inner_ {
@@ -8421,7 +8421,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 ことをSFINAEに利用している。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 78
+    //  example/template/nstd_type_traits.h 78
 
     // 縮小無しでFROMからTOへ変換可能な場合、*t = T{*u}はwell-formed
     // 上記ではない場合、*t = T{*u}はill-formed
@@ -8431,7 +8431,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 52
+    //  example/template/nstd_type_traits_ut.cpp 52
 
     static_assert(Nstd::Inner_::is_convertible_without_narrow_conv_v<int, int>);
     static_assert(Nstd::Inner_::is_convertible_without_narrow_conv_v<int, int16_t>);
@@ -8444,7 +8444,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 の実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 101
+    //  example/template/nstd_type_traits.h 101
 
     namespace Nstd {
     namespace Inner_ {
@@ -8481,7 +8481,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 60
+    //  example/template/nstd_type_traits_ut.cpp 60
 
     static_assert(Nstd::AreConvertibleWithoutNarrowConvV<int, char, int16_t, uint16_t>);
     static_assert(!Nstd::AreConvertibleWithoutNarrowConvV<int, char, int16_t, uint32_t>);
@@ -8496,7 +8496,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 ConvertibleToAllの実装は下記のようになる。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 56
+    //  h/nstd_concepts.h 56
 
 // 複数の型 FROMs がすべて TO に変換可能かどうかを制約するコンセプト
 template <typename TO, typename... FROMs>
@@ -8506,7 +8506,7 @@ concept ConvertibleToAll = (std::convertible_to<FROMs, TO> && ...);
 使用方法を含めて、単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 137
+    //  example/template/nstd_concepts_ut.cpp 137
 
     // ConvertibleToAll_Test テンプレートの定義
     template <typename TO, typename... FROMs>
@@ -8536,7 +8536,7 @@ ConvertibleWithoutNarrowingは以下のようなコンセプトである。
 実装は以下のようになる。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 62
+    //  h/nstd_concepts.h 62
 
 namespace Inner_ {
 
@@ -8616,7 +8616,7 @@ exists_void_func_sfinae_f
 のSFINAEと関数テンプレート/関数のオーバーロードを用いた実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 13
+    //  example/template/exists_func_ut.cpp 13
 
     namespace Inner_ {
 
@@ -8640,7 +8640,7 @@ decltypeの中での関数呼び出しは、実際には呼び出されず関数
 上記の抜粋である下記のコードはこの性質を利用してSFINAEによる静的ディスパッチを行っている。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 20
+    //  example/template/exists_func_ut.cpp 20
 
     // メンバvoid func(void)があれば、voidを生成
     // メンバvoid func(void)がなければ、ill-formed
@@ -8650,7 +8650,7 @@ decltypeの中での関数呼び出しは、実際には呼び出されず関数
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 40
+    //  example/template/exists_func_ut.cpp 40
 
     // テスト用クラス
     struct X {
@@ -8668,7 +8668,7 @@ decltypeの中での関数呼び出しは、実際には呼び出されず関数
 ```
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 60
+    //  example/template/exists_func_ut.cpp 60
 
     static_assert(!exists_void_func_sfinae_f(int{}));
     static_assert(exists_void_func_sfinae_f(X{}));
@@ -8683,7 +8683,7 @@ exists_void_func_sfinae_s
 のSFINAEとクラステンプレートの特殊化を用いた実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 69
+    //  example/template/exists_func_ut.cpp 69
 
     template <typename T, typename U = void>
     struct exists_void_func_sfinae_s : std::false_type {
@@ -8707,7 +8707,7 @@ exists_void_func_sfinae_fとほぼ等しいSFINAEを利用したクラステン�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 91
+    //  example/template/exists_func_ut.cpp 91
 
     static_assert(!exists_void_func_sfinae_s_v<int>);
     static_assert(exists_void_func_sfinae_s_v<X>);
@@ -8726,7 +8726,7 @@ exists_void_func_sfinae_sとほぼ同様の仕様を持つexists_void_func_sfina
 を用いた実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 100
+    //  example/template/exists_func_ut.cpp 100
 
     template <typename T>
     class exists_void_func_sfinae_s2 {
@@ -8753,7 +8753,7 @@ exists_void_func_sfinae_sとほぼ同様の仕様を持つexists_void_func_sfina
 メンバ関数へのポインタを使用しSFINAEを実装している。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 105
+    //  example/template/exists_func_ut.cpp 105
 
     // メンバvoid func()が呼び出せれば、メンバ関数テンプレートはtrueを返す
     // メンバvoid func()が呼び出せなければ、ill-formed
@@ -8770,7 +8770,7 @@ decltypeを使っていないのでC++03コンパイラにも受け入れられ�
 exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 129
+    //  example/template/exists_func_ut.cpp 129
 
     static_assert(!exists_void_func_sfinae_s2_v<int>);
     static_assert(exists_void_func_sfinae_s2_v<X>);
@@ -8788,7 +8788,7 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
 以下に示すように、C++20から導入された[コンセプト](#SS_6_10_2)はこのような問題の軽減につながる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 138
+    //  example/template/exists_func_ut.cpp 138
 
     template <typename T>  // C++20スタイル。concept/requiresによるSFINAEの回避
     concept exists_void_func_concept = requires(T& t)
@@ -8797,7 +8797,7 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
     };
 ```
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 151
+    //  example/template/exists_func_ut.cpp 151
     static_assert(!exists_void_func_concept<decltype(int{})>);
     static_assert(exists_void_func_concept<decltype(X{})>);
     static_assert(!exists_void_func_concept<decltype(Y{})>);  // Y::funcの戻りはint
@@ -8811,7 +8811,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 で用いたパターンのメンバ関数を非メンバ関数に置き換えて使えば以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 161
+    //  example/template/exists_func_ut.cpp 161
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8835,7 +8835,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記単体テストでは問題ないように見えるが、
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 177
+    //  example/template/exists_func_ut.cpp 177
 
     static_assert(exists_begin_v<std::string>);
     static_assert(!exists_begin_v<int>);
@@ -8845,7 +8845,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記の単体テストはstatic_assertがフェールするためコンパイルできない。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 187
+    //  example/template/exists_func_ut.cpp 187
 
     // 以下が問題
     static_assert(exists_begin_v<int[3]>);
@@ -8866,7 +8866,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記のように実装できることにも気付けるだろう。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 204
+    //  example/template/exists_func_ut.cpp 204
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8900,7 +8900,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 と考えれば下記のような実装を思いつくだろう。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 144
+    //  example/template/nstd_type_traits.h 144
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8917,7 +8917,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 十分にシンプルなのでこれを採用し、exists_endも同様に実装する。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 157
+    //  example/template/nstd_type_traits.h 157
 
     template <typename, typename = void>
     struct exists_end : std::false_type {
@@ -8933,7 +8933,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 94
+    //  example/template/nstd_type_traits_ut.cpp 94
 
     static_assert(exists_begin_v<std::string>);
     static_assert(!exists_begin_v<int>);
@@ -8960,7 +8960,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 IsRangeの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 171
+    //  example/template/nstd_type_traits.h 171
 
     template <typename T>
     struct IsRange : std::conditional_t<Inner_::exists_begin_v<T> && Inner_::exists_end_v<T>,
@@ -8975,7 +8975,7 @@ IsRangeの実装は以下のようになる。
 名前空間Inner\_で宣言している。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 113
+    //  example/template/nstd_type_traits_ut.cpp 113
 
     static_assert(IsRangeV<std::string>);
     static_assert(!IsRangeV<int>);
@@ -8989,13 +8989,13 @@ IsRangeの実装は以下のようになる。
 以降の節で使用するため、テンプレートパラメータが配列である制約を下記のように宣言する。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 8
+    //  h/nstd_concepts.h 8
 
     template <typename T>
     concept Array = std::is_array_v<T>;
 ```
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 18
+    //  example/template/nstd_concepts_ut.cpp 18
 
     int  a[3];
     int* ptr = a;
@@ -9011,7 +9011,7 @@ IsRangeの実装は以下のようになる。
 コンセプトを使用し、[exists_begin/exsits_end](#SS_4_3_5_5)をリファクタリングした例を以下に示す。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 14
+    //  h/nstd_concepts.h 14
 
     template <typename T>
     concept Beginable = Array<T> || requires(T& t)
@@ -9026,7 +9026,7 @@ IsRangeの実装は以下のようになる。
     };
 ```
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 34
+    //  example/template/nstd_concepts_ut.cpp 34
 
     int  a[3];
     int* ptr = a;
@@ -9044,7 +9044,7 @@ IsRangeの実装は以下のようになる。
 IsRangeと同一の機能を持つコンセプトRangedを以下のように定義する。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 32
+    //  h/nstd_concepts.h 32
 
     template <typename T>
     concept Ranged = Beginable<T> && Endable<T>;
@@ -9053,7 +9053,7 @@ IsRangeと同一の機能を持つコンセプトRangedを以下のように定�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 53
+    //  example/template/nstd_concepts_ut.cpp 53
 
     static_assert(Ranged<std::string>);
     static_assert(!Ranged<int>);
@@ -9068,7 +9068,7 @@ Rangedの可読性はIsRangedに比べ格段に改善している。
 与えられた型をコンテナに制約するためのコンセプトを下記のように便宜的に宣言する。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 32
+    //  h/nstd_concepts.h 32
 
     template <typename T>
     concept Ranged = Beginable<T> && Endable<T>;
@@ -9077,7 +9077,7 @@ Rangedの可読性はIsRangedに比べ格段に改善している。
 単体テストには少々の工夫が必要になる。
 
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 62
+    //  example/template/nstd_concepts_ut.cpp 62
 
     struct X {
         std::vector<int> data{1, 2, 3, 4, 5};
@@ -9086,7 +9086,7 @@ Rangedの可読性はIsRangedに比べ格段に改善している。
         auto end() { return data.end(); }      // std::end
     };
 
-    // @@@ example/template/nstd_concepts_ut.cpp 74
+    //  example/template/nstd_concepts_ut.cpp 74
 
     static_assert(Container<std::string>);
     static_assert(!Container<int>);
@@ -9101,7 +9101,7 @@ std::ostreamのメンバ関数operator<<の戻り型はstd::ostream&であるた
 exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put to"と発音する)。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 240
+    //  example/template/exists_func_ut.cpp 240
 
     template <typename, typename = std::ostream&>
     struct exists_put_to_as_member : std::false_type {
@@ -9121,7 +9121,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/test_class.h 3
+    //  example/template/test_class.h 3
 
     class test_class_exits_put_to {
     public:
@@ -9141,7 +9141,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 ```
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 257
+    //  example/template/exists_func_ut.cpp 257
 
     static_assert(exists_put_to_as_member_v<bool>);
     static_assert(!exists_put_to_as_member_v<std::string>);
@@ -9155,7 +9155,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 やや驚きなのは、上記の抜粋である下記コードがコンパイルできることである。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 266
+    //  example/template/exists_func_ut.cpp 266
 
     static_assert(exists_put_to_as_member_v<test_class_not_exits_put_to[3]>);  // 驚き!
 ```
@@ -9173,7 +9173,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 exists_put_to_as_non_memberの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 275
+    //  example/template/exists_func_ut.cpp 275
 
     template <typename, typename = std::ostream&>
     struct exists_put_to_as_non_member : std::false_type {
@@ -9197,7 +9197,7 @@ exists_put_to_as_non_memberの実装は以下のようになる。
 std::ostream << tができるかどうかを判断するExistsPutToの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp 304
+    //  example/template/exists_func_ut.cpp 304
 
     template <typename T>
     struct ExistsPutTo
@@ -9215,7 +9215,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 下記のように、もっとシンプルに実装できることに気づくだろう。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 186
+    //  example/template/nstd_type_traits.h 186
 
     namespace Nstd {
 
@@ -9236,7 +9236,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 124
+    //  example/template/nstd_type_traits_ut.cpp 124
 
     static_assert(Nstd::ExistsPutToV<bool>);
     static_assert(Nstd::ExistsPutToV<std::string>);
@@ -9254,7 +9254,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 * リファクタリングに合わせてコンセプト化し、それらしい名称にする。
 
 ```cpp
-    // @@@ h/nstd_concepts.h 41
+    //  h/nstd_concepts.h 41
 
     template <typename T>
     concept Printable = requires(T t, std::ostream& os)
@@ -9263,7 +9263,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
     };
 ```
 ```cpp
-    // @@@ example/template/nstd_concepts_ut.cpp 86
+    //  example/template/nstd_concepts_ut.cpp 86
 
     struct X {};  // Non-pritable
     struct Y {};  // Printable
@@ -9273,7 +9273,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
         return os;  // 何もしない
     }
 
-    // @@@ example/template/nstd_concepts_ut.cpp 99
+    //  example/template/nstd_concepts_ut.cpp 99
 
     static_assert(Printable<bool>);
     static_assert(Printable<std::string>);
@@ -9289,7 +9289,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 下記で示す通り、
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp 142
+    //  example/template/nstd_type_traits_ut.cpp 142
 
     struct T {};
 
@@ -9333,7 +9333,7 @@ XからTを導出することが必要になる。ここでは、そのような
 その次元を一つだけ除去するメタ関数である)。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 18
+    //  example/template/value_type_ut.cpp 18
 
     template <typename T, typename = void>
     struct ValueType {
@@ -9352,7 +9352,7 @@ XからTを導出することが必要になる。ここでは、そのような
 このコードは問題なく動作するが、下記の通り、2次元配列に対するValueType::typeは1次元配列となる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 36
+    //  example/template/value_type_ut.cpp 36
 
     static_assert(std::is_same_v<int, ValueTypeT<int[1]>>);
     static_assert(std::is_same_v<void, ValueTypeT<int>>);
@@ -9363,7 +9363,7 @@ XからTを導出することが必要になる。ここでは、そのような
 コードは下記のようになるだろう。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 49
+    //  example/template/value_type_ut.cpp 49
 
     template <typename T, typename = void>
     struct ValueType {
@@ -9387,7 +9387,7 @@ XからTを導出することが必要になる。ここでは、そのような
 動作は下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 76
+    //  example/template/value_type_ut.cpp 76
 
     static_assert(0 == ValueType<int>::Nest);
     static_assert(1 == ValueType<int[1]>::Nest);
@@ -9409,7 +9409,7 @@ ValueType::type_n\<N>は玉ねぎの皮を一枚ずつむくようなメンバ�
 プライマリの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 91
+    //  example/template/value_type_ut.cpp 91
 
     template <typename T>
     struct ValueType {
@@ -9428,7 +9428,7 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
 配列に対する特殊化は以下のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 104
+    //  example/template/value_type_ut.cpp 104
 
     template <typename T, size_t N>  // Array Tを使わずに配列の一般的な表現を使用してNを取り出す
     struct ValueType<T[N]> {  // 配列型の特殊化
@@ -9446,7 +9446,7 @@ Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しい�
 読者の理解を確かめるため、以下のように順を追って一枚づつ配列の階層を剝ぎ取る様子を見ていく。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 126
+    //  example/template/value_type_ut.cpp 126
 
     // ValueType<int[1][2][3]>の展開について、考えよう。
 
@@ -9478,7 +9478,7 @@ Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しい�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 155
+    //  example/template/value_type_ut.cpp 155
 
     using T = int[1][2][3];
 
@@ -9493,7 +9493,7 @@ Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しい�
 上記エイリアスTに対して下記が成立する。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 178
+    //  example/template/value_type_ut.cpp 178
 
     using T = ValueTypeT_n<int[1][2][3], 3>;
 
@@ -9508,7 +9508,7 @@ Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しい�
 これによりValueTypeは下記のようになる。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 240
+    //  example/template/value_type_ut.cpp 240
 
     template <typename T>
     struct ValueType {  // プライマリ
@@ -9533,7 +9533,7 @@ Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しい�
 この特殊化のテンプレートパラメータの制約にはすでに開発したコンセプト[Container](#SS_4_3_5_10)を使用する。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 261
+    //  example/template/value_type_ut.cpp 261
 
     template <Container T>
     struct ValueType<T> {  // コンテナ型の特殊化
@@ -9548,7 +9548,7 @@ Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しい�
 まずは、追加した特殊化の機能を下記のように単体テストを行う。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 278
+    //  example/template/value_type_ut.cpp 278
 
     using T = int[1][2][3];
 
@@ -9563,7 +9563,7 @@ Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しい�
 次に特殊化がデグレードを起こしていないことを下記のように証明する。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 291
+    //  example/template/value_type_ut.cpp 291
 
     // コンテナ特殊化の機能の機能チェック
     using T = std::vector<std::vector<std::vector<int>>>;
@@ -9577,7 +9577,7 @@ Value::type_n\<>のリカーシブ展開を頭の中で行うことは難しい�
 ValueTypeの最終的な単体テストのために上記を統合したテストを行う。
 
 ```cpp
-    // @@@ example/template/value_type_ut.cpp 303
+    //  example/template/value_type_ut.cpp 303
 
     // 統合した機能チェック
     using T = std::vector<int[1][2][3]>;
@@ -9602,7 +9602,7 @@ ValueTypeの最終的な単体テストのために上記を統合したテス�
 多少のメンバの追加や調整をした最終のコードを以下に示す。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h 207
+    //  example/template/nstd_type_traits.h 207
 
     namespace Nstd {
     template <typename T, typename = void>  // ValueTypeのプライマリ
@@ -9668,7 +9668,7 @@ SafeArray2の要件をまとめると、
 となる。この要件を満たすためには、SafeArrayが
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 155
+    //  example/template/safe_vector_ut.cpp 155
 
     template <typename... ARGS>  // コンストラクタを定義
     SafeArray(ARGS... args) : base_type{args...}
@@ -9690,7 +9690,7 @@ SafeArray2の要件をまとめると、
 
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 228
+    //  example/template/safe_vector_ut.cpp 228
 namespace Nstd {
 
 template <typename T, size_t N>
@@ -9741,7 +9741,7 @@ private:
 下記のようなコードでのコンストラクタ呼び出しには、
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 299
+    //  example/template/safe_vector_ut.cpp 299
 
     auto sa_init = Nstd::SafeArray2<int, 3>{1, 2, 3};
 ```
@@ -9749,7 +9749,7 @@ private:
 上記の抜粋である下記のコンストラクタが置換失敗により排除される(SFINAE)。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 252
+    //  example/template/safe_vector_ut.cpp 252
 
     // 縮小型変換しない場合には、ill-formedになるコンストラクタ
     /* C++17までのSFINAE
@@ -9769,7 +9769,7 @@ private:
 従って、マッチするコンストラクタは
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 237
+    //  example/template/safe_vector_ut.cpp 237
 
     // 縮小型変換した場合には、ill-formedになるコンストラクタ
     /* c++17スタイルのSFINAE
@@ -9788,7 +9788,7 @@ private:
 のみとなり、無事にコンパイルが成功し、下記の単体テストもパスする。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 299
+    //  example/template/safe_vector_ut.cpp 299
 
     auto sa_init = Nstd::SafeArray2<int, 3>{1, 2, 3};
 
@@ -9804,7 +9804,7 @@ private:
 コンパイルも単体テストもパスする。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 314
+    //  example/template/safe_vector_ut.cpp 314
     auto const sa_init = Nstd::SafeArray2<int, 3>{10, 20, 30.0};  // 30.0はintに縮小型変換される
 
     ASSERT_TRUE(sa_init.InitWithNarrowing());  // 縮小型変換あり
@@ -9825,7 +9825,7 @@ private:
 パラメータパックで与えられた全引数をそれぞれにT型オブジェクトに変換するための記法である。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp 264
+    //  example/template/safe_vector_ut.cpp 264
 
     base_type{T(args)...},  // 縮小型変換を抑止するため、T(args)が必要
 ```
@@ -9855,7 +9855,7 @@ Nstd::SafeVectorとNstd::SafeStringの共通コードはテンプレートテン
 
 
 ```cpp
-    // @@@ example/template/nstd_safe_index.h 8
+    //  example/template/nstd_safe_index.h 8
 
     namespace Nstd {
 
@@ -9875,7 +9875,7 @@ Nstd::SafeVectorとNstd::SafeStringの共通コードはテンプレートテン
 このコードの使用例を兼ねた単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp 8
+    //  example/template/nstd_safe_index_ut.cpp 8
 
     auto v_i = Nstd::SafeIndex<std::vector, int>{1, 2};
 
@@ -9897,7 +9897,7 @@ Nstd::SafeVectorとNstd::SafeStringの共通コードはテンプレートテン
 このままでは使いづらいので下記のようにエイリアスを使い、元のテンプレートと同じ名前を与える。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index.h 24
+    //  example/template/nstd_safe_index.h 24
 
     namespace Nstd {
 
@@ -9911,7 +9911,7 @@ Nstd::SafeVectorとNstd::SafeStringの共通コードはテンプレートテン
 このコードの単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp 54
+    //  example/template/nstd_safe_index_ut.cpp 54
 
     auto v_i = Nstd::SafeVector<int>{1, 2};
 
@@ -9935,7 +9935,7 @@ Nstd::SafeIndexにNstd::SafeArrayの実装が取り込めれば、リファク�
 残念ながら、下記のコードはコンパイルできない。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp 44
+    //  example/template/nstd_safe_index_ut.cpp 44
 
     // 下記のように書きたいが、パラメータパックは型と値を混在できないのでコンパイルエラー
     auto a_i = Nstd::SafeIndex<std::array, int, 5>{};
@@ -9951,7 +9951,7 @@ std::arrayから派生した下記のStdArrayLikeは、std::integral_constant::v
 Nstd::SafeIndexのテンプレートテンプレートパラメータとして使用できるようになる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index.h 34
+    //  example/template/nstd_safe_index.h 34
 
     namespace Nstd {
     namespace Inner_ {
@@ -9974,7 +9974,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 まずは、このコードの使用例を兼ねた単体テストを下記に示す。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp 134
+    //  example/template/nstd_safe_index_ut.cpp 134
 
     auto sal = Nstd::Inner_::std_array_like<int, std::integral_constant<size_t, 3>>{1, 2, 3};
 
@@ -10000,7 +10000,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 これを使えば、下記のような記述が可能となる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp 157
+    //  example/template/nstd_safe_index_ut.cpp 157
 
     using T2   = Nstd::SafeIndex<Nstd::Inner_::std_array_like, std::string,
                                std::integral_constant<size_t, 4>>;
@@ -10020,7 +10020,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index.h 53
+    //  example/template/nstd_safe_index.h 53
 
     namespace Nstd {
 
@@ -10033,7 +10033,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 このコードの単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp 89
+    //  example/template/nstd_safe_index_ut.cpp 89
 
     auto sal_s = Nstd::SafeArray<std::string, 4>{"1", "2", "3"};
 
@@ -10050,7 +10050,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 この効果により、下記に示したような拡張もコードクローンせずに簡単に行えるようになった。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index.h 62
+    //  example/template/nstd_safe_index.h 62
 
     namespace Nstd {
 
@@ -10060,7 +10060,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ```
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp 112
+    //  example/template/nstd_safe_index_ut.cpp 112
 
     auto u16str = Nstd::SafeStringU16{u"あいうえお"};
 
@@ -10086,7 +10086,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 テンプレートテンプレートパラメータを使って以下のようにすることが考えられる。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 8
+    //  example/template/safe_index_put_to_ut.cpp 8
 
     template <template <class...> class C, typename... Ts>
     std::ostream& operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index)
@@ -10104,7 +10104,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 以下の単体テストで動作確認する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 25
+    //  example/template/safe_index_put_to_ut.cpp 25
     {
         auto v_i = Nstd::SafeVector<int>{1, 2};
 
@@ -10123,7 +10123,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ここまではうまく行っているが、以下の単体テストによりバグが発覚する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 40
+    //  example/template/safe_index_put_to_ut.cpp 40
 
     {
         auto s_str = Nstd::SafeString{"hello"};
@@ -10148,7 +10148,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ここでも、すでにみてきた[コンセプト](#SS_6_10_2)による制約によりこの問題に対処する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 99
+    //  example/template/safe_index_put_to_ut.cpp 99
 
     namespace Inner_ {
     template <typename T>
@@ -10172,7 +10172,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 これにより先ほど問題が発生した単体テストも下記のようにパスする。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp 135
+    //  example/template/safe_index_put_to_ut.cpp 135
 
     auto str = Nstd::SafeString{"hello"};
     auto oss = std::ostringstream{};
@@ -10202,7 +10202,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 となるだろう。この条件を診断するためのメタ関数は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_put_to.h 17
+    //  example/template/nstd_put_to.h 17
 
     namespace Nstd {
     namespace Inner_ {
@@ -10256,7 +10256,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 このような複雑なメタ関数には単体テストは必須である。
 
 ```cpp
-    // @@@ example/template/test_class.h 3
+    //  example/template/test_class.h 3
 
     class test_class_exits_put_to {
     public:
@@ -10276,7 +10276,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ```
 
 ```cpp
-    // @@@ example/template/nstd_put_to_ut.cpp 31
+    //  example/template/nstd_put_to_ut.cpp 31
 
     static_assert(enable_range_put_to_v<int[3]>);                         // Nstd::operator<<
     static_assert(!enable_range_put_to_v<char[3]>);                       // std::operator<<
@@ -10300,7 +10300,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 Nstd::operator\<\<は下記のように定義できる。
 
 ```cpp
-    // @@@ example/template/nstd_put_to.h 64
+    //  example/template/nstd_put_to.h 64
 
     namespace Nstd {
     namespace Inner_ {
@@ -10350,7 +10350,7 @@ range_put_to_sep<>()を用意した。
 まずは、配列の単体テストを示す。
 
 ```cpp
-    // @@@ example/template/nstd_put_to_ut.cpp 113
+    //  example/template/nstd_put_to_ut.cpp 113
 
     using namespace Nstd;
     {
@@ -10393,7 +10393,7 @@ range_put_to_sep<>()を用意した。
 次に、コンテナの単体テストを示す。
 
 ```cpp
-    // @@@ example/template/nstd_put_to_ut.cpp 170
+    //  example/template/nstd_put_to_ut.cpp 170
 
     using namespace Nstd;
     {
@@ -10422,7 +10422,7 @@ range_put_to_sep<>()を用意した。
 最後に、Nstd::SafeIndexの単体テストを示す。
 
 ```cpp
-    // @@@ example/template/nstd_put_to_ut.cpp 220
+    //  example/template/nstd_put_to_ut.cpp 220
 
     {
         auto sal_s = Nstd::SafeArray<std::string, 4>{"1", "2", "3"};
@@ -10457,7 +10457,7 @@ range_put_to_sep<>()を用意した。
 浮動小数点の演算には下記に示したような問題が起こり得るため、単純な==の比較はできない。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 9
+    //  example/template/nstd_float_ut.cpp 9
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -10469,7 +10469,7 @@ range_put_to_sep<>()を用意した。
 この問題に対処するのが以下のコードである。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 17
+    //  example/template/nstd_float_ut.cpp 17
 
     float epsilon  = std::abs(0.05F - (a + b));
     bool  is_equal = epsilon <= std::numeric_limits<float>::epsilon();
@@ -10480,7 +10480,7 @@ range_put_to_sep<>()を用意した。
 下記のような関数(float用とdouble用)で対処することが一般的である。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 25
+    //  example/template/nstd_float_ut.cpp 25
 
     namespace Nstd {
 
@@ -10499,7 +10499,7 @@ range_put_to_sep<>()を用意した。
 実際に使う場面を以下に示す。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 44
+    //  example/template/nstd_float_ut.cpp 44
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -10513,7 +10513,7 @@ range_put_to_sep<>()を用意した。
 一見これで万事うまくいくように見えるが、そうは行かないことを以下の例で示す。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 59
+    //  example/template/nstd_float_ut.cpp 59
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -10530,7 +10530,7 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 これに対処する方法を以下に示す。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 74
+    //  example/template/nstd_float_ut.cpp 74
 
     namespace Nstd {
     // is_equal_dを改良して、引数の型が統一されていない呼び出しをコンパイルエラーにできるようにした。
@@ -10549,7 +10549,7 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 この関数のテストは以下の通りである。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 91
+    //  example/template/nstd_float_ut.cpp 91
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -10564,7 +10564,7 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 さらに下記のように拡張変更した。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 106
+    //  example/template/nstd_float_ut.cpp 106
 
     /// @brief 浮動小数点比較用関数
     /// 相対誤差を考慮して、lhs と rhs の絶対値に基づくトレランスの範囲内での比較を行う。
@@ -10583,7 +10583,7 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 この関数のテストは以下の通りである。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp 125
+    //  example/template/nstd_float_ut.cpp 125
 
     float a = 1000000.0F;
     float b = 1000000.1F;
@@ -10608,7 +10608,7 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
 以下に示す固定小数点クラス(FixedPoint)はこれらの問題を解決できる。
 
 ```cpp
-    // @@@ example/template/fixed_point.h 7
+    //  example/template/fixed_point.h 7
 
     namespace Nstd {
     /// @brief BASIC_TYPEで指定する基本型のビット長を持つ固定小数点を扱うためのクラス
@@ -10776,7 +10776,7 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
 FixedPointの単体テストコードを以下に示す。
 
 ```cpp
-    // @@@ example/template/fixed_point_ut.cpp 21
+    //  example/template/fixed_point_ut.cpp 21
 
     // 以下は、FixedPoint<>の使用例である。
     using FP4 = Nstd::FixedPoint<uint8_t, 4>;  // 基本型uint8_t、小数点4ビット
@@ -10802,7 +10802,7 @@ FixedPointの単体テストコードを以下に示す。
 使い勝手のよい環境をユーザに提供するべきである。
 
 ```cpp
-    // @@@ example/template/fixed_point.h 174
+    //  example/template/fixed_point.h 174
 
     namespace Nstd {
     namespace fixed_point_literals {
@@ -10827,7 +10827,7 @@ FixedPointの単体テストコードを以下に示す。
 以上のコードの単体テストを以下に示す。これにより使用方も明らかになるだろう。
 
 ```cpp
-    // @@@ example/template/fixed_point_ut.cpp 171
+    //  example/template/fixed_point_ut.cpp 171
 
     using namespace Nstd::fixed_point_literals;
 
@@ -10847,7 +10847,7 @@ FixedPointの単体テストコードを以下に示す。
 以下のコードで示す有理数クラスがちょうどよい選択となることがある。
 
 ```cpp
-    // @@@ example/template/rational.h 10
+    //  example/template/rational.h 10
 
     namespace Nstd {
     /// @brief ユーザー指定の型で分数を扱うためのクラス
@@ -10966,7 +10966,7 @@ FixedPointの単体テストコードを以下に示す。
     }  // namespace Nstd
 ```
 ```cpp
-    // @@@ example/template/rational_ut.cpp 12
+    //  example/template/rational_ut.cpp 12
 
     auto       r1    = Rational{1, 2};
     const auto r1_sv = r1;
@@ -10993,7 +10993,7 @@ FixedPointの単体テストコードを以下に示す。
 [有理数クラス](#SS_4_5_4)に対して、有理数リテラルを定義するべきである。
 
 ```cpp
-    // @@@ example/template/rational.h 128
+    //  example/template/rational.h 128
 
     namespace Nstd {
     /// @brief Rational<int32_t>をユーザ定義リテラルとして扱うためのオペレータ
@@ -11016,7 +11016,7 @@ FixedPointの単体テストコードを以下に示す。
     }  // namespace Nstd
 ```
 ```cpp
-    // @@@ example/template/rational_ut.cpp 55
+    //  example/template/rational_ut.cpp 55
 
     auto r1 = "1/2"_rn;
     auto r2 = "1/3"_rn;
@@ -11029,7 +11029,7 @@ FixedPointの単体テストコードを以下に示す。
 ログ取得ライブラリでの問題は「Logging名前空間が依存してよい名前空間」に
 
 ```cpp
-    // @@@ example/template/app_ints.h 6
+    //  example/template/app_ints.h 6
 
     namespace App {
     using Ints_t = std::vector<int>;
@@ -11041,7 +11041,7 @@ FixedPointの単体テストコードを以下に示す。
 これを使い、問題を解決したログ取得ライブラリを以下に示す。
 
 ```cpp
-    // @@@ example/template/logger.h 7
+    //  example/template/logger.h 7
 
     namespace Logging {
     class Logger {
@@ -11091,7 +11091,7 @@ FixedPointの単体テストコードを以下に示す。
 問題のあったコードとの差分は、メンバ関数テンプレートset_innerの
 
 ```cpp
-    // @@@ example/template/logger.h 40
+    //  example/template/logger.h 40
 
     using Nstd::operator<<;  // Nstd::operator<<もname lookupの対象にする
 ```
@@ -11099,7 +11099,7 @@ FixedPointの単体テストコードを以下に示す。
 のみである。実際に解決できたことを以下の単体テストで示す。
 
 ```cpp
-    // @@@ example/template/logger_0_ints_ut.h 8
+    //  example/template/logger_0_ints_ut.h 8
 
     auto ints = App::Ints_t{1, 2, 3};
 
@@ -11115,7 +11115,7 @@ FixedPointの単体テストコードを以下に示す。
 また、
 
 ```cpp
-    // @@@ example/template/app_ints.h 12
+    //  example/template/app_ints.h 12
 
     namespace App {
 
@@ -11131,7 +11131,7 @@ FixedPointの単体テストコードを以下に示す。
 のように定義されたクラスも、
 
 ```cpp
-    // @@@ example/template/app_ints.h 28
+    //  example/template/app_ints.h 28
 
     namespace App {
 
@@ -11143,7 +11143,7 @@ FixedPointの単体テストコードを以下に示す。
 コンテナや配列に対しても下記のようにログ取得が可能となる。
 
 ```cpp
-    // @@@ example/template/logger_ut.cpp 37
+    //  example/template/logger_ut.cpp 37
 
     using namespace Nstd;
 
@@ -11172,7 +11172,7 @@ FixedPointの単体テストコードを以下に示す。
 2個の文字列からstd::vector\<std::string>を生成する下記のような関数について考える。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 9
+    //  example/template/universal_ref_ut.cpp 9
 
     std::vector<std::string> gen_vector(std::string const& s0, std::string const& s1)
     {
@@ -11188,7 +11188,7 @@ FixedPointの単体テストコードを以下に示す。
 これは下記のように動作する。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 25
+    //  example/template/universal_ref_ut.cpp 25
 
     auto a = std::string{"a"};
     auto b = std::string{"b"};
@@ -11204,7 +11204,7 @@ FixedPointの単体テストコードを以下に示す。
 [ユニバーサルリファレンス](#SS_6_14_1)を使って下記のように書き直した。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 41
+    //  example/template/universal_ref_ut.cpp 41
 
     template <typename STR0, typename STR1>
     std::vector<std::string> gen_vector(STR0&& s0, STR1&& s1)
@@ -11221,7 +11221,7 @@ FixedPointの単体テストコードを以下に示す。
 残念ながら、このコードは意図したようには動作せず、下記に示した通り相変わらずmove代入ができない。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 58
+    //  example/template/universal_ref_ut.cpp 58
 
     auto a = std::string{"a"};
     auto b = std::string{"b"};
@@ -11240,7 +11240,7 @@ FixedPointの単体テストコードを以下に示す。
 この現象について下記の関数テンプレートを用いて解説を行う。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 71
+    //  example/template/universal_ref_ut.cpp 71
 
     enum class ExpressionType { Lvalue, Rvalue };
 
@@ -11265,7 +11265,7 @@ FixedPointの単体テストコードを以下に示す。
 下記に示した通り、universal_refとuniversal_ref2のパラメータが同じ型であるとは限らない。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 96
+    //  example/template/universal_ref_ut.cpp 96
 
     auto i = 0;
 
@@ -11288,7 +11288,7 @@ FixedPointの単体テストコードを以下に示す。
 この問題はstd::forwardにより対処できる。これによって改良されたコードを下記に示す。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 124
+    //  example/template/universal_ref_ut.cpp 124
 
     template <typename STR0, typename STR1>
     std::vector<std::string> gen_vector(STR0&& s0, STR1&& s1)
@@ -11305,7 +11305,7 @@ FixedPointの単体テストコードを以下に示す。
 下記単体テストが示す通り、rvalueリファレンスはmove代入され、lvalueリファレンスはcopy代入されている。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 142
+    //  example/template/universal_ref_ut.cpp 142
 
     auto a = std::string{"a"};
     auto b = std::string{"b"};
@@ -11320,7 +11320,7 @@ FixedPointの単体テストコードを以下に示す。
 しかし残念ながら、このコードにも改良すべき点がある。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 155
+    //  example/template/universal_ref_ut.cpp 155
 
     auto a = std::string{"a"};
 
@@ -11339,7 +11339,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 下記は、この対策を施すとともに任意の数の引数を受け取れるように改良したコードである。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 171
+    //  example/template/universal_ref_ut.cpp 171
 
     void emplace_back(std::vector<std::string>&) {}
 
@@ -11387,7 +11387,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 (が、残念ならがテンポラリオブジェクトが生成されていないことを単体テストで証明することはできない)。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 197
+    //  example/template/universal_ref_ut.cpp 197
 
     auto a = std::string{"a"};
     auto b = std::string{"b"};
@@ -11403,7 +11403,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 [畳み込み式](#SS_6_10_3)を使用した下記の実装の方がより明確である。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 211
+    //  example/template/universal_ref_ut.cpp 211
 
     template <typename... STR>
     std::vector<std::string> gen_vector(STR&&... ss)
@@ -11424,7 +11424,7 @@ constなlvalueリファレンスとして扱うべきである。
 従って、下記のようなコードは書くべきではない。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 240
+    //  example/template/universal_ref_ut.cpp 240
 
     template <typename STR0, typename STR1>
     std::vector<std::string> gen_vector(STR0&& s0, STR1&& s1)
@@ -11442,7 +11442,7 @@ constなlvalueリファレンスとして扱うべきである。
 下記単体テストが示すように非constな実引数はmoveされてしまうことになる。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 257
+    //  example/template/universal_ref_ut.cpp 257
 
     auto       a = std::string{"a"};
     auto const b = std::string{"b"};
@@ -11458,7 +11458,7 @@ constなlvalueリファレンスとして扱うべきである。
 すでに述べたように引数はユニバーサルリファレンスとなってしまうため、lvalueにもバインドしてしまう。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 273
+    //  example/template/universal_ref_ut.cpp 273
 
     template <typename T>
     void f(T&& t) noexcept
@@ -11470,7 +11470,7 @@ constなlvalueリファレンスとして扱うべきである。
 このような場合、下記の記述が必要になる。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 292
+    //  example/template/universal_ref_ut.cpp 292
 
     template <typename T>
     void f(T&) = delete;
@@ -11480,7 +11480,7 @@ constなlvalueリファレンスとして扱うべきである。
 当初の目的通り、rvalueのみを引数に取る関数テンプレートが定義できたことになる。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp 300
+    //  example/template/universal_ref_ut.cpp 300
 
     auto s = std::string{};
 
@@ -11494,7 +11494,7 @@ constなlvalueリファレンスとして扱うべきである。
 下記のようなクラスとoperator<<があった場合を考える。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp 13
+    //  example/template/generic_lambda_ut.cpp 13
 
     struct XYZ {
         XYZ(int ax, int ay, int az) noexcept : x{ax}, y{ay}, z{az} {}
@@ -11513,7 +11513,7 @@ constなlvalueリファレンスとして扱うべきである。
 の成果物との組み合わせの単体テストは下記のように書けるだろう。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp 31
+    //  example/template/generic_lambda_ut.cpp 31
 
     auto v   = Nstd::SafeVector<XYZ>{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}, {0, 1, 2}};
     auto oss = std::ostringstream{};
@@ -11525,7 +11525,7 @@ constなlvalueリファレンスとして扱うべきである。
 std::sortによるソートができるかどうかのテストは、C++11までは、
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp 41
+    //  example/template/generic_lambda_ut.cpp 41
 
     auto v = Nstd::SafeVector<XYZ>{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}, {0, 1, 2}};
 
@@ -11545,7 +11545,7 @@ std::sortによるソートができるかどうかのテストは、C++11まで
 C++14からは下記のコードで示した通り引数にautoが使えるようになった。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp 57
+    //  example/template/generic_lambda_ut.cpp 57
 
     auto v = Nstd::SafeVector<XYZ>{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}, {0, 1, 2}};
 
@@ -11567,7 +11567,7 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
 ジェネリックラムダは下記のように使用することができる。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp 73
+    //  example/template/generic_lambda_ut.cpp 73
 
     template <typename PUTTO>
     void f(PUTTO&& p)
@@ -11592,7 +11592,7 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
 理解できる。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp 92
+    //  example/template/generic_lambda_ut.cpp 92
 
     class Closure {
     public:
@@ -11609,7 +11609,7 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
     };
 ```
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp 111
+    //  example/template/generic_lambda_ut.cpp 111
 
     auto oss = std::ostringstream{};
 
@@ -11627,7 +11627,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
 まずは、std::variantの使用例を下記する。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp 13
+    //  example/template/variant_ut.cpp 13
 
     auto v = std::variant<int, std::string, double>{};  // 3つの型を切り替える
 
@@ -11659,7 +11659,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
 下記のように書ける。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp 37
+    //  example/template/variant_ut.cpp 37
 
     auto oss = std::ostringstream{};
 
@@ -11712,7 +11712,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
 の2つによって下記のように行うことができる。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp 79
+    //  example/template/variant_ut.cpp 79
 
     template <typename VARIANT, typename F, size_t INDEX = 0>
     void org_visit(const F& f, const VARIANT& v)
@@ -11734,7 +11734,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
     }
 ```
 ```cpp
-    // @@@ example/template/variant_ut.cpp 103
+    //  example/template/variant_ut.cpp 103
 
     auto oss = std::ostringstream{};
 
@@ -11748,7 +11748,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
 単体テストは、以下のようになる。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp 113
+    //  example/template/variant_ut.cpp 113
     {
         auto v = std::variant<int, std::string, double>{};  // 3つの型を切り替える
 
@@ -11779,7 +11779,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
 下記のように継承関係のない複数のクラスが同じシグネチャのメンバ関数を持つ場合、
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp 177
+    //  example/template/variant_ut.cpp 177
 
     class A {
     public:
@@ -11801,7 +11801,7 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 下記に示したような疑似的なポリモーフィズムを実現できる。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp 197
+    //  example/template/variant_ut.cpp 197
 
     char ret{};
     auto call_f = [&ret](auto const& a) { ret = a.f(); };
@@ -11824,7 +11824,7 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 ほぼこれと同様のものがstd::visitとして定義されている。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp 215
+    //  example/template/variant_ut.cpp 215
 
     v = A{};
     std::visit(call_f, v);  // 疑似的なポリモーフィズム
@@ -11849,7 +11849,7 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 下記のようにクラスや関数テンプレートが定義されている場合を考える。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 11
+    //  example/template/suppress_adl_ut.cpp 11
 
     namespace App {
 
@@ -11872,7 +11872,7 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 これに対しての単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 37
+    //  example/template/suppress_adl_ut.cpp 37
 
     auto xy0 = App::XY{0, 1};
     auto xy1 = App::XY{0, 2};
@@ -11895,7 +11895,7 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 上記の抜粋である
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 43
+    //  example/template/suppress_adl_ut.cpp 43
 
     ASSERT_FALSE(is_equal(xy0, xy1));
     ASSERT_TRUE(is_equal(xy0, xy2));
@@ -11909,7 +11909,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 上記の名前空間での定義が可視である状態で、下記のようなコードを書いた場合を考える。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 63
+    //  example/template/suppress_adl_ut.cpp 63
 
     namespace App2 {
     struct XYZ {
@@ -11928,7 +11928,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 この単体テストは、やはりADLを使い下記のように書ける。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 84
+    //  example/template/suppress_adl_ut.cpp 84
     auto xyz0 = App2::XYZ{0, 2, 2};
     auto xyz1 = App2::XYZ{0, 1, 2};
 
@@ -11939,7 +11939,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 これに問題はないが、下記のテストもコンパイルでき、且つテストもパスしてしまうことには問題がある。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 93
+    //  example/template/suppress_adl_ut.cpp 93
 
     auto xyz0 = App2::XYZ{0, 2, 2};
     auto xyz1 = App2::XYZ{0, 1, 2};
@@ -11971,7 +11971,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 従って下記のような関数テンプレートを指す概念ではない。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 108
+    //  example/template/suppress_adl_ut.cpp 108
 
     template <typename T, size_t N>
     constexpr auto array_length(T const (&)[N]) noexcept
@@ -11983,7 +11983,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 前記で問題を起こした関数テンプレート
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 20
+    //  example/template/suppress_adl_ut.cpp 20
 
     // このような関数テンプレートは適用範囲が広すぎるので定義すべきではないが、
     // 危険な例を示すためあえて定義している
@@ -12000,7 +12000,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 これに対する最も安全な対処は下記コードで示す通りテンプレートを使わないことである。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 126
+    //  example/template/suppress_adl_ut.cpp 126
 
     namespace App {
 
@@ -12021,7 +12021,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 こうすることでその適用範囲はそれを定義した関数内に留まる。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 153
+    //  example/template/suppress_adl_ut.cpp 153
 
     // 下記のpointのようなクラスが他にもいくつかあった場合、
     // このジェネリックラムダでコードの被りは回避できる
@@ -12057,7 +12057,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 下記のコードについて考える。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 176
+    //  example/template/suppress_adl_ut.cpp 176
 
     struct A {
         int f(int i) noexcept { return i * 3; }
@@ -12086,7 +12086,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 ([two phase name lookup](#SS_6_9_3)の一回目のname lookupでfがバインドされるため)。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 203
+    //  example/template/suppress_adl_ut.cpp 203
 
     auto ef = App::ExecF<A>{};
 
@@ -12098,7 +12098,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
 下記のようにリファクタリングしたとしよう。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 213
+    //  example/template/suppress_adl_ut.cpp 213
 
     struct A {
         int f(int i) noexcept { return i * 3; }
@@ -12121,7 +12121,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
 すると、fのname lookupの対象が変わってしまい、元の単体テストはパスしなくなる。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp 236
+    //  example/template/suppress_adl_ut.cpp 236
 
     auto ef = App::ExecF{};
 
@@ -12144,7 +12144,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
 下記のコードについて考える。
 
 ```cpp
-    // @@@ example/template/adl_firewall_0_ut.cpp 10
+    //  example/template/adl_firewall_0_ut.cpp 10
 
     namespace App {
 
@@ -12182,7 +12182,7 @@ std::vectorオブジェクトをstd::stringに変換する。
 これに対しての単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/adl_firewall_0_ut.cpp 47
+    //  example/template/adl_firewall_0_ut.cpp 47
 
     auto xys = std::vector<App::XY>{{9, 8}, {7, 6}};
 
@@ -12192,7 +12192,7 @@ std::vectorオブジェクトをstd::stringに変換する。
 これは想定通りの動作だが、上記のAppの後に下記のコードを追加するとApp::ToStringは影響を受ける。
 
 ```cpp
-    // @@@ example/template/adl_firewall_1_ut.cpp 40
+    //  example/template/adl_firewall_1_ut.cpp 40
 
     // Appに下記を追加
     namespace App {
@@ -12207,7 +12207,7 @@ std::vectorオブジェクトをstd::stringに変換する。
 これにより元の単体テストはエラーとなり、新しい単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/adl_firewall_1_ut.cpp 56
+    //  example/template/adl_firewall_1_ut.cpp 56
 
     auto xys = std::vector<App::XY>{{9, 8}, {7, 6}};
 
@@ -12227,7 +12227,7 @@ Appの宣言がname lookupの対象になったことにも原因がある。
 下記のコードは後者の原因を解消する。
 
 ```cpp
-    // @@@ example/template/adl_firewall_2_ut.cpp 23
+    //  example/template/adl_firewall_2_ut.cpp 23
 
     // Appの中の新たな名前空間XY_Firewall_でstruct XYとoperator<<を宣言
     namespace App {
@@ -12274,7 +12274,7 @@ App内でusing XYを宣言したことで、これまで通りApp::XYが使え�
 以下に示すNstd::Type2Strは、「[Nstdライブラリの開発](#SS_4_2)」等で実際に使用したそのような関数である。
 
 ```cpp
-    // @@@ h/nstd_type2str.h 9
+    //  h/nstd_type2str.h 9
 
     namespace Nstd {
     namespace Inner_ {
@@ -12331,7 +12331,7 @@ typeid::name()が返す文字列リテラルは引数の型の文字列表現を
 下記単体テストは、そのことを示している。
 
 ```cpp
-    // @@@ example/template/nstd_type2str_ut.cpp 11
+    //  example/template/nstd_type2str_ut.cpp 11
 
     ASSERT_EQ("int const", Nstd::Type2Str<int const>());
     ASSERT_EQ("std::string", Nstd::Type2Str<std::string>());
@@ -12368,7 +12368,7 @@ std::stringは文字列を扱うことにおいて、非常に有益なクラス
   デバッグに便利であるが、メモリ確保失敗を通知するような場面ではこの方法は使えない。
 
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp 6
+    //  example/template/nstd_exception_ut.cpp 6
 
     class Exception : std::exception {
     public:
@@ -12393,7 +12393,7 @@ std::stringは文字列を扱うことにおいて、非常に有益なクラス
     }
 ```
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp 34
+    //  example/template/nstd_exception_ut.cpp 34
 
     auto caught = false;
     try {
@@ -12414,7 +12414,7 @@ StaticStringオブジェクトは、char配列をメンバとして持つが、
 そのパラメータパック生成クラスを下記のように定義する。
 
 ```cpp
-    // @@@ example/template/nstd_seq.h 4
+    //  example/template/nstd_seq.h 4
 
     // パラメータパック展開ヘルパクラス
     template <size_t... Ns>
@@ -12440,7 +12440,7 @@ StaticStringオブジェクトは、char配列をメンバとして持つが、
 このクラスにより、下記のような配列メンバの初期ができるようになる。
 
 ```cpp
-    // @@@ example/template/nstd_seq_ut.cpp 7
+    //  example/template/nstd_seq_ut.cpp 7
 
     template <size_t N>
     struct seq_test {
@@ -12452,7 +12452,7 @@ StaticStringオブジェクトは、char配列をメンバとして持つが、
     };
 ```
 ```cpp
-    // @@@ example/template/nstd_seq_ut.cpp 24
+    //  example/template/nstd_seq_ut.cpp 24
 
     constexpr auto st = seq_test<3>{index_sequence<1, 2, 3>()};
     ASSERT_EQ(1, st.data[0]);
@@ -12463,7 +12463,7 @@ StaticStringオブジェクトは、char配列をメンバとして持つが、
 これを下記のように使うことで、メンバである文字列配列のコンパイル時初期化ができるようになる。
 
 ```cpp
-    // @@@ example/template/nstd_seq_ut.cpp 33
+    //  example/template/nstd_seq_ut.cpp 33
 
     template <size_t N>
     class seq_test2 {
@@ -12480,7 +12480,7 @@ StaticStringオブジェクトは、char配列をメンバとして持つが、
     };
 ```
 ```cpp
-    // @@@ example/template/nstd_seq_ut.cpp 52
+    //  example/template/nstd_seq_ut.cpp 52
 
     constexpr char const str[]{"123"};
 
@@ -12498,7 +12498,7 @@ utilityで定義されているため、以下ではこれらを使用する。
 StaticStringはすでに示したテクニックを使い、下記のように定義できる。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 10
+    //  example/h/nstd_static_string.h 10
 
     template <size_t N>
     class StaticString {
@@ -12540,7 +12540,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 文字列リテラルからStaticStringを生成する単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp 12
+    //  example/template/nstd_static_string_ut.cpp 12
 
     const auto fs = StaticString{"abc"};  // C++17からのNの指定は不要
 
@@ -12554,7 +12554,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 また、std::initializer_list\<char>による初期化の単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp 24
+    //  example/template/nstd_static_string_ut.cpp 24
 
     const auto fs = StaticString<4>{'a', 'b', 'c'};  // C++17でもNの指定は必要
 
@@ -12568,7 +12568,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 次にこのクラスにc++17用に`operator==`とc++20用に`operator<=>`を追加する。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 48
+    //  example/h/nstd_static_string.h 48
     // operator==の実装のソースコードの、C++のバージョンごとに以下のように分かれている
     #if __cplusplus == 201703L
     // for C++17
@@ -12692,7 +12692,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp 70
+    //  example/template/nstd_static_string_ut.cpp 70
 
     static_assert(StaticString{"123"} == StaticString{"123"});
     static_assert(StaticString{"123"} != StaticString{"1234"});
@@ -12709,7 +12709,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 同様にoperator + を追加する。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 168
+    //  example/h/nstd_static_string.h 168
 
     namespace Inner_ {
     template <size_t N1, size_t... I1, size_t N2, size_t... I2>
@@ -12742,7 +12742,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 ```
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp 83
+    //  example/template/nstd_static_string_ut.cpp 83
 
     constexpr auto fs0 = StaticString{"1234"} + StaticString{"567"};
     static_assert(std::is_same_v<StaticString<fs0.Size()> const, decltype(fs0)>);
@@ -12766,7 +12766,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 任意のサイズの文字列を切り出せるようにすることでStaticStringはより便利に使用できるようになる。
 
 ```cpp
-    // @@@ example/h/nstd_static_string.h 199
+    //  example/h/nstd_static_string.h 199
 
     template <size_t SIZE, size_t N>  // StaticString<SiZE>の部分文字列生成
     constexpr auto TopStr(StaticString<N> ss) noexcept
@@ -12782,7 +12782,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 ```
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp 53
+    //  example/template/nstd_static_string_ut.cpp 53
 
     constexpr auto ss  = StaticString{"0123456789"};
     auto           ss2 = TopStr<2>(ss);  // 先頭2文字
@@ -12804,7 +12804,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 行番号を10進数での文字列で表現するため、いくつかのヘルパ関数を下記のように定義する。
 
 ```cpp
-    // @@@ example/h/nstd_static_string_num.h 8
+    //  example/h/nstd_static_string_num.h 8
 
     namespace Inner_ {
 
@@ -12842,7 +12842,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_num_ut.cpp 47
+    //  example/template/nstd_static_string_num_ut.cpp 47
 
     constexpr auto ns
         = make_static_string<__LINE__>(std::make_index_sequence<Inner_::num_of_digits(__LINE__)>());
@@ -12855,7 +12855,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 Int2StaticString\<>()が得られる。
 
 ```cpp
-    // @@@ example/h/nstd_static_string_num.h 42
+    //  example/h/nstd_static_string_num.h 42
 
     template <size_t N>
     constexpr StaticString<Inner_::num_of_digits(N) + 1> Int2StaticString() noexcept
@@ -12867,7 +12867,7 @@ Int2StaticString\<>()が得られる。
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_num_ut.cpp 66
+    //  example/template/nstd_static_string_num_ut.cpp 66
 
     constexpr auto ns       = Int2StaticString<__LINE__>();
     auto           line_num = __LINE__ - 1;
@@ -12881,7 +12881,7 @@ Int2StaticString\<>()が得られる。
 ここでは、その問題を解決するためのExceptionクラスの実装を示す。
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 11
+    //  example/h/nstd_exception.h 11
 
     /// @brief StaticString<>を使ったエクセプションクラス
     ///        下記のMAKE_EXCEPTIONを使い生成
@@ -12904,7 +12904,7 @@ Int2StaticString\<>()が得られる。
 StaticStringと同様に、このままでは不便であるため、下記の関数を定義する。
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 30
+    //  example/h/nstd_exception.h 30
 
     namespace Inner_ {
     template <typename E, template <size_t> class STATIC_STR, size_t N>
@@ -12924,7 +12924,7 @@ StaticStringと同様に、このままでは不便であるため、下記の�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp 89
+    //  example/template/nstd_exception_ut.cpp 89
 
     auto caught   = false;
     auto line_num = __LINE__ + 2;  // 2行下の行番号
@@ -12945,7 +12945,7 @@ StaticStringと同様に、このままでは不便であるため、下記の�
 Exceptionクラスの利便性をさらに高めるため、下記の定義を行う。
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 48
+    //  example/h/nstd_exception.h 48
 
     #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
 ```
@@ -12955,7 +12955,7 @@ Exceptionクラスの利便性をさらに高めるため、下記の定義を�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp 109
+    //  example/template/nstd_exception_ut.cpp 109
 
     uint32_t line_num_div;  // エクセプション行を指定
 
@@ -12970,7 +12970,7 @@ Exceptionクラスの利便性をさらに高めるため、下記の定義を�
     }
 ```
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp 126
+    //  example/template/nstd_exception_ut.cpp 126
 
     auto caught = false;
 
@@ -13014,7 +13014,7 @@ std::unique_ptrは、
 で初期化することでメモリの解放を行っている。
 
 ```cpp
-    // @@@ h/nstd_type2str.h 18
+    //  h/nstd_type2str.h 18
 
     std::unique_ptr<char, decltype(&std::free)> demangled{
         abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
@@ -13027,7 +13027,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 まずは、std::unique_ptrの動作を確かめるためのクラスを下記のように定義する。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 8
+    //  example/template/func_type_ut.cpp 8
 
     // デストラクタが呼び出された時に、外部から渡されたフラグをtrueにする
     struct A {
@@ -13042,7 +13042,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 テスト用クラスAの動作確認ができるはずである。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 25
+    //  example/template/func_type_ut.cpp 25
 
     {  // 第2パラメータに何も指定しない
         auto is_called = false;
@@ -13057,7 +13057,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 次に示すのは、
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 18
+    //  example/template/func_type_ut.cpp 18
 
     void delete_func(A* a) noexcept { delete a; }
 ```
@@ -13065,7 +13065,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 のポインタをstd::unique_ptrの第2パラメータに与えた例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 36
+    //  example/template/func_type_ut.cpp 36
 
     {  // 第2パラメータに関数ポインタを与える
         auto is_called = false;
@@ -13080,7 +13080,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 次に示すのは、std::unique_ptrの第2パラメータにラムダを与えた例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 47
+    //  example/template/func_type_ut.cpp 47
 
     {  // 第2パラメータにラムダを与える
         auto is_called = false;
@@ -13100,7 +13100,7 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::function)を与えた例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 62
+    //  example/template/func_type_ut.cpp 62
 
     {  // 第2パラメータにstd::function型オブジェクトを与える
         auto is_called = false;
@@ -13122,7 +13122,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 やや意外だが、このようなテンプレートパラメータに特別な記法はなく、以下のようにすれば良い。
 
 ```cpp
-    // @@@ h/scoped_guard.h 7
+    //  h/scoped_guard.h 7
 
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
@@ -13145,7 +13145,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 上記コードの抜粋である下記は、テンプレートパラメータを関数型に制約するためのものである。
 
 ```cpp
-    // @@@ h/scoped_guard.h 7
+    //  h/scoped_guard.h 7
 
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
@@ -13159,7 +13159,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 まずは、以下の関数と静的変数の組み合わせ
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 78
+    //  example/template/func_type_ut.cpp 78
 
     bool is_caleded_in_static{false};
     void caleded_by_destructor() noexcept { is_caleded_in_static = true; }
@@ -13168,7 +13168,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 を使った例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 86
+    //  example/template/func_type_ut.cpp 86
 
     {  // Fに関数ポインタを与える
         is_caleded_in_static = false;
@@ -13183,7 +13183,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 次に示すのは、それぞれにラムダ式とstd::functionを使った2例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 101
+    //  example/template/func_type_ut.cpp 101
 
     {  // Fにラムダ式を与える
         auto is_called = false;
@@ -13207,7 +13207,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 次に示すのは関数型オブジェクト
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 123
+    //  example/template/func_type_ut.cpp 123
 
     struct TestFunctor {
         explicit TestFunctor(bool& is_called) : is_called_{is_called} {}
@@ -13219,7 +13219,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 を使った例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 134
+    //  example/template/func_type_ut.cpp 134
 
     {  // Fに関数型オブジェクトを与える
         auto is_called = false;
@@ -13236,7 +13236,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 下記に示すようにScopedGuardのテンプレートラメータ型を指定しなければならない煩雑さがある。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 146
+    //  example/template/func_type_ut.cpp 146
     {  // Fに関数型オブジェクトを与える
         auto is_called = false;
         auto tf        = TestFunctor{is_called};
@@ -13251,7 +13251,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 これを回避するためには下記のような関数テンプレートを用意すればよい。
 
 ```cpp
-    // @@@ h/scoped_guard.h 30
+    //  h/scoped_guard.h 30
 
     template <typename F>
     ScopedGuard<F> MakeScopedGuard(F&& f) noexcept
@@ -13264,7 +13264,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 テンプレートパラメータを指定する必要がなくなる。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp 161
+    //  example/template/func_type_ut.cpp 161
 
     {  // Fに関数ポインタを与える
         is_caleded_in_static = false;
@@ -13356,7 +13356,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
   下記コードが示すように直感に反する関数が選択される場合がある。
 
 ```cpp
-    // @@@ example/template/etc_ut.cpp 7
+    //  example/template/etc_ut.cpp 7
 
     template <typename T> constexpr int32_t f(T) noexcept { return 0; }                   // f-0
     template <typename T> constexpr int32_t f(T*) noexcept { return 1; }                  // f-1
@@ -13364,7 +13364,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
     // f-2はf-1の特殊化のように見えるが、T == int32_t*の場合のf-0の特殊化である。
 ```
 ```cpp
-    // @@@ example/template/etc_ut.cpp 18
+    //  example/template/etc_ut.cpp 18
 
     // 以下、f-0/f-1/f-2のテスト
     auto c   = char{0};
@@ -13452,7 +13452,7 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 全体は巻末の「[example/dynamic_memory_allocation/malloc_ut.cpp](#SS_7_1_1)」に掲載する)。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/malloc_ut.cpp 19
+    //  example/dynamic_memory_allocation/malloc_ut.cpp 19
 
     namespace {
 
@@ -13486,7 +13486,7 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
     }  // namespace
 ```
 ```cpp
-    // @@@ example/dynamic_memory_allocation/malloc_ut.cpp 105
+    //  example/dynamic_memory_allocation/malloc_ut.cpp 105
 
     void free(void* mem) noexcept
     {
@@ -13549,7 +13549,7 @@ headerがnullptrであるため必ずnullptrを返すことになる。
 上記の抜粋である下記のコードによりmalloc_innerの戻りがnullptrであった場合、sbrkが呼び出される。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/malloc_ut.cpp 148
+    //  example/dynamic_memory_allocation/malloc_ut.cpp 148
 
     if (mem == nullptr) {
         auto const add_size = Roundup(unit_size, 1024 * 1024 + size);  // 1MB追加
@@ -13564,7 +13564,7 @@ headerがnullptrであるため必ずnullptrを返すことになる。
 sbrkとはOSからメモリを新たに取得するための下記のようなシステムコールである。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/malloc_ut.cpp 13
+    //  example/dynamic_memory_allocation/malloc_ut.cpp 13
 
     extern "C" void* sbrk(ptrdiff_t __incr);
 ```
@@ -13584,7 +13584,7 @@ mallocで使用することになる。
 次にもう一つの問題である「メモリのフラグメントを起こす」ことについて見て行く。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/malloc_ut.cpp 190
+    //  example/dynamic_memory_allocation/malloc_ut.cpp 190
 
     void* mem[1024];
 
@@ -13610,7 +13610,7 @@ mallocで使用することになる。
 このように断片化されたメモリは、そのアドレス順にソートされた単方向リストによって管理される。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/malloc_ut.cpp 120
+    //  example/dynamic_memory_allocation/malloc_ut.cpp 120
 
     if (mem_to_free < header) {
         concat(mem_to_free, header);
@@ -13679,7 +13679,7 @@ malloc/freeにリアルタイム性がない原因は、
 (「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_7_6_4)」参照)。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool.h 12
+    //  example/dynamic_memory_allocation/mpool.h 12
 
     class MPool {
     public:
@@ -13726,7 +13726,7 @@ malloc/freeにリアルタイム性がない原因は、
 次に、MPoolFixedを下記に示す。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_fixed.h 25
+    //  example/dynamic_memory_allocation/mpool_fixed.h 25
 
     template <uint32_t MEM_SIZE, uint32_t MEM_COUNT>
     class MPoolFixed final : public MPool {
@@ -13799,7 +13799,7 @@ malloc/freeにリアルタイム性がない原因は、
 個々のメモリブロックは、下記のコードのalignas/alignofでアライメントされた領域となる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_fixed.h 11
+    //  example/dynamic_memory_allocation/mpool_fixed.h 11
 
     constexpr size_t MPoolFixed_MinSize{32};
 
@@ -13827,7 +13827,7 @@ MPoolFixed::alloc/MPoolFixed::freeを見ればわかる通り、malloc/freeの�
 組み込みソフトでは、割り込みディセーブル/イネーブルを使ってロックすることを推奨する。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/spin_lock.h 3
+    //  example/dynamic_memory_allocation/spin_lock.h 3
 
     #include <atomic>
 
@@ -13851,7 +13851,7 @@ MPoolFixed::alloc/MPoolFixed::freeを見ればわかる通り、malloc/freeの�
 MPoolFixedの単体テストは、下記のようになる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_fixed_ut.cpp 10
+    //  example/dynamic_memory_allocation/mpool_fixed_ut.cpp 10
 
     Inner_::mem_chunk<5> mc5[3];
     static_assert(32 == sizeof(mc5[0]));
@@ -13861,7 +13861,7 @@ MPoolFixedの単体テストは、下記のようになる。
     static_assert(64 == sizeof(mc33));
 ```
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_fixed_ut.cpp 106
+    //  example/dynamic_memory_allocation/mpool_fixed_ut.cpp 106
 
     auto mpf = MPoolFixed<33, 2>{};
 
@@ -13903,7 +13903,7 @@ MPoolFixedの単体テストは、下記のようになる。
 (「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_7_6_4)」参照)、
 
 ```cpp
-    // @@@ example/h/nstd_exception.h 11
+    //  example/h/nstd_exception.h 11
 
     /// @brief StaticString<>を使ったエクセプションクラス
     ///        下記のMAKE_EXCEPTIONを使い生成
@@ -13925,7 +13925,7 @@ MPoolFixedの単体テストは、下記のようになる。
     #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
 ```
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool.h 7
+    //  example/dynamic_memory_allocation/mpool.h 7
 
     class MPoolBadAlloc : public std::bad_alloc {  // Nstd::Exceptionの基底クラス
     };
@@ -13943,7 +13943,7 @@ MPoolから派生したクラスが、
 [固定長メモリプール](#SS_5_2_1)を使用したoperator newのオーバーロードの実装例を以下に示す。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/global_new_delete.cpp 31
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 31
 
     namespace {
     MPool* mpool_table[32];
@@ -14028,7 +14028,7 @@ MEM_COUNTの値を見直した方が、
 operator deleteについては、下記の2種類が必要となる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/global_new_delete.cpp 109
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 109
 
     void operator delete(void* mem) noexcept
     {
@@ -14067,7 +14067,7 @@ operator delete(void\* mem)は、それ以外のメモリ解放に使用され�
 下記のように定義されている。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/global_new_delete.cpp 8
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 8
 
     namespace {
 
@@ -14119,7 +14119,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
 下記のコードは、そのためのインターフェースを提供する。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/global_new_delete.h 4
+    //  example/dynamic_memory_allocation/global_new_delete.h 4
 
     class GlobalNewDeleteMonitor {
     public:
@@ -14130,7 +14130,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
     };
 ```
 ```cpp
-    // @@@ example/dynamic_memory_allocation/global_new_delete.cpp 135
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 135
 
     MPool const* const* GlobalNewDeleteMonitor::begin() const noexcept { return &mpool_table[0]; }
     MPool const* const* GlobalNewDeleteMonitor::end() const noexcept
@@ -14145,7 +14145,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
 このインターフェースを下記のように使用することで、
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/global_new_delete_ut.cpp 124
+    //  example/dynamic_memory_allocation/global_new_delete_ut.cpp 124
 
     auto gm = GlobalNewDeleteMonitor{};
 
@@ -14202,7 +14202,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
 メモリ管理に「[固定長メモリプール](#SS_5_2_1)」で示したMPoolFixedを利用した実装例を以下に示す。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/class_new_delete_ut.cpp 14
+    //  example/dynamic_memory_allocation/class_new_delete_ut.cpp 14
 
     struct A {
         A() noexcept : name0{"A"} {}
@@ -14229,7 +14229,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
 (従ってグローバルnew/deleteは使われていないこともわかる)。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/class_new_delete_ut.cpp 43
+    //  example/dynamic_memory_allocation/class_new_delete_ut.cpp 43
 
     ASSERT_EQ(3, mpf_A.GetCount());
 
@@ -14261,7 +14261,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
 しかし、この方法ではnewのオーバーロードを行うクラス毎に、
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/class_new_delete_ut.cpp 20
+    //  example/dynamic_memory_allocation/class_new_delete_ut.cpp 20
 
     [[nodiscard]] static void* operator new(size_t size);
     static void                operator delete(void* mem) noexcept;
@@ -14278,7 +14278,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
 を利用した下記のようなクラステンプレートを導入すれば良い。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/op_new.h 5
+    //  example/dynamic_memory_allocation/op_new.h 5
 
     template <typename T>
     class OpNew {
@@ -14300,7 +14300,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
 の実装例を以下に示す。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/class_new_delete_ut.cpp 77
+    //  example/dynamic_memory_allocation/class_new_delete_ut.cpp 77
 
     struct A : public OpNew<A> {
         A() noexcept : name0{"A"} {}
@@ -14336,7 +14336,7 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
 下記のように、さらに派生クラスを定義してしまうとnewが失敗してしまうことがあるので注意が必要である。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/class_new_delete_ut.cpp 135
+    //  example/dynamic_memory_allocation/class_new_delete_ut.cpp 135
 
     struct Large : A {
         uint8_t buff[1024];  // mpf_ABCDのメモリブロックのサイズを超える
@@ -14353,7 +14353,7 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
 偶発的にグローバルnewを使ってしまわないようにすることもできる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/op_new_deleted.h 3
+    //  example/dynamic_memory_allocation/op_new_deleted.h 3
 
     class OpNewDeleted {
         static void* operator new(size_t size)                             = delete;
@@ -14362,7 +14362,7 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
     };
 ```
 ```cpp
-    // @@@ example/dynamic_memory_allocation/class_new_delete_ut.cpp 150
+    //  example/dynamic_memory_allocation/class_new_delete_ut.cpp 150
 
     class DeletedNew : OpNewDeleted {  // プライベート継承
     };
@@ -14393,7 +14393,7 @@ STLコンテナはこういった状況に備えて、ユーザ定義のアロ�
 アロケータの定義例を以下に示す。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator.h 7
+    //  example/dynamic_memory_allocation/mpool_allocator.h 7
 
     template <typename T>
     class MPoolBasedAllocator {
@@ -14451,7 +14451,7 @@ STLコンテナはこういった状況に備えて、ユーザ定義のアロ�
 (全体は巻末の「[example/dynamic_memory_allocation/mpool_variable.h](#SS_7_1_2)」に掲載する)。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_variable.h 59
+    //  example/dynamic_memory_allocation/mpool_variable.h 59
 
     template <uint32_t MEM_SIZE>
     class MPoolVariable final : public MPool {
@@ -14502,7 +14502,7 @@ STLコンテナはこういった状況に備えて、ユーザ定義のアロ�
 MPoolBasedAllocatorを使うことでnew char[]に対応するアロケータが定義できる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 11
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 11
 
     namespace {
     MPoolVariable<1024 * 64> mpv_allocator;
@@ -14516,7 +14516,7 @@ MPoolBasedAllocatorを使うことでnew char[]に対応するアロケータが
 その振る舞いを示している。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 24
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 24
 
     auto rest = mpv_allocator.GetCount();
     auto str  = std::basic_string<char, std::char_traits<char>, MPoolBasedAllocator<char>>{"hehe"};
@@ -14528,7 +14528,7 @@ MPoolBasedAllocatorを使うことでnew char[]に対応するアロケータが
 この長い宣言は、下記のようにすることで簡潔に記述できるようになる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 34
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 34
 
     using mpv_string = std::basic_string<char, std::char_traits<char>, MPoolBasedAllocator<char>>;
 ```
@@ -14536,7 +14536,7 @@ MPoolBasedAllocatorを使うことでnew char[]に対応するアロケータが
 下記のように宣言、定義することで、
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 50
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 50
 
     template <>
     MPool& MPoolBasedAllocator<int>::mpool_ = mpv_allocator;
@@ -14547,7 +14547,7 @@ MPoolBasedAllocatorを使うことでnew char[]に対応するアロケータが
 下記の単体テストが示す通り、std::vector\<int>にこのアロケータを使わせることもできる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 61
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 61
 
     auto rest = mpv_allocator.GetCount();
     auto ints = mpv_vector_int{1, 2, 3};
@@ -14560,7 +14560,7 @@ MPoolBasedAllocatorを使うことでnew char[]に対応するアロケータが
 std::stringと同等のオブジェクトを保持するstd::vectorを宣言することもできる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 72
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 72
 
     using mpv_vector_str = std::vector<mpv_string, MPoolBasedAllocator<mpv_string>>;
 
@@ -14568,7 +14568,7 @@ std::stringと同等のオブジェクトを保持するstd::vectorを宣言す�
     MPool& MPoolBasedAllocator<mpv_string>::mpool_ = mpv_allocator;
 ```
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 94
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 94
 
     auto strs = mpv_vector_str{"1", "2", "3"};
 
@@ -14584,7 +14584,7 @@ std::stringと同等のオブジェクトを保持するstd::vectorを宣言す�
 宣言のみではmpv_stringのnewにこのアロケータを使わせることはできない。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 121
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 121
 
     auto rest = mpv_allocator.GetCount();
 
@@ -14598,7 +14598,7 @@ std::stringと同等のオブジェクトを保持するstd::vectorを宣言す�
 そうするためには、さらに下記のような定義が必要になる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 108
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 108
 
     struct mpv_string_op_new : OpNew<mpv_string_op_new>, mpv_string {
         using mpv_string::basic_string;
@@ -14611,7 +14611,7 @@ std::stringと同等のオブジェクトを保持するstd::vectorを宣言す�
 このようにすることで、下記に示すように期待した動きになる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 133
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 133
 
     rest = mpv_allocator.GetCount();
 
@@ -14626,7 +14626,7 @@ std::stringと同等のオブジェクトを保持するstd::vectorを宣言す�
 下記に示すように期待した結果にならないため、注意が必要である。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 145
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 145
 
     rest = mpv_allocator.GetCount();
 
@@ -14640,7 +14640,7 @@ std::stringと同等のオブジェクトを保持するstd::vectorを宣言す�
 newをオーバーロードしたクラスをstd::shared_ptrで管理する場合、下記のようにしなければならない。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 157
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 157
 
     rest = mpv_allocator.GetCount();
 
@@ -14661,7 +14661,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_variable.h 59
+    //  example/dynamic_memory_allocation/mpool_variable.h 59
 
     template <uint32_t MEM_SIZE>
     class MPoolVariable final : public MPool {
@@ -14712,7 +14712,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 このインターフェースを下記のように使用することで、
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool_allocator_ut.cpp 213
+    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 213
 
     for (auto mem : mpv_allocator) {
         std::cout << std::setw(16) << mem->next << ":" << mem->n_nuits << std::endl;
@@ -14758,7 +14758,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 下記に示すような、これまで使用したMPoolFixedによる単純な実装を使うこともできる。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/exception_allocator_ut.cpp 15
+    //  example/dynamic_memory_allocation/exception_allocator_ut.cpp 15
 
     // https://github.com/hjl-tools/gcc/blob/master/libstdc%2B%2B-v3/libsupc%2B%2B/unwind-cxx.h
     // の抜粋
@@ -14804,7 +14804,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 以下に単体テストを示す。
 
 ```cpp
-    // @@@ example/dynamic_memory_allocation/exception_allocator_ut.cpp 104
+    //  example/dynamic_memory_allocation/exception_allocator_ut.cpp 104
 
     auto count             = mpf_exception.GetCount();
     auto exception_occured = false;
