@@ -6,6 +6,7 @@
 #define SUPPRESS_WARN_CLANG_END _Pragma("clang diagnostic pop")
 
 #define SUPPRESS_WARN_CLANG_ARRAY_BOUNDS _Pragma("clang diagnostic ignored \"-Warray-bounds\"")
+#define SUPPRESS_WARN_CLANG_BOOL_OP _Pragma("clang diagnostic ignored \"-Wbool-operation\"");
 #define SUPPRESS_WARN_CLANG_ADDRESS \
     _Pragma("clang diagnostic ignored \"-Wtautological-pointer-compare\"")
 #define SUPPRESS_WARN_CLANG_COMMENT _Pragma("clang diagnostic ignored \"-Wcomment\"")
@@ -51,6 +52,7 @@
 #define SUPPRESS_WARN_CLANG_USER_DEFINED_LITERAL \
     _Pragma("clang diagnostic ignored \"-Wuser-defined-literals\"")
 #define SUPPRESS_WARN_CLANG_SWITCH _Pragma("clang diagnostic ignored \"-Wswitch\"")
+#define SUPPRESS_WARN_CLANG_SWITCH_BOOL _Pragma("clang diagnostic ignored \"-Wswitch-bool\"");
 #define SUPPRESS_WARN_CLANG_CONVERSION_VEXING_PARSE \
     _Pragma("clang diagnostic ignored \"-Wvexing-parse\"")
 
@@ -114,7 +116,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_UNUSED_CAPTURE \
     _Pragma("clang diagnostic ignored \"-Wunused-lambda-capture\"")
 #define SUPPRESS_WARN_CLANG_ENUM_COMP_SWITCH \
-    _Pragma("GCC diagnostic ignored \"-Wenum-compare-switch\"")
+    _Pragma("clang diagnostic ignored \"-Wenum-compare-switch\"")
 
 #else
 
@@ -123,6 +125,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 
 #define SUPPRESS_WARN_CLANG_ADDRESS
 #define SUPPRESS_WARN_CLANG_ARRAY_BOUNDS
+#define SUPPRESS_WARN_CLANG_BOOL_OP
 #define SUPPRESS_WARN_CLANG_ENUM_COMP
 #define SUPPRESS_WARN_CLANG_ENUM_ENUM_COMP_SWITCH
 #define SUPPRESS_WARN_CLANG_UNUSED_BUT_SET_VAR
@@ -156,6 +159,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_UNUSED_VAR
 #define SUPPRESS_WARN_CLANG_USER_DEFINED_LITERAL
 #define SUPPRESS_WARN_CLANG_SWITCH
+#define SUPPRESS_WARN_CLANG_SWITCH_BOOL
 
 // only clang
 #define SUPPRESS_WARN_CLANG_CONVERSION_VEXING_PARSE

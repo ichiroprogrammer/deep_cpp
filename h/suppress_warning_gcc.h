@@ -6,6 +6,7 @@
 #define SUPPRESS_WARN_GCC_END _Pragma("GCC diagnostic pop")
 
 #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
+#define SUPPRESS_WARN_GCC_BOOL_OP _Pragma("GCC diagnostic ignored \"-Wbool-operation\"");
 #define SUPPRESS_WARN_GCC_ADDRESS _Pragma("GCC diagnostic ignored \"-Waddress\"")
 #define SUPPRESS_WARN_GCC_COMMENT _Pragma("GCC diagnostic ignored \"-Wcomment\"")
 #define SUPPRESS_WARN_GCC_CONV_NULL _Pragma("GCC diagnostic ignored \"-Wconversion-null\"")
@@ -44,6 +45,7 @@
 #define SUPPRESS_WARN_GCC_USER_DEFINED_LITERAL \
     _Pragma("GCC diagnostic ignored \"-Wliteral-suffix\"")
 #define SUPPRESS_WARN_GCC_SWITCH _Pragma("GCC diagnostic ignored \"-Wswitch\"")
+#define SUPPRESS_WARN_GCC_SWITCH_BOOL _Pragma("GCC diagnostic ignored \"-Wswitch-bool\"");
 #define SUPPRESS_WARN_GCC_CONVERSION_VEXING_PARSE \
     _Pragma("GCC diagnostic ignored \"-Wvexing-parse\"")
 #define SUPPRESS_WARN_GCC_ENUM_COMP _Pragma("GCC diagnostic ignored \"-Wenum-compare\"")
@@ -79,6 +81,7 @@
 
 #define SUPPRESS_WARN_GCC_ADDRESS
 #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS
+#define SUPPRESS_WARN_GCC_BOOL_OP
 #define SUPPRESS_WARN_GCC_COMMENT
 #define SUPPRESS_WARN_GCC_CONV_NULL
 #define SUPPRESS_WARN_GCC_DEL_INCOMP
@@ -134,6 +137,7 @@
 #define SUPPRESS_WARN_GCC_SEQ_POINT
 #define SUPPRESS_WARN_GCC_STRING_OVERFLOW
 #define SUPPRESS_WARN_GCC_SWITCH
+#define SUPPRESS_WARN_GCC_SWITCH_BOOL
 #define SUPPRESS_WARN_GCC_TERMINATE
 
 #endif
