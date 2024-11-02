@@ -14,6 +14,24 @@ ___
 
 ## 組み込み型とインスタンス
 
+### 基本型
+基本型(fundamental types)は、C++の標準で定義されている型で、
+特別なキーワードを使用して直接宣言できる型の総称である。[組み込み型](---)とも呼ばれることもある。
+
+基本型は以下のに示した型によって構成される。
+
+* [算術型](---)
+* [汎整数型](---)
+* [用語解説|組み込み型とインスタンス|浮動小数点型](---)
+* void
+* 上記した型のポインタ型
+
+注:  
+リファレンスは基本型に含まれない。
+
+### 組み込み型
+組み込み型(built-in types)は[基本型](---)(fundamental types)の別称。
+
 ### 算術型
 算術型とは下記の型の総称である。
 
@@ -39,7 +57,6 @@ ___
 ### 整数型
 整数型とは下記の型の総称である。
 
-* char
 * signed char
 * unsigned char
 * short
@@ -72,6 +89,23 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 
 ```cpp
     // @@@ example/term_explanation/integral_promotion_ut.cpp #0:2 begin -2
+```
+
+### 汎整数拡張
+bool、char、signed char、unsigned char、short、unsigned short型の変数が、
+算術のオペランドとして使用される場合、
+
+* その変数の型の取り得る値全てがintで表現できるのならば、int型に変換される。
+* そうでなければ、その変数はunsigned int型に変換される。
+
+この変換を汎整数拡張と呼ぶ。
+
+従って、sizof(short) < sizeof(int)である処理系では、
+bool、char、signed char、unsigned char、short、unsigned short型の変数は、
+下記のようにintに変換される。
+
+```cpp
+    // @@@ example/term_explanation/integral_promotion_ut.cpp #1:0 begin -1
 ```
 
 ### 浮動小数点型
@@ -146,24 +180,6 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 実質的には不可能になってしまうため、
 浮動小数演算を複数コンテキストで行うソフトウェアの開発する場合、
 処理系の選択に注意が必要である。
-
-
-### 汎整数拡張
-bool、char、signed char、unsigned char、short、unsigned short型の変数が、
-算術のオペランドとして使用される場合、
-
-* その変数の型の取り得る値全てがintで表現できるのならば、int型に変換される。
-* そうでなければ、その変数はunsigned int型に変換される。
-
-この変換を汎整数拡張と呼ぶ。
-
-従って、sizof(short) < sizeof(int)である処理系では、
-bool、char、signed char、unsigned char、short、unsigned short型の変数は、
-下記のようにintに変換される。
-
-```cpp
-    // @@@ example/term_explanation/integral_promotion_ut.cpp #1:0 begin -1
-```
 
 ## enum
 C++03までのenumは定数を分かりやすい名前で定義するための記法である。
