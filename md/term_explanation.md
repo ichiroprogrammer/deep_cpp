@@ -72,7 +72,7 @@ ___
 C++における算術変換とは、算術演算の1つのオペランドが他のオペランドと同じ型でない場合、
 1つのオペランドを他のオペランドと同じ型に変換するプロセスのことを指す。
 
-算術変換は、[汎整数拡張](---)と通常算術変換に分けられる。
+算術変換は、[汎整数型昇格](---)と通常算術変換に分けられる。
 
 ```cpp
     // @@@ example/term_explanation/integral_promotion_ut.cpp #0:0 begin -1
@@ -91,14 +91,14 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
     // @@@ example/term_explanation/integral_promotion_ut.cpp #0:2 begin -2
 ```
 
-### 汎整数拡張
+### 汎整数型昇格
 bool、char、signed char、unsigned char、short、unsigned short型の変数が、
 算術のオペランドとして使用される場合、
 
 * その変数の型の取り得る値全てがintで表現できるのならば、int型に変換される。
 * そうでなければ、その変数はunsigned int型に変換される。
 
-この変換を汎整数拡張と呼ぶ。
+この変換を汎整数型昇格(integral promotion)と呼ぶ。
 
 従って、sizof(short) < sizeof(int)である処理系では、
 bool、char、signed char、unsigned char、short、unsigned short型の変数は、
@@ -107,6 +107,9 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 ```cpp
     // @@@ example/term_explanation/integral_promotion_ut.cpp #1:0 begin -1
 ```
+
+### 汎整数型拡張
+汎整数型拡張とは[汎整数型昇格](---)と同じ概念を指す。
 
 ### 浮動小数点型
 浮動小数点型は以下の型の総称である。
@@ -240,8 +243,8 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 
 ### std::byte
 C++17で導入されたstd::byte型は、バイト単位のデータ操作に使用され、
-整数型としての意味を持たないため、型安全性を確保する。
-uint8_t型と似ているが、uint8_t型の演算による[汎整数拡張](---)が発生しないため、
+[整数型](---)としての意味を持たないため、型安全性を確保する。
+uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](---)を発生させないため、
 可読性、保守性の向上が見込める。
 
 ```cpp
