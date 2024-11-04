@@ -30,6 +30,7 @@
 #define SUPPRESS_WARN_CLANG_MISSING_BRACES _Pragma("clang diagnostic ignored \"-Wmissing-braces\"")
 #define SUPPRESS_WARN_CLANG_NON_VIRTUAL_DTOR \
     _Pragma("clang diagnostic ignored \"-Wnon-virtual-dtor\"")
+#define SUPPRESS_WARN_CLANG_NULL_ARITH _Pragma("clang diagnostic ignored \"-Wnull-arithmetic\"")
 #define SUPPRESS_WARN_CLANG_PARENTHESES _Pragma("clang diagnostic ignored \"-Wparentheses\"")
 #define SUPPRESS_WARN_CLANG_PESSIMIZING_MOVE \
     _Pragma("clang diagnostic ignored \"-Wpessimizing-move\"")
@@ -146,6 +147,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_INIT_OVERRIDE
 #define SUPPRESS_WARN_CLANG_MISSING_BRACES
 #define SUPPRESS_WARN_CLANG_NON_VIRTUAL_DTOR
+#define SUPPRESS_WARN_CLANG_NULL_ARITH
 #define SUPPRESS_WARN_CLANG_PARENTHESES
 #define SUPPRESS_WARN_CLANG_PESSIMIZING_MOVE
 #define SUPPRESS_WARN_CLANG_SHIFT_COUNT_OVERFLOW

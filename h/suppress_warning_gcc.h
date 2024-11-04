@@ -26,6 +26,7 @@
 #define SUPPRESS_WARN_GCC_NON_VIRTUAL_DTOR _Pragma("GCC diagnostic ignored \"-Wnon-virtual-dtor\"")
 #define SUPPRESS_WARN_GCC_NARROWING _Pragma("GCC diagnostic ignored \"-Wnarrowing\"")
 #define SUPPRESS_WARN_GCC_PARENTHESES _Pragma("GCC diagnostic ignored \"-Wparentheses\"")
+#define SUPPRESS_WARN_GCC_NULL_ARITH _Pragma("GCC diagnostic ignored \"-Wpointer-arith\"")
 #define SUPPRESS_WARN_GCC_PESSIMIZING_MOVE _Pragma("GCC diagnostic ignored \"-Wpessimizing-move\"")
 #define SUPPRESS_WARN_GCC_SHIFT_COUNT_OVERFLOW \
     _Pragma("GCC diagnostic ignored \"-Wshift-count-overflow\"")
@@ -98,6 +99,7 @@
 #define SUPPRESS_WARN_GCC_MISSING_BRACES
 #define SUPPRESS_WARN_GCC_NON_VIRTUAL_DTOR
 #define SUPPRESS_WARN_GCC_PARENTHESES
+#define SUPPRESS_WARN_GCC_NULL_ARITH
 #define SUPPRESS_WARN_GCC_PESSIMIZING_MOVE
 #define SUPPRESS_WARN_GCC_SHIFT_COUNT_OVERFLOW
 #define SUPPRESS_WARN_GCC_SIGN_COMPARE
