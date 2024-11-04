@@ -24,6 +24,7 @@
 #define SUPPRESS_WARN_GCC_INIT_OVERRIDE _Pragma("GCC diagnostic ignored \"-Woverride-init\"");
 #define SUPPRESS_WARN_GCC_MISSING_BRACES _Pragma("GCC diagnostic ignored \"-Wmissing-braces\"")
 #define SUPPRESS_WARN_GCC_NON_VIRTUAL_DTOR _Pragma("GCC diagnostic ignored \"-Wnon-virtual-dtor\"")
+#define SUPPRESS_WARN_GCC_NARROWING _Pragma("GCC diagnostic ignored \"-Wnarrowing\"")
 #define SUPPRESS_WARN_GCC_PARENTHESES _Pragma("GCC diagnostic ignored \"-Wparentheses\"")
 #define SUPPRESS_WARN_GCC_PESSIMIZING_MOVE _Pragma("GCC diagnostic ignored \"-Wpessimizing-move\"")
 #define SUPPRESS_WARN_GCC_SHIFT_COUNT_OVERFLOW \
@@ -129,6 +130,7 @@
 #define SUPPRESS_WARN_GCC_INACCESS_BASE
 #define SUPPRESS_WARN_GCC_TYPE_LIMITS
 #define SUPPRESS_WARN_GCC_LOCAL_RETURN
+#define SUPPRESS_WARN_GCC_NARROWING
 #define SUPPRESS_WARN_GCC_NON_NULL_COMP
 #define SUPPRESS_WARN_GCC_NOT_EFF_CPP
 #define SUPPRESS_WARN_GCC_OVERFLOW

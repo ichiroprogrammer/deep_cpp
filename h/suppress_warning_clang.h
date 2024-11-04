@@ -76,6 +76,7 @@
     _Pragma("clang diagnostic ignored \"-Wlogical-op-parentheses\"")
 #define SUPPRESS_WARN_CLANG_MISMATCHED_NEW_DELETE \
     _Pragma("clang diagnostic ignored \"-Wmismatched-new-delete\"")
+#define SUPPRESS_WARN_CLANG_NARROWING _Pragma("clang diagnostic ignored \"-Wc++11-narrowing\"")
 #define SUPPRESS_WARN_CLANG_NON_POD_VARARGS \
     _Pragma("clang diagnostic ignored \"-Wnon-pod-varargs\"")
 #define SUPPRESS_WARN_CLANG_OVERLOADED_VIRTUAL \
@@ -101,6 +102,8 @@
     _Pragma("clang diagnostic ignored \"-Wtautological-undefined-compare\"")
 #define SUPPRESS_WARN_CLANG_OVERLAP_COMP \
     _Pragma("clang diagnostic ignored \"-Wtautological-overlap-compare\"")
+#define SUPPRESS_WARN_CLANG_INT_FLOAT_CONVERSION \
+    _Pragma("clang diagnostic ignored \"-Wimplicit-const-int-float-conversion\"")
 
 #define SUPPRESS_WARN_CLANG_UNEVALUATED_EXPRESSION \
     _Pragma("clang diagnostic ignored \"-Wunevaluated-expression\"")
@@ -171,6 +174,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_LITERAL_CONVERSION
 #define SUPPRESS_WARN_CLANG_LOGICAL_OP_PARENTHESES
 #define SUPPRESS_WARN_CLANG_MISMATCHED_NEW_DELETE
+#define SUPPRESS_WARN_CLANG_NARROWING
 #define SUPPRESS_WARN_CLANG_NON_POD_VARARGS
 #define SUPPRESS_WARN_CLANG_OVERLOADED_VIRTUAL
 #define SUPPRESS_WARN_CLANG_POINTER_BOOL_CONVERSION
@@ -185,6 +189,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_UNDEFINED_INTERNAL
 #define SUPPRESS_WARN_CLANG_UNDEF_COMP
 #define SUPPRESS_WARN_CLANG_OVERLAP_COMP
+#define SUPPRESS_WARN_CLANG_INT_FLOAT_CONVERSION
 #define SUPPRESS_WARN_CLANG_UNEVALUATED_EXPRESSION
 #define SUPPRESS_WARN_CLANG_UNKNOWN_ESCAPE_SEQUENCE
 #define SUPPRESS_WARN_CLANG_UNSEQUENCED
