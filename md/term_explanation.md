@@ -1729,11 +1729,24 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
     // @@@ example/term_explanation/lambda.cpp #0:0 begin -1
 ```
 
-### クロージャ
+#### クロージャ
 「[言語機能|ラムダ式](---)」を参照せよ。
 
-### クロージャ型
+#### クロージャ型
 「[言語機能|ラムダ式](---)」を参照せよ。
+
+#### 一時的ラムダ
+一時的ラムダ(transient lambda)とは下記のような使い方をするラムダ式指す慣用用語である。
+
+複雑な初期化を必要とするconstオブジェクトの生成をするような場合に有用なテクニックである。
+
+```cpp
+    // @@@ example/term_explanation/transient_lambda_ut.cpp #0:0 begin -1
+```
+
+#### transient lambda
+「[言語機能|ラムダ式|一時的ラムダ](---)」を参照せよ。
+
 
 ## name lookupと名前空間
 ここではname lookupとそれに影響を与える名前空間について解説する。

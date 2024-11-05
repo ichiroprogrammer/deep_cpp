@@ -14843,7 +14843,7 @@ __この章の構成__
 &emsp;&emsp;&emsp; [汎整数型](#SS_6_1_4)  
 &emsp;&emsp;&emsp; [整数型](#SS_6_1_5)  
 &emsp;&emsp;&emsp; [算術変換](#SS_6_1_6)  
-&emsp;&emsp;&emsp; [汎整数昇格](#SS_6_1_7)  
+&emsp;&emsp;&emsp; [汎整数型昇格](#SS_6_1_7)  
 &emsp;&emsp;&emsp; [汎整数型拡張](#SS_6_1_8)  
 &emsp;&emsp;&emsp; [浮動小数点型](#SS_6_1_9)  
 &emsp;&emsp;&emsp;&emsp; [浮動小数点型のダイナミックレンジ](#SS_6_1_9_1)  
@@ -14942,8 +14942,10 @@ __この章の構成__
 
 &emsp;&emsp;&emsp; [モジュール](#SS_6_8_2)  
 &emsp;&emsp;&emsp; [ラムダ式](#SS_6_8_3)  
-&emsp;&emsp;&emsp; [クロージャ](#SS_6_8_4)  
-&emsp;&emsp;&emsp; [クロージャ型](#SS_6_8_5)  
+&emsp;&emsp;&emsp;&emsp; [クロージャ](#SS_6_8_3_1)  
+&emsp;&emsp;&emsp;&emsp; [クロージャ型](#SS_6_8_3_2)  
+&emsp;&emsp;&emsp;&emsp; [一時的ラムダ](#SS_6_8_3_3)  
+&emsp;&emsp;&emsp;&emsp; [transient lambda](#SS_6_8_3_4)  
 
 &emsp;&emsp; [name lookupと名前空間](#SS_6_9)  
 &emsp;&emsp;&emsp; [ルックアップ](#SS_6_9_1)  
@@ -15131,7 +15133,7 @@ ___
 C++における算術変換とは、算術演算の1つのオペランドが他のオペランドと同じ型でない場合、
 1つのオペランドを他のオペランドと同じ型に変換するプロセスのことを指す。
 
-算術変換は、[汎整数昇格](#SS_6_1_7)と通常算術変換に分けられる。
+算術変換は、[汎整数型昇格](#SS_6_1_7)と通常算術変換に分けられる。
 
 ```cpp
     //  example/term_explanation/integral_promotion_ut.cpp 11
@@ -15220,14 +15222,14 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
     ASSERT_TRUE(s < us);  // 汎整数拡張により、-1 < 1が成立
 ```
 
-### 汎整数昇格 <a id="SS_6_1_7"></a>
+### 汎整数型昇格 <a id="SS_6_1_7"></a>
 bool、char、signed char、unsigned char、short、unsigned short型の変数が、
 算術のオペランドとして使用される場合、
 
 * その変数の型の取り得る値全てがintで表現できるのならば、int型に変換される。
 * そうでなければ、その変数はunsigned int型に変換される。
 
-この変換を汎整数昇格と呼ぶ。
+この変換を汎整数型昇格(integral promotion)と呼ぶ。
 
 従って、sizof(short) < sizeof(int)である処理系では、
 bool、char、signed char、unsigned char、short、unsigned short型の変数は、
@@ -15258,7 +15260,7 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 ```
 
 ### 汎整数型拡張 <a id="SS_6_1_8"></a>
-汎整数型昇格(integral promotion)とは[汎整数型拡張](#SS_6_1_8)と同じ概念を指す。
+汎整数型拡張とは[汎整数型昇格](#SS_6_1_7)と同じ概念を指す。
 
 ### 浮動小数点型 <a id="SS_6_1_9"></a>
 浮動小数点型は以下の型の総称である。
@@ -15498,8 +15500,8 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 
 ### std::byte <a id="SS_6_2_4"></a>
 C++17で導入されたstd::byte型は、バイト単位のデータ操作に使用され、
-整数型としての意味を持たないため、型安全性を確保する。
-uint8_t型と似ているが、uint8_t型の演算による[汎整数昇格](#SS_6_1_7)が発生しないため、
+[整数型](#SS_6_1_5)としての意味を持たないため、型安全性を確保する。
+uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](#SS_6_1_7)を発生させないため、
 可読性、保守性の向上が見込める。
 
 ```cpp
@@ -18917,11 +18919,40 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
     auto s = g_closure(std::string{"1"}, std::string{"2"});  // t0、t1はstd::string
 ```
 
-### クロージャ <a id="SS_6_8_4"></a>
+#### クロージャ <a id="SS_6_8_3_1"></a>
 「[ラムダ式](#SS_6_8_3)」を参照せよ。
 
-### クロージャ型 <a id="SS_6_8_5"></a>
+#### クロージャ型 <a id="SS_6_8_3_2"></a>
 「[ラムダ式](#SS_6_8_3)」を参照せよ。
+
+#### 一時的ラムダ <a id="SS_6_8_3_3"></a>
+一時的ラムダ(transient lambda)とは下記のような使い方をするラムダ式指す慣用用語である。
+
+複雑な初期化を必要とするconstオブジェクトの生成をするような場合に有用なテクニックである。
+
+```cpp
+    //  example/term_explanation/transient_lambda_ut.cpp 9
+
+    std::vector<int> vec{1, 2, 3};
+
+    // ラムダ式を即時実行するために () を追加
+    auto const vec_act = [&vec = vec]() {
+        using arg_type = std::remove_reference_t<decltype(vec)>;
+        arg_type temp;
+        for (auto val : vec) {
+            temp.push_back(val * 2);
+        }
+        return temp;  // 変更後のベクターを返す
+    }();
+
+    std::vector<int> const vec_exp{2, 4, 6};
+
+    ASSERT_EQ(vec_act, vec_exp);
+```
+
+#### transient lambda <a id="SS_6_8_3_4"></a>
+「[一時的ラムダ](#SS_6_8_3_3)」を参照せよ。
+
 
 ## name lookupと名前空間 <a id="SS_6_9"></a>
 ここではname lookupとそれに影響を与える名前空間について解説する。
