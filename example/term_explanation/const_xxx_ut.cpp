@@ -151,6 +151,8 @@ constexpr uint64_t bit_mask(uint32_t max)
 {
     return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1);
 }
+constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
+static_assert(0b1111 == bit_mask_0);
 // @@@ sample end
 // @@@ sample begin 5:1
 
@@ -164,6 +166,8 @@ constexpr uint64_t bit_mask_for(uint32_t max)
 
     return ret;
 }
+constexpr uint64_t bit_mask_1 = bit_mask_for(4);  // C++17からサポート
+static_assert(0b1111 == bit_mask_1);
 // @@@ sample end
 
 template <uint32_t N>
@@ -176,13 +180,7 @@ template <>
 struct bit_mask_struct<0> {
     static constexpr uint64_t value = 0;
 };
-
-TEST(TermExp, bit_mask)
-{
-    static_assert(0b1111 == bit_mask(4));
-    static_assert(0b1111 == bit_mask_for(4));
-    static_assert(0b1111 == bit_mask_struct<4>::value);
-}
+static_assert(0b1111 == bit_mask_struct<4>::value);
 
 namespace cpp20 {
 // @@@ sample begin 6:0

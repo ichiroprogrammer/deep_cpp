@@ -14880,10 +14880,11 @@ __この章の構成__
 &emsp;&emsp; [constexpr](#SS_6_4)  
 &emsp;&emsp;&emsp; [constexpr定数](#SS_6_4_1)  
 &emsp;&emsp;&emsp; [constexpr関数](#SS_6_4_2)  
-&emsp;&emsp;&emsp; [リテラル型](#SS_6_4_3)  
-&emsp;&emsp;&emsp; [constexprインスタンス](#SS_6_4_4)  
-&emsp;&emsp;&emsp; [consteval](#SS_6_4_5)  
-&emsp;&emsp;&emsp; [constexprラムダ](#SS_6_4_6)  
+&emsp;&emsp;&emsp; [コア定数式](#SS_6_4_3)  
+&emsp;&emsp;&emsp; [リテラル型](#SS_6_4_4)  
+&emsp;&emsp;&emsp; [constexprインスタンス](#SS_6_4_5)  
+&emsp;&emsp;&emsp; [consteval](#SS_6_4_6)  
+&emsp;&emsp;&emsp; [constexprラムダ](#SS_6_4_7)  
 
 &emsp;&emsp; [オブジェクトと生成](#SS_6_5)  
 &emsp;&emsp;&emsp; [初期化子リストコンストラクタ](#SS_6_5_1)  
@@ -16431,9 +16432,9 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 constインスタンスは、ランタイムまたはコンパイル時に初期化され、
 その後、状態が不変であるインスタンスである。
 必ずしも以下に示すようにconstインスタンスがコンパイル時に値が定まっているわけではない。
-[constexprインスタンス](#SS_6_4_4)はconstインスタンスである。
+[constexprインスタンス](#SS_6_4_5)はconstインスタンスである。
 C++03までのコンパイラに、
-最適化の一環で`static const`インスタンスを[constexprインスタンス](#SS_6_4_4)と扱うものもあった。
+最適化の一環で`static const`インスタンスを[constexprインスタンス](#SS_6_4_5)と扱うものもあった。
 
 
 ```cpp
@@ -16545,12 +16546,14 @@ for/if文や条件分岐のような処理を含むことができなかった�
     {
         return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1);
     }
+    constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
+    static_assert(0b1111 == bit_mask_0);
 ```
 このため、可読性、保守性があったため、C++14で制約が緩和され、
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 155
+    //  example/term_explanation/const_xxx_ut.cpp 157
 
     constexpr uint64_t bit_mask_for(uint32_t max)
     {
@@ -16562,9 +16565,40 @@ for/if文や条件分岐のような処理を含むことができなかった�
 
         return ret;
     }
+    constexpr uint64_t bit_mask_1 = bit_mask_for(4);  // C++17からサポート
+    static_assert(0b1111 == bit_mask_1);
 ```
 
-### リテラル型 <a id="SS_6_4_3"></a>
+### コア定数式 <a id="SS_6_4_3"></a>
+コア定数式(core constant expression)とは以下の条件を満たす式である。
+
+1. 以下のいずれかに該当する式であること  
+   - リテラル
+   - constexpr変数への参照
+   - 定数式で初期化された参照
+   - constexprサブオブジェクトへの参照
+   - constexpr関数呼び出し
+   - sizeof演算子の適用結果
+   - typeid演算子の適用結果(式の値が[ポリモーフィックなクラス](#SS_6_3_8)である場合を除く)
+
+2. 以下のすべてを満たすこと:  
+   - 浮動小数点の比較演算を含まない
+   - インクリメント/デクリメント演算を含まない
+   - 代入演算を含まない
+   - 動的メモリ割り当てを含まない
+   - 仮想関数の呼び出しを含まない
+   - 未定義動作を引き起こさない
+   - 例外を投げない
+   - アドレス取得演算子の使用が定数式の評価に限定される
+
+3. その式の評価において:  
+   - すべてのサブ式も定数式である
+   - 使用されるすべての変数は定数式で初期化されている
+   - 呼び出されるすべての関数はconstexpr関数である
+
+このドキュメントでは慣用的に[constexpr定数](#SS_6_4_1)と呼んでいる概念が、コア定数式である。
+
+### リテラル型 <a id="SS_6_4_4"></a>
 constexpr導入後のC++11の標準では、下記の条件を満たすクラスは、
 
 * constexprコンストラクタを持つ
@@ -16572,7 +16606,7 @@ constexpr導入後のC++11の標準では、下記の条件を満たすクラス
 * 仮想関数や仮想基底クラスを持たない
 
 constexpr定数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
-[constexprインスタンス](#SS_6_4_4)を生成できる。
+[constexprインスタンス](#SS_6_4_5)を生成できる。
 
 このようなクラスは慣習的にリテラル型(literal type)と呼ばれる。
 
@@ -16608,8 +16642,8 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
                                           // int_3.Allways3()はconstexprt定数
 ```
 
-### constexprインスタンス <a id="SS_6_4_4"></a>
-[constexpr定数](#SS_6_4_1)を引数にして、[リテラル型](#SS_6_4_3)のconstexprコンストラクタを呼び出せば、
+### constexprインスタンス <a id="SS_6_4_5"></a>
+[constexpr定数](#SS_6_4_1)を引数にして、[リテラル型](#SS_6_4_4)のconstexprコンストラクタを呼び出せば、
 constexprインスタンスを生成できる。このリテラル型を使用して下記のように[ユーザー定義リテラル](#SS_6_6_6)
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
@@ -16629,7 +16663,7 @@ constexprインスタンスを生成できる。このリテラル型を使用�
     static_assert(std::is_same_v<decltype(i), Integer const>);
 ```
 
-### consteval <a id="SS_6_4_5"></a>
+### consteval <a id="SS_6_4_6"></a>
 constevalはC++20 から導入されたキーワードであり、
 常にコンパイル時に評価されることを保証する関数を定義するために使用される。
 このキーワードを使用すると、引数や関数内の処理がコンパイル時に確定できなければ、
@@ -16637,7 +16671,7 @@ constevalはC++20 から導入されたキーワードであり、
 パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 188
+    //  example/term_explanation/const_xxx_ut.cpp 186
 
     consteval uint64_t bit_mask(uint32_t max)
     {
@@ -16650,7 +16684,7 @@ constevalはC++20 から導入されたキーワードであり、
     }
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 203
+    //  example/term_explanation/const_xxx_ut.cpp 201
 
     static_assert(0b1111'1111 == bit_mask(8));
 
@@ -16662,7 +16696,7 @@ constevalはC++20 から導入されたキーワードであり、
     ASSERT_EQ(0b1111'1111, bm);
 ```
 
-### constexprラムダ <a id="SS_6_4_6"></a>
+### constexprラムダ <a id="SS_6_4_7"></a>
 constexprラムダはC++17から導入された機能であり、以下の条件を満たした[ラムダ式](#SS_6_8_3)である。
 
 * 引数やラムダ式内の処理がコンパイル時に評価可能である必要がある。
@@ -16683,7 +16717,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 220
+    //  example/term_explanation/const_xxx_ut.cpp 218
 
     constexpr auto factorial = [](int n) {  // constexpr ラムダの定義
         int result = 1;
@@ -16697,7 +16731,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
     static_assert(fact_5 == 120);
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 237
+    //  example/term_explanation/const_xxx_ut.cpp 235
 
     constexpr auto factorial = [](auto self, int n) -> int {  // リカーシブconstexprラムダ
         return (n <= 1) ? 1 : n * self(self, n - 1);
@@ -19186,7 +19220,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 * クロージャ型とは、クロージャオブジェクトの型。
 * キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
 * ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
-* [constexprラムダ](#SS_6_4_6)とはクロージャ型の[constexprインスタンス](#SS_6_4_4)。
+* [constexprラムダ](#SS_6_4_7)とはクロージャ型の[constexprインスタンス](#SS_6_4_5)。
 * [ジェネリックラムダ](#SS_6_10_4)とは、C++11のラムダ式を拡張して、
   パラメータにautoを使用(型推測)できるようにした機能。
 
