@@ -629,6 +629,129 @@ Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層�
 ### ポリモーフィックなクラス
 ポリモーフィックなクラスとは、仮想関数を持つクラスを指す。
 なお、純粋仮想関数を持つクラスは、仮想クラスと呼ばれれる。
+ポリモーフィックなクラスと、
+非ポリモーフィックなクラスは[型とインスタンス|RTTI](---)との組み合わせで動作の違いが顕著となる。
+
+### RTTI
+RTTI(Run-time Type Information)とは、プログラム実行中のオブジェクトの型を導出するための機能であり、
+具体的には下記の3つの要素を指す。
+
+* [dynamic_cast](---)
+* [typeid](---)
+* [std::type_info](---)
+
+
+#### dynamic_cast
+dynamic_castは、実行時の型チェックと安全なダウンキャストを行うためのキャスト演算子であるため、
+[ポリモーフィックなクラス](---)とは密接な関係を持つ。
+
+
+下記のような[ポリモーフィックなクラス](---)に対しては、
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #0:0 begin
+```
+
+dynamic_castは下記のように振舞う。
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #0:1 begin -1
+```
+
+
+一方で、下記のような非[ポリモーフィックなクラス](---)に対しては、
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #1:0 begin
+```
+
+dynamic_castは下記のように振舞う。
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #1:1 begin -1
+```
+
+#### typeid
+typeidは[RTTI](---)オブジェクトの型情報([std::type_info](---))を実行時に取得するための演算子である。
+dynamic_castとは違い、
+typeidのオペランドは[ポリモーフィックなクラス](---)のインスタンスでなくても良い。
+以下の例では[基本型](---)に対するtypeidが返す[std::type_info](---)の振る舞いを表す。
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #0:2 begin -1
+```
+
+下記のような[ポリモーフィックなクラス](---)のインスタンスに関して、
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #0:0 begin -1
+```
+
+typeidが返す[std::type_info](---)オブジェクトは下記のように振舞う。
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #0:3 begin -1
+```
+
+一方で、下記のような非[ポリモーフィックなクラス](---)に対しては、
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #1:0 begin
+```
+
+typeidが返す[std::type_info](---)オブジェクトは下記のように振舞う。
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #1:2 begin -1
+```
+
+従って、このような場合のtypeidは静的な型(表層の型)に対しての情報を返すため、
+コンパイル時にのみ評価され、ランタイム時に評価されない。
+
+[ポリモーフィックなクラス](---)のオブジェクトをオペランドとするtypeidの実行は、
+そのオペランドの実際のオブジェクトの型を取得することはすでに示した。
+このような場合、オペランド式は実行時に評価される。以下のコードはそのことを表している。
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #0:4 begin -1
+```
+
+
+一方、非[ポリモーフィックなクラス](---)のオブジェクトをオペランドとするtypeidのオペランド式は、
+コンパイル時に処理されるため、その式は実行されない。以下のコードはそのことを表している。
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #1:4 begin -1
+```
+
+#### std::type_info
+type_infoクラスは、[typeid](----)演算子によって返される、型の情報が格納された型である。
+
+std::type_infoはコンパイラの実装で定義された型名を含んでいる。
+以下のコードで示したように`std::type_info::name()`によりその型名を取り出すことができる。
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #2:0 begin -1
+```
+
+`std::type_info::name()`が返すCスタイルの文字列リテラルを、
+「人間が認知できる元の型名に戻す関数」を通常のコンパイラは独自に提供する。
+このドキュメントのコードのコンパイルに使用している[g++](---)/[clang++](---)では、
+そのような関数は、`abi::__cxa_demangle`である。
+
+`std::type_info::name()`と`abi::__cxa_demangle`を利用して、
+オブジェクトの[被修飾型](---)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #2:1 begin
+```
+```cpp
+    // @@@ example/term_explanation/rtti_ut.cpp #2:2 begin -1
+```
+
+### Run-time Type Information
+「[型とインスタンス|RTTI](---)」を参照せよ。
+
 
 ### インターフェースクラス
 インターフェースクラスとは、純粋仮想関数のみを持つ抽象クラスのことを指す。
@@ -3358,7 +3481,7 @@ Derived用のoperator==を
     // @@@ example/term_explanation/semantics_ut.cpp #4:1 begin -1
 ```
 
-この問題は、[C++その他|RTTI](---)を使った下記のようなコードで対処できる。
+この問題は、「[型とインスタンス|RTTI](---)」使った下記のようなコードで対処できる。
 
 ```cpp
     // @@@ example/term_explanation/semantics_ut.cpp #5:0 begin
@@ -3566,6 +3689,21 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
     // @@@ example/term_explanation/undefined_ut.cpp #0:0 begin -1
 ```
 
+### 被修飾型
+被修飾型(unqualified type)とは、変数の宣言において付加される修飾子(const、
+volatile など)やポインタやリファレンスなどの間接指定子を除いた素の型を指す。
+
+修飾子(const、volatile)に注視しい場合、cv-被修飾型(cv-unqualified type)という場合もある。
+
+例えば: 
+|定義         |被修飾型|
+|-------------|:------:|
+|const A& a   |A       |
+|volatile B& b|B       |
+|const T* C   |C       |
+|const D d    |D       |
+
+
 ### 未規定動作
 未規定動作(Unspecified Behavior)とは、C++標準がある操作の動作を完全には決めておらず、
 複数の許容可能な選択肢がある場合でのコードの動作を指す。
@@ -3652,54 +3790,6 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 [オブジェクトと生成|初期化子リストコンストラクタ](---)の呼び出しでオブジェクトの初期化を行うことで、
 このような問題を回避できる。
 
-
-### RTTI
-RTTI(Run-time Type Information)とは、プログラム実行中のオブジェクトの型を導出するための機能であり、
-具体的には下記の3つの要素を指す。
-
-* dynamic_cast
-* typeid
-* std::type_info
-
-下記のようなポリモーフィックな(virtual関数を持った)クラスに対しては、
-
-```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #0:0 begin
-```
-
-dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のように振舞う。
-
-```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #0:1 begin -1
-```
-
-下記のような非ポリモーフィックな(virtual関数を持たない)クラスに対しては、
-
-```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #1:0 begin
-```
-
-dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のように振舞う。
-
-```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #1:1 begin -1
-```
-
-### Run-time Type Information
-「[C++その他|RTTI](---)」を参照せよ。
-
-### simple-declaration
-このための記述が
-[simple-declaration](https://cpprefjp.github.io/lang/cpp17/selection_statements_with_initializer.html)
-とは、C++17から導入された
-「従来for文しか使用できなかった初期化をif文とswitch文でも使えるようにする」ための記述方法である。
-
-```cpp
-    // @@@ example/term_explanation/simple_declaration_ut.cpp #0:0 begin
-```
-
-### typeid
-「[C++その他|RTTI](---)」を参照せよ。
 
 ### トライグラフ
 トライグラフとは、2つの疑問符とその後に続く1文字によって表される、下記の文字列である。

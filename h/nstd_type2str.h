@@ -17,7 +17,7 @@ inline std::string demangle(char const* to_demagle)
     // @@@ sample end
     // @@@ sample begin 0:1
 
-    std::unique_ptr<char, decltype(&std::free)> demangled{
+    auto demangled = std::unique_ptr<char, decltype(&std::free)>{
         abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
     // @@@ sample end
     // @@@ sample begin 0:2

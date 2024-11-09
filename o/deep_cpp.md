@@ -7325,7 +7325,7 @@ std::enable_ifの使用例を下記に示す。
 
 実装例から明らかなように
 
-* std::enable_if\<true>::typeは[well-formed](#SS_6_17_9)
+* std::enable_if\<true>::typeは[well-formed](#SS_6_17_10)
 * std::enable_if\<false>::typeは[ill-formed](#SS_6_17_5)
 
 となるため、下記のコードはコンパイルできない。
@@ -8828,7 +8828,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 上記で使用したstd::void_tは、テンプレートパラメータが
 
 * [ill-formed](#SS_6_17_5)ならばill-formedになる
-* [well-formed](#SS_6_17_9)ならvoidを生成する
+* [well-formed](#SS_6_17_10)ならvoidを生成する
 
 テンプレートである。
 
@@ -12283,7 +12283,7 @@ App内でusing XYを宣言したことで、これまで通りApp::XYが使え�
     {
         int status;
 
-        std::unique_ptr<char, decltype(&std::free)> demangled{
+        auto demangled = std::unique_ptr<char, decltype(&std::free)>{
             abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
 
         return demangled.get();
@@ -13016,7 +13016,7 @@ std::unique_ptrは、
 ```cpp
     //  h/nstd_type2str.h 18
 
-    std::unique_ptr<char, decltype(&std::free)> demangled{
+    auto demangled = std::unique_ptr<char, decltype(&std::free)>{
         abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
 ```
 
@@ -13670,7 +13670,7 @@ malloc/freeにリアルタイム性がない原因は、
 
 そのため、固定長のメモリプールは、
 
-* 複数個のメモリプールを統合的に扱う[インターフェースクラス](#SS_6_3_11)MPool
+* 複数個のメモリプールを統合的に扱う[インターフェースクラス](#SS_6_3_13)MPool
 * MPoolを基底クラスとし、固定長メモリブロックを管理するクラステンプレートMPoolFixed
 
 によって実装することにする。
@@ -14869,8 +14869,14 @@ __この章の構成__
 &emsp;&emsp;&emsp; [クラスのレイアウト](#SS_6_3_8)  
 &emsp;&emsp;&emsp; [オーバーライドとオーバーロードの違い](#SS_6_3_9)  
 &emsp;&emsp;&emsp; [ポリモーフィックなクラス](#SS_6_3_10)  
-&emsp;&emsp;&emsp; [インターフェースクラス](#SS_6_3_11)  
-&emsp;&emsp;&emsp; [constインスタンス](#SS_6_3_12)  
+&emsp;&emsp;&emsp; [RTTI](#SS_6_3_11)  
+&emsp;&emsp;&emsp;&emsp; [dynamic_cast](#SS_6_3_11_1)  
+&emsp;&emsp;&emsp;&emsp; [typeid](#SS_6_3_11_2)  
+&emsp;&emsp;&emsp;&emsp; [std::type_info](#SS_6_3_11_3)  
+
+&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_3_12)  
+&emsp;&emsp;&emsp; [インターフェースクラス](#SS_6_3_13)  
+&emsp;&emsp;&emsp; [constインスタンス](#SS_6_3_14)  
 
 &emsp;&emsp; [constexpr](#SS_6_4)  
 &emsp;&emsp;&emsp; [constexpr定数](#SS_6_4_1)  
@@ -15031,20 +15037,17 @@ __この章の構成__
 &emsp;&emsp;&emsp; [単純代入](#SS_6_17_4)  
 &emsp;&emsp;&emsp; [ill-formed](#SS_6_17_5)  
 &emsp;&emsp;&emsp; [未定義動作](#SS_6_17_6)  
-&emsp;&emsp;&emsp; [未規定動作](#SS_6_17_7)  
-&emsp;&emsp;&emsp; [未定義動作と未規定動作](#SS_6_17_8)  
-&emsp;&emsp;&emsp; [well-formed](#SS_6_17_9)  
-&emsp;&emsp;&emsp; [one-definition rule](#SS_6_17_10)  
-&emsp;&emsp;&emsp; [ODR](#SS_6_17_11)  
-&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_17_12)  
-&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_17_13)  
-&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_17_14)  
-&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_17_15)  
-&emsp;&emsp;&emsp; [RTTI](#SS_6_17_16)  
-&emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_17_17)  
-&emsp;&emsp;&emsp; [simple-declaration](#SS_6_17_18)  
-&emsp;&emsp;&emsp; [typeid](#SS_6_17_19)  
-&emsp;&emsp;&emsp; [トライグラフ](#SS_6_17_20)  
+&emsp;&emsp;&emsp; [被修飾型](#SS_6_17_7)  
+&emsp;&emsp;&emsp; [未規定動作](#SS_6_17_8)  
+&emsp;&emsp;&emsp; [未定義動作と未規定動作](#SS_6_17_9)  
+&emsp;&emsp;&emsp; [well-formed](#SS_6_17_10)  
+&emsp;&emsp;&emsp; [one-definition rule](#SS_6_17_11)  
+&emsp;&emsp;&emsp; [ODR](#SS_6_17_12)  
+&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_17_13)  
+&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_17_14)  
+&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_17_15)  
+&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_17_16)  
+&emsp;&emsp;&emsp; [トライグラフ](#SS_6_17_17)  
 
 &emsp;&emsp; [C++コンパイラ](#SS_6_18)  
 &emsp;&emsp;&emsp; [g++](#SS_6_18_1)  
@@ -16106,8 +16109,297 @@ Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層�
 ### ポリモーフィックなクラス <a id="SS_6_3_10"></a>
 ポリモーフィックなクラスとは、仮想関数を持つクラスを指す。
 なお、純粋仮想関数を持つクラスは、仮想クラスと呼ばれれる。
+ポリモーフィックなクラスと、
+非ポリモーフィックなクラスは[RTTI](#SS_6_3_11)との組み合わせで動作の違いが顕著となる。
 
-### インターフェースクラス <a id="SS_6_3_11"></a>
+### RTTI <a id="SS_6_3_11"></a>
+RTTI(Run-time Type Information)とは、プログラム実行中のオブジェクトの型を導出するための機能であり、
+具体的には下記の3つの要素を指す。
+
+* [dynamic_cast](#SS_6_3_11_1)
+* [typeid](#SS_6_3_11_2)
+* [std::type_info](#SS_6_3_11_3)
+
+
+#### dynamic_cast <a id="SS_6_3_11_1"></a>
+dynamic_castは、実行時の型チェックと安全なダウンキャストを行うためのキャスト演算子であるため、
+[ポリモーフィックなクラス](#SS_6_3_10)とは密接な関係を持つ。
+
+
+下記のような[ポリモーフィックなクラス](#SS_6_3_10)に対しては、
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 8
+
+    class Polymorphic_Base {  // ポリモーフィックな基底クラス
+    public:
+        virtual ~Polymorphic_Base() = default;
+    };
+
+    class Polymorphic_Derived : public Polymorphic_Base {  // ポリモーフィックな派生クラス
+    };
+```
+
+dynamic_castは下記のように振舞う。
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 25
+
+    auto b = Polymorphic_Base{};
+    auto d = Polymorphic_Derived{};
+
+    Polymorphic_Base& b_ref_d = d;
+    Polymorphic_Base& b_ref_b = b;
+
+    // ポインタへのdynamic_cast
+    auto* d_ptr = dynamic_cast<Polymorphic_Derived*>(&b_ref_d);
+    ASSERT_EQ(d_ptr, &d);
+
+    auto* d_ptr2 = dynamic_cast<Polymorphic_Derived*>(&b_ref_b);
+    ASSERT_EQ(d_ptr2, nullptr);  // キャストできない場合、nullptrが返る
+
+    // リファレンスへのdynamic_cast
+    auto& d_ref = dynamic_cast<Polymorphic_Derived&>(b_ref_d);
+    ASSERT_EQ(&d_ref, &d);
+
+    // キャストできない場合、エクセプションのが発生する
+    ASSERT_THROW(dynamic_cast<Polymorphic_Derived&>(b_ref_b), std::bad_cast);
+```
+
+
+一方で、下記のような非[ポリモーフィックなクラス](#SS_6_3_10)に対しては、
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 102
+
+    class NonPolymorphic_Base {  // 非ポリモーフィックな基底クラス
+    };
+
+    class NonPolymorphic_Derived : public NonPolymorphic_Base {  // 非ポリモーフィックな派生クラス
+    };
+```
+
+dynamic_castは下記のように振舞う。
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 115
+
+    auto b = NonPolymorphic_Base{};
+    auto d = NonPolymorphic_Derived{};
+
+    NonPolymorphic_Base& b_ref_d = d;
+    NonPolymorphic_Base& b_ref_b = b;
+
+    #if 0  // 非ポリモーフィックなクラスへのdynamic_castはill-formedになる
+    auto* d_ptr = dynamic_cast<NonPolymorphic_Derived*>(&b_ref_d);
+    auto* d_ptr2 = dynamic_cast<NonPolymorphic_Derived*>(&b_ref_b);
+    
+    //virtual関数を持たないため、リファレンスへのdynamic_castはコンパイルできない
+    auto& d_ref = dynamic_cast<NonPolymorphic_Derived&>(b_ref_d);
+    ASSERT_THROW(dynamic_cast<NonPolymorphic_Derived&>(b_ref_b), std::bad_cast);
+    #endif
+```
+
+#### typeid <a id="SS_6_3_11_2"></a>
+typeidは[RTTI](#SS_6_3_11)オブジェクトの型情報([std::type_info](#SS_6_3_11_3))を実行時に取得するための演算子である。
+dynamic_castとは違い、
+typeidのオペランドは[ポリモーフィックなクラス](#SS_6_3_10)のインスタンスでなくても良い。
+以下の例では[基本型](#SS_6_1_1)に対するtypeidが返す[std::type_info](#SS_6_3_11_3)の振る舞いを表す。
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 52
+
+    int   i{};
+    long  j{};
+    auto& i_ref = i;
+
+    auto const& type_info_i     = typeid(i);
+    auto const& type_info_i_ref = typeid(i_ref);
+
+    ASSERT_NE(typeid(i), typeid(j));
+    ASSERT_EQ(type_info_i, type_info_i_ref);
+    ASSERT_STREQ(type_info_i.name(), "i");  // 実装定義の型名(clang++/g++ではintはi)
+```
+
+下記のような[ポリモーフィックなクラス](#SS_6_3_10)のインスタンスに関して、
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 8
+
+class Polymorphic_Base {  // ポリモーフィックな基底クラス
+public:
+    virtual ~Polymorphic_Base() = default;
+};
+
+class Polymorphic_Derived : public Polymorphic_Base {  // ポリモーフィックな派生クラス
+};
+```
+
+typeidが返す[std::type_info](#SS_6_3_11_3)オブジェクトは下記のように振舞う。
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 65
+
+    auto b = Polymorphic_Base{};
+    auto d = Polymorphic_Derived{};
+
+    Polymorphic_Base& b_ref_d = d;
+    Polymorphic_Base& b_ref_b = b;
+
+    // ポリモーフィックなクラスインスタンスに対するtypeidが返す
+    // std::type_infoオブジェクトが示す型は、オペランドの実際の型である。
+    // * b_ref_dの表層の型:Polymorphic_Base
+    // * b_ref_dの実際の型:Polymorphic_Derived
+    // 下記のアサーションはこのことを表す。
+    ASSERT_EQ(typeid(b_ref_d), typeid(d));  // b_ref_dとdの実際の型が同じであることを示す
+    ASSERT_EQ(typeid(b_ref_b), typeid(b));  // b_ref_bとbの表層の型が同じであることを示す
+```
+
+一方で、下記のような非[ポリモーフィックなクラス](#SS_6_3_10)に対しては、
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 102
+
+    class NonPolymorphic_Base {  // 非ポリモーフィックな基底クラス
+    };
+
+    class NonPolymorphic_Derived : public NonPolymorphic_Base {  // 非ポリモーフィックな派生クラス
+    };
+```
+
+typeidが返す[std::type_info](#SS_6_3_11_3)オブジェクトは下記のように振舞う。
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 139
+
+    auto b = NonPolymorphic_Base{};
+    auto d = NonPolymorphic_Derived{};
+
+    NonPolymorphic_Base& b_ref_d = d;
+    NonPolymorphic_Base& b_ref_b = b;
+
+    // 非ポリモーフィックなクラスインスタンスに対するtypeidが返す
+    // std::type_infoオブジェクトが示す型は、オペランドの表層の型である。
+    // * b_ref_dの表層の型:Polymorphic_Base
+    // * b_ref_dの実際の型:Polymorphic_Derived
+    // 下記のアサーションはこのことを表す。
+    ASSERT_EQ(typeid(b_ref_d), typeid(b));  // b_ref_dとdの表層の型が同じであることを示す
+    ASSERT_EQ(typeid(b_ref_b), typeid(b));  // b_ref_bとbの表層の型が同じであることを示す
+```
+
+従って、このような場合のtypeidは静的な型(表層の型)に対しての情報を返すため、
+コンパイル時にのみ評価され、ランタイム時に評価されない。
+
+[ポリモーフィックなクラス](#SS_6_3_10)のオブジェクトをオペランドとするtypeidの実行は、
+そのオペランドの実際のオブジェクトの型を取得することはすでに示した。
+このような場合、オペランド式は実行時に評価される。以下のコードはそのことを表している。
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 87
+
+    Polymorphic_Base    base;
+    Polymorphic_Derived derived;
+    Polymorphic_Base*   base_ptr = &derived;
+
+    ASSERT_EQ(typeid(Polymorphic_Derived), typeid(*base_ptr));
+    ASSERT_EQ(typeid(Polymorphic_Base), typeid(*(base_ptr = &base)));  // 注意
+
+    // ポリモーフィックなクラスは対しては、typeid内の式が実行される
+    ASSERT_EQ(base_ptr, &base);  // base_ptr = &baseが実行される
+```
+
+
+一方、非[ポリモーフィックなクラス](#SS_6_3_10)のオブジェクトをオペランドとするtypeidのオペランド式は、
+コンパイル時に処理されるため、その式は実行されない。以下のコードはそのことを表している。
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 161
+
+    NonPolymorphic_Base    base;
+    NonPolymorphic_Derived derived;
+    NonPolymorphic_Base*   base_ptr = &derived;
+
+    ASSERT_NE(typeid(NonPolymorphic_Derived), typeid(*base_ptr));
+    ASSERT_EQ(typeid(NonPolymorphic_Base), typeid(*(base_ptr = &base)));  // 注意
+
+    // 非ポリモーフィックなクラスに対しては、typeid内の式は実行されない
+    ASSERT_EQ(base_ptr, &derived);  // base_ptr = &baseは実行されない
+```
+
+#### std::type_info <a id="SS_6_3_11_3"></a>
+type_infoクラスは、[typeid](----)演算子によって返される、型の情報が格納された型である。
+
+std::type_infoはコンパイラの実装で定義された型名を含んでいる。
+以下のコードで示したように`std::type_info::name()`によりその型名を取り出すことができる。
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 179
+
+    auto s = std::string{"str"};
+    auto v = std::string_view{"str"};
+    auto b = std::byte{0b1001};
+
+    ASSERT_STREQ(typeid(s).name(), "Ss");       // 実装定義の型名
+    ASSERT_STREQ(typeid(b).name(), "St4byte");  // 実装定義の型名
+    ASSERT_STREQ(typeid(v).name(), "St17basic_string_viewIcSt11char_traitsIcEE");
+```
+
+`std::type_info::name()`が返すCスタイルの文字列リテラルを、
+「人間が認知できる元の型名に戻す関数」を通常のコンパイラは独自に提供する。
+このドキュメントのコードのコンパイルに使用している[g++](#SS_6_18_1)/[clang++](#SS_6_18_2)では、
+そのような関数は、`abi::__cxa_demangle`である。
+
+`std::type_info::name()`と`abi::__cxa_demangle`を利用して、
+オブジェクトの[被修飾型](#SS_6_17_7)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
+
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 191
+
+    #include <cxxabi.h>  // g++/clang++実装依存ヘッダ abi::__cxa_demangleの宣言
+
+    #include <memory>
+    #include <string>
+
+    template <typename T>
+    std::string type2str(T&& obj)
+    {
+        int status;
+
+        // objに基づく型情報を取得
+        auto demangled = std::unique_ptr<char, decltype(&std::free)>{
+            abi::__cxa_demangle(typeid(obj).name(), 0, 0, &status), &std::free};
+
+        return demangled ? demangled.get() : "unknown";
+    }
+```
+```cpp
+    //  example/term_explanation/rtti_ut.cpp 213
+
+    int   i{};
+    auto  s     = std::string{"str"};
+    auto& s_ref = s;
+    auto  v     = std::string_view{"str"};
+
+    ASSERT_EQ(type2str(i), "int");
+    ASSERT_EQ(type2str(s), "std::string");
+    ASSERT_EQ(type2str(s_ref), "std::string");
+    ASSERT_EQ(type2str(v), "std::basic_string_view<char, std::char_traits<char> >");
+
+    auto b = Polymorphic_Base{};
+    auto d = Polymorphic_Derived{};
+
+    Polymorphic_Base& b_ref_d = d;
+    Polymorphic_Base& b_ref_b = b;
+
+    ASSERT_EQ(type2str(b_ref_d), "Polymorphic_Derived");  // b_ref_dの実際の型はPolymorphic_Derived
+    ASSERT_EQ(type2str(b_ref_b), "Polymorphic_Base");  // b_ref_bの実際の型はPolymorphic_Base
+```
+
+### Run-time Type Information <a id="SS_6_3_12"></a>
+「[RTTI](#SS_6_3_11)」を参照せよ。
+
+
+### インターフェースクラス <a id="SS_6_3_13"></a>
 インターフェースクラスとは、純粋仮想関数のみを持つ抽象クラスのことを指す。
 インターフェースクラスは、クラスの実装を提供することなく、
 クラスのインターフェースを定義するために使用される。
@@ -16136,7 +16428,7 @@ Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層�
     };
 ```
 
-### constインスタンス <a id="SS_6_3_12"></a>
+### constインスタンス <a id="SS_6_3_14"></a>
 constインスタンスは、ランタイムまたはコンパイル時に初期化され、
 その後、状態が不変であるインスタンスである。
 必ずしも以下に示すようにconstインスタンスがコンパイル時に値が定まっているわけではない。
@@ -22280,7 +22572,7 @@ Derived用のoperator==を
     ASSERT_TRUE(d0_b_ref == d1);  // NG d0_b_refの実態はd0なのでd1と等価でない
 ```
 
-この問題は、[RTTI](#SS_6_17_16)を使った下記のようなコードで対処できる。
+この問題は、「[RTTI](#SS_6_3_11)」使った下記のようなコードで対処できる。
 
 ```cpp
     //  example/term_explanation/semantics_ut.cpp 203
@@ -22633,7 +22925,7 @@ operator& がオーバーロードされている場合には、
 ### 演算子のオペランドの評価順位 <a id="SS_6_17_2"></a>
 
 C++17で、演算子のオペランドに対する評価順序が明確に規定された。
-それに対し、C++14までは、演算子のオペランド部分式の評価順序は[未規定動作](#SS_6_17_7)であった。
+それに対し、C++14までは、演算子のオペランド部分式の評価順序は[未規定動作](#SS_6_17_8)であった。
 以下の表で示す演算子に関しては、オペランドaがオペランドbよりも先に評価される。
 
 | 演算子               |説明                                                                   |
@@ -22734,7 +23026,22 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 
 ```
 
-### 未規定動作 <a id="SS_6_17_7"></a>
+### 被修飾型 <a id="SS_6_17_7"></a>
+被修飾型(unqualified type)とは、変数の宣言において付加される修飾子(const、
+volatile など)やポインタやリファレンスなどの間接指定子を除いた素の型を指す。
+
+修飾子(const、volatile)に注視しい場合、cv-被修飾型(cv-unqualified type)という場合もある。
+
+例えば: 
+|定義         |被修飾型|
+|-------------|:------:|
+|const A& a   |A       |
+|volatile B& b|B       |
+|const T* C   |C       |
+|const D d    |D       |
+
+
+### 未規定動作 <a id="SS_6_17_8"></a>
 未規定動作(Unspecified Behavior)とは、C++標準がある操作の動作を完全には決めておらず、
 複数の許容可能な選択肢がある場合でのコードの動作を指す。
 未規定動作は、実装ごとに異なる可能性があり、標準は少なくとも「何らかの合理的な結果」を保証する。
@@ -22751,20 +23058,20 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
     auto result = lambda(a++, a++);  // 未規定 - 引数評価の順序が決まっていない
 ```
 
-### 未定義動作と未規定動作 <a id="SS_6_17_8"></a>
+### 未定義動作と未規定動作 <a id="SS_6_17_9"></a>
 | 種類            |定義                                                               | 例                               | 結果                           |
 |-----------------|-------------------------------------------------------------------|----------------------------------|--------------------------------|
 |[未定義動作](#SS_6_17_6)|C++標準が全く保証しない動作                                        | ゼロ除算、配列範囲外アクセス     | 予測不能(クラッシュなど)       |
-|[未規定動作](#SS_6_17_7)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
+|[未規定動作](#SS_6_17_8)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
 
 
-### well-formed <a id="SS_6_17_9"></a>
+### well-formed <a id="SS_6_17_10"></a>
 「[ill-formed](#SS_6_17_5)」を参照せよ。
 
-### one-definition rule <a id="SS_6_17_10"></a>
-「[ODR](#SS_6_17_11)」を参照せよ。
+### one-definition rule <a id="SS_6_17_11"></a>
+「[ODR](#SS_6_17_12)」を参照せよ。
 
-### ODR <a id="SS_6_17_11"></a>
+### ODR <a id="SS_6_17_12"></a>
 ODRとは、One Definition Ruleの略語であり、下記のようなことを定めている。
 
 * どの翻訳単位でも、テンプレート、型、関数、またはオブジェクトは、複数の定義を持つことができない。
@@ -22775,7 +23082,7 @@ ODRとは、One Definition Ruleの略語であり、下記のようなことを�
 [https://en.cppreference.com/w/cpp/language/definition](https://en.cppreference.com/w/cpp/language/definition)
 が参考になる。
 
-### RVO(Return Value Optimization) <a id="SS_6_17_12"></a>
+### RVO(Return Value Optimization) <a id="SS_6_17_13"></a>
 関数の戻り値がオブジェクトである場合、
 戻り値オブジェクトは、その関数の呼び出し元のオブジェクトにコピーされた後、すぐに破棄される。
 この「オブジェクトをコピーして、その後すぐにそのオブジェクトを破棄する」動作は、
@@ -22786,7 +23093,7 @@ RVOとはこのような最適化を指す。
 [C++17から規格化](https://cpprefjp.github.io/lang/cpp17/guaranteed_copy_elision.html)された。
 
 
-### SSO(Small String Optimization) <a id="SS_6_17_13"></a>
+### SSO(Small String Optimization) <a id="SS_6_17_14"></a>
 一般にstd::stringで文字列を保持する場合、newしたメモリが使用される。
 64ビット環境であれば、newしたメモリのアドレスを保持する領域は8バイトになる。
 std::stringで保持する文字列が終端の'\0'も含め8バイト以下である場合、
@@ -22795,7 +23102,7 @@ std::stringで保持する文字列が終端の'\0'も含め8バイト以下で�
 
 SOOとはこのような最適化を指す。
 
-### heap allocation elision <a id="SS_6_17_14"></a>
+### heap allocation elision <a id="SS_6_17_15"></a>
 C++11までの仕様では、new式によるダイナミックメモリアロケーションはコードに書かれた通りに、
 実行されなければならず、ひとまとめにしたり省略したりすることはできなかった。
 つまり、ヒープ割り当てに対する最適化は認められなかった。
@@ -22843,7 +23150,7 @@ new/deleteの呼び出しをまとめたり省略したりすることができ�
 ダイナミックメモリアロケーションが1回に抑えられるため、メモリアクセスが高速化される。
 
 
-### Most Vexing Parse <a id="SS_6_17_15"></a>
+### Most Vexing Parse <a id="SS_6_17_16"></a>
 Most Vexing Parse(最も困惑させる構文解析)とは、C++の文法に関連する問題で、
 Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつけたことに由来する。
 
@@ -22875,135 +23182,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 このような問題を回避できる。
 
 
-### RTTI <a id="SS_6_17_16"></a>
-RTTI(Run-time Type Information)とは、プログラム実行中のオブジェクトの型を導出するための機能であり、
-具体的には下記の3つの要素を指す。
-
-* dynamic_cast
-* typeid
-* std::type_info
-
-下記のようなポリモーフィックな(virtual関数を持った)クラスに対しては、
-
-```cpp
-    //  example/term_explanation/rtti_ut.cpp 7
-
-    class Polymorphic_Base {  // ポリモーフィックな基底クラス
-    public:
-        virtual ~Polymorphic_Base() = default;
-    };
-
-    class Polymorphic_Derived : public Polymorphic_Base {  // ポリモーフィックな派生クラス
-    };
-```
-
-dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のように振舞う。
-
-```cpp
-    //  example/term_explanation/rtti_ut.cpp 21
-
-    auto b = Polymorphic_Base{};
-    auto d = Polymorphic_Derived{};
-
-    Polymorphic_Base& b_ref_d = d;
-    Polymorphic_Base& b_ref_b = b;
-
-    // std::type_infoの比較
-    ASSERT_EQ(typeid(b_ref_d), typeid(d));
-    ASSERT_EQ(typeid(b_ref_b), typeid(b));
-
-    // ポインタへのdynamic_cast
-    auto* d_ptr = dynamic_cast<Polymorphic_Derived*>(&b_ref_d);
-    ASSERT_EQ(d_ptr, &d);
-
-    auto* d_ptr2 = dynamic_cast<Polymorphic_Derived*>(&b_ref_b);
-    ASSERT_EQ(d_ptr2, nullptr);  // キャストできない場合、nullptrが返る
-
-    // リファレンスへのdynamic_cast
-    auto& d_ref = dynamic_cast<Polymorphic_Derived&>(b_ref_d);
-    ASSERT_EQ(&d_ref, &d);
-
-    // キャストできない場合、エクセプションのが発生する
-    ASSERT_THROW(dynamic_cast<Polymorphic_Derived&>(b_ref_b), std::bad_cast);
-```
-
-下記のような非ポリモーフィックな(virtual関数を持たない)クラスに対しては、
-
-```cpp
-    //  example/term_explanation/rtti_ut.cpp 53
-
-    class NonPolymorphic_Base {  // 非ポリモーフィックな基底クラス
-    };
-
-    class NonPolymorphic_Derived : public NonPolymorphic_Base {  // 非ポリモーフィックな派生クラス
-    };
-```
-
-dynamic_cast、typeidやその戻り値であるstd::type_infoは、下記のように振舞う。
-
-```cpp
-    //  example/term_explanation/rtti_ut.cpp 65
-
-    auto b = NonPolymorphic_Base{};
-    auto d = NonPolymorphic_Derived{};
-
-    NonPolymorphic_Base& b_ref_d = d;
-    NonPolymorphic_Base& b_ref_b = b;
-
-    // std::type_infoの比較
-    ASSERT_EQ(typeid(b_ref_d), typeid(b));  // 実際の型ではなく、表層型のtype_infoが返る
-    ASSERT_EQ(typeid(b_ref_b), typeid(b));
-
-    // virtual関数を持たないため、ポインタへのdynamic_castはコンパイルできない
-    // auto* d_ptr = dynamic_cast<NonPolymorphic_Derived*>(&b_ref_d);
-    // auto* d_ptr2 = dynamic_cast<NonPolymorphic_Derived*>(&b_ref_b);
-
-    // virtual関数を持たないため、リファレンスへのdynamic_castはコンパイルできない
-    // auto& d_ref = dynamic_cast<NonPolymorphic_Derived&>(b_ref_d);
-    // ASSERT_THROW(dynamic_cast<NonPolymorphic_Derived&>(b_ref_b), std::bad_cast);
-```
-
-### Run-time Type Information <a id="SS_6_17_17"></a>
-「[RTTI](#SS_6_17_16)」を参照せよ。
-
-### simple-declaration <a id="SS_6_17_18"></a>
-このための記述が
-[simple-declaration](https://cpprefjp.github.io/lang/cpp17/selection_statements_with_initializer.html)
-とは、C++17から導入された
-「従来for文しか使用できなかった初期化をif文とswitch文でも使えるようにする」ための記述方法である。
-
-```cpp
-    //  example/term_explanation/simple_declaration_ut.cpp 9
-    int32_t f();
-    int32_t g1()
-    {
-        if (auto ret = f(); ret != 0) {  // retがsimple-declaration
-            return ret;
-        }
-        else {
-            return 0;
-        }
-    }
-
-    int32_t g2()
-    {
-        switch (auto ret = f()) {  // retがsimple-declaration
-        case 0:
-            return 0;
-        case 1:
-            return ret * 5;
-        case 2:
-            return ret + 3;
-        default:
-            return -1;
-        }
-    }
-```
-
-### typeid <a id="SS_6_17_19"></a>
-「[RTTI](#SS_6_17_16)」を参照せよ。
-
-### トライグラフ <a id="SS_6_17_20"></a>
+### トライグラフ <a id="SS_6_17_17"></a>
 トライグラフとは、2つの疑問符とその後に続く1文字によって表される、下記の文字列である。
 
 ```
