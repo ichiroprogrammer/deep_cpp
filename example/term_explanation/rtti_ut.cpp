@@ -119,8 +119,8 @@ TEST(TermExp, dynamic_cast2)
 
     NonPolymorphic_Base& b_ref_d = d;
     NonPolymorphic_Base& b_ref_b = b;
-
     // clang-format off
+
     #if 0  // 非ポリモーフィックなクラスへのdynamic_castはill-formedになる
     auto* d_ptr = dynamic_cast<NonPolymorphic_Derived*>(&b_ref_d);
     auto* d_ptr2 = dynamic_cast<NonPolymorphic_Derived*>(&b_ref_b);
