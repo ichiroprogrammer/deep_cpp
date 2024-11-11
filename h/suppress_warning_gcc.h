@@ -73,6 +73,7 @@
 #define SUPPRESS_WARN_GCC_REORDER _Pragma("GCC diagnostic ignored \"-Wreorder\"")
 #define SUPPRESS_WARN_GCC_RETURN_TYPE _Pragma("GCC diagnostic ignored \"-Wreturn-type\"")
 #define SUPPRESS_WARN_GCC_SEQ_POINT _Pragma("GCC diagnostic ignored \"-Wsequence-point\"")
+#define SUPPRESS_WARN_GCC_SWITCH_RANGE _Pragma("GCC diagnostic ignored \"-Wswitch-outside-range\"")
 #define SUPPRESS_WARN_GCC_STRING_OVERFLOW _Pragma("GCC diagnostic ignored \"-Wstringop-overflow=\"")
 #define SUPPRESS_WARN_GCC_TERMINATE _Pragma("GCC diagnostic ignored \"-Wterminate\"");
 
@@ -139,6 +140,7 @@
 #define SUPPRESS_WARN_GCC_REORDER
 #define SUPPRESS_WARN_GCC_RETURN_TYPE
 #define SUPPRESS_WARN_GCC_SEQ_POINT
+#define SUPPRESS_WARN_GCC_SWITCH_RANGE
 #define SUPPRESS_WARN_GCC_STRING_OVERFLOW
 #define SUPPRESS_WARN_GCC_SWITCH
 #define SUPPRESS_WARN_GCC_SWITCH_BOOL
