@@ -23204,7 +23204,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 
     Vexing obj1();        // はローカルオブジェクトobj1の定義ではない
     Vexing obj2(Vexing);  // はローカルオブジェクトobj2の定義ではない
-    Vexing(obj3);         // はローカルオブジェクトobj2の定義ではない
+    Vexing(obj3);         // はローカルオブジェクトobj3の定義
 
     ASSERT_EQ("Vexing ()", Nstd::Type2Str<decltype(obj1)>());
     ASSERT_EQ("Vexing (Vexing)", Nstd::Type2Str<decltype(obj2)>());

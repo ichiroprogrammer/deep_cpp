@@ -22,7 +22,7 @@ TEST(TermExplanationMisra, most_vexing_parse)
 
     Vexing obj1();        // はローカルオブジェクトobj1の定義ではない
     Vexing obj2(Vexing);  // はローカルオブジェクトobj2の定義ではない
-    Vexing(obj3);         // はローカルオブジェクトobj2の定義ではない
+    Vexing(obj3);         // はローカルオブジェクトobj3の定義
 
     ASSERT_EQ("Vexing ()", Nstd::Type2Str<decltype(obj1)>());
     ASSERT_EQ("Vexing (Vexing)", Nstd::Type2Str<decltype(obj2)>());
