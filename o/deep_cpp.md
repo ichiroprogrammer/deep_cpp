@@ -16201,7 +16201,8 @@ dynamic_castは下記のように振舞う。
 ```
 
 #### typeid <a id="SS_6_3_10_2"></a>
-typeidは[RTTI](#SS_6_3_10)オブジェクトの型情報([std::type_info](#SS_6_3_10_3))を実行時に取得するための演算子である。
+typeidは[RTTI](#SS_6_3_10)オブジェクトの型情報
+([std::type_info](#SS_6_3_10_3))を実行時に取得するための演算子である。
 dynamic_castとは違い、
 typeidのオペランドは[ポリモーフィックなクラス](#SS_6_3_8)のインスタンスでなくても良い。
 以下の例では[基本型](#SS_6_1_1)に対するtypeidが返す[std::type_info](#SS_6_3_10_3)の振る舞いを表す。
@@ -23196,18 +23197,22 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
     class Vexing {
     public:
         Vexing(int) {}
+        Vexing() {}
     };
 
-    //  example/term_explanation/most_vexing_parse_ut.cpp 19
+    //  example/term_explanation/most_vexing_parse_ut.cpp 21
 
-    Vexing obj1();        // はローカルオブジェクトobj1の宣言ではない
-    Vexing obj2(Vexing);  // ローカルオブジェクトobj2の宣言ではない
+    Vexing obj1();        // はローカルオブジェクトobj1の定義ではない
+    Vexing obj2(Vexing);  // はローカルオブジェクトobj2の定義ではない
+    Vexing(obj3);         // はローカルオブジェクトobj2の定義ではない
 
     ASSERT_EQ("Vexing ()", Nstd::Type2Str<decltype(obj1)>());
     ASSERT_EQ("Vexing (Vexing)", Nstd::Type2Str<decltype(obj2)>());
+    ASSERT_EQ("Vexing", Nstd::Type2Str<decltype(obj3)>());
     // 上記単体テストが示すように、
-    // * obj1はVexingを返す関数
-    // * obj2はVexingを引数に取りVexingを返す関数
+    //   * obj1はVexingを返す関数
+    //   * obj2はVexingを引数に取りVexingを返す関数
+    //   * obj3はVexing型のオブジェクト
     // となる。
 ```
 
