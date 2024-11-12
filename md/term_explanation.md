@@ -195,18 +195,18 @@ C++03までのenumには、以下のような問題があった。
 * 名前空間の汚染: グローバルスコープに定義されたenumは、名前空間を汚染する。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #0:0 begin -1
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #0:0 begin -1
 ```
 
 ### enum class
 enum classは通常の[用語解説|enum](---)の問題を解決するためにC++11から導入された。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #1:0 begin -1
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #1:0 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #1:1 begin -1
 ```
 
 ### スコープドenum
@@ -219,7 +219,7 @@ C++11で導入されたシンタックスである。enumのサイズをユー�
 特定のバイナリプロトコルとの互換性が必要な場合や、特定のハードウェアと連携する際に特に有効である。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #2:0 begin
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #2:0 begin
 ```
 
 C++17までは、型安全の観点から、初期化においては、以下のコードコメントのような仕様であったが、
@@ -227,7 +227,7 @@ C++17から導入された[std::byte](---)の利便性のため、
 underlying typeを指定したenumやenum class変数のunderlying typeインスタンスによる初期化が認められるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #2:1 begin -1
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #2:1 begin -1
 ```
 
 上記コードにもあるが、underlying typeインスタンスによる初期化を行う場合は、
@@ -238,7 +238,7 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 前方宣言できないが、underlying typeを指定したenum、enum classは前方宣言することができる。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #3:0 begin
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #3:0 begin
 ```
 
 ### std::byte
@@ -248,7 +248,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 可読性、保守性の向上が見込める。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #4:0 begin -1
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #4:0 begin -1
 ```
 
 ### using enum
@@ -267,17 +267,17 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 とすることで、スコープによる修飾を省略するための記法である。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #5:0 begin
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #5:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #5:1 begin -1
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #5:1 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #6:0 begin
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #6:1 begin -1
+    // @@@ example/term_explanation_cpp20/enum_ut.cpp #6:1 begin -1
 ```
 
 この記法は、簡潔に記述できるものの、一方では過度な使用は、
@@ -775,7 +775,7 @@ C++03までのコンパイラに、
 
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #0:0 begin -1
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #0:0 begin -1
 ```
 
 ## constexpr
@@ -800,10 +800,10 @@ C++11以前で定数を定義する方法は、
 こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #1:0 begin
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #1:1 begin -1
 ```
 
 constexpr定数がif文のオカレンスになる場合、[constexpr if文](---)することで、
@@ -818,10 +818,10 @@ constexpr関数の呼び出し式の値がコンパイル時に確定する場�
 通常の関数呼び出しと同じになる。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #2:0 begin
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #2:1 begin -1
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #2:1 begin -1
 ```
 
 C++11の規約では、constexpr関数の制約は厳しく、
@@ -829,13 +829,13 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #5:0 begin
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #5:0 begin
 ```
 このため、可読性、保守性があったため、C++14で制約が緩和され、
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #5:1 begin
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #5:1 begin
 ```
 
 ### コア定数式
@@ -882,10 +882,10 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
 以下にリテラル型を例示する。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #3:0 begin
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #3:1 begin -1
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #3:1 begin -1
 ```
 
 ### constexprインスタンス
@@ -894,10 +894,10 @@ constexprインスタンスを生成できる。このリテラル型を使用�
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #4:0 begin
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #4:1 begin -1
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #4:1 begin -1
 ```
 
 ### consteval
@@ -908,10 +908,10 @@ constevalはC++20 から導入されたキーワードであり、
 パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #6:0 begin
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #6:1 begin -1
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #6:1 begin -1
 ```
 
 ### constexprラムダ
@@ -935,10 +935,10 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #7:0 begin -1
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #7:0 begin -1
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #7:1 begin -1
+    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #7:1 begin -1
 ```
 
 ## オブジェクトと生成
@@ -1392,21 +1392,21 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 C++11から導入された導入されたリテラル。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #0:0 begin
+    // @@@ example/term_explanation_cpp20/literal_ut.cpp #0:0 begin
 ```
 
 ### 2進数リテラル
 C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #1:0 begin -1
+    // @@@ example/term_explanation_cpp20/literal_ut.cpp #1:0 begin -1
 ```
 
 ### 数値リテラル
 C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #2:0 begin -1
+    // @@@ example/term_explanation_cpp20/literal_ut.cpp #2:0 begin -1
 ```
 
 ### ワイド文字列
@@ -1417,7 +1417,7 @@ C++14では区切り文字'を使用し、数値リテラルを記述できる�
 * char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #3:0 begin -1
+    // @@@ example/term_explanation_cpp20/literal_ut.cpp #3:0 begin -1
 ```
 
 ### 16進浮動小数点数リテラル
@@ -1448,7 +1448,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ```
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #4:0 begin -1
+    // @@@ example/term_explanation_cpp20/literal_ut.cpp #4:0 begin -1
 ```
 
 ### ユーザー定義リテラル
@@ -1475,14 +1475,14 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 std::chronoのリテラルは以下のコードのように使用できる。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #5:0 begin
+    // @@@ example/term_explanation_cpp20/literal_ut.cpp #5:0 begin
 ```
 
 #### std::complexリテラル
 std::complexリテラル以下のコードのように使用できる。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #6:0 begin -1
+    // @@@ example/term_explanation_cpp20/literal_ut.cpp #6:0 begin -1
 ```
 
 ### ==演算子
@@ -1497,14 +1497,14 @@ std::complexリテラル以下のコードのように使用できる。
 * インライン化し易い。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:0 begin
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #0:0 begin
 ```
 
 すべてのメンバ変数に==演算子が定義されている場合、
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #5:0 begin
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #5:0 begin
 ```
 
 
@@ -1515,20 +1515,20 @@ C++20以降より、`=default`により==演算子を自動生成させること
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:0 begin
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #1:0 begin
 ```
 
 * 暗黙の型変換を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #1:1 begin -2
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #1:1 begin -2
 ```
 
 すべてのメンバ変数に==演算子が定義されている場合、
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #6:0 begin
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #6:0 begin
 ```
 
 ### 比較演算子
@@ -1543,7 +1543,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #0:1 begin -1
 ```
 
 なお、std::rel_opsはC++20から導入された[<=>演算子](---)により不要になったため、
@@ -1554,10 +1554,10 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #2:0 begin
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #2:1 begin
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #2:1 begin
 ```
 
 
@@ -1567,17 +1567,17 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #3:0 begin
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #3:1 begin -1
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #3:1 begin -1
 ```
 
 定型の比較演算子では不十分である場合、<=>演算子を実装する必要が出てくる。
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/comparison_operator_ut.cpp #4:0 begin
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #4:0 begin
 ```
 
 #### 三方比較演算子
@@ -1785,24 +1785,24 @@ co_awaitはコルーチンの非同期操作の一時停止と再開に使用さ
 co_waitとco_returnを使用したコードを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/co_await_ut.cpp #0:0 begin
+    // @@@ example/term_explanation_cpp20/co_await_ut.cpp #0:0 begin
 ```
 以下単体テストコードによりに上記コルーチンの動作を示す。
 
 ```cpp
-    // @@@ example/term_explanation/co_await_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation_cpp20/co_await_ut.cpp #0:1 begin -1
 ```
 
 上記のコルーチンと同じ機能を持つクラスのco_await/co_returnを使わない実装を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/co_await_ut.cpp #1:0 begin
+    // @@@ example/term_explanation_cpp20/co_await_ut.cpp #1:0 begin
 ```
 
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    // @@@ example/term_explanation/co_await_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation_cpp20/co_await_ut.cpp #1:1 begin -1
 ```
 
 C++20から導入されたco_await、co_return、TaskとC++17以前の機能のみを使用したコードの対比によって、
@@ -1817,25 +1817,25 @@ co_yieldはコルーチンから値を返しつつ、
 次の再開ポイントまで処理を中断する。これはジェネレーターの実装に便利である。
 
 ```cpp
-    // @@@ example/term_explanation/co_yield_ut.cpp #0:0 begin
+    // @@@ example/term_explanation_cpp20/co_yield_ut.cpp #0:0 begin
 ```
 このテストを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/co_yield_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation_cpp20/co_yield_ut.cpp #0:1 begin -1
 ```
 
 [co_await](---)、co_returnの例でみたように、
 co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yieldを使わない実装を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/co_yield_ut.cpp #1:0 begin
+    // @@@ example/term_explanation_cpp20/co_yield_ut.cpp #1:0 begin
 ```
 
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    // @@@ example/term_explanation/co_yield_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation_cpp20/co_yield_ut.cpp #1:1 begin -1
 ```
 
 C++20から導入されたco_await、co_return、TaskとC++17以前の機能のみを使用したコードの対比によって、
@@ -2577,33 +2577,33 @@ C++20から導入された「コンセプト(concepts)」は、
   テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #0:0 begin
+    // @@@ example/term_explanation_cpp20/concept_ut.cpp #0:0 begin
 
-    // @@@ example/term_explanation/concept_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation_cpp20/concept_ut.cpp #0:1 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #1:0 begin
+    // @@@ example/term_explanation_cpp20/concept_ut.cpp #1:0 begin
 
-    // @@@ example/term_explanation/concept_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation_cpp20/concept_ut.cpp #1:1 begin -1
 ```
 
 以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #2:0 begin
+    // @@@ example/term_explanation_cpp20/concept_ut.cpp #2:0 begin
 ```
 
 以上の関数テンプレートをコンセプトを使用して改善した例である。
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #3:0 begin
+    // @@@ example/term_explanation_cpp20/concept_ut.cpp #3:0 begin
 ```
 
 フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #4:0 begin
+    // @@@ example/term_explanation_cpp20/concept_ut.cpp #4:0 begin
 ```
 
 ### 畳み込み式
@@ -2752,10 +2752,10 @@ constexpr ifを使用することで、やや単純に記述できる。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #4:0 begin
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #4:1 begin -1
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #4:1 begin -1
 ```
 
 
@@ -2842,7 +2842,7 @@ decltypeはオペランドに[expression](---)を取り、その型を算出す�
 下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:0 begin -1
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #0:0 begin -1
 ```
 
 decltypeは、テンプレートプログラミングに多用されるが、
@@ -2851,7 +2851,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
 下記例のような場合にも有用である。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:1 begin
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #0:1 begin
 ```
 
 ### decltype(auto)
@@ -2860,7 +2860,7 @@ decltype(auto)はC++14から導入されたdecltypeの類似機能である。
 auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:2 begin -1
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #0:2 begin -1
 ```
 
 ### 戻り値型を後置する関数宣言
@@ -2869,13 +2869,13 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 コード例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #1:0 begin
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #1:0 begin
 ```
 
 この構文をC++11から導入された理由は以下のコードを見れば明らかだろう。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #1:1 begin
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #1:1 begin
 ```
 
 ### 関数の戻り値型auto
@@ -2885,10 +2885,10 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
 (「[autoパラメータによる関数テンプレートの簡易定義](---)」を参照)。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #2:0 begin
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #2:1 begin -1
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #2:1 begin -1
 ```
 
 ### 後置戻り値型auto
@@ -2897,10 +2897,10 @@ C++14から導入された[関数の戻り値型auto](---)と似た、
 autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #3:0 begin
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #3:1 begin -1
+    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #3:1 begin -1
 ```
 
 
@@ -2921,20 +2921,20 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のコードのように暗黙のの型変換が起こる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #0:0 begin
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #0:1 begin -1
 ```
 
 暗黙の型変換はわかりづらいバグを生み出してしまうことがあるため、
 下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #1:0 begin
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #1:1 begin -1
 ```
 
 C++03までは、[一様初期化](---)がサポートされていなかったため、
@@ -2944,20 +2944,20 @@ C++11からサポートされた[一様初期化](---)を下記のように使�
 暗黙の型変換を使用できる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #2:0 begin
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #2:1 begin -1
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #2:1 begin -1
 ```
 
 以下に示す通り、コンストラクタの引数の数によらず、
 C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #3:0 begin
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #3:1 begin -1
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #3:1 begin -1
 ```
 
 ### explicit type operator()
@@ -2966,19 +2966,19 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
 この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #4:0 begin
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #4:1 begin -1
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #4:1 begin -1
 ```
 
 以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #5:0 begin
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #5:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #5:1 begin -1
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #5:1 begin -1
 ```
 
 ### explicit(COND)
@@ -2989,19 +2989,19 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 以下にこのシンタックスの単純な使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #6:0 begin
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #6:1 begin -1
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #6:1 begin -1
 ```
 
 テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #7:0 begin
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #7:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #7:1 begin -1
+    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #7:1 begin -1
 ```
 
 こういった工夫により、コードの過度な柔軟性を適度に保つことができ、

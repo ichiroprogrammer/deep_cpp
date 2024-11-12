@@ -1,5 +1,5 @@
 SRCS:=\
-    aaa.cpp argument.cpp class_layout_ut.cpp constructor_ut.cpp decltype_ut.cpp \
+    aaa.cpp argument.cpp class_layout_ut.cpp constructor_ut.cpp \
 	deep_shallow_copy_ut.cpp func_try_block.cpp interface_class.cpp flold_expression_ut.cpp \
 	implicit_conversion_ut.cpp incomplete_type_ut.cpp integral_promotion_ut.cpp \
 	generic_lambda_ut.cpp lack_of_cohesion_ut.cpp lambda.cpp trivial_ut.cpp nsdmi.cpp \
@@ -10,12 +10,13 @@ SRCS:=\
     ambiguous_ownership_ut.cpp unique_ptr_ownership_ut.cpp shared_ptr_ownership_ut.cpp \
     universal_ref_ut.cpp user_defined_literal_ut.cpp dominance_ut.cpp diamond_inheritance_ut.cpp \
     virtual_inheritance_ut.cpp most_vexing_parse_ut.cpp structured_binding_ut.cpp \
-    heap_allocation_elision_ut.cpp dangling_ut.cpp literal_ut.cpp \
-    class_relation_ut.cpp  comparison_operator_ut.cpp concept_ut.cpp explicit_ut.cpp \
-	attr_ut.cpp aliging_ut.cpp enum_ut.cpp const_xxx_ut.cpp if_switch_init_ut.cpp \
-	co_await_ut.cpp  co_yield_ut.cpp template_ut.cpp noexcept_ut.cpp \
+    heap_allocation_elision_ut.cpp dangling_ut.cpp \
+    class_relation_ut.cpp \
+	attr_ut.cpp aliging_ut.cpp if_switch_init_ut.cpp \
+	template_ut.cpp noexcept_ut.cpp \
 	float_ut.cpp undefined_ut.cpp etc_ut.cpp transient_lambda_ut.cpp
 
+CPP_VER = c++17
 SHARED:=../../
 include $(SHARED)make/env.mk
 

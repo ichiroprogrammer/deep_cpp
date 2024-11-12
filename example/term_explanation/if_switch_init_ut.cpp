@@ -59,13 +59,12 @@ TEST(TermExp, if_switch_init2)
 {
     // @@@ sample begin 1:2
 
-    using enum OperationResult::ErrorCode;
     switch (auto result = DoOperation(); result.Get()) {
-    case ErrorPattern1:
+    case OperationResult::ErrorCode::ErrorPattern1:
         RecoverOperation(result.Get());  // エラー処理
         break;
-    // エラー処理のいくつかのパターン
-    case NoError:
+        // エラー処理のいくつかのパターン
+    case OperationResult::ErrorCode::NoError:
         // 成功処理
     default:
         assert(false);  // ここには来ないはず
