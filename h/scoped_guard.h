@@ -1,5 +1,8 @@
 #pragma once
+#if __cplusplus == 201703L
 #include <concepts>
+#endif
+
 #include <functional>
 
 namespace Nstd {
@@ -8,8 +11,12 @@ namespace Nstd {
 
 /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
 ///
+#if __cplusplus == 201703L
+template <typename F>
+#else
 template <std::invocable F>  // Fが呼び出し可能であることを制約
-// @@@ sample end
+                             // @@@ sample end
+#endif
 // @@@ sample begin 0:1
 class ScopedGuard {
 public:

@@ -2087,10 +2087,13 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 このような場合には、下記するようなリソース解放用クラス
 
 ```cpp
-    //  h/scoped_guard.h 7
+    //  h/scoped_guard.h 10
 
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
+    #if __cplusplus == 201703L
+    template <typename F>
+    #else
     template <std::invocable F>  // Fが呼び出し可能であることを制約
     class ScopedGuard {
     public:
@@ -3136,6 +3139,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
 ```cpp
     //  example/design_pattern/template_method.cpp 8
 
+    /// @class XxxDataFormatterXml
     /// @brief XxxDataをXmlに変換
     class XxxDataFormatterXml final : public XxxDataFormatterIF {
         ...
@@ -3158,6 +3162,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
         static inline std::string const footer_{"</XxxDataFormatterXml>\n"};
     };
 
+    /// @class XxxDataFormatterCsv
     /// @brief XxxDataをCsvに変換
     class XxxDataFormatterCsv final : public XxxDataFormatterIF {
         ...
@@ -3174,6 +3179,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
         static inline std::string const footer_{};
     };
 
+    /// @class XxxDataFormatterTable
     /// @brief XxxDataをTableに変換
     class XxxDataFormatterTable final : public XxxDataFormatterIF {
         ...
@@ -3289,6 +3295,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 ```cpp
     //  example/design_pattern/template_method_ut.cpp 112
 
+    #if __cplusplus == 202002L // c++20
     template <typename T>
     concept DataFormattable = requires(T t, const XxxData& xxx_data) {
         { t.Header() } -> std::convertible_to<std::string>;
@@ -3297,6 +3304,9 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
     };
 
     template <DataFormattable T>  // TはDataFormattableに制約される
+    #else                         // c++17
+    template <typename T>  // Tは下記のXxxDataFormatterXmlのようなクラス
+    #endif
     class XxxDataFormatter : private T {
     public:
         std::string ToString(XxxData const& xxx_data) const
@@ -3343,7 +3353,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 上記の単体テストは下記のようになる。
 
 ```cpp
-    //  example/design_pattern/template_method_ut.cpp 168
+    //  example/design_pattern/template_method_ut.cpp 172
 
         auto xml = XxxDataFormatterXml{};
 
@@ -3418,7 +3428,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 ```
 
 ```cpp
-    //  example/design_pattern/template_method.cpp 106
+    //  example/design_pattern/template_method.cpp 109
 
     std::unique_ptr<XxxDataFormatterIF const> XxxDataFormatterFactory(XxxDataFormatterMethod method)
     {
@@ -3494,7 +3504,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 この例ではその必要はないため、ヒープを使用しないFactory関数の例を下記する。
 
 ```cpp
-    //  example/design_pattern/template_method.cpp 123
+    //  example/design_pattern/template_method.cpp 126
 
     XxxDataFormatterIF const& XxxDataFormatterFactory2(XxxDataFormatterMethod method) noexcept
     {
@@ -3726,7 +3736,7 @@ Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを�
 ```
 
 ```cpp
-    //  example/design_pattern/template_method.cpp 144
+    //  example/design_pattern/template_method.cpp 147
 
     XxxDataFormatterIF const& XxxDataFormatterIF::Xml() noexcept
     {
@@ -4262,7 +4272,10 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     /// @brief find_files_recursively仮引数conditionの型(関数オブジェクトの型)
     using find_condition = std::function<bool(std::filesystem::path const&)>;
 
-    /// @brief Strategyパターン。条件にマッチしたファイルをリカーシブに探索して返す
+    // Strategyパターン
+    /// @fn std::vector<std::string> find_files_recursively(std::string const& path,
+    ///                                                     find_condition     condition);
+    /// @brief 条件にマッチしたファイルをリカーシブに探索して返す
     /// @param path      リカーシブにディレクトリを辿るための起点となるパス
     /// @param condition 探索するファイルの条件
     /// @return 条件にマッチしたファイルをstd::vector<std::string>で返す
@@ -4401,8 +4414,9 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 なお、上記find_files_recursivelyの第2パラメータをテンプレートパラメータとすることで、
 
 ```cpp
-    //  example/design_pattern/find_files_strategy.h 20
+    //  example/design_pattern/find_files_strategy.h 23
 
+    #if __cplusplus == 202002L  // c++20
     // ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
     namespace Inner_ {
     template <typename F>
@@ -4413,7 +4427,13 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     }  // namespace Inner_
 
     template <Inner_::find_condition F>
+    auto find_files_recursively2(std::string const& path, F condition)
+        -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>,
+                            std::vector<std::string>>
+    #else  // c++17
+    template <typename F>  // Fはファンクタ
     auto find_files_recursively2(std::string const& path, F&& condition) -> std::vector<std::string>
+    #endif
     {
         namespace fs = std::filesystem;
 
@@ -12570,12 +12590,10 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 ```cpp
     //  example/h/nstd_static_string.h 48
     // operator==の実装のソースコードの、C++のバージョンごとに以下のように分かれている
-    #if __cplusplus == 201703L
-    // for C++17
-    #elif __cplusplus == 202002L
-    // for C++20
+    #if __cplusplus == 201703L    // c++17
+    #elif __cplusplus == 202002L  // c++20
     #else
-    static_assert(false, "C++ version not supported!");
+    static_assert(false, "c++ version not supported!");
     #endif
 
     namespace Inner_ {
@@ -12591,7 +12609,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     }
     }  // namespace Inner_
 
-    #if __cplusplus == 201703L
+    #if __cplusplus == 201703L  // c++17
     template <size_t N1, size_t N2>
     constexpr bool operator==(StaticString<N1> const&, StaticString<N2> const&) noexcept
     {
@@ -12639,7 +12657,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     {
         return !(lhs == rhs);
     }
-    #elif __cplusplus == 202002L
+    #elif __cplusplus == 202002L  // c++20
 
     // 以下、operator==とoperator!=を<=>に置き換え
     template <size_t N1, size_t N2>
@@ -12685,7 +12703,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
         return StaticString{lhs} == rhs;
     }
     #else
-    static_assert(false, "C++ version not supported!");
+    static_assert(false, "c++ version not supported!");
     #endif
 ```
 
@@ -12709,7 +12727,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 同様にoperator + を追加する。
 
 ```cpp
-    //  example/h/nstd_static_string.h 168
+    //  example/h/nstd_static_string.h 166
 
     namespace Inner_ {
     template <size_t N1, size_t... I1, size_t N2, size_t... I2>
@@ -12766,7 +12784,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 任意のサイズの文字列を切り出せるようにすることでStaticStringはより便利に使用できるようになる。
 
 ```cpp
-    //  example/h/nstd_static_string.h 199
+    //  example/h/nstd_static_string.h 197
 
     template <size_t SIZE, size_t N>  // StaticString<SiZE>の部分文字列生成
     constexpr auto TopStr(StaticString<N> ss) noexcept
@@ -13122,10 +13140,13 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 やや意外だが、このようなテンプレートパラメータに特別な記法はなく、以下のようにすれば良い。
 
 ```cpp
-    //  h/scoped_guard.h 7
+    //  h/scoped_guard.h 10
 
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
+    #if __cplusplus == 201703L
+    template <typename F>
+    #else
     template <std::invocable F>  // Fが呼び出し可能であることを制約
     class ScopedGuard {
     public:
@@ -13145,10 +13166,13 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 上記コードの抜粋である下記は、テンプレートパラメータを関数型に制約するためのものである。
 
 ```cpp
-    //  h/scoped_guard.h 7
+    //  h/scoped_guard.h 10
 
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
+    #if __cplusplus == 201703L
+    template <typename F>
+    #else
     template <std::invocable F>  // Fが呼び出し可能であることを制約
 ```
 
@@ -13251,7 +13275,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 これを回避するためには下記のような関数テンプレートを用意すればよい。
 
 ```cpp
-    //  h/scoped_guard.h 30
+    //  h/scoped_guard.h 37
 
     template <typename F>
     ScopedGuard<F> MakeScopedGuard(F&& f) noexcept

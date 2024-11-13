@@ -10,7 +10,10 @@
 /// @brief find_files_recursively仮引数conditionの型(関数オブジェクトの型)
 using find_condition = std::function<bool(std::filesystem::path const&)>;
 
-/// @brief Strategyパターン。条件にマッチしたファイルをリカーシブに探索して返す
+// Strategyパターン
+/// @fn std::vector<std::string> find_files_recursively(std::string const& path,
+///                                                     find_condition     condition);
+/// @brief 条件にマッチしたファイルをリカーシブに探索して返す
 /// @param path      リカーシブにディレクトリを辿るための起点となるパス
 /// @param condition 探索するファイルの条件
 /// @return 条件にマッチしたファイルをstd::vector<std::string>で返す
@@ -19,6 +22,7 @@ extern std::vector<std::string> find_files_recursively(std::string const& path,
 // @@@ sample end
 // @@@ sample begin 1:0
 
+#if __cplusplus == 202002L  // c++20
 // ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
 // clang-format off
 namespace Inner_ {
@@ -31,7 +35,13 @@ concept find_condition = requires(F f, std::filesystem::path const& p)
 }  // namespace Inner_
 
 template <Inner_::find_condition F>
+auto find_files_recursively2(std::string const& path, F condition)
+    -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>,
+                        std::vector<std::string>>
+#else  // c++17
+template <typename F>  // Fはファンクタ
 auto find_files_recursively2(std::string const& path, F&& condition) -> std::vector<std::string>
+#endif
 {
     namespace fs = std::filesystem;
 

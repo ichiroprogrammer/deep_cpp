@@ -47,12 +47,10 @@ private:
 // @@@ sample end
 // @@@ sample begin 0:1
 // operator==の実装のソースコードの、C++のバージョンごとに以下のように分かれている
-#if __cplusplus == 201703L
-// for C++17
-#elif __cplusplus == 202002L
-// for C++20
+#if __cplusplus == 201703L    // c++17
+#elif __cplusplus == 202002L  // c++20
 #else
-static_assert(false, "C++ version not supported!");
+static_assert(false, "c++ version not supported!");
 #endif
 
 namespace Inner_ {
@@ -68,7 +66,7 @@ constexpr bool equal_n(size_t n, StaticString<N> const& lhs, StaticString<N> con
 }
 }  // namespace Inner_
 
-#if __cplusplus == 201703L
+#if __cplusplus == 201703L  // c++17
 template <size_t N1, size_t N2>
 constexpr bool operator==(StaticString<N1> const&, StaticString<N2> const&) noexcept
 {
@@ -116,7 +114,7 @@ constexpr bool operator!=(char const (&lhs)[N1], StaticString<N2> const& rhs) no
 {
     return !(lhs == rhs);
 }
-#elif __cplusplus == 202002L
+#elif __cplusplus == 202002L  // c++20
 
 // 以下、operator==とoperator!=を<=>に置き換え
 template <size_t N1, size_t N2>
@@ -162,7 +160,7 @@ constexpr bool operator==(char const (&lhs)[N1], StaticString<N2> const& rhs) no
     return StaticString{lhs} == rhs;
 }
 #else
-static_assert(false, "C++ version not supported!");
+static_assert(false, "c++ version not supported!");
 #endif
 // @@@ sample end
 // @@@ sample begin 0:2

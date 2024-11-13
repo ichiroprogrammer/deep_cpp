@@ -111,6 +111,7 @@ namespace TemplateTemplateMethod {
 // clang-format off
 // @@@ sample begin 1:0
 
+#if __cplusplus == 202002L // c++20
 template <typename T>
 concept DataFormattable = requires(T t, const XxxData& xxx_data) {
     { t.Header() } -> std::convertible_to<std::string>;
@@ -120,6 +121,9 @@ concept DataFormattable = requires(T t, const XxxData& xxx_data) {
 // clang-format on
 
 template <DataFormattable T>  // TはDataFormattableに制約される
+#else                         // c++17
+template <typename T>  // Tは下記のXxxDataFormatterXmlのようなクラス
+#endif
 class XxxDataFormatter : private T {
 public:
     std::string ToString(XxxData const& xxx_data) const
