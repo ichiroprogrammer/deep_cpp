@@ -3,6 +3,7 @@ SRCS:=\
 	mpool_allocator_ut.cpp global_new_delete.cpp global_new_delete_ut.cpp \
 	exception_allocator_ut.cpp
 
+CPP_VER:=c++17
 SHARED:=../../
 include $(SHARED)make/env.mk
 include $(SHARED)make/example.mk

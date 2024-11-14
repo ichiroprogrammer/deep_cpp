@@ -1748,6 +1748,13 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     // @@@ example/term_explanation/if_switch_init_ut.cpp #1:1 begin -1
 ```
 
+クラスの独自の[<=>演算子](---)を定義する場合、下記のように使用することができる。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/if_switch_init_ut.cpp #0:0 begin
+```
+
+
 #### 初期化付きswitch文
 下記の疑似コードはこの節で説明しようとしているswitch文の構造を表す。
 

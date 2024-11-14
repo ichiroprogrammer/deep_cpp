@@ -18328,7 +18328,7 @@ std::complexリテラル以下のコードのように使用できる。
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 215
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 232
 
     class Integer {
     public:
@@ -18388,7 +18388,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 239
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 256
 
     class Integer {
     public:
@@ -18490,10 +18490,11 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
         int y;
 
         auto operator<=>(const Point& other) const noexcept = default;  // 三方比較演算子 (C++20)
+        // 通常autoとするが、実際の戻り型はstd::strong_ordering
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 165
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 166
 
     auto p1 = Point{1, 2};
     auto p2 = Point{1, 2};
@@ -18503,13 +18504,29 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
     ASSERT_NE(p1, p3);  // p1 != p3
     ASSERT_TRUE(p1 < p3);
     ASSERT_FALSE(p1 > p3);
+
+    auto cmp_1_2 = p1 <=> p2;
+    auto cmp_1_3 = p1 <=> p3;
+    auto cmp_3_1 = p3 <=> p1;
+    static_assert(std::is_same_v<std::strong_ordering, decltype(cmp_1_2)>);
+
+    ASSERT_EQ(std::strong_ordering::equal, cmp_1_2);    // 等しい
+    ASSERT_EQ(std::strong_ordering::less, cmp_1_3);     // <=>の左オペランドが小さい
+    ASSERT_EQ(std::strong_ordering::greater, cmp_3_1);  // <=>の左オペランドが大きい
+
+    // std::strong_orderingの値
+    // ASSERT_EQ(static_cast<int32_t>(cmp_1_2), 0); キャストできないのでコンパイルエラー
+    ASSERT_TRUE(cmp_1_2 == 0);
+    ASSERT_TRUE(cmp_1_3 < 0);  // cmp_1_3は実質的には-1
+    ASSERT_TRUE(cmp_3_1 > 0);  // cmp_3_1は実質的には1
+
 ```
 
 定型の比較演算子では不十分である場合、<=>演算子を実装する必要が出てくる。
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 180
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 197
 
     struct Point {
         int x;
@@ -18862,6 +18879,29 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     }
     // resultはスコープアウトする
 ```
+
+クラスの独自の[<=>演算子](#SS_6_6_8_3)を定義する場合、下記のように使用することができる。
+
+```cpp
+    //  example/term_explanation_cpp20/if_switch_init_ut.cpp 9
+
+    struct DoubleName {
+        std::string name0;
+        std::string name1;
+        friend bool operator==(DoubleName const& lhs, DoubleName const& rhs) noexcept = default;
+    };
+
+    inline auto operator<=>(DoubleName const& lhs, DoubleName const& rhs) noexcept
+    {
+        // name0 を比較し、等しくなければその比較結果を返す
+        if (auto cmp = lhs.name0 <=> rhs.name0; cmp != 0) {
+            return cmp;
+        }
+
+        return lhs.name1 <=> rhs.name1;  // name0が等しければ name1を比較
+    }
+```
+
 
 #### 初期化付きswitch文 <a id="SS_6_7_5_3"></a>
 下記の疑似コードはこの節で説明しようとしているswitch文の構造を表す。
@@ -24337,13 +24377,13 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
          88         Inner_::header_t const* operator*() noexcept { return header_; }
          89 
          90         // clang-format off
-         91     #if __cplusplus == 201703L
-         92         bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
-         93         bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
-         94     #elif __cplusplus == 202002L
-         95         auto operator<=>(const const_iterator&) const = default;
-         96     #else
-         97         static_assert(false, "C++ version not supported!");
+         91     #if __cplusplus <= 201703L  // c++17
+         92 
+         93         bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
+         94         bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
+         95     #else  // c++20
+         96 
+         97         auto operator<=>(const const_iterator&) const = default;
          98     #endif
          99         // clang-format on
         100 
