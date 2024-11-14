@@ -12,7 +12,7 @@ MD_GEN:=./md_gen/export/py
 VPATH=./md:
 
 MDS:=deep_intro.md solid.md design_pattern.md template_meta_programming.md \
-	 dynamic_memory_allocation.md term_explanation.md
+     dynamic_memory_allocation.md term_explanation.md
 
 INDEX_OPT:=--exclude $(addsuffix :1,$(MDS) sample_code.md)
 

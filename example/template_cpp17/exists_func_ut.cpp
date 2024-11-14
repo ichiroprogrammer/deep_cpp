@@ -137,6 +137,7 @@ TEST(Template, exists_void_func_sfinae_s2)
 
 // @@@ sample begin 2:4
 
+#if __cplusplus == 202002L  // c++20
 // clang-format off
 template <typename T>  // C++20スタイル。concept/requiresによるSFINAEの回避
 concept exists_void_func_concept = requires(T& t)
@@ -144,6 +145,24 @@ concept exists_void_func_concept = requires(T& t)
     { t.func() } -> std::same_as<void>;
 };
 // clang-format on
+#else
+namespace Inner_ {
+template <typename T, typename = void>
+struct exists_void_func_impl : std::false_type {
+};
+
+template <typename T>  // C++17スタイル。SFINAEでの実装
+struct exists_void_func_impl<
+    T,
+    std::void_t<decltype(std::declval<T&>().func())>>  // func()が呼び出し可能か確認
+    : std::is_same<void, decltype(std::declval<T&>().func())>  // 戻り値がvoidか確認
+{
+};
+}  // namespace Inner_
+
+template <typename T>
+inline constexpr bool exists_void_func_concept = Inner_::exists_void_func_impl<T>::value;
+#endif
 // @@@ sample end
 
 TEST(Template, exists_void_func_concept)

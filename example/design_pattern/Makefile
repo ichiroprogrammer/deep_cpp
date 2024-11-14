@@ -12,6 +12,7 @@ SRCS:=\
 	factory_shipping_lib.cpp factory_shipping_ut.cpp \
     observer_ut.cpp observer_ng.cpp observer_ok.cpp subject_ng.cpp subject_ok.cpp
 
+CPP_VER:= c++17
 SHARED:=../../
 include $(SHARED)make/env.mk
 include $(SHARED)make/example.mk

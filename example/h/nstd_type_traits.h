@@ -13,9 +13,29 @@
 // @@@ sample begin 0:0
 
 namespace Nstd {
+namespace Inner_ {
+template <typename T, typename U, typename... Us>
+struct is_same_as_some_of_impl {  // 型特性の補助クラス: 複数の型と比較する再帰的な実装
+    static constexpr bool value
+        = std::is_same<T, U>::value || is_same_as_some_of_impl<T, Us...>::value;
+};
+
+// 再帰の終端条件: 比較する型が1つの場合
+template <typename T, typename U>
+struct is_same_as_some_of_impl<T, U> {
+    static constexpr bool value = std::is_same<T, U>::value;
+};
+}  // namespace Inner_
+
+#if __cplusplus == 202002L  // c++20
 // コンセプト: 複数の型のいずれかがTと同じかどうかをチェック
 template <typename T, typename U, typename... Us>
 concept SameAsSomeOf = (std::same_as<T, U> || (std::same_as<T, Us> || ...));
+#else  // c++17
+// コンセプトが使えない場合、上と同じ機能を持つ変数テンプレート
+template <typename T, typename U, typename... Us>
+constexpr bool SameAsSomeOf = Inner_::is_same_as_some_of_impl<T, U, Us...>::value;
+#endif
 
 // 型特性: TがUsのいずれかと同じ場合true_type、そうでない場合false_typeを継承
 template <typename T, typename U, typename... Us>
@@ -27,7 +47,6 @@ template <typename T, typename U, typename... Us>
 constexpr bool IsSameSomeOfV = IsSameSomeOf<T, U, Us...>::value;
 }  // namespace Nstd
 // @@@ sample end
-// replace IsSameSomeOfV -> OneOf
 //
 // AreConvertible
 //
@@ -220,6 +239,56 @@ struct ValueType {
     using type = type_n<Nest>;
 };
 
+#if __cplusplus == 201703L  // c++17
+namespace Inner_ {
+
+template <typename T, size_t N>
+struct conditional_value_type_n {
+    using type = typename std::conditional_t<
+        ValueType<T>::Nest != 0,
+        typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
+};
+
+template <typename T>
+struct conditional_value_type_n<T, 0> {
+    using type = T;
+};
+
+template <typename T, typename = void>
+struct array_or_container : std::false_type {
+};
+
+template <typename T>
+struct array_or_container<T, typename std::enable_if_t<std::is_array_v<T>>> : std::true_type {
+    using type = typename std::remove_extent_t<T>;
+};
+
+// Tが配列でなく、且つT型インスタンスに範囲for文が適用できるならばstdコンテナと診断する
+template <typename T>
+constexpr bool is_container_v{Nstd::IsRange<T>::value && !std::is_array_v<T>};
+
+template <typename T>
+struct array_or_container<T, typename std::enable_if_t<is_container_v<T>>> : std::true_type {
+    using type = typename T::value_type;
+};
+
+template <typename T>
+constexpr bool array_or_container_v{array_or_container<T>::value};
+}  // namespace Inner_
+
+template <typename T>  // ValueTypeの特殊化
+struct ValueType<T, typename std::enable_if_t<Inner_::array_or_container_v<T>>> {
+    using type_direct = typename Inner_::array_or_container<T>::type;
+
+    static constexpr bool   IsBuiltinArray{std::is_array_v<T>};
+    static constexpr size_t Nest{ValueType<type_direct>::Nest + 1};
+
+    template <size_t N>
+    using type_n = typename Inner_::conditional_value_type_n<T, N>::type;
+
+    using type = type_n<Nest>;
+};
+#else
 template <typename T, size_t N>
 struct ValueType<T[N]> {  // 配列型の特殊化
     using type_direct = T;
@@ -247,8 +316,12 @@ struct ValueType<T> {   // コンセプトによるSFINAEの回避
 
     using type = type_n<Nest>;
 };
+#endif
 
 template <typename T>
 using ValueTypeT = typename ValueType<T>::type;
+
+template <typename T, size_t N>
+using ValueTypeT_n = typename ValueType<T>::template type_n<N>;
 }  // namespace Nstd
 // @@@ sample end

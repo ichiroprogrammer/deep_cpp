@@ -98,15 +98,25 @@ TEST(Template, is_kind_of_safe_string)
 // clang-format off
 // @@@ sample begin 2:0
 
+
+#if __cplusplus == 202002L  // c++20
 namespace Inner_ {
 template <typename T>
 concept not_safe_string = !std::is_same_v<T, Nstd::SafeString>;
 }
+#endif
 
 template <template <class...> class C, typename... Ts>
+#if __cplusplus == 202002L  // c++20
 auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) -> std::ostream& 
     requires Inner_::not_safe_string<Nstd::SafeIndex<C, Ts...>> // enable_ifによるSFINAEを避け、
-{                                                               // コンセプトによる制約
+#else
+auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) ->
+    typename std::enable_if_t<    // safe_indexがSafeString型ならば、SFINAEにより非活性化
+        !std::is_same_v<Nstd::SafeIndex<C, Ts...>, Nstd::SafeString>, std::ostream&>
+#endif
+// clang-format on
+{  // コンセプトによる制約
     auto sep = "";
 
     for (auto const& i : safe_index) {

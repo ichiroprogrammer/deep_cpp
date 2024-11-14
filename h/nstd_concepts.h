@@ -1,8 +1,9 @@
-#include <concepts>
+#pragma once
 #include <ostream>
 #include <type_traits>
 
-#pragma once
+#if __cplusplus == 202002L  // c++20
+#include <concepts>
 
 namespace Nstd {
 // @@@ sample begin 0:0
@@ -82,3 +83,4 @@ template <typename TO, typename... FROMs>
 concept ConvertibleWithoutNarrowing = Inner_::all_convertible_without_narrowing<TO, FROMs...>;
 // @@@ sample end
 }  // namespace Nstd
+#endif

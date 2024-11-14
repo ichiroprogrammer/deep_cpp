@@ -34,7 +34,11 @@ public:
 private:
     char const string_[N];
 
+#if __cplusplus == 202002L  // c++20
     template <Beginable T, size_t... I>
+#else
+    template <typename T, size_t... I>
+#endif
     // offsetは部分StaticString切り出しのため(TopStr, BottomStr)
     constexpr StaticString(size_t offset, T& t, std::index_sequence<I...>) noexcept
         : string_{std::begin(t)[I + offset]...}

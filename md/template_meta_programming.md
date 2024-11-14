@@ -129,7 +129,7 @@ C++11で導入されたパラメータパックはやや複雑なシンタック
 次のような単体テストをパスする関数テンプレートsumをパラメータパックで実装することを考える。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #0:1 begin -1
 ```
 
 sumの要件は、
@@ -141,7 +141,7 @@ sumの要件は、
 のようなものになるため、関数テンプレートsumは下記のように書ける。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #0:0 begin
 ```
 
 1つ目の関数テンプレートsumは引数が一つの場合に対応する。
@@ -189,7 +189,7 @@ sum(3)は1つ目のsumにマッチするため、最終的には下記のよう�
 これで基本的な要件は満たしたが、このsumでは下記のようなコードもコンパイルできてしまう。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #0:2 begin -1
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #0:2 begin -1
 ```
 
 これを認めるかどうかはsumの仕様次第だが、ここではこれらを認めないようにしたい。
@@ -197,10 +197,10 @@ sum(3)は1つ目のsumにマッチするため、最終的には下記のよう�
 合わせてそれも修正する。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #1:0 begin
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #1:1 begin -1
 ```
 
 以上で示したようにパラメータパックにより、
@@ -220,10 +220,10 @@ valueをtrueで初期化するクラステンプレートであり、 type_trait
 C++17で導入された畳みこみ式を用い、以下の様に簡潔に記述することもできる。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #2:1 begin -1
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #2:1 begin -1
 ```
 
 畳みこみ式で使用できる演算子を以下に示す。
@@ -243,13 +243,13 @@ C++17で導入された畳みこみ式を用い、以下の様に簡潔に記述
 これまでのsumに代えて下記のようなproduct(掛け算)を考える。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #3:0 begin
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #3:0 begin
 ```
 
 このコードの単体テストは、
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #3:1 begin -1
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #3:1 begin -1
 ```
 
 のようになるだろうが、
@@ -258,7 +258,7 @@ std::numeric_limits<>::epsilonを使用していないため
 、このテストはパスしない。一方で、以下のテストはパスする。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #3:2 begin -1
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #3:2 begin -1
 ```
 
 一般に0.01の2進数表現は無限小数になるため、これを含む演算にはepsilon以下の演算誤差が発生する。
@@ -270,20 +270,20 @@ std::numeric_limits<>::epsilonを使用していないため
 ということで、productを前から演算するように修正する。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #4:0 begin
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #4:0 begin
 ```
 
 HEAD、TAILに加えHEAD2を導入することで、前からの演算を実装できる
 (引数が一つのproductに変更はない)。当然ながら、これにより、
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #4:1 begin -1
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #4:1 begin -1
 ```
 
 はパスし、下記はパスしなくなる。
 
 ```cpp
-    // @@@ example/template/parameter_pack_ut.cpp #4:2 begin -1
+    // @@@ example/template_cpp17/parameter_pack_ut.cpp #4:2 begin -1
 ```
 
 
@@ -876,13 +876,13 @@ std::true_type/std::false_typeは真/偽を返すSTLメタ関数群の戻り型�
 これらは、下記で確かめられる通り、後述する[std::integral_constant](---)を使い定義されている。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #0:0 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #0:0 begin -1
 ```
 
 それぞれの型が持つvalue定数は、下記のように定義されている。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #0:1 begin -1
 ```
 
 これらが何の役に立つのか直ちに理解することは難しいが、
@@ -891,13 +891,13 @@ true/falseのメタ関数版と考えれば、追々理解できるだろう。
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #0:2 begin
+    // @@@ example/template_cpp17/type_traits_ut.cpp #0:2 begin
 ```
 
 上記の単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #0:3 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #0:3 begin -1
 ```
 
 IsCovertibleToIntの呼び出しをdecltypeのオペランドにすることで、
@@ -911,7 +911,7 @@ std::integral_constantは
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #1:0 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #1:0 begin -1
 ```
 
 また、すでに示したようにstd::true_type/std::false_typeを実装するためのクラステンプレートでもある。
@@ -928,18 +928,18 @@ std::integral_constantは
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #3:0 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #3:0 begin -1
 ```
 
 また、 C++17で導入されたstd::is_same_vは、定数テンプレートを使用し、
 下記のように定義されている。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #3:1 begin
+    // @@@ example/template_cpp17/type_traits_ut.cpp #3:1 begin
 ```
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #3:2 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #3:2 begin -1
 ```
 
 このような簡潔な記述の一般形式は、
@@ -955,7 +955,7 @@ std::integral_constantは
 std::is_base_ofを使うことで下記のようにstd::is_sameの基底クラス確認することもできる。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #3:3 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #3:3 begin -1
 ```
 
 
@@ -968,13 +968,13 @@ std::enable_ifは、bool値である第1テンプレートパラメータが
 下記のコードはクラステンプレートの特殊化を用いたstd::enable_ifの実装例である。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #4:0 begin
+    // @@@ example/template_cpp17/type_traits_ut.cpp #4:0 begin
 ```
 
 std::enable_ifの使用例を下記に示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #4:1 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #4:1 begin -1
 ```
 
 実装例から明らかなように
@@ -985,7 +985,7 @@ std::enable_ifの使用例を下記に示す。
 となるため、下記のコードはコンパイルできない。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #4:2 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #4:2 begin -1
 ```
 
 std::enable_ifのこの特性と後述する[SFINAE](---)により、
@@ -1004,13 +1004,13 @@ std::conditionalは、bool値である第1テンプレートパラメータが
 下記のコードはクラステンプレートの特殊化を用いたstd::conditionalの実装例である。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #5:0 begin
+    // @@@ example/template_cpp17/type_traits_ut.cpp #5:0 begin
 ```
 
 std::conditionalの使用例を下記に示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #5:1 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #5:1 begin -1
 ```
 
 #### std::is_void
@@ -1024,7 +1024,7 @@ std::is_voidはテンプレートパラメータの型が
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/template/type_traits_ut.cpp #2:0 begin -1
+    // @@@ example/template_cpp17/type_traits_ut.cpp #2:0 begin -1
 ```
 
 ### is_void_xxxの実装
@@ -1324,13 +1324,13 @@ std::conditionalの値パラメータis_void_f\<T>()は、「[is_void_f](---)の
 関数テンプレートのオーバーロードを用いたis_same_fの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #0:0 begin
 ```
 
 すでに述べたように関数テンプレートの部分特殊化は言語仕様として認められておらず、
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #0:1 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #0:1 begin
 ```
 
 上記のようなのようなコードは、以下のようなコンパイルエラーになる
@@ -1351,20 +1351,20 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #0:2 begin -1
+    // @@@ example/template_cpp17/is_same_ut.cpp #0:2 begin -1
 ```
 
 #### is_same_v
 定数テンプレートの特殊化を用いたis_same_vの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #1:0 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #1:0 begin
 ```
 
 単純であるため、解説は不要だろう。 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/is_same_ut.cpp #1:1 begin -1
 ```
 
 
@@ -1372,13 +1372,13 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 クラステンプレートの特殊化を用いたis_same_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #2:0 begin
 ```
 
 「[is_same_v](---)の実装」と同様に単純であるため、解説は不要だろう。 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #2:1 begin -1
+    // @@@ example/template_cpp17/is_same_ut.cpp #2:1 begin -1
 ```
 
 
@@ -1386,15 +1386,15 @@ is_same_f_helper\<T>()のようなテンプレートパラメータを直接使�
 SFINAEと関数テンプレート/関数のオーバーロードを用いたis_same_sfinae_f実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #3:0 begin
-    // @@@ example/template/is_same_ut.cpp #3:1 begin
-    // @@@ example/template/is_same_ut.cpp #3:2 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #3:0 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #3:1 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #3:2 begin
 ```
 
 上記の抜粋である下記コードのコメントで示したように、
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #3:1 begin -1 1
+    // @@@ example/template_cpp17/is_same_ut.cpp #3:1 begin -1 1
 ```
 
 T != Uの場合、この関数テンプレートはill-formedとなりname lookupの対象ではなくなる。
@@ -1405,21 +1405,21 @@ T == Uの場合は、関数テンプレートis_same_sfinae_f_detectorが選択�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #3:3 begin -1
+    // @@@ example/template_cpp17/is_same_ut.cpp #3:3 begin -1
 ```
 
 #### is_same_sfinae_s
 SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #4:0 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #4:0 begin
 ```
 
 「[is_void_sfinae_s](---)の実装」とほぼ同様であるため、解説は不要だろう。 
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #4:1 begin -1
+    // @@@ example/template_cpp17/is_same_ut.cpp #4:1 begin -1
 ```
 
 #### same_as
@@ -1427,38 +1427,34 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
 よりリファクタリングしたコードを以下に示す。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #4:2 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #4:2 begin
 ```
 is_same_sfinae_sは定数テンプレートであり、same_asはコンセプトであるが、
 下記のテストから明らかな通り、ほぼ同様に同様に使用することができる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #4:4 begin -1
+    // @@@ example/template_cpp17/is_same_ut.cpp #4:3 begin
 ```
 
 「[is_same_s](---)」で紹介した特殊化のテクニックを下記のように使用することができる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #4:3 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #4:4 begin
 ```
-```cpp
-    // @@@ example/template/is_same_ut.cpp #4:5 begin -1
-```
-
 
 #### is_same_templ
 例えば、std::stringとstd::basic_string\<T>が同じもしくは違う型であることを確認するためには、
 すでに示したis_same_sを使用し、
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #5:1 begin -1
+    // @@@ example/template_cpp17/is_same_ut.cpp #5:1 begin -1
 ```
 
 のようにすればよいが、
 以下に示したコードのようにテンプレートテンプレートパラメータを使うことでも実装できる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #5:0 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #5:0 begin
 ```
 
 上記のis_same_templは、第2引数にクラステンプレート、
@@ -1466,19 +1462,19 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 使用例を兼ねた単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #5:2 begin -1
+    // @@@ example/template_cpp17/is_same_ut.cpp #5:2 begin -1
 ```
 
 これを応用したエイリアステンプレート
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #5:3 begin
+    // @@@ example/template_cpp17/is_same_ut.cpp #5:3 begin
 ```
 
 は与えられたテンプレートパラメータがstd::stringを生成するかどうかを判定することができる。
 
 ```cpp
-    // @@@ example/template/is_same_ut.cpp #5:4 begin -1
+    // @@@ example/template_cpp17/is_same_ut.cpp #5:4 begin -1
 ```
 
 [演習-テンプレートテンプレートパラメータ](~~~)
@@ -1494,7 +1490,7 @@ IsSameSomeOfはこれまでの例とは少々異なり、
 このようなIsSameSomeOfの実装はは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #0:0 begin
+    // @@@ example/h/nstd_type_traits.h #0:0 begin
 ```
 
 IsSameSomeOfは、TがUsのいずれかと一致するかどうかのほとんどの処理をSameAsSomeOfに移譲する。
@@ -1550,7 +1546,7 @@ std::is_convertible\<FROM, TO>は、
 AreConvertibleの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #1:0 begin
+    // @@@ example/h/nstd_type_traits.h #1:0 begin
 ```
 
 
@@ -1579,9 +1575,9 @@ AreConvertibleWithoutNarrowConvに対しis_convertible_without_narrow_convが必
 SFINAEと関数テンプレート/関数のオーバーライドを使用し以下のように実装できる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #2:0 begin
-    // @@@ example/template/nstd_type_traits.h #2:1 begin
-    // @@@ example/template/nstd_type_traits.h #2:2 begin
+    // @@@ example/h/nstd_type_traits.h #2:0 begin
+    // @@@ example/h/nstd_type_traits.h #2:1 begin
+    // @@@ example/h/nstd_type_traits.h #2:2 begin
 ```
 
 AreConvertibleWithoutNarrowConvはNstdで定義するため、その内部のみで用いる
@@ -1591,7 +1587,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 ことをSFINAEに利用している。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #2:1 begin -2 1
+    // @@@ example/h/nstd_type_traits.h #2:1 begin -2 1
 ```
 
 単体テストは以下のようになる。
@@ -1604,7 +1600,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 の実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #2:3 begin
+    // @@@ example/h/nstd_type_traits.h #2:3 begin
 ```
 
 単体テストは以下のようになる。
@@ -1697,26 +1693,26 @@ exists_void_func_sfinae_f
 のSFINAEと関数テンプレート/関数のオーバーロードを用いた実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #0:0 begin
-    // @@@ example/template/exists_func_ut.cpp #0:1 begin
-    // @@@ example/template/exists_func_ut.cpp #0:2 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #0:1 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #0:2 begin
 ```
 
 decltypeの中での関数呼び出しは、実際には呼び出されず関数の戻り値の型になる。
 上記の抜粋である下記のコードはこの性質を利用してSFINAEによる静的ディスパッチを行っている。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #0:1 begin -1 1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #0:1 begin -1 1
 ```
 
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #0:3 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #0:3 begin
 ```
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #0:4 begin -1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #0:4 begin -1
 ```
 
 
@@ -1726,7 +1722,7 @@ exists_void_func_sfinae_s
 のSFINAEとクラステンプレートの特殊化を用いた実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #1:0 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #1:0 begin
 ```
 
 exists_void_func_sfinae_fとほぼ等しいSFINAEを利用したクラステンプレートの特殊化により、
@@ -1735,7 +1731,7 @@ exists_void_func_sfinae_fとほぼ等しいSFINAEを利用したクラステン�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #1:1 begin -1
 ```
 
 
@@ -1749,16 +1745,16 @@ exists_void_func_sfinae_sとほぼ同様の仕様を持つexists_void_func_sfina
 を用いた実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #2:0 begin
-    // @@@ example/template/exists_func_ut.cpp #2:1 begin
-    // @@@ example/template/exists_func_ut.cpp #2:2 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #2:1 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #2:2 begin
 ```
 
 前2例とは異なり、上記の抜粋である下記コードのように、
 メンバ関数へのポインタを使用しSFINAEを実装している。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #2:1 begin -1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #2:1 begin -1
 ```
 
 あまり応用範囲が広くない方法ではあるが、
@@ -1767,7 +1763,7 @@ decltypeを使っていないのでC++03コンパイラにも受け入れられ�
 exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #2:3 begin -1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #2:3 begin -1
 ```
 
 [演習-メンバ関数の存在の診断](~~~)
@@ -1781,10 +1777,10 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
 以下に示すように、C++20から導入された[コンセプト](---)はこのような問題の軽減につながる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #2:4 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #2:4 begin
 ```
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #2:5 begin -1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #2:5 begin -1
 ```
 
 #### exists_begin/exsits_end
@@ -1794,7 +1790,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 で用いたパターンのメンバ関数を非メンバ関数に置き換えて使えば以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #3:0 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #3:0 begin
 ```
 
 上記で使用したstd::void_tは、テンプレートパラメータが
@@ -1807,13 +1803,13 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記単体テストでは問題ないように見えるが、
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #3:1 begin -1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #3:1 begin -1
 ```
 
 下記の単体テストはstatic_assertがフェールするためコンパイルできない。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #3:2 begin -1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #3:2 begin -1
 ```
 
 理由は、
@@ -1831,7 +1827,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記のように実装できることにも気付けるだろう。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #4:0 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #4:0 begin
 ```
 
 2個目のexists_beginはTが配列でない場合、
@@ -1845,13 +1841,13 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 と考えれば下記のような実装を思いつくだろう。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #3:0 begin
+    // @@@ example/h/nstd_type_traits.h #3:0 begin
 ```
 
 十分にシンプルなのでこれを採用し、exists_endも同様に実装する。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #3:1 begin
+    // @@@ example/h/nstd_type_traits.h #3:1 begin
 ```
 
 単体テストは下記のようになる。
@@ -1874,7 +1870,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 IsRangeの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #3:2 begin
+    // @@@ example/h/nstd_type_traits.h #3:2 begin
 ```
 
 なお、上記のコードでは、exists_begin/exsits_endは、IsRangeの実装の詳細であるため、
@@ -1944,7 +1940,7 @@ std::ostreamのメンバ関数operator<<の戻り型はstd::ostream&であるた
 exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put to"と発音する)。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #5:0 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #5:0 begin
 ```
 
 「[exists_void_func_sfinae_f](---)の実装」と同様のパターンを使用したので解説は不要だろう。
@@ -1956,14 +1952,14 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 ```
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #5:1 begin -1
-    // @@@ example/template/exists_func_ut.cpp #5:2 begin -1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #5:1 begin -1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #5:2 begin -1
 ```
 
 やや驚きなのは、上記の抜粋である下記コードがコンパイルできることである。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #5:2 begin -1 1
+    // @@@ example/template_cpp17/exists_func_ut.cpp #5:2 begin -1 1
 ```
 
 これは、
@@ -1979,7 +1975,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 exists_put_to_as_non_memberの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #5:3 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #5:3 begin
 ```
 
 「[exists_begin/exsits_end](---)や[exists_put_to_as_member](---)の実装」
@@ -1991,7 +1987,7 @@ exists_put_to_as_non_memberの実装は以下のようになる。
 std::ostream << tができるかどうかを判断するExistsPutToの実装は以下のようになる。
 
 ```cpp
-    // @@@ example/template/exists_func_ut.cpp #5:4 begin
+    // @@@ example/template_cpp17/exists_func_ut.cpp #5:4 begin
 ```
 
 「[IsRange](---)の実装」に影響されて、一旦このように実装したが、先に書いた通り、
@@ -1999,7 +1995,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 下記のように、もっとシンプルに実装できることに気づくだろう。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #4:0 begin
+    // @@@ example/h/nstd_type_traits.h #4:0 begin
 ```
 
 単体テストは下記のようになる。
@@ -2165,7 +2161,7 @@ ValueTypeの最終的な単体テストのために上記を統合したテス�
 多少のメンバの追加や調整をした最終のコードを以下に示す。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits.h #5:0 begin
+    // @@@ example/h/nstd_type_traits.h #5:0 begin
 ```
 
 [演習-配列の長さの取り出し](~~~)
@@ -2292,7 +2288,7 @@ Nstd::SafeVectorとNstd::SafeStringの共通コードはテンプレートテン
 このコードの使用例を兼ねた単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp #0:0 begin -1
+    // @@@ example/template_cpp17/nstd_safe_index_ut.cpp #0:0 begin -1
 ```
 
 このままでは使いづらいので下記のようにエイリアスを使い、元のテンプレートと同じ名前を与える。
@@ -2304,7 +2300,7 @@ Nstd::SafeVectorとNstd::SafeStringの共通コードはテンプレートテン
 このコードの単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp #1:0 begin -1
+    // @@@ example/template_cpp17/nstd_safe_index_ut.cpp #1:0 begin -1
 ```
 
 これで、Nstd::SafeVectorとNstd::SafeStringは統一できたので、
@@ -2312,7 +2308,7 @@ Nstd::SafeIndexにNstd::SafeArrayの実装が取り込めれば、リファク�
 残念ながら、下記のコードはコンパイルできない。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/nstd_safe_index_ut.cpp #0:1 begin -1
 ```
 
 理由は、パラメータパックにはそのすべてに型を指定するか、そのすべてに値を指定しなければならず、
@@ -2331,13 +2327,13 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 まずは、このコードの使用例を兼ねた単体テストを下記に示す。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp #2:0 begin -1
+    // @@@ example/template_cpp17/nstd_safe_index_ut.cpp #2:0 begin -1
 ```
 
 これを使えば、下記のような記述が可能となる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp #2:1 begin -1
+    // @@@ example/template_cpp17/nstd_safe_index_ut.cpp #2:1 begin -1
 ```
 
 このままでは使いづらいのでNstd::SafeVector、Nstd::Stringと同様にエイリアスを使えば、
@@ -2350,7 +2346,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 このコードの単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/nstd_safe_index_ut.cpp #1:1 begin -1
 ```
 
 これにより、当初の目的であったコードクローンの除去が完了した。
@@ -2361,7 +2357,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ```
 
 ```cpp
-    // @@@ example/template/nstd_safe_index_ut.cpp #1:2 begin -1
+    // @@@ example/template_cpp17/nstd_safe_index_ut.cpp #1:2 begin -1
 ```
 
 ### Nstd::SafeIndexのoperator\<\<の開発
@@ -2371,19 +2367,19 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 テンプレートテンプレートパラメータを使って以下のようにすることが考えられる。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/safe_index_put_to_ut.cpp #0:0 begin
 ```
 
 以下の単体テストで動作確認する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp #1:0 begin -1
+    // @@@ example/template_cpp17/safe_index_put_to_ut.cpp #1:0 begin -1
 ```
 
 ここまではうまく行っているが、以下の単体テストによりバグが発覚する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/safe_index_put_to_ut.cpp #1:1 begin -1
 ```
 
 この原因は、Nstd::SafeStringオブジェクトに対して、std::operator<<が使用されなかったからである。
@@ -2392,13 +2388,13 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ここでも、すでにみてきた[コンセプト](---)による制約によりこの問題に対処する。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/safe_index_put_to_ut.cpp #2:0 begin
 ```
 
 これにより先ほど問題が発生した単体テストも下記のようにパスする。
 
 ```cpp
-    // @@@ example/template/safe_index_put_to_ut.cpp #3:0 begin -2
+    // @@@ example/template_cpp17/safe_index_put_to_ut.cpp #3:0 begin -2
 ```
 
 
@@ -2487,57 +2483,57 @@ range_put_to_sep<>()を用意した。
 浮動小数点の演算には下記に示したような問題が起こり得るため、単純な==の比較はできない。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp #0:0 begin -1
+    // @@@ example/template_cpp17/nstd_float_ut.cpp #0:0 begin -1
 ```
 
 この問題に対処するのが以下のコードである。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/nstd_float_ut.cpp #0:1 begin -1
 ```
 
 単なる浮動小数変数の比較にこのようなコードを書くのは間違えやすいし、非効率であるため、
 下記のような関数(float用とdouble用)で対処することが一般的である。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp #1:0 begin
+    // @@@ example/template_cpp17/nstd_float_ut.cpp #1:0 begin
 ```
 実際に使う場面を以下に示す。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/nstd_float_ut.cpp #1:1 begin -1
 ```
 
 一見これで万事うまくいくように見えるが、そうは行かないことを以下の例で示す。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp #1:2 begin -1
+    // @@@ example/template_cpp17/nstd_float_ut.cpp #1:2 begin -1
 ```
 
 dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるため、このような問題が起こり得る。
 これに対処する方法を以下に示す。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/nstd_float_ut.cpp #2:0 begin
 ```
 
 この関数のテストは以下の通りである。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp #2:1 begin -1
+    // @@@ example/template_cpp17/nstd_float_ut.cpp #2:1 begin -1
 ```
 
 通常の浮動小数の比較は相対誤差を指定できる必要性がある場合が多いため、
 さらに下記のように拡張変更した。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp #3:0 begin
+    // @@@ example/template_cpp17/nstd_float_ut.cpp #3:0 begin
 ```
 
 この関数のテストは以下の通りである。
 
 ```cpp
-    // @@@ example/template/nstd_float_ut.cpp #3:1 begin -1
+    // @@@ example/template_cpp17/nstd_float_ut.cpp #3:1 begin -1
 ```
 
 ### 固定小数点クラス
@@ -2556,13 +2552,13 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
 以下に示す固定小数点クラス(FixedPoint)はこれらの問題を解決できる。
 
 ```cpp
-    // @@@ example/template/fixed_point.h #0:0 begin
+    // @@@ example/template_cpp17/fixed_point.h #0:0 begin
 ```
 
 FixedPointの単体テストコードを以下に示す。
 
 ```cpp
-    // @@@ example/template/fixed_point_ut.cpp #0:0 begin -1
+    // @@@ example/template_cpp17/fixed_point_ut.cpp #0:0 begin -1
 ```
 
 ### 固定小数点リテラル
@@ -2570,13 +2566,13 @@ FixedPointの単体テストコードを以下に示す。
 使い勝手のよい環境をユーザに提供するべきである。
 
 ```cpp
-    // @@@ example/template/fixed_point.h #0:1 begin
+    // @@@ example/template_cpp17/fixed_point.h #0:1 begin
 ```
 
 以上のコードの単体テストを以下に示す。これにより使用方も明らかになるだろう。
 
 ```cpp
-    // @@@ example/template/fixed_point_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/fixed_point_ut.cpp #0:1 begin -1
 ```
 
 ### 有理数クラス
@@ -2584,10 +2580,10 @@ FixedPointの単体テストコードを以下に示す。
 以下のコードで示す有理数クラスがちょうどよい選択となることがある。
 
 ```cpp
-    // @@@ example/template/rational.h #0:0 begin
+    // @@@ example/template_cpp17/rational.h #0:0 begin
 ```
 ```cpp
-    // @@@ example/template/rational_ut.cpp #0:0 begin -1
+    // @@@ example/template_cpp17/rational_ut.cpp #0:0 begin -1
 ```
 
 ### 有理数リテラル
@@ -2596,10 +2592,10 @@ FixedPointの単体テストコードを以下に示す。
 [有理数クラス](---)に対して、有理数リテラルを定義するべきである。
 
 ```cpp
-    // @@@ example/template/rational.h #0:1 begin
+    // @@@ example/template_cpp17/rational.h #0:1 begin
 ```
 ```cpp
-    // @@@ example/template/rational_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/rational_ut.cpp #0:1 begin -1
 ```
 
 ## ログ取得ライブラリの開発2
@@ -2661,26 +2657,26 @@ FixedPointの単体テストコードを以下に示す。
 2個の文字列からstd::vector\<std::string>を生成する下記のような関数について考える。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #0:0 begin
 ```
 
 これは下記のように動作する。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #0:1 begin -1
 ```
 
 このコードは正しく動作するものの、move代入できず、パフォーマンス問題を引き起こす可能性があるため、
 [ユニバーサルリファレンス](---)を使って下記のように書き直した。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #1:0 begin
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #1:0 begin
 ```
 
 残念ながら、このコードは意図したようには動作せず、下記に示した通り相変わらずmove代入ができない。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #1:1 begin -1
 ```
 
 この原因は、
@@ -2690,31 +2686,31 @@ FixedPointの単体テストコードを以下に示す。
 この現象について下記の関数テンプレートを用いて解説を行う。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #1:2 begin
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #1:2 begin
 ```
 
 下記に示した通り、universal_refとuniversal_ref2のパラメータが同じ型であるとは限らない。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #1:3 begin -1
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #1:3 begin -1
 ```
 
 この問題はstd::forwardにより対処できる。これによって改良されたコードを下記に示す。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #2:0 begin
 ```
 
 下記単体テストが示す通り、rvalueリファレンスはmove代入され、lvalueリファレンスはcopy代入されている。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #2:1 begin -2
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #2:1 begin -2
 ```
 
 しかし残念ながら、このコードにも改良すべき点がある。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #2:2 begin -2
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #2:2 begin -2
 ```
 
 上記の"b"のような文字列リテラルを引数にした場合、
@@ -2726,7 +2722,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 下記は、この対策を施すとともに任意の数の引数を受け取れるように改良したコードである。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #3:0 begin
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #3:0 begin
 ```
 
 上記の
@@ -2752,14 +2748,14 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 (が、残念ならがテンポラリオブジェクトが生成されていないことを単体テストで証明することはできない)。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #3:1 begin -1
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #3:1 begin -1
 ```
 
 上記のgen_vectorはリカーシブコールを使って実装したが、
 [畳み込み式](---)を使用した下記の実装の方がより明確である。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #3:2 begin
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #3:2 begin
 ```
 
 ユニバーサルリファレンスはconstにすることができないが
@@ -2770,34 +2766,34 @@ constなlvalueリファレンスとして扱うべきである。
 従って、下記のようなコードは書くべきではない。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #4:0 begin
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #4:0 begin
 ```
 
 もしそのようにしてしまえば、
 下記単体テストが示すように非constな実引数はmoveされてしまうことになる。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #4:1 begin -1
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #4:1 begin -1
 ```
 
 任意の型Tのrvalueのみを引数に取る関数テンプレートを下記のように記述した場合、
 すでに述べたように引数はユニバーサルリファレンスとなってしまうため、lvalueにもバインドしてしまう。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #5:0 begin
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #5:0 begin
 ```
 
 このような場合、下記の記述が必要になる。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #5:1 begin
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #5:1 begin
 ```
 
 この効果により、下記に示した通りlvalueにはバインドできなくなり、
 当初の目的通り、rvalueのみを引数に取る関数テンプレートが定義できたことになる。
 
 ```cpp
-    // @@@ example/template/universal_ref_ut.cpp #5:2 begin -1
+    // @@@ example/template_cpp17/universal_ref_ut.cpp #5:2 begin -1
 ```
 
 なお、ユニバーサルリファレンスは、[リファレンスcollapsing](---)の一機能としても理解できる。
@@ -2806,20 +2802,20 @@ constなlvalueリファレンスとして扱うべきである。
 下記のようなクラスとoperator<<があった場合を考える。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/generic_lambda_ut.cpp #0:0 begin
 ```
 
 「[Nstd::SafeIndexの開発](---)」や「[コンテナ用Nstd::operator\<\<の開発](---)」
 の成果物との組み合わせの単体テストは下記のように書けるだろう。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp #0:1 begin -2
+    // @@@ example/template_cpp17/generic_lambda_ut.cpp #0:1 begin -2
 ```
 
 std::sortによるソートができるかどうかのテストは、C++11までは、
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp #0:2 begin -2
+    // @@@ example/template_cpp17/generic_lambda_ut.cpp #0:2 begin -2
 ```
 
 のように書くのが一般的だろう。ラムダ式の引数の型を指定しなければならないのは、
@@ -2827,7 +2823,7 @@ std::sortによるソートができるかどうかのテストは、C++11まで
 C++14からは下記のコードで示した通り引数にautoが使えるようになった。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp #0:3 begin -2
+    // @@@ example/template_cpp17/generic_lambda_ut.cpp #0:3 begin -2
 ```
 
 この記法は[ジェネリックラムダ](---)と呼ばれる。
@@ -2837,7 +2833,7 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
 ジェネリックラムダは下記のように使用することができる。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp #1:0 begin
+    // @@@ example/template_cpp17/generic_lambda_ut.cpp #1:0 begin
 ```
 
 この例で使用しているクロージャは一見、型をダイナミックに扱っているように見えるが、
@@ -2845,10 +2841,10 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
 理解できる。
 
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp #1:1 begin
+    // @@@ example/template_cpp17/generic_lambda_ut.cpp #1:1 begin
 ```
 ```cpp
-    // @@@ example/template/generic_lambda_ut.cpp #1:2 begin -1
+    // @@@ example/template_cpp17/generic_lambda_ut.cpp #1:2 begin -1
 ```
 
 #### std::variantとジェネリックラムダ
@@ -2859,7 +2855,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
 まずは、std::variantの使用例を下記する。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp #0:0 begin -1
+    // @@@ example/template_cpp17/variant_ut.cpp #0:0 begin -1
 ```
 
 上記からわかる通り、std::variantオブジェクトは、直前に代入されたオブジェクトの型以外で、
@@ -2869,7 +2865,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
 下記のように書ける。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/variant_ut.cpp #0:1 begin -1
 ```
 
 このラムダは、
@@ -2884,36 +2880,36 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
 の2つによって下記のように行うことができる。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp #1:0 begin
+    // @@@ example/template_cpp17/variant_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/template/variant_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/variant_ut.cpp #1:1 begin -1
 ```
 
 単体テストは、以下のようになる。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp #1:2 begin -1
+    // @@@ example/template_cpp17/variant_ut.cpp #1:2 begin -1
 ```
 
 下記のように継承関係のない複数のクラスが同じシグネチャのメンバ関数を持つ場合、
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/variant_ut.cpp #2:0 begin
 ```
 
 std::variant、上に示した関数テンプレート、ジェネリックラムダを使い、
 下記に示したような疑似的なポリモーフィズムを実現できる。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp #2:1 begin -1
+    // @@@ example/template_cpp17/variant_ut.cpp #2:1 begin -1
 ```
 
 ここで示した関数テンプレートは、デザインパターン[Visitor](---)の例であり、
 ほぼこれと同様のものがstd::visitとして定義されている。
 
 ```cpp
-    // @@@ example/template/variant_ut.cpp #2:2 begin -1
+    // @@@ example/template_cpp17/variant_ut.cpp #2:2 begin -1
 ```
 
 ### クラステンプレートと継承の再帰構造
@@ -2926,22 +2922,22 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 下記のようにクラスや関数テンプレートが定義されている場合を考える。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #0:0 begin
-    // @@@ example/template/suppress_adl_ut.cpp #0:1 begin
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #0:1 begin
 ```
 
 これに対しての単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #0:2 begin -1
-    // @@@ example/template/suppress_adl_ut.cpp #0:3 begin -1
-    // @@@ example/template/suppress_adl_ut.cpp #0:4 begin -1
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #0:2 begin -1
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #0:3 begin -1
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #0:4 begin -1
 ```
 
 上記の抜粋である
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #0:3 begin -1
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #0:3 begin -1
 ```
 
 が名前空間Appの指定なしでコンパイルできる理由は、
@@ -2952,19 +2948,19 @@ lookupによるバグの混入を起こしてしまうことがある。
 上記の名前空間での定義が可視である状態で、下記のようなコードを書いた場合を考える。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #1:0 begin
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #1:0 begin
 ```
 
 この単体テストは、やはりADLを使い下記のように書ける。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #1:1 begin -2
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #1:1 begin -2
 ```
 
 これに問題はないが、下記のテストもコンパイルでき、且つテストもパスしてしまうことには問題がある。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #1:2 begin -2
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #1:2 begin -2
 ```
 
 このセマンティクス的に無意味な(もしくは混乱を引き起こしてしまうであろう)コードは、
@@ -2989,20 +2985,20 @@ lookupによるバグの混入を起こしてしまうことがある。
 従って下記のような関数テンプレートを指す概念ではない。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #2:0 begin
 ```
 
 前記で問題を起こした関数テンプレート
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #0:1 begin
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #0:1 begin
 ```
 
 が典型的な「ジェネリックすぎるテンプレート」である。
 これに対する最も安全な対処は下記コードで示す通りテンプレートを使わないことである。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #2:1 begin
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #2:1 begin
 ```
 
 ジェネリックなis_equalが必要であれば下記単体テストのように
@@ -3010,7 +3006,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 こうすることでその適用範囲はそれを定義した関数内に留まる。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #2:2 begin -1
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #2:2 begin -1
 ```
 
 上記で示した
@@ -3031,7 +3027,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 下記のコードについて考える。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #3:0 begin
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #3:0 begin
 ```
 
 基底クラスのメンバ関数を呼び出す場合は、T::f()、もしくは、this->f()と書く必要があるため、
@@ -3039,7 +3035,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 ([two phase name lookup](---)の一回目のname lookupでfがバインドされるため)。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #3:1 begin -1
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #3:1 begin -1
 ```
 
 これだけでも十分わかりづらいが、
@@ -3047,13 +3043,13 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
 下記のようにリファクタリングしたとしよう。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #4:0 begin
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #4:0 begin
 ```
 
 すると、fのname lookupの対象が変わってしまい、元の単体テストはパスしなくなる。
 
 ```cpp
-    // @@@ example/template/suppress_adl_ut.cpp #4:1 begin -1
+    // @@@ example/template_cpp17/suppress_adl_ut.cpp #4:1 begin -1
 ```
 
 こういった場合に備え単体テストを実行すべきなのだが、この程度の問題はコンパイルで検出したい。
@@ -3071,7 +3067,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
 下記のコードについて考える。
 
 ```cpp
-    // @@@ example/template/adl_firewall_0_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/adl_firewall_0_ut.cpp #0:0 begin
 ```
 
 上記のApp::ToStringは「[コンテナ用Nstd::operator\<\<の開発](---)」のコードを使用し、
@@ -3080,19 +3076,19 @@ std::vectorオブジェクトをstd::stringに変換する。
 これに対しての単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/adl_firewall_0_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/adl_firewall_0_ut.cpp #0:1 begin -1
 ```
 
 これは想定通りの動作だが、上記のAppの後に下記のコードを追加するとApp::ToStringは影響を受ける。
 
 ```cpp
-    // @@@ example/template/adl_firewall_1_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/adl_firewall_1_ut.cpp #0:0 begin
 ```
 
 これにより元の単体テストはエラーとなり、新しい単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/adl_firewall_1_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/adl_firewall_1_ut.cpp #0:1 begin -1
 ```
 
 これが意図通りなら問題ないが、
@@ -3106,7 +3102,7 @@ Appの宣言がname lookupの対象になったことにも原因がある。
 下記のコードは後者の原因を解消する。
 
 ```cpp
-    // @@@ example/template/adl_firewall_2_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/adl_firewall_2_ut.cpp #0:0 begin
 ```
 
 XY型オブジェクトを引数にした関数呼び出しによる[関連名前空間](---)は、
@@ -3166,10 +3162,10 @@ std::stringは文字列を扱うことにおいて、非常に有益なクラス
   デバッグに便利であるが、メモリ確保失敗を通知するような場面ではこの方法は使えない。
 
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/nstd_exception_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/nstd_exception_ut.cpp #0:1 begin -1
 ```
 
 このような問題を回避するために、ここでは静的に文字列を扱うためのクラスStaticStringを開発する。
@@ -3180,25 +3176,25 @@ StaticStringオブジェクトは、char配列をメンバとして持つが、
 そのパラメータパック生成クラスを下記のように定義する。
 
 ```cpp
-    // @@@ example/template/nstd_seq.h #0:0 begin
+    // @@@ example/template_cpp17/nstd_seq.h #0:0 begin
 ```
 
 このクラスにより、下記のような配列メンバの初期ができるようになる。
 
 ```cpp
-    // @@@ example/template/nstd_seq_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/nstd_seq_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/template/nstd_seq_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/nstd_seq_ut.cpp #0:1 begin -1
 ```
 
 これを下記のように使うことで、メンバである文字列配列のコンパイル時初期化ができるようになる。
 
 ```cpp
-    // @@@ example/template/nstd_seq_ut.cpp #1:0 begin
+    // @@@ example/template_cpp17/nstd_seq_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/template/nstd_seq_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/nstd_seq_ut.cpp #1:1 begin -1
 ```
 
 上記とほぼ同様のクラステンプレートstd::index_sequence、std::make_index_sequenceが、
@@ -3214,13 +3210,13 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 文字列リテラルからStaticStringを生成する単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp #0:0 begin -2
+    // @@@ example/template_cpp17/nstd_static_string_ut.cpp #0:0 begin -2
 ```
 
 また、std::initializer_list\<char>による初期化の単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp #0:1 begin -2
+    // @@@ example/template_cpp17/nstd_static_string_ut.cpp #0:1 begin -2
 ```
 
 次にこのクラスにc++17用に`operator==`とc++20用に`operator<=>`を追加する。
@@ -3232,7 +3228,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp #1:0 begin -1
+    // @@@ example/template_cpp17/nstd_static_string_ut.cpp #1:0 begin -1
 ```
 
 [非explicitなコンストラクタによる暗黙の型変換](---)
@@ -3246,7 +3242,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 ```
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp #2:0 begin -1
+    // @@@ example/template_cpp17/nstd_static_string_ut.cpp #2:0 begin -1
 ```
 
 以上でstd::stringのように=、==、+などの演算が可能となった。
@@ -3258,7 +3254,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 ```
 
 ```cpp
-    // @@@ example/template/nstd_static_string_ut.cpp #0:2 begin -1
+    // @@@ example/template_cpp17/nstd_static_string_ut.cpp #0:2 begin -1
 ```
 
 #### 整数をStaticStringに変換する関数の開発
@@ -3309,7 +3305,7 @@ StaticStringと同様に、このままでは不便であるため、下記の�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp #1:0 begin -2
+    // @@@ example/template_cpp17/nstd_exception_ut.cpp #1:0 begin -2
 ```
 
 Exceptionクラスの利便性をさらに高めるため、下記の定義を行う。
@@ -3323,10 +3319,10 @@ Exceptionクラスの利便性をさらに高めるため、下記の定義を�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/nstd_exception_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/template/nstd_exception_ut.cpp #2:1 begin -1
+    // @@@ example/template_cpp17/nstd_exception_ut.cpp #2:1 begin -1
 ```
 
 ### 関数型をテンプレートパラメータで使う
@@ -3366,39 +3362,39 @@ std::unique_ptrの第2パラメータには、上記のような関数へのポ�
 まずは、std::unique_ptrの動作を確かめるためのクラスを下記のように定義する。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/func_type_ut.cpp #0:0 begin
 ```
 
 次に示すのは、第2パラメータに何も指定しないパターンである。
 テスト用クラスAの動作確認ができるはずである。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #1:0 begin -1
+    // @@@ example/template_cpp17/func_type_ut.cpp #1:0 begin -1
 ```
 
 次に示すのは、
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #0:1 begin
+    // @@@ example/template_cpp17/func_type_ut.cpp #0:1 begin
 ```
 
 のポインタをstd::unique_ptrの第2パラメータに与えた例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #1:1 begin -1
+    // @@@ example/template_cpp17/func_type_ut.cpp #1:1 begin -1
 ```
 
 次に示すのは、std::unique_ptrの第2パラメータにラムダを与えた例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #1:2 begin -1
+    // @@@ example/template_cpp17/func_type_ut.cpp #1:2 begin -1
 ```
 
 次に示すのは、
 std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::function)を与えた例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #1:3 begin -1
+    // @@@ example/template_cpp17/func_type_ut.cpp #1:3 begin -1
 ```
 
 以上で見てきたようにstd::unique_ptrの第2パラメータには、
@@ -3428,38 +3424,38 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 まずは、以下の関数と静的変数の組み合わせ
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #2:0 begin
+    // @@@ example/template_cpp17/func_type_ut.cpp #2:0 begin
 ```
 
 を使った例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #2:1 begin -1
+    // @@@ example/template_cpp17/func_type_ut.cpp #2:1 begin -1
 ```
 
 次に示すのは、それぞれにラムダ式とstd::functionを使った2例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #2:2 begin -1
+    // @@@ example/template_cpp17/func_type_ut.cpp #2:2 begin -1
 ```
 
 次に示すのは関数型オブジェクト
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #3:0 begin
+    // @@@ example/template_cpp17/func_type_ut.cpp #3:0 begin
 ```
 
 を使った例である。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #3:1 begin -1
+    // @@@ example/template_cpp17/func_type_ut.cpp #3:1 begin -1
 ```
 
 C++17からサポートされた「クラステンプレートのテンプレートパラメータ推論」が使えないC++14以前では、
 下記に示すようにScopedGuardのテンプレートラメータ型を指定しなければならない煩雑さがある。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #3:2 begin -1
+    // @@@ example/template_cpp17/func_type_ut.cpp #3:2 begin -1
 ```
 
 これを回避するためには下記のような関数テンプレートを用意すればよい。
@@ -3472,7 +3468,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 テンプレートパラメータを指定する必要がなくなる。
 
 ```cpp
-    // @@@ example/template/func_type_ut.cpp #4:1 begin -1
+    // @@@ example/template_cpp17/func_type_ut.cpp #4:1 begin -1
 ```
 
 このような便利なテンプレートは、Nstdのようなライブラリで定義、宣言し、
@@ -3533,10 +3529,10 @@ C++17からサポートされた「クラステンプレートのテンプレー
   下記コードが示すように直感に反する関数が選択される場合がある。
 
 ```cpp
-    // @@@ example/template/etc_ut.cpp #0:0 begin
+    // @@@ example/template_cpp17/etc_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/template/etc_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/etc_ut.cpp #0:1 begin -1
 ```
 
 * ユニバーサルリファレンスを持つ関数テンプレートをオーバーロードしない。
