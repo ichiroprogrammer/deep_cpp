@@ -1,9 +1,9 @@
 #pragma once
+#include <concepts>
 #include <ostream>
 #include <type_traits>
 
-#if __cplusplus == 202002L  // c++20
-#include <concepts>
+#if __cplusplus >= 202002L  // c++20
 
 namespace Nstd {
 // @@@ sample begin 0:0

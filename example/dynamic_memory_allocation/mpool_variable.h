@@ -88,13 +88,13 @@ public:
         Inner_::header_t const* operator*() noexcept { return header_; }
 
         // clang-format off
-    #if __cplusplus == 201703L
+    #if __cplusplus <= 201703L  // c++17
+
         bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
         bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
-    #elif __cplusplus == 202002L
+    #else  // c++20
+
         auto operator<=>(const const_iterator&) const = default;
-    #else
-        static_assert(false, "C++ version not supported!");
     #endif
         // clang-format on
 

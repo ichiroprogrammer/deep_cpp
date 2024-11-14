@@ -22,6 +22,22 @@ TEST(Template, is_same_some_of)
     // @@@ sample end
 }
 
+#if __cplusplus >= 202002L  // c++20
+
+TEST(Template, OneOf)
+{
+    // @@@ sample begin 0:1
+
+    static_assert(!Nstd::OneOf<int, int8_t, int16_t, uint16_t>);
+    static_assert(Nstd::OneOf<int, int8_t, int16_t, uint16_t, int32_t>);
+    static_assert(Nstd::OneOf<int&, int8_t, int16_t, int32_t&, int32_t>);
+    static_assert(!Nstd::OneOf<int&, int8_t, int16_t, uint32_t&, int32_t>);
+    static_assert(Nstd::OneOf<std::string, int, char*, std::string>);
+    static_assert(!Nstd::OneOf<std::string, int, char*>);
+    // @@@ sample end
+}
+#endif
+
 TEST(Template, are_convertible)
 {
     // @@@ sample begin 1:0
@@ -148,21 +164,21 @@ TEST(Template, value_type)
     {
         using T = std::vector<std::list<int*>[3]>;
 
-        static_assert(std::is_same_v<T, ValueTypeT_n<T, 0>>);
-        static_assert(std::is_same_v<std::list<int*>[3], ValueTypeT_n<T, 1>>);
-        static_assert(std::is_same_v<std::list<int*>, ValueTypeT_n<T, 2>>);
-        static_assert(std::is_same_v<int*, ValueTypeT_n<T, 3>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 4>>);
+        static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+        static_assert(std::is_same_v<std::list<int*>[3], ValueType<T>::type_n<1>>);
+        static_assert(std::is_same_v<std::list<int*>, ValueType<T>::type_n<2>>);
+        static_assert(std::is_same_v<int*, ValueType<T>::type_n<3>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<4>>);
     }
     {
         using T = std::vector<int[2][3]>;
 
-        static_assert(std::is_same_v<T, ValueTypeT_n<T, 0>>);
-        static_assert(std::is_same_v<int[2][3], ValueTypeT_n<T, 1>>);
-        static_assert(std::is_same_v<int[3], ValueTypeT_n<T, 2>>);
-        static_assert(std::is_same_v<int, ValueTypeT_n<T, 3>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 4>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 5>>);
+        static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+        static_assert(std::is_same_v<int[2][3], ValueType<T>::type_n<1>>);
+        static_assert(std::is_same_v<int[3], ValueType<T>::type_n<2>>);
+        static_assert(std::is_same_v<int, ValueType<T>::type_n<3>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<4>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<5>>);
 
         static_assert(std::is_same_v<int, ValueTypeT<T>>);
         static_assert(!ValueType<T>::IsBuiltinArray);
@@ -170,12 +186,12 @@ TEST(Template, value_type)
     {
         using T = int[1][2][3];
 
-        static_assert(std::is_same_v<T, ValueTypeT_n<T, 0>>);
-        static_assert(std::is_same_v<int[2][3], ValueTypeT_n<T, 1>>);
-        static_assert(std::is_same_v<int[3], ValueTypeT_n<T, 2>>);
-        static_assert(std::is_same_v<int, ValueTypeT_n<T, 3>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 4>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 5>>);
+        static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+        static_assert(std::is_same_v<int[2][3], ValueType<T>::type_n<1>>);
+        static_assert(std::is_same_v<int[3], ValueType<T>::type_n<2>>);
+        static_assert(std::is_same_v<int, ValueType<T>::type_n<3>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<4>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<5>>);
 
         static_assert(std::is_same_v<int, ValueTypeT<T>>);
         static_assert(ValueType<T>::IsBuiltinArray);
@@ -183,11 +199,11 @@ TEST(Template, value_type)
     {
         using T = int[1][2];
 
-        static_assert(std::is_same_v<T, ValueTypeT_n<T, 0>>);
-        static_assert(std::is_same_v<int[2], ValueTypeT_n<T, 1>>);
-        static_assert(std::is_same_v<int, ValueTypeT_n<T, 2>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 3>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 5>>);
+        static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+        static_assert(std::is_same_v<int[2], ValueType<T>::type_n<1>>);
+        static_assert(std::is_same_v<int, ValueType<T>::type_n<2>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<3>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<5>>);
 
         static_assert(std::is_same_v<int, ValueTypeT<T>>);
         static_assert(ValueType<T>::IsBuiltinArray);
@@ -195,10 +211,10 @@ TEST(Template, value_type)
     {
         using T = int[1];
 
-        static_assert(std::is_same_v<T, ValueTypeT_n<T, 0>>);
-        static_assert(std::is_same_v<int, ValueTypeT_n<T, 1>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 2>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 3>>);
+        static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+        static_assert(std::is_same_v<int, ValueType<T>::type_n<1>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<2>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<3>>);
 
         static_assert(std::is_same_v<int, ValueTypeT<T>>);
         static_assert(ValueType<T>::IsBuiltinArray);
@@ -206,9 +222,9 @@ TEST(Template, value_type)
     {
         using T = int*;
 
-        static_assert(std::is_same_v<T, ValueTypeT_n<T, 0>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 1>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 2>>);
+        static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<1>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<2>>);
 
         static_assert(std::is_same_v<T, ValueTypeT<T>>);
         static_assert(!ValueType<T>::IsBuiltinArray);
@@ -216,9 +232,9 @@ TEST(Template, value_type)
     {
         using T = int;
 
-        static_assert(std::is_same_v<T, ValueTypeT_n<T, 0>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 1>>);
-        static_assert(std::is_same_v<void, ValueTypeT_n<T, 2>>);
+        static_assert(std::is_same_v<T, ValueType<T>::type_n<0>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<1>>);
+        static_assert(std::is_same_v<void, ValueType<T>::type_n<2>>);
 
         static_assert(std::is_same_v<int, ValueTypeT<T>>);
         static_assert(!ValueType<T>::IsBuiltinArray);

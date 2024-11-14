@@ -237,12 +237,12 @@ struct SafeArray2 : std::array<T, N> {
     // @@@ sample begin 4:1
 
     // 縮小型変換した場合には、ill-formedになるコンストラクタ
-#if __cplusplus == 201703L  // c++17
+#if __cplusplus <= 201703L  // c++17
     template <typename... ARGS,
               typename = 
                   typename std::enable_if_t<
                        AreConvertibleWithoutNarrowConvV<T, ARGS...>>> // c++17スタイルのSFINAE
-#else
+#else  // c++20
     template <typename... ARGS> // C++20のコンセプトを使用したSFINAE
     requires ConvertibleWithoutNarrowing<T, ARGS...>
 #endif
@@ -253,11 +253,13 @@ struct SafeArray2 : std::array<T, N> {
     // @@@ sample begin 4:2
 
     // 縮小型変換しない場合には、ill-formedになるコンストラクタ
-#if __cplusplus == 201703L  // c++17
+#if __cplusplus <= 201703L  // c++17
+
     template <typename... ARGS, 
               typename std::enable_if_t<
                   !AreConvertibleWithoutNarrowConvV<T, ARGS...>>* = nullptr> // C++17までのSFINAE
-#else
+#else  // c++20
+
     template <typename... ARGS> // C++20のコンセプトを使用したSFINAE
     requires (!ConvertibleWithoutNarrowing<T, ARGS...>)  // この行には()が必要
 #endif

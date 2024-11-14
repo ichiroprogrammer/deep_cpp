@@ -1,8 +1,5 @@
 #pragma once
-#if __cplusplus == 202002L
 #include <concepts>
-#endif
-
 #include <functional>
 
 namespace Nstd {
@@ -11,12 +8,16 @@ namespace Nstd {
 
 /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
 ///
-#if __cplusplus == 202002L
+// clang-format off
+#if __cplusplus >= 202002L   // c++20
+
 template <std::invocable F>  // Fが呼び出し可能であることを制約
-                             // @@@ sample end
-#else
+#else  // c++17
+
 template <typename F>
 #endif
+// clang-format on
+// @@@ sample end
 // @@@ sample begin 0:1
 class ScopedGuard {
 public:

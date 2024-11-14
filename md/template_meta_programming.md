@@ -39,6 +39,18 @@ C言語のqsort()のように強引なキャストを使い、この増加をあ
 ログ取得ライブラリやSTLを応用したNstdライブラリの実装を通して、
 これらのテクニックや、使用上の注意点について解説する。
 
+c++20から導入された[コンセプト](---)によりジェネリックプログラミングは、
+開発容易性、可読性、保守性が大きく向上しため、この章のコード例には、
+[コンセプト](---)(`concept`, `requires`)を多用した。
+
+が、この副作用として、
+c++17までしか使えない読者の参考にならないコードが増えてしまうことを避けるため、
+以下のような`#ifdef`を使うことによりc++17でも使えるコード例となるようにした
+(本来、`#ifdef`は使うべきではないが、`#ifdef`の数少ない使いどころだと判断した)。
+
+```cpp
+    // @@@ example/template/cplusplus.cpp #0:0 begin
+```
 ___
 
 __この章の構成__
@@ -1501,7 +1513,7 @@ Usが複数だった場合、[畳み込み式](--)を使用し上記の処理を
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp #0:0 begin -1
+    // @@@ example/template_cpp17/nstd_type_traits_ut.cpp #0:0 begin -1
 ```
 
 [演習-テンプレートパラメータを可変長にしたstd::is_same](~~~)
@@ -1516,7 +1528,7 @@ OneOfの実装にはシンプルに記述するための[畳み込み式](---)�
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp #0:1 begin -1
+    // @@@ example/template_cpp17/nstd_type_traits_ut.cpp #0:1 begin -1
 ```
 
 ### AreConvertibleXxxの実装
@@ -1561,7 +1573,7 @@ AreConvertibleの実装は以下のようになる。
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp #1:0 begin -1
+    // @@@ example/template_cpp17/nstd_type_traits_ut.cpp #1:0 begin -1
 ```
 
 
@@ -1593,7 +1605,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp #2:0 begin -1
+    // @@@ example/template_cpp17/nstd_type_traits_ut.cpp #2:0 begin -1
 ```
 
 is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
@@ -1606,7 +1618,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp #2:1 begin -1
+    // @@@ example/template_cpp17/nstd_type_traits_ut.cpp #2:1 begin -1
 ```
 
 #### ConvertibleToAll
@@ -1853,7 +1865,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp #3:0 begin -1
+    // @@@ example/template_cpp17/nstd_type_traits_ut.cpp #3:0 begin -1
 ```
 
 #### IsRange
@@ -1877,7 +1889,7 @@ IsRangeの実装は以下のようになる。
 名前空間Inner\_で宣言している。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp #4:0 begin -1
+    // @@@ example/template_cpp17/nstd_type_traits_ut.cpp #4:0 begin -1
 ```
 
 [演習-範囲for文のオペランドになれるかどうかの診断](~~~)
@@ -2001,7 +2013,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp #5:0 begin -1
+    // @@@ example/template_cpp17/nstd_type_traits_ut.cpp #5:0 begin -1
 ```
 
 #### Printable
@@ -2025,7 +2037,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 下記で示す通り、
 
 ```cpp
-    // @@@ example/template/nstd_type_traits_ut.cpp #5:1 begin
+    // @@@ example/template_cpp17/nstd_type_traits_ut.cpp #5:1 begin
 ```
 
 型Xが与えれ、その形式が、

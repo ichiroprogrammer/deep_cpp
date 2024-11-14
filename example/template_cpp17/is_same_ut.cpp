@@ -180,7 +180,7 @@ TEST(Template, type_traits_is_same_sfinae_s)
 
 // @@@ sample begin 4:2
 
-#if __cplusplus == 202002L  // c++20
+#if __cplusplus >= 202002L  // c++20
 
 template <typename T, typename U>
 concept same_as = requires(T const* t, U const* u)
@@ -188,6 +188,7 @@ concept same_as = requires(T const* t, U const* u)
     {t = u, u = t};
 };
 #else  // c++17
+
 template <typename T, typename U>
 inline constexpr bool same_as = is_same_sfinae_s_v<T, U>;
 #endif
@@ -201,7 +202,8 @@ static_assert(same_as<std::string, std::basic_string<char>>);
 // @@@ sample end
 // @@@ sample begin 4:4
 
-#if __cplusplus == 202002L  // c++20
+#if __cplusplus >= 202002L  // c++20
+
 template <typename T, typename U>
 struct is_same_concept_s : std::false_type {
 };
@@ -211,6 +213,7 @@ requires same_as<T, U>
 struct is_same_concept_s<T, U> : std::true_type {
 };
 #else  // c++17
+
 template <typename T, typename U, typename = void>
 struct is_same_concept_s : std::false_type {
 };

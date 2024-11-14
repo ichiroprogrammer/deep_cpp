@@ -16,7 +16,8 @@ namespace Nstd {
 /// @tparam E   std::exceptionから派生したエクセプションクラス
 /// @tparam N   StaticString<N>
 template <typename E, size_t N>
-#if __cplusplus == 202002L  // c++20
+#if __cplusplus >= 202002L  // c++20
+
 requires std::derived_from<E, std::exception>
 #endif
 class Exception : public E {
@@ -34,14 +35,16 @@ private:
 
 namespace Inner_ {
 template <typename E, template <size_t> class STATIC_STR, size_t N>
-#if __cplusplus == 202002L  // c++20
+#if __cplusplus >= 202002L  // c++20
+
 requires std::derived_from<E, std::exception>
 #endif
 auto make_exception(STATIC_STR<N> exception_str) noexcept { return Exception<E, N>{exception_str}; }
 }  // namespace Inner_
 
 template <typename E, size_t LINE_NUM, size_t F_N, size_t M_N>
-#if __cplusplus == 202002L  // c++20
+#if __cplusplus >= 202002L  // c++20
+
 requires std::derived_from<E, std::exception>
 #endif
 auto MakeException(char const (&filename)[F_N], char const (&msg)[M_N]) noexcept

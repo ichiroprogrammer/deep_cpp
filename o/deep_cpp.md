@@ -2087,12 +2087,17 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 このような場合には、下記するようなリソース解放用クラス
 
 ```cpp
-    //  h/scoped_guard.h 10
+    //  h/scoped_guard.h 7
 
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
-    #if __cplusplus == 202002L
+    #if __cplusplus >= 202002L   // c++20
+
     template <std::invocable F>  // Fが呼び出し可能であることを制約
+    #else  // c++17
+
+    template <typename F>
+    #endif
     class ScopedGuard {
     public:
         explicit ScopedGuard(F&& f) noexcept : f_{f}
@@ -3293,16 +3298,17 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 ```cpp
     //  example/design_pattern/template_method_ut.cpp 112
 
-    #if __cplusplus == 202002L // c++20
+    #if __cplusplus >= 202002L // c++20
+
     template <typename T>
     concept DataFormattable = requires(T t, const XxxData& xxx_data) {
         { t.Header() } -> std::convertible_to<std::string>;
         { t.Body(xxx_data) } -> std::convertible_to<std::string>;
         { t.Footer() } -> std::convertible_to<std::string>;
     };
-
     template <DataFormattable T>  // TはDataFormattableに制約される
     #else                         // c++17
+
     template <typename T>  // Tは下記のXxxDataFormatterXmlのようなクラス
     #endif
     class XxxDataFormatter : private T {
@@ -3351,7 +3357,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 上記の単体テストは下記のようになる。
 
 ```cpp
-    //  example/design_pattern/template_method_ut.cpp 172
+    //  example/design_pattern/template_method_ut.cpp 173
 
         auto xml = XxxDataFormatterXml{};
 
@@ -4414,7 +4420,8 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 ```cpp
     //  example/design_pattern/find_files_strategy.h 23
 
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     // ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
     namespace Inner_ {
     template <typename F>
@@ -4428,7 +4435,9 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     auto find_files_recursively2(std::string const& path, F condition)
         -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>,
                             std::vector<std::string>>
+
     #else  // c++17
+
     template <typename F>  // Fはファンクタ
     auto find_files_recursively2(std::string const& path, F&& condition) -> std::vector<std::string>
     #endif
@@ -5679,6 +5688,32 @@ C言語のqsort()のように強引なキャストを使い、この増加をあ
 ログ取得ライブラリやSTLを応用したNstdライブラリの実装を通して、
 これらのテクニックや、使用上の注意点について解説する。
 
+c++20から導入された[コンセプト](#SS_6_10_2)によりジェネリックプログラミングは、
+開発容易性、可読性、保守性が大きく向上しため、この章のコード例には、
+[コンセプト](#SS_6_10_2)(`concept`, `requires`)を多用した。
+
+が、この副作用として、
+c++17までしか使えない読者の参考にならないコードが増えてしまうことを避けるため、
+以下のような`#ifdef`を使うことによりc++17でも使えるコード例となるようにした
+(本来、`#ifdef`は使うべきではないが、`#ifdef`の数少ない使いどころだと判断した)。
+
+```cpp
+    //  example/template/cplusplus.cpp 4
+
+    #if __cplusplus >= 202002L  // c++20
+
+    // c++20以上の機能を使い、c++17以下の機能ではill-formedとなるコード
+    template <typename T, typename U>
+    concept same_as = requires(T const* t, U const* u)
+    {
+        {t = u, u = t};
+    };
+    #else  // c++17以下の機能を使い上記のコードと同じ機能を持つ実装
+
+    template <typename T, typename U>
+    inline constexpr bool same_as = std::is_same_t<T, U>;
+    #endif
+```
 ___
 
 __この章の構成__
@@ -8142,7 +8177,7 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
 ```cpp
     //  example/template_cpp17/is_same_ut.cpp 181
 
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
 
     template <typename T, typename U>
     concept same_as = requires(T const* t, U const* u)
@@ -8150,6 +8185,7 @@ SFINAEとクラステンプレートの特殊化を用いたis_same_sfinae_sの�
         {t = u, u = t};
     };
     #else  // c++17
+
     template <typename T, typename U>
     inline constexpr bool same_as = is_same_sfinae_s_v<T, U>;
     #endif
@@ -8158,7 +8194,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 下記のテストから明らかな通り、ほぼ同様に同様に使用することができる。
 
 ```cpp
-    //  example/template_cpp17/is_same_ut.cpp 195
+    //  example/template_cpp17/is_same_ut.cpp 196
 
     static_assert(!same_as<int, void>);
     static_assert(same_as<int, int>);
@@ -8169,9 +8205,10 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 「[is_same_s](#SS_4_3_3_3)」で紹介した特殊化のテクニックを下記のように使用することができる。
 
 ```cpp
-    //  example/template_cpp17/is_same_ut.cpp 202
+    //  example/template_cpp17/is_same_ut.cpp 203
 
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     template <typename T, typename U>
     struct is_same_concept_s : std::false_type {
     };
@@ -8181,6 +8218,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
     struct is_same_concept_s<T, U> : std::true_type {
     };
     #else  // c++17
+
     template <typename T, typename U, typename = void>
     struct is_same_concept_s : std::false_type {
     };
@@ -8201,7 +8239,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 すでに示したis_same_sを使用し、
 
 ```cpp
-    //  example/template_cpp17/is_same_ut.cpp 243
+    //  example/template_cpp17/is_same_ut.cpp 246
 
     static_assert(is_same_s_v<std::string, std::basic_string<char>>);
     static_assert(!is_same_s_v<std::string, std::basic_string<signed char>>);
@@ -8211,7 +8249,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 以下に示したコードのようにテンプレートテンプレートパラメータを使うことでも実装できる。
 
 ```cpp
-    //  example/template_cpp17/is_same_ut.cpp 231
+    //  example/template_cpp17/is_same_ut.cpp 234
 
     template <typename T, template <class...> class TEMPL, typename... ARGS>
     struct is_same_templ : is_same_sfinae_s<T, TEMPL<ARGS...>> {
@@ -8226,7 +8264,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 使用例を兼ねた単体テストは以下のようになる。
 
 ```cpp
-    //  example/template_cpp17/is_same_ut.cpp 248
+    //  example/template_cpp17/is_same_ut.cpp 251
 
     static_assert(is_same_templ_v<std::string, std::basic_string, char>);
     static_assert(!is_same_templ_v<std::string, std::basic_string, signed char>);
@@ -8235,7 +8273,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 これを応用したエイリアステンプレート
 
 ```cpp
-    //  example/template_cpp17/is_same_ut.cpp 255
+    //  example/template_cpp17/is_same_ut.cpp 258
 
     template <typename T>
     using gen_std_string = is_same_templ<std::string, std::basic_string, T>;
@@ -8247,7 +8285,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 は与えられたテンプレートパラメータがstd::stringを生成するかどうかを判定することができる。
 
 ```cpp
-    //  example/template_cpp17/is_same_ut.cpp 266
+    //  example/template_cpp17/is_same_ut.cpp 269
 
     static_assert(gen_std_string_v<char>);
     static_assert(!gen_std_string_v<signed char>);
@@ -8282,11 +8320,13 @@ IsSameSomeOfはこれまでの例とは少々異なり、
     };
     }  // namespace Inner_
 
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     // コンセプト: 複数の型のいずれかがTと同じかどうかをチェック
     template <typename T, typename U, typename... Us>
     concept SameAsSomeOf = (std::same_as<T, U> || (std::same_as<T, Us> || ...));
     #else  // c++17
+
     // コンセプトが使えない場合、上と同じ機能を持つ変数テンプレート
     template <typename T, typename U, typename... Us>
     constexpr bool SameAsSomeOf = Inner_::is_same_as_some_of_impl<T, U, Us...>::value;
@@ -8311,7 +8351,7 @@ Usが複数だった場合、[畳み込み式](--)を使用し上記の処理を
 単体テストは以下のようになる。
 
 ```cpp
-    //  example/template/nstd_type_traits_ut.cpp 14
+    //  example/template_cpp17/nstd_type_traits_ut.cpp 14
 
     static_assert(!Nstd::IsSameSomeOfV<int, int8_t, int16_t, uint16_t>);
     static_assert(Nstd::IsSameSomeOfV<int, int8_t, int16_t, uint16_t, int32_t>);
@@ -8335,7 +8375,7 @@ OneOfの実装にはシンプルに記述するための[畳み込み式](#SS_6_
 単体テストは以下のようになる。
 
 ```cpp
-    //  example/template/nstd_type_traits_ut.cpp 27
+    //  example/template_cpp17/nstd_type_traits_ut.cpp 29
 
     static_assert(!Nstd::OneOf<int, int8_t, int16_t, uint16_t>);
     static_assert(Nstd::OneOf<int, int8_t, int16_t, uint16_t, int32_t>);
@@ -8372,7 +8412,7 @@ std::is_convertible\<FROM, TO>は、
 AreConvertibleの実装は以下のようになる。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 53
+    //  example/h/nstd_type_traits.h 55
 
     namespace Nstd {
     namespace Inner_ {
@@ -8414,7 +8454,7 @@ AreConvertibleの実装は以下のようになる。
 単体テストは以下のようになる。
 
 ```cpp
-    //  example/template/nstd_type_traits_ut.cpp 40
+    //  example/template_cpp17/nstd_type_traits_ut.cpp 43
 
     static_assert(Nstd::AreConvertibleV<int, int8_t, int16_t, int>);
     static_assert(Nstd::AreConvertibleV<int, char, int, int>);
@@ -8434,7 +8474,7 @@ AreConvertibleWithoutNarrowConvに対しis_convertible_without_narrow_convが必
 SFINAEと関数テンプレート/関数のオーバーライドを使用し以下のように実装できる。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 87
+    //  example/h/nstd_type_traits.h 89
 
     namespace Nstd {
     namespace Inner_ {
@@ -8471,7 +8511,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 ことをSFINAEに利用している。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 97
+    //  example/h/nstd_type_traits.h 99
 
     // 縮小無しでFROMからTOへ変換可能な場合、*t = T{*u}はwell-formed
     // 上記ではない場合、*t = T{*u}はill-formed
@@ -8481,7 +8521,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 単体テストは以下のようになる。
 
 ```cpp
-    //  example/template/nstd_type_traits_ut.cpp 52
+    //  example/template_cpp17/nstd_type_traits_ut.cpp 55
 
     static_assert(Nstd::Inner_::is_convertible_without_narrow_conv_v<int, int>);
     static_assert(Nstd::Inner_::is_convertible_without_narrow_conv_v<int, int16_t>);
@@ -8494,7 +8534,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 の実装は以下のようになる。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 120
+    //  example/h/nstd_type_traits.h 122
 
     namespace Nstd {
     namespace Inner_ {
@@ -8531,7 +8571,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 単体テストは以下のようになる。
 
 ```cpp
-    //  example/template/nstd_type_traits_ut.cpp 60
+    //  example/template_cpp17/nstd_type_traits_ut.cpp 63
 
     static_assert(Nstd::AreConvertibleWithoutNarrowConvV<int, char, int16_t, uint16_t>);
     static_assert(!Nstd::AreConvertibleWithoutNarrowConvV<int, char, int16_t, uint32_t>);
@@ -8840,13 +8880,15 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
 ```cpp
     //  example/template_cpp17/exists_func_ut.cpp 138
 
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     template <typename T>  // C++20スタイル。concept/requiresによるSFINAEの回避
     concept exists_void_func_concept = requires(T& t)
     {
         { t.func() } -> std::same_as<void>;
     };
-    #else
+    #else  // c++17
+
     namespace Inner_ {
     template <typename T, typename = void>
     struct exists_void_func_impl : std::false_type {
@@ -8866,7 +8908,7 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
     #endif
 ```
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 170
+    //  example/template_cpp17/exists_func_ut.cpp 172
     static_assert(!exists_void_func_concept<decltype(int{})>);
     static_assert(exists_void_func_concept<decltype(X{})>);
     static_assert(!exists_void_func_concept<decltype(Y{})>);  // Y::funcの戻りはint
@@ -8880,7 +8922,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 で用いたパターンのメンバ関数を非メンバ関数に置き換えて使えば以下のようになる。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 180
+    //  example/template_cpp17/exists_func_ut.cpp 182
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8904,7 +8946,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記単体テストでは問題ないように見えるが、
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 196
+    //  example/template_cpp17/exists_func_ut.cpp 198
 
     static_assert(exists_begin_v<std::string>);
     static_assert(!exists_begin_v<int>);
@@ -8914,7 +8956,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記の単体テストはstatic_assertがフェールするためコンパイルできない。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 206
+    //  example/template_cpp17/exists_func_ut.cpp 208
 
     // 以下が問題
     static_assert(exists_begin_v<int[3]>);
@@ -8935,7 +8977,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記のように実装できることにも気付けるだろう。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 223
+    //  example/template_cpp17/exists_func_ut.cpp 225
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8969,7 +9011,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 と考えれば下記のような実装を思いつくだろう。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 163
+    //  example/h/nstd_type_traits.h 165
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8986,7 +9028,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 十分にシンプルなのでこれを採用し、exists_endも同様に実装する。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 176
+    //  example/h/nstd_type_traits.h 178
 
     template <typename, typename = void>
     struct exists_end : std::false_type {
@@ -9002,7 +9044,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 単体テストは下記のようになる。
 
 ```cpp
-    //  example/template/nstd_type_traits_ut.cpp 94
+    //  example/template_cpp17/nstd_type_traits_ut.cpp 97
 
     static_assert(exists_begin_v<std::string>);
     static_assert(!exists_begin_v<int>);
@@ -9029,7 +9071,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 IsRangeの実装は以下のようになる。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 190
+    //  example/h/nstd_type_traits.h 192
 
     template <typename T>
     struct IsRange : std::conditional_t<Inner_::exists_begin_v<T> && Inner_::exists_end_v<T>,
@@ -9044,7 +9086,7 @@ IsRangeの実装は以下のようになる。
 名前空間Inner\_で宣言している。
 
 ```cpp
-    //  example/template/nstd_type_traits_ut.cpp 113
+    //  example/template_cpp17/nstd_type_traits_ut.cpp 116
 
     static_assert(IsRangeV<std::string>);
     static_assert(!IsRangeV<int>);
@@ -9170,7 +9212,7 @@ std::ostreamのメンバ関数operator<<の戻り型はstd::ostream&であるた
 exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put to"と発音する)。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 259
+    //  example/template_cpp17/exists_func_ut.cpp 261
 
     template <typename, typename = std::ostream&>
     struct exists_put_to_as_member : std::false_type {
@@ -9210,7 +9252,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 ```
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 276
+    //  example/template_cpp17/exists_func_ut.cpp 278
 
     static_assert(exists_put_to_as_member_v<bool>);
     static_assert(!exists_put_to_as_member_v<std::string>);
@@ -9224,7 +9266,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 やや驚きなのは、上記の抜粋である下記コードがコンパイルできることである。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 285
+    //  example/template_cpp17/exists_func_ut.cpp 287
 
     static_assert(exists_put_to_as_member_v<test_class_not_exits_put_to[3]>);  // 驚き!
 ```
@@ -9242,7 +9284,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 exists_put_to_as_non_memberの実装は以下のようになる。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 294
+    //  example/template_cpp17/exists_func_ut.cpp 296
 
     template <typename, typename = std::ostream&>
     struct exists_put_to_as_non_member : std::false_type {
@@ -9266,7 +9308,7 @@ exists_put_to_as_non_memberの実装は以下のようになる。
 std::ostream << tができるかどうかを判断するExistsPutToの実装は以下のようになる。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 323
+    //  example/template_cpp17/exists_func_ut.cpp 325
 
     template <typename T>
     struct ExistsPutTo
@@ -9284,7 +9326,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 下記のように、もっとシンプルに実装できることに気づくだろう。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 205
+    //  example/h/nstd_type_traits.h 207
 
     namespace Nstd {
 
@@ -9305,7 +9347,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 単体テストは下記のようになる。
 
 ```cpp
-    //  example/template/nstd_type_traits_ut.cpp 124
+    //  example/template_cpp17/nstd_type_traits_ut.cpp 127
 
     static_assert(Nstd::ExistsPutToV<bool>);
     static_assert(Nstd::ExistsPutToV<std::string>);
@@ -9358,7 +9400,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 下記で示す通り、
 
 ```cpp
-    //  example/template/nstd_type_traits_ut.cpp 142
+    //  example/template_cpp17/nstd_type_traits_ut.cpp 145
 
     struct T {};
 
@@ -9671,7 +9713,7 @@ ValueTypeの最終的な単体テストのために上記を統合したテス�
 多少のメンバの追加や調整をした最終のコードを以下に示す。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 226
+    //  example/h/nstd_type_traits.h 228
 
     namespace Nstd {
     template <typename T, typename = void>  // ValueTypeのプライマリ
@@ -9687,7 +9729,8 @@ ValueTypeの最終的な単体テストのために上記を統合したテス�
         using type = type_n<Nest>;
     };
 
-    #if __cplusplus == 201703L  // c++17
+    #if __cplusplus <= 201703L  // c++17
+
     namespace Inner_ {
 
     template <typename T, size_t N>
@@ -9736,7 +9779,8 @@ ValueTypeの最終的な単体テストのために上記を統合したテス�
 
         using type = type_n<Nest>;
     };
-    #else
+    #else  // c++17
+
     template <typename T, size_t N>
     struct ValueType<T[N]> {  // 配列型の特殊化
         using type_direct = T;
@@ -10274,7 +10318,8 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
     //  example/template_cpp17/safe_index_put_to_ut.cpp 99
 
 
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     namespace Inner_ {
     template <typename T>
     concept not_safe_string = !std::is_same_v<T, Nstd::SafeString>;
@@ -10282,10 +10327,12 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
     #endif
 
     template <template <class...> class C, typename... Ts>
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) -> std::ostream& 
         requires Inner_::not_safe_string<Nstd::SafeIndex<C, Ts...>> // enable_ifによるSFINAEを避け、
-    #else
+    #else  // c++17
+
     auto operator<<(std::ostream& os, Nstd::SafeIndex<C, Ts...> const& safe_index) ->
         typename std::enable_if_t<    // safe_indexがSafeString型ならば、SFINAEにより非活性化
             !std::is_same_v<Nstd::SafeIndex<C, Ts...>, Nstd::SafeString>, std::ostream&>
@@ -10304,7 +10351,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 これにより先ほど問題が発生した単体テストも下記のようにパスする。
 
 ```cpp
-    //  example/template_cpp17/safe_index_put_to_ut.cpp 145
+    //  example/template_cpp17/safe_index_put_to_ut.cpp 148
 
     auto str = Nstd::SafeString{"hello"};
     auto oss = std::ostringstream{};
@@ -10851,8 +10898,10 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
         /// 以下比較演算子の定義
 
     #if __cplusplus >= 202002L  // C++20
+
         friend auto operator<=>(FixedPoint lhs, FixedPoint rhs) noexcept = default;
     #else  // C++17
+
         friend bool operator==(FixedPoint lhs, FixedPoint rhs) noexcept
         {
             return lhs.value_ == rhs.value_;
@@ -10934,7 +10983,7 @@ FixedPointの単体テストコードを以下に示す。
 使い勝手のよい環境をユーザに提供するべきである。
 
 ```cpp
-    //  example/template_cpp17/fixed_point.h 174
+    //  example/template_cpp17/fixed_point.h 176
 
     namespace Nstd {
     namespace fixed_point_literals {
@@ -10984,9 +11033,11 @@ FixedPointの単体テストコードを以下に示す。
     namespace Nstd {
     /// @brief ユーザー指定の型で分数を扱うためのクラス
     /// @tparam T 基本の整数型（デフォルトはint32_t）
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     template <std::signed_integral T = int32_t>
     #else
+
     template <typename T = int32_t>
     #endif
     class Rational {
@@ -11044,13 +11095,15 @@ FixedPointの単体テストコードを以下に示す。
         constexpr Rational operator+() const noexcept { return *this; }
         constexpr Rational operator-() const noexcept { return Rational{-value_.num, value_.deno}; }
         /// @brief 比較演算子の定義
-    #if __cplusplus == 202002L
+    #if __cplusplus >= 202002L  // c++20
+
         friend bool operator==(Rational const& lhs, Rational const& rhs) noexcept = default;
         friend auto operator<=>(Rational const& lhs, Rational const& rhs) noexcept
         {
             return (lhs.value_.num * rhs.value_.deno) <=> (rhs.value_.num * lhs.value_.deno);
         }
-    #else
+    #else  // c++17
+
         friend bool operator==(Rational const& lhs, Rational const& rhs) noexcept
         {
             return (lhs.value_.num * rhs.value_.deno) == (rhs.value_.num * lhs.value_.deno);
@@ -11079,11 +11132,12 @@ FixedPointの単体テストコードを以下に示す。
             return (rhs.value_.deno == 1) ? os << rhs.value_.num
                                           : os << rhs.value_.num << "/" << rhs.value_.deno;
         }
+
         /// @brief doubleへの変換演算子
         /// @brief doubleで表現可能な場合のみ利用可能
         template <typename U = T>
         explicit operator double() const noexcept
-    #if __cplusplus == 202002L
+    #if __cplusplus >= 202002L  // c++20
             requires std::is_convertible_v<U, double>
     #endif
         {
@@ -11094,9 +11148,12 @@ FixedPointの単体テストコードを以下に示す。
         struct rational_t {
             T num;
             T deno;
-    #if __cplusplus == 202002L
+
+    #if __cplusplus >= 202002  // c++20
+
             friend bool operator==(rational_t const& lhs, rational_t const& rhs) noexcept = default;
-    #else
+    #else  // c++17
+
             friend bool operator==(rational_t const& lhs, rational_t const& rhs) noexcept
             {
                 return lhs.num == rhs.num && lhs.deno == rhs.deno;
@@ -11150,7 +11207,7 @@ FixedPointの単体テストコードを以下に示す。
 [有理数クラス](#SS_4_5_4)に対して、有理数リテラルを定義するべきである。
 
 ```cpp
-    //  example/template_cpp17/rational.h 153
+    //  example/template_cpp17/rational.h 161
 
     namespace Nstd {
     /// @brief Rational<int32_t>をユーザ定義リテラルとして扱うためのオペレータ
@@ -12682,9 +12739,11 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     private:
         char const string_[N];
 
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
         template <Beginable T, size_t... I>
-    #else
+    #else  // c++17
+
         template <typename T, size_t... I>
     #endif
         // offsetは部分StaticString切り出しのため(TopStr, BottomStr)
@@ -12729,13 +12788,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 次にこのクラスにc++17用に`operator==`とc++20用に`operator<=>`を追加する。
 
 ```cpp
-    //  example/h/nstd_static_string.h 52
-    // operator==の実装のソースコードの、C++のバージョンごとに以下のように分かれている
-    #if __cplusplus == 201703L    // c++17
-    #elif __cplusplus == 202002L  // c++20
-    #else
-    static_assert(false, "c++ version not supported!");
-    #endif
+    //  example/h/nstd_static_string.h 54
 
     namespace Inner_ {
     template <size_t N>
@@ -12750,7 +12803,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     }
     }  // namespace Inner_
 
-    #if __cplusplus == 201703L  // c++17
+    #if __cplusplus <= 201703L  // c++17
     template <size_t N1, size_t N2>
     constexpr bool operator==(StaticString<N1> const&, StaticString<N2> const&) noexcept
     {
@@ -12798,7 +12851,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     {
         return !(lhs == rhs);
     }
-    #elif __cplusplus == 202002L  // c++20
+    #elif __cplusplus >= 202002L  // c++20
 
     // 以下、operator==とoperator!=を<=>に置き換え
     template <size_t N1, size_t N2>
@@ -12868,7 +12921,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 同様にoperator + を追加する。
 
 ```cpp
-    //  example/h/nstd_static_string.h 170
+    //  example/h/nstd_static_string.h 166
 
     namespace Inner_ {
     template <size_t N1, size_t... I1, size_t N2, size_t... I2>
@@ -12925,7 +12978,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 任意のサイズの文字列を切り出せるようにすることでStaticStringはより便利に使用できるようになる。
 
 ```cpp
-    //  example/h/nstd_static_string.h 201
+    //  example/h/nstd_static_string.h 197
 
     template <size_t SIZE, size_t N>  // StaticString<SiZE>の部分文字列生成
     constexpr auto TopStr(StaticString<N> ss) noexcept
@@ -13048,7 +13101,8 @@ Int2StaticString\<>()が得られる。
     /// @tparam E   std::exceptionから派生したエクセプションクラス
     /// @tparam N   StaticString<N>
     template <typename E, size_t N>
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     requires std::derived_from<E, std::exception>
     #endif
     class Exception : public E {
@@ -13066,18 +13120,20 @@ Int2StaticString\<>()が得られる。
 StaticStringと同様に、このままでは不便であるため、下記の関数を定義する。
 
 ```cpp
-    //  example/h/nstd_exception.h 33
+    //  example/h/nstd_exception.h 34
 
     namespace Inner_ {
     template <typename E, template <size_t> class STATIC_STR, size_t N>
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     requires std::derived_from<E, std::exception>
     #endif
     auto make_exception(STATIC_STR<N> exception_str) noexcept { return Exception<E, N>{exception_str}; }
     }  // namespace Inner_
 
     template <typename E, size_t LINE_NUM, size_t F_N, size_t M_N>
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     requires std::derived_from<E, std::exception>
     #endif
     auto MakeException(char const (&filename)[F_N], char const (&msg)[M_N]) noexcept
@@ -13111,7 +13167,7 @@ StaticStringと同様に、このままでは不便であるため、下記の�
 Exceptionクラスの利便性をさらに高めるため、下記の定義を行う。
 
 ```cpp
-    //  example/h/nstd_exception.h 55
+    //  example/h/nstd_exception.h 58
 
     #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
 ```
@@ -13288,12 +13344,17 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 やや意外だが、このようなテンプレートパラメータに特別な記法はなく、以下のようにすれば良い。
 
 ```cpp
-    //  h/scoped_guard.h 10
+    //  h/scoped_guard.h 7
 
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
-    #if __cplusplus == 202002L
+    #if __cplusplus >= 202002L   // c++20
+
     template <std::invocable F>  // Fが呼び出し可能であることを制約
+    #else  // c++17
+
+    template <typename F>
+    #endif
     class ScopedGuard {
     public:
         explicit ScopedGuard(F&& f) noexcept : f_{f}
@@ -13312,12 +13373,17 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 上記コードの抜粋である下記は、テンプレートパラメータを関数型に制約するためのものである。
 
 ```cpp
-    //  h/scoped_guard.h 10
+    //  h/scoped_guard.h 7
 
     /// @brief RAIIのためのクラス。コンストラクタ引数の関数オブジェクトをデストラクタから呼び出す
     ///
-    #if __cplusplus == 202002L
+    #if __cplusplus >= 202002L   // c++20
+
     template <std::invocable F>  // Fが呼び出し可能であることを制約
+    #else  // c++17
+
+    template <typename F>
+    #endif
 ```
 
 これがなければ、誤った型の関数型をテンプレートパラメータに指定できてしまう。
@@ -13419,7 +13485,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 これを回避するためには下記のような関数テンプレートを用意すればよい。
 
 ```cpp
-    //  h/scoped_guard.h 37
+    //  h/scoped_guard.h 38
 
     template <typename F>
     ScopedGuard<F> MakeScopedGuard(F&& f) noexcept
@@ -14079,7 +14145,8 @@ MPoolFixedの単体テストは、下記のようになる。
     /// @tparam E   std::exceptionから派生したエクセプションクラス
     /// @tparam N   StaticString<N>
     template <typename E, size_t N>
-    #if __cplusplus == 202002L  // c++20
+    #if __cplusplus >= 202002L  // c++20
+
     requires std::derived_from<E, std::exception>
     #endif
     class Exception : public E {
@@ -14857,13 +14924,13 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 
             Inner_::header_t const* operator*() noexcept { return header_; }
 
-        #if __cplusplus == 201703L
+        #if __cplusplus <= 201703L  // c++17
+
             bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
             bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
-        #elif __cplusplus == 202002L
+        #else  // c++20
+
             auto operator<=>(const const_iterator&) const = default;
-        #else
-            static_assert(false, "C++ version not supported!");
         #endif
 
         private:
@@ -17037,27 +17104,28 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
         uint32_t    age_;
     };
 
-    #if __cplusplus == 201703L
+    #if __cplusplus <= 201703L  // c++17
+
     bool operator==(Person const& lhs, Person const& rhs) noexcept
     {
         return std::tuple(lhs.GetName(), lhs.GetAge()) == std::tuple(rhs.GetName(), rhs.GetAge());
     }
-    #elif __cplusplus == 202002L
+    #else  // c++20
+
     auto operator<=>(Person const& lhs, Person const& rhs) noexcept
     {
         return std::tuple(lhs.GetName(), lhs.GetAge()) <=> std::tuple(rhs.GetName(), rhs.GetAge());
     }
-    // C++20では、<=>から自動的に==が生成されないため、明示的に定義する必要がある
+
+    // c++20では、<=>から自動的に==が生成されないため、明示的に定義する必要がある
     bool operator==(Person const& lhs, Person const& rhs) noexcept { return (lhs <=> rhs) == 0; }
-    #else
-    static_assert(false, "C++ version not supported!");
     #endif
 ```
 
 上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 40
+    //  example/term_explanation/implicit_conversion_ut.cpp 41
 
     void f(Person const& person) noexcept
     {
@@ -17073,7 +17141,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 54
+    //  example/term_explanation/implicit_conversion_ut.cpp 55
 
     void not_using_implicit_coversion()
     {
@@ -17084,7 +17152,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 66
+    //  example/term_explanation/implicit_conversion_ut.cpp 67
 
     auto otani = std::string{"Ohtani"};
 
@@ -17098,7 +17166,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 80
+    //  example/term_explanation/implicit_conversion_ut.cpp 81
 
     auto otani = Person{"Ohtani", 26};
 
@@ -17112,7 +17180,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 107
+    //  example/term_explanation/implicit_conversion_ut.cpp 108
 
     class Person {
     public:
@@ -21042,26 +21110,26 @@ C++17から、
 ```cpp
     //  example/term_explanation/template_ut.cpp 32
 
-template <typename T>
-struct is_void {
-    static constexpr bool value = false;
-};
+    template <typename T>
+    struct is_void {
+        static constexpr bool value = false;
+    };
 
-template <>
-struct is_void<void> {
-    static constexpr bool value = true;
-};
+    template <>
+    struct is_void<void> {
+        static constexpr bool value = true;
+    };
 
-static_assert(is_void<void>::value);
-static_assert(!is_void<int>::value);
-// 以上はC++14以前のスタイル
+    static_assert(is_void<void>::value);
+    static_assert(!is_void<int>::value);
+    // 以上はC++14以前のスタイル
 
-// 以下はC++17から導入された
-template <typename T>
-constexpr bool is_void_v = is_void<T>::value;
+    // 以下はC++17から導入された
+    template <typename T>
+    constexpr bool is_void_v = is_void<T>::value;
 
-static_assert(is_void_v<void>);
-static_assert(!is_void_v<int>);
+    static_assert(is_void_v<void>);
+    static_assert(!is_void_v<int>);
 ```
 
 なお、変数テンプレートはconstexprと定義されるが、

@@ -115,8 +115,10 @@ private:
     /// 以下比較演算子の定義
 
 #if __cplusplus >= 202002L  // C++20
+
     friend auto operator<=>(FixedPoint lhs, FixedPoint rhs) noexcept = default;
 #else  // C++17
+
     friend bool operator==(FixedPoint lhs, FixedPoint rhs) noexcept
     {
         return lhs.value_ == rhs.value_;

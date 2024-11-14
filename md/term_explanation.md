@@ -2694,7 +2694,7 @@ C++17から、
 変数テンプレートとは、下記のコード示したような機能である。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp #1:0 begin -1
+    // @@@ example/term_explanation/template_ut.cpp #1:0 begin
 ```
 
 なお、変数テンプレートはconstexprと定義されるが、

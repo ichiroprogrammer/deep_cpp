@@ -22,7 +22,8 @@ extern std::vector<std::string> find_files_recursively(std::string const& path,
 // @@@ sample end
 // @@@ sample begin 1:0
 
-#if __cplusplus == 202002L  // c++20
+#if __cplusplus >= 202002L  // c++20
+
 // ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
 // clang-format off
 namespace Inner_ {
@@ -38,7 +39,9 @@ template <Inner_::find_condition F>
 auto find_files_recursively2(std::string const& path, F condition)
     -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>,
                         std::vector<std::string>>
+
 #else  // c++17
+
 template <typename F>  // Fはファンクタ
 auto find_files_recursively2(std::string const& path, F&& condition) -> std::vector<std::string>
 #endif

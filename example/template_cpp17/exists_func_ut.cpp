@@ -137,7 +137,8 @@ TEST(Template, exists_void_func_sfinae_s2)
 
 // @@@ sample begin 2:4
 
-#if __cplusplus == 202002L  // c++20
+#if __cplusplus >= 202002L  // c++20
+
 // clang-format off
 template <typename T>  // C++20スタイル。concept/requiresによるSFINAEの回避
 concept exists_void_func_concept = requires(T& t)
@@ -145,7 +146,8 @@ concept exists_void_func_concept = requires(T& t)
     { t.func() } -> std::same_as<void>;
 };
 // clang-format on
-#else
+#else  // c++17
+
 namespace Inner_ {
 template <typename T, typename = void>
 struct exists_void_func_impl : std::false_type {

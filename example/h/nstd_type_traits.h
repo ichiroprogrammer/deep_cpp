@@ -27,11 +27,13 @@ struct is_same_as_some_of_impl<T, U> {
 };
 }  // namespace Inner_
 
-#if __cplusplus == 202002L  // c++20
+#if __cplusplus >= 202002L  // c++20
+
 // コンセプト: 複数の型のいずれかがTと同じかどうかをチェック
 template <typename T, typename U, typename... Us>
 concept SameAsSomeOf = (std::same_as<T, U> || (std::same_as<T, Us> || ...));
 #else  // c++17
+
 // コンセプトが使えない場合、上と同じ機能を持つ変数テンプレート
 template <typename T, typename U, typename... Us>
 constexpr bool SameAsSomeOf = Inner_::is_same_as_some_of_impl<T, U, Us...>::value;
@@ -239,7 +241,8 @@ struct ValueType {
     using type = type_n<Nest>;
 };
 
-#if __cplusplus == 201703L  // c++17
+#if __cplusplus <= 201703L  // c++17
+
 namespace Inner_ {
 
 template <typename T, size_t N>
@@ -288,7 +291,8 @@ struct ValueType<T, typename std::enable_if_t<Inner_::array_or_container_v<T>>> 
 
     using type = type_n<Nest>;
 };
-#else
+#else  // c++17
+
 template <typename T, size_t N>
 struct ValueType<T[N]> {  // 配列型の特殊化
     using type_direct = T;

@@ -12,9 +12,11 @@
 namespace Nstd {
 /// @brief ユーザー指定の型で分数を扱うためのクラス
 /// @tparam T 基本の整数型（デフォルトはint32_t）
-#if __cplusplus == 202002L  // c++20
+#if __cplusplus >= 202002L  // c++20
+
 template <std::signed_integral T = int32_t>
 #else
+
 template <typename T = int32_t>
 #endif
 class Rational {
@@ -72,13 +74,15 @@ public:
     constexpr Rational operator+() const noexcept { return *this; }
     constexpr Rational operator-() const noexcept { return Rational{-value_.num, value_.deno}; }
     /// @brief 比較演算子の定義
-#if __cplusplus == 202002L
+#if __cplusplus >= 202002L  // c++20
+
     friend bool operator==(Rational const& lhs, Rational const& rhs) noexcept = default;
     friend auto operator<=>(Rational const& lhs, Rational const& rhs) noexcept
     {
         return (lhs.value_.num * rhs.value_.deno) <=> (rhs.value_.num * lhs.value_.deno);
     }
-#else
+#else  // c++17
+
     friend bool operator==(Rational const& lhs, Rational const& rhs) noexcept
     {
         return (lhs.value_.num * rhs.value_.deno) == (rhs.value_.num * lhs.value_.deno);
@@ -107,11 +111,12 @@ public:
         return (rhs.value_.deno == 1) ? os << rhs.value_.num
                                       : os << rhs.value_.num << "/" << rhs.value_.deno;
     }
+
     /// @brief doubleへの変換演算子
     /// @brief doubleで表現可能な場合のみ利用可能
     template <typename U = T>
     explicit operator double() const noexcept
-#if __cplusplus == 202002L
+#if __cplusplus >= 202002L  // c++20
         requires std::is_convertible_v<U, double>
 #endif
     {
@@ -122,9 +127,12 @@ private:
     struct rational_t {
         T num;
         T deno;
-#if __cplusplus == 202002L
+
+#if __cplusplus >= 202002  // c++20
+
         friend bool operator==(rational_t const& lhs, rational_t const& rhs) noexcept = default;
-#else
+#else  // c++17
+
         friend bool operator==(rational_t const& lhs, rational_t const& rhs) noexcept
         {
             return lhs.num == rhs.num && lhs.deno == rhs.deno;
