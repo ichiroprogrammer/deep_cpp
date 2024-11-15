@@ -6,8 +6,10 @@ else
 CC=clang
 endif
 
-O:=$(CXX)/
-D:=d/
+OBJDIR ?= obj/
+
+O:=$(OBJDIR)$(CXX)/
+D:=$(OBJDIR)d/
 
 EXE_NODIR=example.exe
 EXE:=$(addprefix $(O),$(EXE_NODIR))
@@ -26,6 +28,6 @@ endif
 GTEST_DIR_ABSOLUTE=$(shell cd $(GTEST_DIR); pwd)
 
 GTEST_INC:=$(GTEST_DIR)include/
-GTEST_BIN_DIR:=../gtest/$(O)
+GTEST_BIN_DIR:=$(O)
 GTEST_LIB:=$(GTEST_BIN_DIR)libgtest.a
 

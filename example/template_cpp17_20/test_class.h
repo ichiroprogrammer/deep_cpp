@@ -1,1 +1,0 @@
-../template_cpp17/test_class.h

@@ -3,6 +3,7 @@ SRCS:=\
     co_await_ut.cpp co_yield_ut.cpp  explicit_ut.cpp enum_ut.cpp const_xxx_ut.cpp \
     if_switch_init_ut.cpp
 
+OBJDIR:= obj20/
 CPP_VER = c++20
 SHARED:=../../
 include $(SHARED)make/env.mk

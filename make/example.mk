@@ -99,7 +99,9 @@ cov: $(O)cov.lcov
 	genhtml $(O)cov.lcov -o $(O)coverage
 	@rm -rf $(O)cov.lcov $(O)cov1.lcov $(O)cov2.lcov
 
-CLEAN_DIRS=d/ g++/ clang++/ sanitizer/ scan-build/
+CLEAN_DIRS:=d/ g++/ clang++/ sanitizer/ scan-build/
+CLEAN_DIRS:=$(addprefix $(OBJDIR), $(CLEAN_DIRS))
+
 .PHONY : clean clean_gtest
 clean:
 	rm -f $$(find $(CLEAN_DIRS) -type f ! -name ".gitignore")
@@ -107,7 +109,7 @@ clean:
 clean_gtest:
 	rm -f $$(find $(addprefix ../gtest/,$(CLEAN_DIRS)) -type f ! -name ".gitignore")
 
-SCAN_BUILD_DIR=scan-build/
+SCAN_BUILD_DIR=$(OBJDIR)scan-build/
 
 %can-build: force_scan-build
 	scan-build -o $(SCAN_BUILD_DIR) $(MAKE) O=$(SCAN_BUILD_DIR) \
@@ -120,11 +122,11 @@ force_scan-build: ;
 SANITIZER_NORMAL:=address,leak,undefined,float-divide-by-zero,float-cast-overflow
 .PHONY : san
 san:
-	$(MAKE) SANITIZER=\"-fsanitize=$(SANITIZER_NORMAL)\" O=sanitizer/
+	$(MAKE) SANITIZER=\"-fsanitize=$(SANITIZER_NORMAL)\" O=$(OBJDIR)sanitizer/
 
 %an-ut:
 	$(MAKE) san
-	$(MAKE) O=sanitizer/ ut
+	$(MAKE) O=$(OBJDIR)sanitizer/ ut
 fource_san-ut: ;
 
 .PHONY : clang clang-ut

@@ -1,1 +1,0 @@
-../template_cpp17/safe_index_put_to_ut.cpp
