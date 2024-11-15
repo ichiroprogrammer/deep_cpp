@@ -16160,7 +16160,7 @@ sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24で�
 g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
 
 ```cpp
-    //  example/term_explanation/Makefile 24
+    //  example/term_explanation/Makefile 28
 
     CCFLAGS_ADD:=-fdump-lang-class
 ```
@@ -18100,7 +18100,7 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 C++11から導入された導入されたリテラル。
 
 ```cpp
-    //  example/term_explanation_cpp20/literal_ut.cpp 15
+    //  example/term_explanation/literal_ut.cpp 15
 
         std::regex raw_re{R"(\d+)"};  // 生文字リテラルで正規表現パターン。\のエスケープが不要
         std::regex normal_re{"(\\d+)"};  // 生文字リテラルで正規表現パターン。\のエスケープが必要
@@ -18123,7 +18123,7 @@ C++11から導入された導入されたリテラル。
 C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
 
 ```cpp
-    //  example/term_explanation_cpp20/literal_ut.cpp 36
+    //  example/term_explanation/literal_ut.cpp 36
 
     int bin_value = 0b1101;  // 2進数リテラル  2進数1101 は10進数で 13
     ASSERT_EQ(bin_value, 13);
@@ -18133,7 +18133,7 @@ C++14以降では、0bまたは 0B をプレフィックスとして使うこと
 C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
 
 ```cpp
-    //  example/term_explanation_cpp20/literal_ut.cpp 42
+    //  example/term_explanation/literal_ut.cpp 42
 
     // 区切り文字を使った数値リテラル
     int large_number = 1'000'000;  // 10進数は3桁で区切るとわかりやすい
@@ -18154,19 +18154,27 @@ C++14では区切り文字'を使用し、数値リテラルを記述できる�
 * char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
 
 ```cpp
-    //  example/term_explanation_cpp20/literal_ut.cpp 58
+        //  example/term_explanation/literal_ut.cpp 59
 
-    // UTF-16 文字列リテラル（uプレフィックスを使用）
-    char16_t       utf16_str[]  = u"こんにちは";
-    std::u16string utf16_string = u"こんにちは";  // UTF-16 std::u16string 型
+        // UTF-16 文字列リテラル（uプレフィックスを使用）
+        char16_t       utf16_str[]  = u"こんにちは";
+        std::u16string utf16_string = u"こんにちは";  // UTF-16 std::u16string 型
 
-    // UTF-32 文字列リテラル（Uプレフィックスを使用）
-    char32_t       utf32_str[]  = U"こんにちは";
-    std::u32string utf32_string = U"こんにちは";  // UTF-32 std::u32string 型
+        // UTF-32 文字列リテラル（Uプレフィックスを使用）
+        char32_t       utf32_str[]  = U"こんにちは";
+        std::u32string utf32_string = U"こんにちは";  // UTF-32 std::u32string 型
 
-    // UTF-8 文字列リテラル（u8プレフィックスを使用）
-    const char8_t* utf8_str    = u8"こんにちは";
-    std::u8string  utf8_string = u8"こんにちは";  // UTF-8 std::string 型
+    #if __cplusplus >= 202002L  // c++20
+
+        // UTF-8 文字列リテラル（u8プレフィックスを使用）
+        const char8_t* utf8_str    = u8"こんにちは";
+        std::u8string  utf8_string = u8"こんにちは";  // UTF-8 std::string 型
+    #else // c++17
+
+        // UTF-8 文字列リテラル（u8プレフィックスを使用）
+        const char* utf8_str    = "こんにちは";
+        std::string utf8_string = "こんにちは";  // UTF-8 std::string 型
+    #endif
 ```
 
 ### 16進浮動小数点数リテラル <a id="SS_6_6_5"></a>
@@ -18197,7 +18205,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ```
 
 ```cpp
-    //  example/term_explanation_cpp20/literal_ut.cpp 78
+    //  example/term_explanation/literal_ut.cpp 88
 
     // float型
     float hex_float = 0x1.2p3;
@@ -18264,7 +18272,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 std::chronoのリテラルは以下のコードのように使用できる。
 
 ```cpp
-    //  example/term_explanation_cpp20/literal_ut.cpp 100
+    //  example/term_explanation/literal_ut.cpp 110
 
     using namespace std::chrono_literals;
 
@@ -18281,7 +18289,7 @@ std::chronoのリテラルは以下のコードのように使用できる。
 std::complexリテラル以下のコードのように使用できる。
 
 ```cpp
-    //  example/term_explanation_cpp20/literal_ut.cpp 115
+    //  example/term_explanation/literal_ut.cpp 125
 
     using namespace std::complex_literals;  // 複素数リテラルを使うための名前空間
 
@@ -20793,7 +20801,7 @@ C++20から導入された「コンセプト(concepts)」は、
   テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
 
 ```cpp
-    //  example/term_explanation_cpp20/concept_ut.cpp 11
+    //  example/term_explanation/concept_ut.cpp 12
 
     // SFINAEを使用したC++17スタイル
     template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value>::type>
@@ -20802,7 +20810,7 @@ C++20から導入された「コンセプト(concepts)」は、
         return a + b;
     }
 
-    //  example/term_explanation_cpp20/concept_ut.cpp 23
+    //  example/term_explanation/concept_ut.cpp 24
 
     ASSERT_EQ(add(10, 20), 30);     // int型
     ASSERT_EQ(add(1.5, 2.5), 4.0);  // double型
@@ -20823,7 +20831,7 @@ C++20から導入された「コンセプト(concepts)」は、
 ```
 
 ```cpp
-    //  example/term_explanation_cpp20/concept_ut.cpp 47
+    //  example/term_explanation/concept_ut.cpp 49
 
     // コンセプトを使用したC++20スタイル
     template <typename T>
@@ -20835,7 +20843,7 @@ C++20から導入された「コンセプト(concepts)」は、
         return a + b;
     }
 
-    //  example/term_explanation_cpp20/concept_ut.cpp 62
+    //  example/term_explanation/concept_ut.cpp 64
 
     ASSERT_EQ(add(10, 20), 30);     // int型
     ASSERT_EQ(add(1.5, 2.5), 4.0);  // double型
@@ -20854,7 +20862,7 @@ C++20から導入された「コンセプト(concepts)」は、
 以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
 
 ```cpp
-    //  example/term_explanation_cpp20/concept_ut.cpp 81
+    //  example/term_explanation/concept_ut.cpp 85
 
     // 制約のためにstatic_assertを使用したC++17スタイル
     template <typename FLOAT_0, typename FLOAT_1>
@@ -20870,7 +20878,7 @@ C++20から導入された「コンセプト(concepts)」は、
 以上の関数テンプレートをコンセプトを使用して改善した例である。
 
 ```cpp
-    //  example/term_explanation_cpp20/concept_ut.cpp 108
+    //  example/term_explanation/concept_ut.cpp 113
 
     // 標準コンセプト std::floating_point と std::same_as を使用
     template <std::floating_point FLOAT_0, std::same_as<FLOAT_0> FLOAT_1>
@@ -20883,7 +20891,9 @@ C++20から導入された「コンセプト(concepts)」は、
 フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
 
 ```cpp
-    //  example/term_explanation_cpp20/concept_ut.cpp 132
+    //  example/term_explanation/concept_ut.cpp 138
+
+    #if __cplusplus >= 202002L  // c++20
 
     // requiresを使った関数テンプレートの制約
     template <typename FLOAT_0, typename FLOAT_1>
@@ -20892,6 +20902,15 @@ C++20から導入された「コンセプト(concepts)」は、
     {
         return std::abs(lhs - rhs) <= std::numeric_limits<FLOAT_0>::epsilon();
     }
+    #else  // c++17
+
+    template <typename FLOAT_0, typename FLOAT_1>
+    bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
+    {
+        static_assert(std::is_same_v<FLOAT_0, FLOAT_1>);
+        return std::abs(lhs - rhs) <= std::numeric_limits<FLOAT_0>::epsilon();
+    }
+    #endif
 
 ```
 
@@ -21315,12 +21334,24 @@ constexpr ifを使用することで、やや単純に記述できる。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 181
+    //  example/term_explanation/decltype_ut.cpp 182
 
-    auto add(auto lhs, auto rhs) { return lhs + rhs; }
+    #if __cplusplus >= 202002L  // C++20 以降
+
+    auto add(auto lhs, auto rhs) { 
+        return lhs + rhs; 
+    }
+    #else  // C++17
+
+    template <typename T, typename U>
+    auto add(T lhs, U rhs)
+    {
+        return lhs + rhs;
+    }
+    #endif
 ```
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 188
+    //  example/term_explanation/decltype_ut.cpp 202
 
     ASSERT_EQ(add(1, 2), 3);
 
@@ -21608,7 +21639,7 @@ decltypeはオペランドに[expression](#SS_6_13_1)を取り、その型を算
 下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
 
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 13
+    //  example/term_explanation/decltype_ut.cpp 13
 
     int32_t  x{3};
     int32_t& r{x};
@@ -21627,7 +21658,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
 下記例のような場合にも有用である。
 
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 28
+    //  example/term_explanation/decltype_ut.cpp 28
 
     //  本来ならばA::dataは、
     //      * A::Aでメモリ割り当て
@@ -21664,7 +21695,7 @@ decltype(auto)はC++14から導入されたdecltypeの類似機能である。
 auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
 
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 63
+    //  example/term_explanation/decltype_ut.cpp 63
 
     int32_t  x{3};
     int32_t& r{x};
@@ -21686,7 +21717,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 コード例を以下に示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 82
+    //  example/term_explanation/decltype_ut.cpp 82
 
     template <typename T, typename U>
     auto add(T a, U b) -> decltype(a + b)
@@ -21703,7 +21734,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 この構文をC++11から導入された理由は以下のコードを見れば明らかだろう。
 
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 97
+    //  example/term_explanation/decltype_ut.cpp 97
 
     template <typename T, typename U>  // 戻り値型を後置する関数宣言
     decltype(std::declval<T>() + std::declval<T>()) add(T a, U b)
@@ -21724,7 +21755,7 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
 (「[autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_9)」を参照)。
 
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 114
+    //  example/term_explanation/decltype_ut.cpp 114
 
     // 戻り値型autoが使えないと下記のような宣言が必要
     // std::vector<std::string> split(std::string_view str, char delimiter)
@@ -21752,7 +21783,7 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
     }
 ```
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 144
+    //  example/term_explanation/decltype_ut.cpp 144
 
     auto result = split("hello,world", ',');
 
@@ -21767,14 +21798,14 @@ C++14から導入された[関数の戻り値型auto](#SS_6_11_5)と似た、
 autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
 
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 154
+    //  example/term_explanation/decltype_ut.cpp 154
 
     int16_t gvalue = 1;
 
     auto getValue(int16_t a) -> auto& { return gvalue += a; }
 ```
 ```cpp
-    //  example/term_explanation_cpp20/decltype_ut.cpp 163
+    //  example/term_explanation/decltype_ut.cpp 163
 
     auto           ret1 = getValue(10);
     decltype(auto) ret2 = getValue(0);

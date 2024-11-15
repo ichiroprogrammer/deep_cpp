@@ -1,3 +1,5 @@
+SRCS20:=literal_ut.cpp decltype_ut.cpp concept_ut.cpp
+
 SRCS:=\
     aaa.cpp argument.cpp class_layout_ut.cpp constructor_ut.cpp \
 	deep_shallow_copy_ut.cpp func_try_block.cpp interface_class.cpp flold_expression_ut.cpp \
@@ -15,6 +17,8 @@ SRCS:=\
 	attr_ut.cpp aliging_ut.cpp if_switch_init_ut.cpp \
 	template_ut.cpp noexcept_ut.cpp \
 	float_ut.cpp undefined_ut.cpp etc_ut.cpp transient_lambda_ut.cpp
+
+SRCS+=$(SRCS20)
 
 CPP_VER = c++17
 SHARED:=../../

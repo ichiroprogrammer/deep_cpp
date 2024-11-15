@@ -55,6 +55,7 @@ TEST(ExpTerm, binary_literal)
 
 TEST(ExpTerm, wide_string)
 {
+    // clang-format off
     // @@@ sample begin 3:0
 
     // UTF-16 文字列リテラル（uプレフィックスを使用）
@@ -65,10 +66,19 @@ TEST(ExpTerm, wide_string)
     char32_t       utf32_str[]  = U"こんにちは";
     std::u32string utf32_string = U"こんにちは";  // UTF-32 std::u32string 型
 
+#if __cplusplus >= 202002L  // c++20
+
     // UTF-8 文字列リテラル（u8プレフィックスを使用）
     const char8_t* utf8_str    = u8"こんにちは";
     std::u8string  utf8_string = u8"こんにちは";  // UTF-8 std::string 型
+#else // c++17
+
+    // UTF-8 文字列リテラル（u8プレフィックスを使用）
+    const char* utf8_str    = "こんにちは";
+    std::string utf8_string = "こんにちは";  // UTF-8 std::string 型
+#endif
     // @@@ sample end
+    // clang-format on
 
     IGNORE_UNUSED_VAR(utf16_str, utf16_string, utf32_str, utf32_str, utf8_string, utf8_str);
 }

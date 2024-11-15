@@ -178,10 +178,24 @@ TEST(Decltype, return_auto2)
     ASSERT_EQ(ret1, 12);
 }
 
+// clang-format off
 // @@@ sample begin 4:0
 
-auto add(auto lhs, auto rhs) { return lhs + rhs; }
+#if __cplusplus >= 202002L  // C++20 以降
+
+auto add(auto lhs, auto rhs) { 
+    return lhs + rhs; 
+}
+#else  // C++17
+
+template <typename T, typename U>
+auto add(T lhs, U rhs)
+{
+    return lhs + rhs;
+}
+#endif
 // @@@ sample end
+// clang-format on
 
 TEST(Decltype, eazy_template)
 {

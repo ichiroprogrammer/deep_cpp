@@ -7,6 +7,7 @@
 
 namespace {
 
+#if __cplusplus <= 201703L  // c++17
 namespace old_style {
 // @@@ sample begin 0:0
 
@@ -41,6 +42,7 @@ TEST(ExpTerm, concept)
     // @@@ sample end
 }
 }  // namespace old_style
+#else  // c++20
 
 namespace new_style {
 
@@ -76,7 +78,9 @@ TEST(ExpTerm, concept)
     // @@@ sample end
 }
 }  // namespace new_style
+#endif
 
+#if __cplusplus <= 201703L  // c++17
 namespace old_style {
 // @@@ sample begin 2:0
 
@@ -102,6 +106,7 @@ TEST(ExpTerm, use_static_assert)
     ASSERT_TRUE(is_equal(0.05F, a + b));  // OK リテラルに型を指定して、引数の型を統一
 }
 }  // namespace old_style
+#else  // c++20
 
 namespace new_style {
 
@@ -126,10 +131,13 @@ TEST(ExpTerm, use_concept)
     ASSERT_TRUE(is_equal(0.05F, a + b));  // OK リテラルに型を指定して、引数の型を統一
 }
 }  // namespace new_style
+#endif
 
 namespace new_style2 {
 
 // @@@ sample begin 4:0
+
+#if __cplusplus >= 202002L  // c++20
 
 // requiresを使った関数テンプレートの制約
 template <typename FLOAT_0, typename FLOAT_1>
@@ -138,6 +146,15 @@ bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
 {
     return std::abs(lhs - rhs) <= std::numeric_limits<FLOAT_0>::epsilon();
 }
+#else  // c++17
+
+template <typename FLOAT_0, typename FLOAT_1>
+bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
+{
+    static_assert(std::is_same_v<FLOAT_0, FLOAT_1>);
+    return std::abs(lhs - rhs) <= std::numeric_limits<FLOAT_0>::epsilon();
+}
+#endif
 
 // @@@ sample end
 

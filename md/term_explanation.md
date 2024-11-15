@@ -1392,21 +1392,21 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 C++11から導入された導入されたリテラル。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/literal_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/literal_ut.cpp #0:0 begin
 ```
 
 ### 2進数リテラル
 C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/literal_ut.cpp #1:0 begin -1
+    // @@@ example/term_explanation/literal_ut.cpp #1:0 begin -1
 ```
 
 ### 数値リテラル
 C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/literal_ut.cpp #2:0 begin -1
+    // @@@ example/term_explanation/literal_ut.cpp #2:0 begin -1
 ```
 
 ### ワイド文字列
@@ -1417,7 +1417,7 @@ C++14では区切り文字'を使用し、数値リテラルを記述できる�
 * char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/literal_ut.cpp #3:0 begin -1
+        // @@@ example/term_explanation/literal_ut.cpp #3:0 begin -1
 ```
 
 ### 16進浮動小数点数リテラル
@@ -1448,7 +1448,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ```
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/literal_ut.cpp #4:0 begin -1
+    // @@@ example/term_explanation/literal_ut.cpp #4:0 begin -1
 ```
 
 ### ユーザー定義リテラル
@@ -1475,14 +1475,14 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 std::chronoのリテラルは以下のコードのように使用できる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/literal_ut.cpp #5:0 begin
+    // @@@ example/term_explanation/literal_ut.cpp #5:0 begin
 ```
 
 #### std::complexリテラル
 std::complexリテラル以下のコードのように使用できる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/literal_ut.cpp #6:0 begin -1
+    // @@@ example/term_explanation/literal_ut.cpp #6:0 begin -1
 ```
 
 ### ==演算子
@@ -2584,33 +2584,33 @@ C++20から導入された「コンセプト(concepts)」は、
   テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/concept_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/concept_ut.cpp #0:0 begin
 
-    // @@@ example/term_explanation_cpp20/concept_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation/concept_ut.cpp #0:1 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/concept_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/concept_ut.cpp #1:0 begin
 
-    // @@@ example/term_explanation_cpp20/concept_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation/concept_ut.cpp #1:1 begin -1
 ```
 
 以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/concept_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/concept_ut.cpp #2:0 begin
 ```
 
 以上の関数テンプレートをコンセプトを使用して改善した例である。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/concept_ut.cpp #3:0 begin
+    // @@@ example/term_explanation/concept_ut.cpp #3:0 begin
 ```
 
 フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/concept_ut.cpp #4:0 begin
+    // @@@ example/term_explanation/concept_ut.cpp #4:0 begin
 ```
 
 ### 畳み込み式
@@ -2759,10 +2759,10 @@ constexpr ifを使用することで、やや単純に記述できる。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #4:0 begin
+    // @@@ example/term_explanation/decltype_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #4:1 begin -1
+    // @@@ example/term_explanation/decltype_ut.cpp #4:1 begin -1
 ```
 
 
@@ -2849,7 +2849,7 @@ decltypeはオペランドに[expression](---)を取り、その型を算出す�
 下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #0:0 begin -1
+    // @@@ example/term_explanation/decltype_ut.cpp #0:0 begin -1
 ```
 
 decltypeは、テンプレートプログラミングに多用されるが、
@@ -2858,7 +2858,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
 下記例のような場合にも有用である。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #0:1 begin
+    // @@@ example/term_explanation/decltype_ut.cpp #0:1 begin
 ```
 
 ### decltype(auto)
@@ -2867,7 +2867,7 @@ decltype(auto)はC++14から導入されたdecltypeの類似機能である。
 auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #0:2 begin -1
+    // @@@ example/term_explanation/decltype_ut.cpp #0:2 begin -1
 ```
 
 ### 戻り値型を後置する関数宣言
@@ -2876,13 +2876,13 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 コード例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/decltype_ut.cpp #1:0 begin
 ```
 
 この構文をC++11から導入された理由は以下のコードを見れば明らかだろう。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #1:1 begin
+    // @@@ example/term_explanation/decltype_ut.cpp #1:1 begin
 ```
 
 ### 関数の戻り値型auto
@@ -2892,10 +2892,10 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
 (「[autoパラメータによる関数テンプレートの簡易定義](---)」を参照)。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/decltype_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #2:1 begin -1
+    // @@@ example/term_explanation/decltype_ut.cpp #2:1 begin -1
 ```
 
 ### 後置戻り値型auto
@@ -2904,10 +2904,10 @@ C++14から導入された[関数の戻り値型auto](---)と似た、
 autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #3:0 begin
+    // @@@ example/term_explanation/decltype_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/decltype_ut.cpp #3:1 begin -1
+    // @@@ example/term_explanation/decltype_ut.cpp #3:1 begin -1
 ```
 
 
