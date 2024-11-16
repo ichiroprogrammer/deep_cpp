@@ -169,11 +169,12 @@ struct S {
 #else  // C++17
 
     // T が整数型でない場合に有効なコンストラクタ
-    template <typename U = T, typename std::enable_if_t<!std::is_integral_v<U>, int> = 0>
+    template <typename U = T, std::enable_if_t<!std::is_integral_v<U>>* = nullptr>
     explicit S(U x) : value{x} { }
 
     // T が整数型の場合に有効な非explicitコンストラクタ
-    template <typename U = T, typename std::enable_if_t<std::is_integral_v<U>, int> = 0>
+    // T が整数型の場合に有効な非explicitコンストラクタ
+    template <typename U = T, std::enable_if_t<std::is_integral_v<U>>* = nullptr>
     S(U x) : value{x} { }
 #endif
 
@@ -211,11 +212,11 @@ struct Optional {
 #else  // C++17
 
     // Tがnullptr_tではない場合に有効なコンストラクタ
-    template <typename U = T, std::enable_if_t<!std::is_same_v<U, std::nullptr_t>, int> = 0>
+    template <typename U = T, std::enable_if_t<!std::is_same_v<U, std::nullptr_t>>* = nullptr>
     Optional(const U& value) : has_value_(true), value_(value) { }
 
     // Tがnullptr_tの場合に有効なexplicitコンストラクタ
-    template <typename U = T, std::enable_if_t<std::is_same_v<U, std::nullptr_t>, int> = 0>
+    template <typename U = T, std::enable_if_t<std::is_same_v<U, std::nullptr_t>>* = nullptr>
     explicit Optional(const U& value) : has_value_(false), value_(value) { }
 #endif
 

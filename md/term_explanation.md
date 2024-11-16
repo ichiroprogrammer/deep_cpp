@@ -775,7 +775,7 @@ C++03までのコンパイラに、
 
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #0:0 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #0:0 begin -1
 ```
 
 ## constexpr
@@ -800,10 +800,10 @@ C++11以前で定数を定義する方法は、
 こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #1:1 begin -1
 ```
 
 constexpr定数がif文のオカレンスになる場合、[constexpr if文](---)することで、
@@ -818,10 +818,10 @@ constexpr関数の呼び出し式の値がコンパイル時に確定する場�
 通常の関数呼び出しと同じになる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #2:1 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #2:1 begin -1
 ```
 
 C++11の規約では、constexpr関数の制約は厳しく、
@@ -829,13 +829,13 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #5:0 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #5:0 begin
 ```
 このため、可読性、保守性があったため、C++14で制約が緩和され、
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #5:1 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #5:1 begin
 ```
 
 ### コア定数式
@@ -882,10 +882,10 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
 以下にリテラル型を例示する。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #3:0 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #3:1 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #3:1 begin -1
 ```
 
 ### constexprインスタンス
@@ -894,10 +894,10 @@ constexprインスタンスを生成できる。このリテラル型を使用�
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #4:0 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #4:1 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #4:1 begin -1
 ```
 
 ### consteval
@@ -908,10 +908,10 @@ constevalはC++20 から導入されたキーワードであり、
 パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #6:0 begin
+    // @@@ example/term_explanation/const_xxx_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #6:1 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #6:1 begin -1
 ```
 
 ### constexprラムダ
@@ -935,10 +935,10 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #7:0 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #7:0 begin -1
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/const_xxx_ut.cpp #7:1 begin -1
+    // @@@ example/term_explanation/const_xxx_ut.cpp #7:1 begin -1
 ```
 
 ## オブジェクトと生成
@@ -1751,7 +1751,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 クラスの独自の[<=>演算子](---)を定義する場合、下記のように使用することができる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/if_switch_init_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #2:0 begin
 ```
 
 
@@ -2680,7 +2680,7 @@ C++14で導入された。
     // @@@ example/term_explanation/generic_lambda_ut.cpp #0:1 begin
 ```
 
-### クラステンプレートのテンプレート引数推論
+### クラステンプレートのテンプレート引数の型推論
 C++17から、
 「コンストラクタに渡される値によって、クラステンプレートのテンプレート引数を推論する」
 機能が導入された。
@@ -2695,6 +2695,37 @@ C++17から、
 
 ```cpp
     // @@@ example/term_explanation/template_ut.cpp #0:1 begin -1
+```
+
+### テンプレートの型推論ガイド
+テンプレートの型推論ガイドは、C++17で導入された機能である。この機能により、
+クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
+引数から自動的に型を推論できるようになる。型推論ガイドを使用することで、
+コードの可読性と簡潔性が向上する。
+
+型推論ガイドがない場合、[クラステンプレートのテンプレート引数の型推論](---)は限定的であり、
+明示的にテンプレート引数を指定する必要がある場合が多い。
+一方、型推論ガイドを使用することで、
+コンストラクタの引数からテンプレート引数を自動的に決定することが可能になる。
+
+```cpp
+    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:0 begin
+```
+上記のクラステンプレートは、ガイドがない場合、
+以下に示すように型推論によりテンプレート引数を決定することができない。
+
+```cpp
+    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:1 begin -1
+```
+
+以上に示したクラステンプレートに以下の型推論ガイドを追加することにより、
+テンプレート引数を型推論できるようになる。
+
+```cpp
+    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:2 begin 
+```
+```cpp
+    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:3 begin -1
 ```
 
 ### 変数テンプレート

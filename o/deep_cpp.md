@@ -15215,11 +15215,12 @@ __この章の構成__
 &emsp;&emsp;&emsp; [コンセプト](#SS_6_10_2)  
 &emsp;&emsp;&emsp; [畳み込み式](#SS_6_10_3)  
 &emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_6_10_4)  
-&emsp;&emsp;&emsp; [クラステンプレートのテンプレート引数推論](#SS_6_10_5)  
-&emsp;&emsp;&emsp; [変数テンプレート](#SS_6_10_6)  
-&emsp;&emsp;&emsp; [エイリアステンプレート](#SS_6_10_7)  
-&emsp;&emsp;&emsp; [constexpr if文](#SS_6_10_8)  
-&emsp;&emsp;&emsp; [autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_9)  
+&emsp;&emsp;&emsp; [クラステンプレートのテンプレート引数の型推論](#SS_6_10_5)  
+&emsp;&emsp;&emsp; [テンプレートの型推論ガイド](#SS_6_10_6)  
+&emsp;&emsp;&emsp; [変数テンプレート](#SS_6_10_7)  
+&emsp;&emsp;&emsp; [エイリアステンプレート](#SS_6_10_8)  
+&emsp;&emsp;&emsp; [constexpr if文](#SS_6_10_9)  
+&emsp;&emsp;&emsp; [autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_10)  
 
 &emsp;&emsp; [型推論](#SS_6_11)  
 &emsp;&emsp;&emsp; [AAAスタイル](#SS_6_11_1)  
@@ -16695,7 +16696,7 @@ C++03までのコンパイラに、
 
 
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 13
+    //  example/term_explanation/const_xxx_ut.cpp 13
 
     using namespace std;
     auto const str = string{"str"};  // strはプログラムがこの行を通過するときに初期化
@@ -16740,7 +16741,7 @@ C++11以前で定数を定義する方法は、
 こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
 
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 40
+    //  example/term_explanation/const_xxx_ut.cpp 40
 
     template <int N>
     struct Templ {
@@ -16748,7 +16749,7 @@ C++11以前で定数を定義する方法は、
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 49
+    //  example/term_explanation/const_xxx_ut.cpp 49
 
     constexpr int a = 5;  // aは定数であるためかきのような使い方ができる
     static_assert(a == 5);
@@ -16763,7 +16764,7 @@ C++11以前で定数を定義する方法は、
     static_assert(templ.value == 5);
 ```
 
-constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_10_8)することで、
+constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_10_9)することで、
 [ill-formed](#SS_6_17_5)を使用した場合分けが可能になる。
 
 
@@ -16775,13 +16776,13 @@ constexpr関数の呼び出し式の値がコンパイル時に確定する場�
 通常の関数呼び出しと同じになる。
 
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 68
+    //  example/term_explanation/const_xxx_ut.cpp 68
 
     constexpr int f(int a) noexcept { return a * 3; }  // aがconstexprならばf(a)もconstexpr
     int g(int a) noexcept { return a * 3; }            // aがconstexprであってもg(a)は非constexpr
 ```
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 78
+    //  example/term_explanation/const_xxx_ut.cpp 78
 
     auto x = int{0};
 
@@ -16797,7 +16798,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 148
+    //  example/term_explanation/const_xxx_ut.cpp 148
 
     constexpr uint64_t bit_mask(uint32_t max)
     {
@@ -16810,7 +16811,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 157
+    //  example/term_explanation/const_xxx_ut.cpp 157
 
     constexpr uint64_t bit_mask_for(uint32_t max)
     {
@@ -16870,7 +16871,7 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
 以下にリテラル型を例示する。
 
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 94
+    //  example/term_explanation/const_xxx_ut.cpp 94
 
     class Integer {
     public:
@@ -16884,7 +16885,7 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 112
+    //  example/term_explanation/const_xxx_ut.cpp 112
 
     constexpr auto i5 = 5;                // i5はconstexprインスタンス
     constexpr auto int_5 = Integer{i5};   // int_5はconstexprインスタンス
@@ -16905,7 +16906,7 @@ constexprインスタンスを生成できる。このリテラル型を使用�
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 130
+    //  example/term_explanation/const_xxx_ut.cpp 130
 
     constexpr Integer operator"" _i(unsigned long long int value)  // ユーザ定義リテラルの定義
     {
@@ -16913,7 +16914,7 @@ constexprインスタンスを生成できる。このリテラル型を使用�
     }
 ```
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 140
+    //  example/term_explanation/const_xxx_ut.cpp 140
 
     constexpr auto i = 123_i;
     static_assert(i == 123);
@@ -16928,9 +16929,15 @@ constevalはC++20 から導入されたキーワードであり、
 パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
 
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 186
+    //  example/term_explanation/const_xxx_ut.cpp 187
 
-    consteval uint64_t bit_mask(uint32_t max)
+    #if __cplusplus >= 202002L  // C++20
+
+    consteval uint64_t bit_mask(uint32_t max)  // コンパイル時、評価ができなければエラー
+    #else // C++17
+                                         
+    constexpr uint64_t bit_mask(uint32_t max)  // コンパイル時、評価されるとは限らない
+    #endif
     {
         if (max == 0) {
             return 0;
@@ -16941,7 +16948,7 @@ constevalはC++20 から導入されたキーワードであり、
     }
 ```
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 201
+    //  example/term_explanation/const_xxx_ut.cpp 210
 
     static_assert(0b1111'1111 == bit_mask(8));
 
@@ -16974,7 +16981,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 218
+    //  example/term_explanation/const_xxx_ut.cpp 227
 
     constexpr auto factorial = [](int n) {  // constexpr ラムダの定義
         int result = 1;
@@ -16988,7 +16995,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
     static_assert(fact_5 == 120);
 ```
 ```cpp
-    //  example/term_explanation_cpp20/const_xxx_ut.cpp 235
+    //  example/term_explanation/const_xxx_ut.cpp 244
 
     constexpr auto factorial = [](auto self, int n) -> int {  // リカーシブconstexprラムダ
         return (n <= 1) ? 1 : n * self(self, n - 1);
@@ -18909,7 +18916,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 クラスの独自の[<=>演算子](#SS_6_6_8_3)を定義する場合、下記のように使用することができる。
 
 ```cpp
-    //  example/term_explanation_cpp20/if_switch_init_ut.cpp 9
+    //  example/term_explanation/if_switch_init_ut.cpp 78
 
     struct DoubleName {
         std::string name0;
@@ -21156,7 +21163,7 @@ C++14で導入された。
     }
 ```
 
-### クラステンプレートのテンプレート引数推論 <a id="SS_6_10_5"></a>
+### クラステンプレートのテンプレート引数の型推論 <a id="SS_6_10_5"></a>
 C++17から、
 「コンストラクタに渡される値によって、クラステンプレートのテンプレート引数を推論する」
 機能が導入された。
@@ -21181,7 +21188,72 @@ C++17から、
     static_assert(std::is_same_v<decltype(a), std::vector<int>>);  // テンプレート引数がintと推論
 ```
 
-### 変数テンプレート <a id="SS_6_10_6"></a>
+### テンプレートの型推論ガイド <a id="SS_6_10_6"></a>
+テンプレートの型推論ガイドは、C++17で導入された機能である。この機能により、
+クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
+引数から自動的に型を推論できるようになる。型推論ガイドを使用することで、
+コードの可読性と簡潔性が向上する。
+
+型推論ガイドがない場合、[クラステンプレートのテンプレート引数の型推論](#SS_6_10_5)は限定的であり、
+明示的にテンプレート引数を指定する必要がある場合が多い。
+一方、型推論ガイドを使用することで、
+コンストラクタの引数からテンプレート引数を自動的に決定することが可能になる。
+
+```cpp
+    //  example/term_explanation/deduction_guide_ut.cpp 8
+
+    template <typename T>  // Tが整数型の場合、暗黙の型変換を許可
+    struct S {
+        // T が整数型でない場合に有効なコンストラクタ
+        template <typename U = T, std::enable_if_t<!std::is_integral_v<U>>* = nullptr>
+        explicit S(U x) : value{x}
+        {
+        }
+
+        // T が整数型の場合に有効な非explicitコンストラクタ
+        template <typename U = T, std::enable_if_t<std::is_integral_v<U>>* = nullptr>
+        S(U x) : value{x}
+        {
+        }
+
+        T value;
+    };
+
+```
+上記のクラステンプレートは、ガイドがない場合、
+以下に示すように型推論によりテンプレート引数を決定することができない。
+
+```cpp
+    //  example/term_explanation/deduction_guide_ut.cpp 31
+
+    S<int>    s1{42};   // 明示的にテンプレート引数を指定
+    S<double> s2{1.0};  // 明示的にテンプレート引数を指定
+
+    #if 0  // テンプレート引数の推論ができず、下記はコンパイルできない 
+    S       s1{42};   // 明示的にテンプレート引数を指定
+    S       s2{1.0};  // 明示的にテンプレート引数を指定
+    #endif
+```
+
+以上に示したクラステンプレートに以下の型推論ガイドを追加することにより、
+テンプレート引数を型推論できるようになる。
+
+```cpp
+    //  example/term_explanation/deduction_guide_ut.cpp 47
+
+    template <typename T>
+    S(T) -> S<T>;
+```
+```cpp
+    //  example/term_explanation/deduction_guide_ut.cpp 55
+
+    S s1{42};   // 推論ガイドの効果
+    S s2{1.0};  // 推論ガイドの効果
+    S s3 = 42;  // S<int>のコンストラクタがintであるため、暗黙の型変換が可能
+    // S    s4 = 1.0;  // S<double>のコンストラクタがexplicitであるため
+```
+
+### 変数テンプレート <a id="SS_6_10_7"></a>
 変数テンプレートとは、下記のコード示したような機能である。
 
 ```cpp
@@ -21213,7 +21285,7 @@ C++17から、
 「定数テンプレート」ではなく変数テンプレートである。
 
 
-### エイリアステンプレート <a id="SS_6_10_7"></a>
+### エイリアステンプレート <a id="SS_6_10_8"></a>
 エイリアステンプレート(alias templates)とはC++11から導入され、
 下記のコード例で示したようにテンプレートによって型の別名を定義する機能である。
 
@@ -21228,7 +21300,7 @@ C++17から、
     static_assert(std::is_same_v<IntVector, Vec<int>>);  // Vec<int> == std::vector<int>
 ```
 
-### constexpr if文 <a id="SS_6_10_8"></a>
+### constexpr if文 <a id="SS_6_10_9"></a>
 C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/if_constexpr.html)とは、
 文を条件付きコンパイルすることができるようにするための制御構文である。
 
@@ -21347,7 +21419,7 @@ constexpr ifを使用することで、やや単純に記述できる。
     }
 ```
 
-### autoパラメータによる関数テンプレートの簡易定義 <a id="SS_6_10_9"></a>
+### autoパラメータによる関数テンプレートの簡易定義 <a id="SS_6_10_10"></a>
 この機能は、C++20から導入された。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
@@ -21770,7 +21842,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 C++14から導入された機能で、関数の戻り値の型をautoキーワードで宣言することで、
 コンパイラがreturn文から自動的に型を推論してくれる機能である。
 これにより、複雑な型の戻り値を持つ関数でも、より簡潔に記述できるようになる
-(「[autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_9)」を参照)。
+(「[autoパラメータによる関数テンプレートの簡易定義](#SS_6_10_10)」を参照)。
 
 ```cpp
     //  example/term_explanation/decltype_ut.cpp 114
@@ -22011,11 +22083,12 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     #else  // C++17
 
         // T が整数型でない場合に有効なコンストラクタ
-        template <typename U = T, typename std::enable_if_t<!std::is_integral_v<U>, int> = 0>
+        template <typename U = T, std::enable_if_t<!std::is_integral_v<U>>* = nullptr>
         explicit S(U x) : value{x} { }
 
         // T が整数型の場合に有効な非explicitコンストラクタ
-        template <typename U = T, typename std::enable_if_t<std::is_integral_v<U>, int> = 0>
+        // T が整数型の場合に有効な非explicitコンストラクタ
+        template <typename U = T, std::enable_if_t<std::is_integral_v<U>>* = nullptr>
         S(U x) : value{x} { }
     #endif
 
@@ -22026,7 +22099,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     S(T)->S<T>;
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 190
+    //  example/term_explanation/explicit_ut.cpp 191
 
     S s = 1;      // Tがintであるため、explicit宣言されていないため、暗黙の型変換は許可
     // S t = 1.0; // Tが整数型でないため暗黙の型変換は禁止であるため、コンパイルエラー
@@ -22038,7 +22111,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
 
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 203
+    //  example/term_explanation/explicit_ut.cpp 204
 
     template <typename T>
     struct Optional {
@@ -22049,11 +22122,11 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     #else  // C++17
 
         // Tがnullptr_tではない場合に有効なコンストラクタ
-        template <typename U = T, std::enable_if_t<!std::is_same_v<U, std::nullptr_t>, int> = 0>
+        template <typename U = T, std::enable_if_t<!std::is_same_v<U, std::nullptr_t>>* = nullptr>
         Optional(const U& value) : has_value_(true), value_(value) { }
 
         // Tがnullptr_tの場合に有効なexplicitコンストラクタ
-        template <typename U = T, std::enable_if_t<std::is_same_v<U, std::nullptr_t>, int> = 0>
+        template <typename U = T, std::enable_if_t<std::is_same_v<U, std::nullptr_t>>* = nullptr>
         explicit Optional(const U& value) : has_value_(false), value_(value) { }
     #endif
 
@@ -22068,7 +22141,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     Optional(T)->Optional<T>;
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 236
+    //  example/term_explanation/explicit_ut.cpp 237
 
     Optional a = 2;   // T == intであるため、暗黙の型変換を許可
     ASSERT_TRUE(a);   // has_value_がtrueであるため
