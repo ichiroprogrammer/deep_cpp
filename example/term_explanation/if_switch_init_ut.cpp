@@ -74,7 +74,6 @@ TEST(TermExp, if_switch_init2)
 }
 
 #if __cplusplus >= 202002L  // C++20
-
 // @@@ sample begin 2:0
 
 struct DoubleName {

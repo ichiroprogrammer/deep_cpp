@@ -6,7 +6,7 @@ SRCS:=\
     nstd_safe_index_ut.cpp safe_index_put_to_ut.cpp nstd_put_to_ut.cpp \
     logger_ut.cpp universal_ref_ut.cpp generic_lambda_ut.cpp suppress_adl_ut.cpp \
     adl_firewall_0_ut.cpp adl_firewall_1_ut.cpp adl_firewall_2_ut.cpp \
-    func_type_ut.cpp etc_ut.cpp constexpr_if_ut.cpp variant_ut.cpp \ nstd_seq_ut.cpp \
+    func_type_ut.cpp etc_ut.cpp constexpr_if_ut.cpp variant_ut.cpp nstd_seq_ut.cpp \
     nstd_static_string_ut.cpp nstd_static_string_num_ut.cpp nstd_exception_ut.cpp \
     fixed_point_ut.cpp rational_ut.cpp nstd_static_string_path_ut.cpp
 

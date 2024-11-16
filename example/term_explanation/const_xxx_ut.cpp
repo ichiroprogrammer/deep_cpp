@@ -186,11 +186,10 @@ namespace cpp20 {
 // clang-format off
 // @@@ sample begin 6:0
 
-#if __cplusplus >= 202002L  // C++20
-
+#if __cplusplus >= 202002L  // c++20
 consteval uint64_t bit_mask(uint32_t max)  // コンパイル時、評価ができなければエラー
+
 #else // C++17
-                                     
 constexpr uint64_t bit_mask(uint32_t max)  // コンパイル時、評価されるとは限らない
 #endif
 {

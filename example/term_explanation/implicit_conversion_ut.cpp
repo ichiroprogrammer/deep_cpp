@@ -22,19 +22,18 @@ private:
 };
 
 #if __cplusplus <= 201703L  // c++17
-
 bool operator==(Person const& lhs, Person const& rhs) noexcept
 {
     return std::tuple(lhs.GetName(), lhs.GetAge()) == std::tuple(rhs.GetName(), rhs.GetAge());
 }
-#else  // c++20
 
+#else  // c++20
 auto operator<=>(Person const& lhs, Person const& rhs) noexcept
 {
     return std::tuple(lhs.GetName(), lhs.GetAge()) <=> std::tuple(rhs.GetName(), rhs.GetAge());
 }
 
-// c++20では、<=>から自動的に==が生成されないため、明示的に定義する必要がある
+// <=>から自動的に==が生成されないため、明示的に定義する必要がある
 bool operator==(Person const& lhs, Person const& rhs) noexcept { return (lhs <=> rhs) == 0; }
 #endif
 // @@@ sample end

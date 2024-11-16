@@ -11,7 +11,7 @@ namespace {
 namespace old_style {
 // @@@ sample begin 0:0
 
-// SFINAEを使用したC++17スタイル
+// SFINAEを使用したc++17スタイル
 template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value>::type>
 T add(T a, T b)
 {
@@ -146,8 +146,8 @@ bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
 {
     return std::abs(lhs - rhs) <= std::numeric_limits<FLOAT_0>::epsilon();
 }
-#else  // c++17
 
+#else  // c++17
 template <typename FLOAT_0, typename FLOAT_1>
 bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs) noexcept
 {

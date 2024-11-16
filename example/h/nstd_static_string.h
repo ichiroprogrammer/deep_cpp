@@ -35,10 +35,8 @@ private:
     char const string_[N];
 
 #if __cplusplus >= 202002L  // c++20
-
     template <Beginable T, size_t... I>
 #else  // c++17
-
     template <typename T, size_t... I>
 #endif
     // offsetは部分StaticString切り出しのため(TopStr, BottomStr)
@@ -115,7 +113,6 @@ constexpr bool operator!=(char const (&lhs)[N1], StaticString<N2> const& rhs) no
     return !(lhs == rhs);
 }
 #elif __cplusplus >= 202002L  // c++20
-
 // 以下、operator==とoperator!=を<=>に置き換え
 template <size_t N1, size_t N2>
 constexpr auto operator<=>(StaticString<N1> const& lhs, StaticString<N2> const& rhs) noexcept
@@ -159,8 +156,6 @@ constexpr bool operator==(char const (&lhs)[N1], StaticString<N2> const& rhs) no
 {
     return StaticString{lhs} == rhs;
 }
-#else
-static_assert(false, "c++ version not supported!");
 #endif
 // @@@ sample end
 // @@@ sample begin 0:2

@@ -163,11 +163,10 @@ TEST(ExpTerm, explicit)
 
 template <typename T>  // Tが整数型の場合、暗黙の型変換を許可
 struct S {
-#if __cplusplus >= 202002L  // C++20
-
+#if __cplusplus >= 202002L  // c++20
     explicit(!std::is_integral_v<T>) S(T x) : value{x} {}
-#else  // C++17
 
+#else  // c++17
     // T が整数型でない場合に有効なコンストラクタ
     template <typename U = T, std::enable_if_t<!std::is_integral_v<U>>* = nullptr>
     explicit S(U x) : value{x} { }
@@ -205,12 +204,11 @@ TEST(ExpTerm, explicit_cond)
 
 template <typename T>
 struct Optional {
-#if __cplusplus >= 202002L  // C++20
+#if __cplusplus >= 202002L  // c++20
     explicit(std::is_same_v<T, std::nullptr_t>) Optional(const T& value)
         : has_value_(!std::is_same_v<T, std::nullptr_t>), value_(value) { }
 
-#else  // C++17
-
+#else  // c++17
     // Tがnullptr_tではない場合に有効なコンストラクタ
     template <typename U = T, std::enable_if_t<!std::is_same_v<U, std::nullptr_t>>* = nullptr>
     Optional(const U& value) : has_value_(true), value_(value) { }

@@ -67,12 +67,11 @@ TEST(ExpTerm, wide_string)
     std::u32string utf32_string = U"こんにちは";  // UTF-32 std::u32string 型
 
 #if __cplusplus >= 202002L  // c++20
-
     // UTF-8 文字列リテラル（u8プレフィックスを使用）
     const char8_t* utf8_str    = u8"こんにちは";
     std::u8string  utf8_string = u8"こんにちは";  // UTF-8 std::string 型
-#else // c++17
 
+#else // c++17
     // UTF-8 文字列リテラル（u8プレフィックスを使用）
     const char* utf8_str    = "こんにちは";
     std::string utf8_string = "こんにちは";  // UTF-8 std::string 型

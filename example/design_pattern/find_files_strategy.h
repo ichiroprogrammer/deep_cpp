@@ -23,7 +23,6 @@ extern std::vector<std::string> find_files_recursively(std::string const& path,
 // @@@ sample begin 1:0
 
 #if __cplusplus >= 202002L  // c++20
-
 // ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
 // clang-format off
 namespace Inner_ {
@@ -41,7 +40,6 @@ auto find_files_recursively2(std::string const& path, F condition)
                         std::vector<std::string>>
 
 #else  // c++17
-
 template <typename F>  // Fはファンクタ
 auto find_files_recursively2(std::string const& path, F&& condition) -> std::vector<std::string>
 #endif

@@ -161,9 +161,8 @@ enum class Color { Red, Green, Yellow };
 
 constexpr std::string_view to_str(Color color)
 {
-#if __cplusplus >= 202002L  // C++20
-
-    using enum Color;  // 名前修飾の省略可能にする
+#if __cplusplus >= 202002L  // c++20
+    using enum Color;       // 名前修飾の省略可能にする
 
     switch (color) {
     case Red:
@@ -173,8 +172,8 @@ constexpr std::string_view to_str(Color color)
     case Yellow:
         return "Yellow";
     }
-#else  // c++17
 
+#else  // c++17
     switch (color) {
     case Color::Red:
         return "Red";
@@ -194,13 +193,13 @@ TEST(TermExp, to_str)
     // clang-format off
     // @@@ sample begin 5:1
 
-#if __cplusplus >= 202002L  // C++20
+#if __cplusplus >= 202002L  // c++20
     using Color::Red;  // Redに関しては名前修飾なしで使用する
 
     ASSERT_EQ("Red", to_str(Red));
     ASSERT_EQ("Yellow", to_str(Color::Yellow));
-#else  // C++17
 
+#else  // c++17
     ASSERT_EQ("Red", to_str(Color::Red));
     ASSERT_EQ("Yellow", to_str(Color::Yellow));
 #endif
@@ -209,7 +208,7 @@ TEST(TermExp, to_str)
 }
 }  // namespace enum_using
 
-#if __cplusplus >= 202002L  // C++20
+#if __cplusplus >= 202002L  // c++20
 namespace enum_using2 {
 // @@@ sample begin 6:0
 

@@ -13,10 +13,8 @@ namespace Nstd {
 /// @brief ユーザー指定の型で分数を扱うためのクラス
 /// @tparam T 基本の整数型（デフォルトはint32_t）
 #if __cplusplus >= 202002L  // c++20
-
 template <std::signed_integral T = int32_t>
-#else
-
+#else  // c++17
 template <typename T = int32_t>
 #endif
 class Rational {
@@ -75,14 +73,13 @@ public:
     constexpr Rational operator-() const noexcept { return Rational{-value_.num, value_.deno}; }
     /// @brief 比較演算子の定義
 #if __cplusplus >= 202002L  // c++20
-
     friend bool operator==(Rational const& lhs, Rational const& rhs) noexcept = default;
     friend auto operator<=>(Rational const& lhs, Rational const& rhs) noexcept
     {
         return (lhs.value_.num * rhs.value_.deno) <=> (rhs.value_.num * lhs.value_.deno);
     }
-#else  // c++17
 
+#else  // c++17
     friend bool operator==(Rational const& lhs, Rational const& rhs) noexcept
     {
         return (lhs.value_.num * rhs.value_.deno) == (rhs.value_.num * lhs.value_.deno);
@@ -129,10 +126,9 @@ private:
         T deno;
 
 #if __cplusplus >= 202002  // c++20
-
         friend bool operator==(rational_t const& lhs, rational_t const& rhs) noexcept = default;
-#else  // c++17
 
+#else  // c++17
         friend bool operator==(rational_t const& lhs, rational_t const& rhs) noexcept
         {
             return lhs.num == rhs.num && lhs.deno == rhs.deno;

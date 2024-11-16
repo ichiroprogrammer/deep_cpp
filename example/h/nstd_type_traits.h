@@ -28,12 +28,11 @@ struct is_same_as_some_of_impl<T, U> {
 }  // namespace Inner_
 
 #if __cplusplus >= 202002L  // c++20
-
 // コンセプト: 複数の型のいずれかがTと同じかどうかをチェック
 template <typename T, typename U, typename... Us>
 concept SameAsSomeOf = (std::same_as<T, U> || (std::same_as<T, Us> || ...));
-#else  // c++17
 
+#else  // c++17
 // コンセプトが使えない場合、上と同じ機能を持つ変数テンプレート
 template <typename T, typename U, typename... Us>
 constexpr bool SameAsSomeOf = Inner_::is_same_as_some_of_impl<T, U, Us...>::value;
@@ -242,7 +241,6 @@ struct ValueType {
 };
 
 #if __cplusplus <= 201703L  // c++17
-
 namespace Inner_ {
 
 template <typename T, size_t N>

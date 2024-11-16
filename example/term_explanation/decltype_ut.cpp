@@ -181,13 +181,12 @@ TEST(Decltype, return_auto2)
 // clang-format off
 // @@@ sample begin 4:0
 
-#if __cplusplus >= 202002L  // C++20 以降
-
+#if __cplusplus >= 202002L  // c++20
 auto add(auto lhs, auto rhs) { 
     return lhs + rhs; 
 }
-#else  // C++17
 
+#else  // c++17
 template <typename T, typename U>
 auto add(T lhs, U rhs)
 {
