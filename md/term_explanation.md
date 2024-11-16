@@ -195,18 +195,18 @@ C++03までのenumには、以下のような問題があった。
 * 名前空間の汚染: グローバルスコープに定義されたenumは、名前空間を汚染する。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #0:0 begin -1
+    // @@@ example/term_explanation/enum_ut.cpp #0:0 begin -1
 ```
 
 ### enum class
 enum classは通常の[用語解説|enum](---)の問題を解決するためにC++11から導入された。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #1:0 begin -1
+    // @@@ example/term_explanation/enum_ut.cpp #1:0 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation/enum_ut.cpp #1:1 begin -1
 ```
 
 ### スコープドenum
@@ -219,7 +219,7 @@ C++11で導入されたシンタックスである。enumのサイズをユー�
 特定のバイナリプロトコルとの互換性が必要な場合や、特定のハードウェアと連携する際に特に有効である。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/enum_ut.cpp #2:0 begin
 ```
 
 C++17までは、型安全の観点から、初期化においては、以下のコードコメントのような仕様であったが、
@@ -227,7 +227,7 @@ C++17から導入された[std::byte](---)の利便性のため、
 underlying typeを指定したenumやenum class変数のunderlying typeインスタンスによる初期化が認められるようになった。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #2:1 begin -1
+    // @@@ example/term_explanation/enum_ut.cpp #2:1 begin -1
 ```
 
 上記コードにもあるが、underlying typeインスタンスによる初期化を行う場合は、
@@ -238,7 +238,7 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 前方宣言できないが、underlying typeを指定したenum、enum classは前方宣言することができる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #3:0 begin
+    // @@@ example/term_explanation/enum_ut.cpp #3:0 begin
 ```
 
 ### std::byte
@@ -248,7 +248,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 可読性、保守性の向上が見込める。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #4:0 begin -1
+    // @@@ example/term_explanation/enum_ut.cpp #4:0 begin -1
 ```
 
 ### using enum
@@ -267,17 +267,17 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 とすることで、スコープによる修飾を省略するための記法である。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #5:0 begin
+    // @@@ example/term_explanation/enum_ut.cpp #5:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #5:1 begin -1
+    // @@@ example/term_explanation/enum_ut.cpp #5:1 begin
 ```
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #6:0 begin
+    // @@@ example/term_explanation/enum_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/enum_ut.cpp #6:1 begin -1
+    // @@@ example/term_explanation/enum_ut.cpp #6:1 begin -1
 ```
 
 この記法は、簡潔に記述できるものの、一方では過度な使用は、
@@ -1417,7 +1417,7 @@ C++14では区切り文字'を使用し、数値リテラルを記述できる�
 * char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
 
 ```cpp
-        // @@@ example/term_explanation/literal_ut.cpp #3:0 begin -1
+    // @@@ example/term_explanation/literal_ut.cpp #3:0 begin
 ```
 
 ### 16進浮動小数点数リテラル
@@ -2928,20 +2928,20 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のコードのように暗黙のの型変換が起こる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/explicit_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation/explicit_ut.cpp #0:1 begin -1
 ```
 
 暗黙の型変換はわかりづらいバグを生み出してしまうことがあるため、
 下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/explicit_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation/explicit_ut.cpp #1:1 begin -1
 ```
 
 C++03までは、[一様初期化](---)がサポートされていなかったため、
@@ -2951,20 +2951,20 @@ C++11からサポートされた[一様初期化](---)を下記のように使�
 暗黙の型変換を使用できる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/explicit_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #2:1 begin -1
+    // @@@ example/term_explanation/explicit_ut.cpp #2:1 begin -1
 ```
 
 以下に示す通り、コンストラクタの引数の数によらず、
 C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #3:0 begin
+    // @@@ example/term_explanation/explicit_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #3:1 begin -1
+    // @@@ example/term_explanation/explicit_ut.cpp #3:1 begin -1
 ```
 
 ### explicit type operator()
@@ -2973,19 +2973,19 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
 この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #4:0 begin
+    // @@@ example/term_explanation/explicit_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #4:1 begin -1
+    // @@@ example/term_explanation/explicit_ut.cpp #4:1 begin -1
 ```
 
 以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #5:0 begin
+    // @@@ example/term_explanation/explicit_ut.cpp #5:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #5:1 begin -1
+    // @@@ example/term_explanation/explicit_ut.cpp #5:1 begin -1
 ```
 
 ### explicit(COND)
@@ -2996,19 +2996,19 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 以下にこのシンタックスの単純な使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #6:0 begin
+    // @@@ example/term_explanation/explicit_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #6:1 begin -1
+    // @@@ example/term_explanation/explicit_ut.cpp #6:1 begin -1
 ```
 
 テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #7:0 begin
+    // @@@ example/term_explanation/explicit_ut.cpp #7:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/explicit_ut.cpp #7:1 begin -1
+    // @@@ example/term_explanation/explicit_ut.cpp #7:1 begin -1
 ```
 
 こういった工夫により、コードの過度な柔軟性を適度に保つことができ、

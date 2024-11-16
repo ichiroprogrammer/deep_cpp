@@ -15631,7 +15631,7 @@ C++03までのenumには、以下のような問題があった。
 * 名前空間の汚染: グローバルスコープに定義されたenumは、名前空間を汚染する。
 
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 14
+    //  example/term_explanation/enum_ut.cpp 14
 
     enum DayOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
@@ -15646,7 +15646,7 @@ C++03までのenumには、以下のような問題があった。
 enum classは通常の[enum](#SS_6_2)の問題を解決するためにC++11から導入された。
 
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 29
+    //  example/term_explanation/enum_ut.cpp 29
 
     enum class DayOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
@@ -15660,7 +15660,7 @@ enum classは通常の[enum](#SS_6_2)の問題を解決するためにC++11か�
 ```
 
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 41
+    //  example/term_explanation/enum_ut.cpp 41
 
     // DayOfWeek d0 {0}; intからの暗黙の型変換は許可されないため、コンパイルエラー
     DayOfWeek d0{static_cast<DayOfWeek>(0)};
@@ -15680,7 +15680,7 @@ C++11で導入されたシンタックスである。enumのサイズをユー�
 特定のバイナリプロトコルとの互換性が必要な場合や、特定のハードウェアと連携する際に特に有効である。
 
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 54
+    //  example/term_explanation/enum_ut.cpp 54
 
     enum NormalEnum {  // underlying typeの指定しない従来のenum
     };
@@ -15707,7 +15707,7 @@ C++17から導入された[std::byte](#SS_6_2_4)の利便性のため、
 underlying typeを指定したenumやenum class変数のunderlying typeインスタンスによる初期化が認められるようになった。
 
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 80
+    //  example/term_explanation/enum_ut.cpp 80
 
     enum class Color : int { Red, Green, Blue };
 
@@ -15728,7 +15728,7 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 前方宣言できないが、underlying typeを指定したenum、enum classは前方宣言することができる。
 
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 97
+    //  example/term_explanation/enum_ut.cpp 97
 
     // in calender.h
     enum class DayOfWeek : int8_t;  // DayOfWeekの前方宣言
@@ -15746,7 +15746,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 可読性、保守性の向上が見込める。
 
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 113
+    //  example/term_explanation/enum_ut.cpp 113
 
     uint8_t u8_0     = 0x80;
     auto    result_0 = u8_0 << 1;  // 汎整数拡張のためresult_0の型はintになる
@@ -15761,7 +15761,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 
     // 整数型を取り出すためには、暗黙の型変換ではなく、
     // 明示的なto_integerの呼び出しが必要になることもコードの安全性につながる
-    ASSERT_EQ(0x00, to_integer<int>(result_1));  // 0x100はstd::byteでは0
+    ASSERT_EQ(0x00, std::to_integer<int>(result_1));  // 0x100はstd::byteでは0
 ```
 
 ### using enum <a id="SS_6_2_5"></a>
@@ -15780,12 +15780,14 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 とすることで、スコープによる修飾を省略するための記法である。
 
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 158
+    //  example/term_explanation/enum_ut.cpp 158
 
     enum class Color { Red, Green, Yellow };
 
     constexpr std::string_view to_str(Color color)
     {
+    #if __cplusplus >= 202002L  // C++20
+
         using enum Color;  // 名前修飾の省略可能にする
 
         switch (color) {
@@ -15796,27 +15798,43 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
         case Yellow:
             return "Yellow";
         }
+    #else  // c++17
 
+        switch (color) {
+        case Color::Red:
+            return "Red";
+        case Color::Green:
+            return "Green";
+        case Color::Yellow:
+            return "Yellow";
+        }
+    #endif
         assert(false);
         return "";
     }
 ```
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 182
+    //  example/term_explanation/enum_ut.cpp 195
 
-    using Color::Red;  // Redに関しては名前修飾なしで使用する
+    #if __cplusplus >= 202002L  // C++20
+        using Color::Red;  // Redに関しては名前修飾なしで使用する
 
-    ASSERT_EQ("Red", to_str(Red));
-    ASSERT_EQ("Yellow", to_str(Color::Yellow));
+        ASSERT_EQ("Red", to_str(Red));
+        ASSERT_EQ("Yellow", to_str(Color::Yellow));
+    #else  // C++17
+
+        ASSERT_EQ("Red", to_str(Color::Red));
+        ASSERT_EQ("Yellow", to_str(Color::Yellow));
+    #endif
 ```
 
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 193
+    //  example/term_explanation/enum_ut.cpp 214
 
     class Signal {
     public:
         enum class Color { Red, Green, Yellow };
-        using enum Color;  // 列挙子を簡潔に書くためのusing
+        using enum Color;
 
         void Set(Color);
 
@@ -15825,7 +15843,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/enum_ut.cpp 209
+    //  example/term_explanation/enum_ut.cpp 230
 
     Signal s{};
 
@@ -18154,7 +18172,7 @@ C++14では区切り文字'を使用し、数値リテラルを記述できる�
 * char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
 
 ```cpp
-        //  example/term_explanation/literal_ut.cpp 59
+    //  example/term_explanation/literal_ut.cpp 59
 
         // UTF-16 文字列リテラル（uプレフィックスを使用）
         char16_t       utf16_str[]  = u"こんにちは";
@@ -21839,7 +21857,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のコードのように暗黙のの型変換が起こる。
 
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 10
+    //  example/term_explanation/explicit_ut.cpp 10
 
     struct A {
         A(int a) : x{a} {}
@@ -21849,7 +21867,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
     A f(A a) { return a; };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 21
+    //  example/term_explanation/explicit_ut.cpp 21
 
     A a = 1;  // A::Aがexplicitでないため、iはA{1}に変換される
     ASSERT_EQ(a.x, 1);
@@ -21862,7 +21880,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
 
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 34
+    //  example/term_explanation/explicit_ut.cpp 34
 
     struct A {
         explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
@@ -21872,7 +21890,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
     A f(A a) { return a; };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 45
+    //  example/term_explanation/explicit_ut.cpp 45
 
     // A a = 1;    // A::Aがexplicitであるため、コンパイルエラー
     // auto b = f(2);  // A::Aがexplicitであるため、コンパイルエラー
@@ -21885,7 +21903,7 @@ C++11からサポートされた[一様初期化](#SS_6_5_6)を下記のよう�
 暗黙の型変換を使用できる。
 
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 56
+    //  example/term_explanation/explicit_ut.cpp 56
 
     struct A {
         A(int a, int b) : x{a}, y{b} {}
@@ -21897,7 +21915,7 @@ C++11からサポートされた[一様初期化](#SS_6_5_6)を下記のよう�
     bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
 ```
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 70
+    //  example/term_explanation/explicit_ut.cpp 70
 
     A a = {1, 2};  // A::Aがexplicitでないため、iはA{1, 2}に変換される
     ASSERT_EQ(a, (A{1, 2}));
@@ -21910,7 +21928,7 @@ C++11からサポートされた[一様初期化](#SS_6_5_6)を下記のよう�
 C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
 
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 82
+    //  example/term_explanation/explicit_ut.cpp 82
 
     struct A {
         explicit A(int a, int b) : x{a}, y{b} {}
@@ -21922,7 +21940,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
     bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
 ```
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 96
+    //  example/term_explanation/explicit_ut.cpp 96
 
     // A a = {1, 2};  // A::Aがexplicitであるため、コンパイルエラー
     // auto b = f({2, 1});  // A::Aがexplicitであるため、コンパイルエラー
@@ -21934,7 +21952,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
 この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
 
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 110
+    //  example/term_explanation/explicit_ut.cpp 110
 
     struct A {
         explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
@@ -21943,7 +21961,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 123
+    //  example/term_explanation/explicit_ut.cpp 123
 
     auto a = A{2};
 
@@ -21958,7 +21976,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
 以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
 
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 137
+    //  example/term_explanation/explicit_ut.cpp 137
 
     struct A {
         explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
@@ -21967,7 +21985,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 150
+    //  example/term_explanation/explicit_ut.cpp 150
 
     auto a = A{2};
 
@@ -21983,19 +22001,35 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 以下にこのシンタックスの単純な使用例を示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 161
+    //  example/term_explanation/explicit_ut.cpp 162
 
-    template <typename T>
+    template <typename T>  // Tが整数型の場合、暗黙の型変換を許可
     struct S {
-        explicit(!std::is_integral_v<T>) S(T x) : value{x} {}  // Tが整数型の場合、暗黙の型変換を許可
+    #if __cplusplus >= 202002L  // C++20
+
+        explicit(!std::is_integral_v<T>) S(T x) : value{x} {}
+    #else  // C++17
+
+        // T が整数型でない場合に有効なコンストラクタ
+        template <typename U = T, typename std::enable_if_t<!std::is_integral_v<U>, int> = 0>
+        explicit S(U x) : value{x} { }
+
+        // T が整数型の場合に有効な非explicitコンストラクタ
+        template <typename U = T, typename std::enable_if_t<std::is_integral_v<U>, int> = 0>
+        S(U x) : value{x} { }
+    #endif
+
         T value;
     };
+
+    template <typename T>  // 推論ガイド
+    S(T)->S<T>;
 ```
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 172
+    //  example/term_explanation/explicit_ut.cpp 190
 
-    S s = 1;      // Tがintであるため、explicit宣言されていない
-    // S t = 1.0; // Tが整数型でないため、コンパイルエラー
+    S s = 1;      // Tがintであるため、explicit宣言されていないため、暗黙の型変換は許可
+    // S t = 1.0; // Tが整数型でないため暗黙の型変換は禁止であるため、コンパイルエラー
     S t{1.0};     // Tが整数型でないが、明示的な初期化は問題ない
 
     ASSERT_EQ(s.value, 1);
@@ -22004,24 +22038,37 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 184
+    //  example/term_explanation/explicit_ut.cpp 203
 
     template <typename T>
     struct Optional {
-        // Tの型がnullptr_tの場合、explicit
+    #if __cplusplus >= 202002L  // C++20
         explicit(std::is_same_v<T, std::nullptr_t>) Optional(const T& value)
             : has_value_(!std::is_same_v<T, std::nullptr_t>), value_(value) { }
 
-        explicit operator bool() const noexcept { return has_value_; } // bool型への変換
-        operator T() const noexcept { return value_; } // T型への変換
+    #else  // C++17
+
+        // Tがnullptr_tではない場合に有効なコンストラクタ
+        template <typename U = T, std::enable_if_t<!std::is_same_v<U, std::nullptr_t>, int> = 0>
+        Optional(const U& value) : has_value_(true), value_(value) { }
+
+        // Tがnullptr_tの場合に有効なexplicitコンストラクタ
+        template <typename U = T, std::enable_if_t<std::is_same_v<U, std::nullptr_t>, int> = 0>
+        explicit Optional(const U& value) : has_value_(false), value_(value) { }
+    #endif
+
+        explicit operator bool() const noexcept { return has_value_; }  // bool型への変換
+                 operator T() const noexcept { return value_; }         // T型への変換
 
     private:
         bool has_value_;
         T    value_;
     };
+    template <typename T>  // 推論ガイド
+    Optional(T)->Optional<T>;
 ```
 ```cpp
-    //  example/term_explanation_cpp20/explicit_ut.cpp 205
+    //  example/term_explanation/explicit_ut.cpp 236
 
     Optional a = 2;   // T == intであるため、暗黙の型変換を許可
     ASSERT_TRUE(a);   // has_value_がtrueであるため

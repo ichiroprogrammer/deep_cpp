@@ -158,21 +158,39 @@ TEST(ExpTerm, explicit)
 }
 }  // namespace operator_bool_explicit
 
+// clang-format off
 // @@@ sample begin 6:0
 
-template <typename T>
+template <typename T>  // Tが整数型の場合、暗黙の型変換を許可
 struct S {
-    explicit(!std::is_integral_v<T>) S(T x) : value{x} {}  // Tが整数型の場合、暗黙の型変換を許可
+#if __cplusplus >= 202002L  // C++20
+
+    explicit(!std::is_integral_v<T>) S(T x) : value{x} {}
+#else  // C++17
+
+    // T が整数型でない場合に有効なコンストラクタ
+    template <typename U = T, typename std::enable_if_t<!std::is_integral_v<U>, int> = 0>
+    explicit S(U x) : value{x} { }
+
+    // T が整数型の場合に有効な非explicitコンストラクタ
+    template <typename U = T, typename std::enable_if_t<std::is_integral_v<U>, int> = 0>
+    S(U x) : value{x} { }
+#endif
+
     T value;
 };
+
+template <typename T>  // 推論ガイド
+S(T)->S<T>;
 // @@@ sample end
+// clang-format on
 TEST(ExpTerm, explicit_cond)
 {
     // clang-format off
     // @@@ sample begin 6:1
 
-    S s = 1;      // Tがintであるため、explicit宣言されていない
-    // S t = 1.0; // Tが整数型でないため、コンパイルエラー
+    S s = 1;      // Tがintであるため、explicit宣言されていないため、暗黙の型変換は許可
+    // S t = 1.0; // Tが整数型でないため暗黙の型変換は禁止であるため、コンパイルエラー
     S t{1.0};     // Tが整数型でないが、明示的な初期化は問題ない
 
     ASSERT_EQ(s.value, 1);
@@ -181,24 +199,37 @@ TEST(ExpTerm, explicit_cond)
     IGNORE_UNUSED_VAR(t);
 }
 
+// clang-format off
 // @@@ sample begin 7:0
 
 template <typename T>
 struct Optional {
-    // clang-format off
-    // Tの型がnullptr_tの場合、explicit
+#if __cplusplus >= 202002L  // C++20
     explicit(std::is_same_v<T, std::nullptr_t>) Optional(const T& value)
         : has_value_(!std::is_same_v<T, std::nullptr_t>), value_(value) { }
 
-    explicit operator bool() const noexcept { return has_value_; } // bool型への変換
-    operator T() const noexcept { return value_; } // T型への変換
-    // clang-format on
+#else  // C++17
+
+    // Tがnullptr_tではない場合に有効なコンストラクタ
+    template <typename U = T, std::enable_if_t<!std::is_same_v<U, std::nullptr_t>, int> = 0>
+    Optional(const U& value) : has_value_(true), value_(value) { }
+
+    // Tがnullptr_tの場合に有効なexplicitコンストラクタ
+    template <typename U = T, std::enable_if_t<std::is_same_v<U, std::nullptr_t>, int> = 0>
+    explicit Optional(const U& value) : has_value_(false), value_(value) { }
+#endif
+
+    explicit operator bool() const noexcept { return has_value_; }  // bool型への変換
+             operator T() const noexcept { return value_; }         // T型への変換
 
 private:
     bool has_value_;
     T    value_;
 };
+template <typename T>  // 推論ガイド
+Optional(T)->Optional<T>;
 // @@@ sample end
+// clang-format on
 
 TEST(ExpTerm, explicit_cond2)
 {

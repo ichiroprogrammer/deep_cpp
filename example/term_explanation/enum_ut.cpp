@@ -125,7 +125,7 @@ TEST(TermExp, std_byte)
 
     // 整数型を取り出すためには、暗黙の型変換ではなく、
     // 明示的なto_integerの呼び出しが必要になることもコードの安全性につながる
-    ASSERT_EQ(0x00, to_integer<int>(result_1));  // 0x100はstd::byteでは0
+    ASSERT_EQ(0x00, std::to_integer<int>(result_1));  // 0x100はstd::byteでは0
     // @@@ sample end
 }
 
@@ -161,6 +161,8 @@ enum class Color { Red, Green, Yellow };
 
 constexpr std::string_view to_str(Color color)
 {
+#if __cplusplus >= 202002L  // C++20
+
     using enum Color;  // 名前修飾の省略可能にする
 
     switch (color) {
@@ -171,7 +173,17 @@ constexpr std::string_view to_str(Color color)
     case Yellow:
         return "Yellow";
     }
+#else  // c++17
 
+    switch (color) {
+    case Color::Red:
+        return "Red";
+    case Color::Green:
+        return "Green";
+    case Color::Yellow:
+        return "Yellow";
+    }
+#endif
     assert(false);
     return "";
 }
@@ -179,23 +191,32 @@ constexpr std::string_view to_str(Color color)
 
 TEST(TermExp, to_str)
 {
+    // clang-format off
     // @@@ sample begin 5:1
 
+#if __cplusplus >= 202002L  // C++20
     using Color::Red;  // Redに関しては名前修飾なしで使用する
 
     ASSERT_EQ("Red", to_str(Red));
     ASSERT_EQ("Yellow", to_str(Color::Yellow));
+#else  // C++17
+
+    ASSERT_EQ("Red", to_str(Color::Red));
+    ASSERT_EQ("Yellow", to_str(Color::Yellow));
+#endif
     // @@@ sample end
+    // clang-format on
 }
 }  // namespace enum_using
 
+#if __cplusplus >= 202002L  // C++20
 namespace enum_using2 {
 // @@@ sample begin 6:0
 
 class Signal {
 public:
     enum class Color { Red, Green, Yellow };
-    using enum Color;  // 列挙子を簡潔に書くためのusing
+    using enum Color;
 
     void Set(Color);
 
@@ -222,4 +243,5 @@ TEST(TermExp, to_str)
 }
 void Signal::Set(Signal::Color) {}
 }  // namespace enum_using2
+#endif
 }  // namespace

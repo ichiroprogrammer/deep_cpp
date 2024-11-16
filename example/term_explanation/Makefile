@@ -1,4 +1,4 @@
-SRCS20:=literal_ut.cpp decltype_ut.cpp concept_ut.cpp
+SRCS20:=literal_ut.cpp decltype_ut.cpp concept_ut.cpp  explicit_ut.cpp enum_ut.cpp
 
 SRCS:=\
     aaa.cpp argument.cpp class_layout_ut.cpp constructor_ut.cpp \
