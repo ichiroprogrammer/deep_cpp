@@ -144,7 +144,7 @@ doxy:
 	doxygen ../doxygen.config
 
 format:
-	clang-format -i $$(find . $(SHARED)h ../h -name "*.cpp" -o -name "*.h")
+	clang-format -i $$(find . $(SHARED)h ../h -name "*.cpp" -o -name "*.h" -o -name "*.hpp")
 
 complete : 
 	bear -- $(MAKE) --always-make
