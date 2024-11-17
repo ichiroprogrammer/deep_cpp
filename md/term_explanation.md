@@ -3746,13 +3746,16 @@ conditionの評価結果に基づき、expr1または expr2 のどちらかが�
 ### ill-formed
 [標準規格と処理系](https://cpprefjp.github.io/implementation-compliance.html)に詳しい解説があるが、
 
-* well-formed(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
+* [well-formed](---)(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
   単一定義規則を満たすことである。
 * ill-formed(不適格)とはプログラムが適格でないことである。
 
 プログラムがwell-formedになった場合、そのプログラムはコンパイルできる。
 プログラムがill-formedになった場合、通常はコンパイルエラーになるが、
 対象がテンプレートの場合、事情は少々異なり、[SFINAE](---)によりコンパイルできることもある。
+
+### well-formed
+「[ill-formed](---)」を参照せよ。
 
 ### 未定義動作
 未定義動作(Undefined Behavior)とは、
@@ -3797,9 +3800,6 @@ volatile など)やポインタやリファレンスなどの間接指定子を�
 |const T* C   |C       |
 |const D d    |D       |
 
-
-### well-formed
-「[ill-formed](---)」を参照せよ。
 
 ### one-definition rule
 「[ODR](---)」を参照せよ。
