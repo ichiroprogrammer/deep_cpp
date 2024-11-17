@@ -28,6 +28,8 @@
 #define SUPPRESS_WARN_CLANG_INIT_OVERRIDE \
     _Pragma("clang diagnostic ignored \"-Winitializer-overrides\"")
 #define SUPPRESS_WARN_CLANG_MISSING_BRACES _Pragma("clang diagnostic ignored \"-Wmissing-braces\"")
+#define SUPPRESS_WARN_CLANG_MISSING_FIELD_INIT \
+    _Pragma("clang diagnostic ignored \"-Wmissing-field-initializers\"")
 #define SUPPRESS_WARN_CLANG_NON_VIRTUAL_DTOR \
     _Pragma("clang diagnostic ignored \"-Wnon-virtual-dtor\"")
 #define SUPPRESS_WARN_CLANG_NULL_ARITH _Pragma("clang diagnostic ignored \"-Wnull-arithmetic\"")
@@ -53,7 +55,7 @@
 #define SUPPRESS_WARN_CLANG_USER_DEFINED_LITERAL \
     _Pragma("clang diagnostic ignored \"-Wuser-defined-literals\"")
 #define SUPPRESS_WARN_CLANG_SWITCH _Pragma("clang diagnostic ignored \"-Wswitch\"")
-#define SUPPRESS_WARN_CLANG_SWITCH_BOOL _Pragma("clang diagnostic ignored \"-Wswitch-bool\"");
+#define SUPPRESS_WARN_CLANG_SWITCH_BOOL _Pragma("clang diagnostic ignored \"-Wswitch-bool\"")
 #define SUPPRESS_WARN_CLANG_CONVERSION_VEXING_PARSE \
     _Pragma("clang diagnostic ignored \"-Wvexing-parse\"")
 
@@ -61,7 +63,7 @@
 #define SUPPRESS_WARN_CLANG_ENUM_ENUM_COMP_SWITCH \
     _Pragma("clang diagnostic ignored \"-Wenum-compare-switch\"")
 #define SUPPRESS_WARN_CLANG_UNUSED_BUT_SET_VAR \
-    _Pragma("clang diagnostic ignored \"-Wunused-but-set-variable\"");
+    _Pragma("clang diagnostic ignored \"-Wunused-but-set-variable\"")
 
 // only clang
 #define SUPPRESS_WARN_CLANG_CONST_CONV _Pragma("clang diagnostic ignored \"-Wconstant-conversion\"")
@@ -146,6 +148,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_IMPLICIT_CONST_FLOAT
 #define SUPPRESS_WARN_CLANG_INIT_OVERRIDE
 #define SUPPRESS_WARN_CLANG_MISSING_BRACES
+#define SUPPRESS_WARN_CLANG_MISSING_FIELD_INIT
 #define SUPPRESS_WARN_CLANG_NON_VIRTUAL_DTOR
 #define SUPPRESS_WARN_CLANG_NULL_ARITH
 #define SUPPRESS_WARN_CLANG_PARENTHESES

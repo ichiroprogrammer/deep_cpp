@@ -6,7 +6,7 @@
 #define SUPPRESS_WARN_GCC_END _Pragma("GCC diagnostic pop")
 
 #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
-#define SUPPRESS_WARN_GCC_BOOL_OP _Pragma("GCC diagnostic ignored \"-Wbool-operation\"");
+#define SUPPRESS_WARN_GCC_BOOL_OP _Pragma("GCC diagnostic ignored \"-Wbool-operation\"")
 #define SUPPRESS_WARN_GCC_ADDRESS _Pragma("GCC diagnostic ignored \"-Waddress\"")
 #define SUPPRESS_WARN_GCC_COMMENT _Pragma("GCC diagnostic ignored \"-Wcomment\"")
 #define SUPPRESS_WARN_GCC_CONV_NULL _Pragma("GCC diagnostic ignored \"-Wconversion-null\"")
@@ -15,13 +15,13 @@
 #define SUPPRESS_WARN_GCC_DEPRECATED _Pragma("GCC diagnostic ignored \"-Wdeprecated\"")
 #define SUPPRESS_WARN_GCC_DEPRECATED_COPY _Pragma("GCC diagnostic ignored \"-Wdeprecated-copy\"")
 #define SUPPRESS_WARN_GCC_DEPRECATED_DECL \
-    _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"");
+    _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
 #define SUPPRESS_WARN_GCC_FORMAT_SEC _Pragma("GCC diagnostic ignored \"-Wformat-security\"")
 #define SUPPRESS_WARN_GCC_IGNORE_QUAL _Pragma("GCC diagnostic ignored \"-Wignored-qualifiers\"")
 #define SUPPRESS_WARN_GCC_IMPLICIT_INT _Pragma("GCC diagnostic ignored \"-Wimplicit-int\"")
 #define SUPPRESS_WARN_GCC_MISLEADING_INDENT \
     _Pragma("GCC diagnostic ignored \"-Wmisleading-indentation\"")
-#define SUPPRESS_WARN_GCC_INIT_OVERRIDE _Pragma("GCC diagnostic ignored \"-Woverride-init\"");
+#define SUPPRESS_WARN_GCC_INIT_OVERRIDE _Pragma("GCC diagnostic ignored \"-Woverride-init\"")
 #define SUPPRESS_WARN_GCC_MISSING_BRACES _Pragma("GCC diagnostic ignored \"-Wmissing-braces\"")
 #define SUPPRESS_WARN_GCC_NON_VIRTUAL_DTOR _Pragma("GCC diagnostic ignored \"-Wnon-virtual-dtor\"")
 #define SUPPRESS_WARN_GCC_NARROWING _Pragma("GCC diagnostic ignored \"-Wnarrowing\"")
@@ -47,16 +47,16 @@
 #define SUPPRESS_WARN_GCC_USER_DEFINED_LITERAL \
     _Pragma("GCC diagnostic ignored \"-Wliteral-suffix\"")
 #define SUPPRESS_WARN_GCC_SWITCH _Pragma("GCC diagnostic ignored \"-Wswitch\"")
-#define SUPPRESS_WARN_GCC_SWITCH_BOOL _Pragma("GCC diagnostic ignored \"-Wswitch-bool\"");
+#define SUPPRESS_WARN_GCC_SWITCH_BOOL _Pragma("GCC diagnostic ignored \"-Wswitch-bool\"")
 #define SUPPRESS_WARN_GCC_CONVERSION_VEXING_PARSE \
     _Pragma("GCC diagnostic ignored \"-Wvexing-parse\"")
 #define SUPPRESS_WARN_GCC_ENUM_COMP _Pragma("GCC diagnostic ignored \"-Wenum-compare\"")
 #define SUPPRESS_WARN_GCC_EXCEPTIONS _Pragma("GCC diagnostic ignored \"-Wexceptions\"")
 #define SUPPRESS_WARN_GCC_UNUSED_BUT_SET_VAR \
-    _Pragma("GCC diagnostic ignored \"-Wunused-but-set-variable\"");
+    _Pragma("GCC diagnostic ignored \"-Wunused-but-set-variable\"")
 
 // only gcc
-#define SUPPRESS_WARN_GCC_DANGLING_ELSE _Pragma("GCC diagnostic ignored \"-Wdangling-else\"");
+#define SUPPRESS_WARN_GCC_DANGLING_ELSE _Pragma("GCC diagnostic ignored \"-Wdangling-else\"")
 #define SUPPRESS_WARN_GCC_FORMAT_EQ _Pragma("GCC diagnostic ignored \"-Wformat=\"")
 #define SUPPRESS_WARN_GCC_CAST_FUNC_TYPE _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
 #define SUPPRESS_WARN_GCC_CATCH_ASSIGN _Pragma("GCC diagnostic ignored \"-Wcatch-value=\"")
@@ -67,6 +67,8 @@
 #define SUPPRESS_WARN_GCC_FALLTHROUGH _Pragma("GCC diagnostic ignored \"-Wimplicit-fallthrough\"")
 #define SUPPRESS_WARN_GCC_INACCESS_BASE _Pragma("GCC diagnostic ignored \"-Winaccessible-base\"")
 #define SUPPRESS_WARN_GCC_LOCAL_RETURN _Pragma("GCC diagnostic ignored \"-Wreturn-local-addr\"")
+#define SUPPRESS_WARN_GCC_MISSING_FIELD_INIT \
+    _Pragma("GCC diagnostic ignored \"-Wmissing-field-initializers\"")
 #define SUPPRESS_WARN_GCC_NON_NULL_COMP _Pragma("GCC diagnostic ignored \"-Wnonnull-compare\"")
 #define SUPPRESS_WARN_GCC_NOT_EFF_CPP _Pragma("GCC diagnostic ignored \"-Weffc++\"")
 #define SUPPRESS_WARN_GCC_OVERFLOW _Pragma("GCC diagnostic ignored \"-Woverflow\"")
@@ -75,7 +77,7 @@
 #define SUPPRESS_WARN_GCC_SEQ_POINT _Pragma("GCC diagnostic ignored \"-Wsequence-point\"")
 #define SUPPRESS_WARN_GCC_SWITCH_RANGE _Pragma("GCC diagnostic ignored \"-Wswitch-outside-range\"")
 #define SUPPRESS_WARN_GCC_STRING_OVERFLOW _Pragma("GCC diagnostic ignored \"-Wstringop-overflow=\"")
-#define SUPPRESS_WARN_GCC_TERMINATE _Pragma("GCC diagnostic ignored \"-Wterminate\"");
+#define SUPPRESS_WARN_GCC_TERMINATE _Pragma("GCC diagnostic ignored \"-Wterminate\"")
 
 #else
 
@@ -133,6 +135,7 @@
 #define SUPPRESS_WARN_GCC_INACCESS_BASE
 #define SUPPRESS_WARN_GCC_TYPE_LIMITS
 #define SUPPRESS_WARN_GCC_LOCAL_RETURN
+#define SUPPRESS_WARN_GCC_MISSING_FIELD_INIT
 #define SUPPRESS_WARN_GCC_NARROWING
 #define SUPPRESS_WARN_GCC_NON_NULL_COMP
 #define SUPPRESS_WARN_GCC_NOT_EFF_CPP

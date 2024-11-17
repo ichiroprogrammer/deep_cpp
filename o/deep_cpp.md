@@ -7374,7 +7374,7 @@ std::enable_ifの使用例を下記に示す。
 
 実装例から明らかなように
 
-* std::enable_if\<true>::typeは[well-formed](#SS_6_17_10)
+* std::enable_if\<true>::typeは[well-formed](#SS_6_17_6)
 * std::enable_if\<false>::typeは[ill-formed](#SS_6_17_5)
 
 となるため、下記のコードはコンパイルできない。
@@ -8933,7 +8933,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 上記で使用したstd::void_tは、テンプレートパラメータが
 
 * [ill-formed](#SS_6_17_5)ならばill-formedになる
-* [well-formed](#SS_6_17_10)ならvoidを生成する
+* [well-formed](#SS_6_17_6)ならvoidを生成する
 
 テンプレートである。
 
@@ -15252,11 +15252,11 @@ __この章の構成__
 &emsp;&emsp;&emsp; [実引数/仮引数](#SS_6_17_3)  
 &emsp;&emsp;&emsp; [単純代入](#SS_6_17_4)  
 &emsp;&emsp;&emsp; [ill-formed](#SS_6_17_5)  
-&emsp;&emsp;&emsp; [未定義動作](#SS_6_17_6)  
-&emsp;&emsp;&emsp; [未規定動作](#SS_6_17_7)  
-&emsp;&emsp;&emsp; [未定義動作と未規定動作](#SS_6_17_8)  
-&emsp;&emsp;&emsp; [被修飾型](#SS_6_17_9)  
-&emsp;&emsp;&emsp; [well-formed](#SS_6_17_10)  
+&emsp;&emsp;&emsp; [well-formed](#SS_6_17_6)  
+&emsp;&emsp;&emsp; [未定義動作](#SS_6_17_7)  
+&emsp;&emsp;&emsp; [未規定動作](#SS_6_17_8)  
+&emsp;&emsp;&emsp; [未定義動作と未規定動作](#SS_6_17_9)  
+&emsp;&emsp;&emsp; [被修飾型](#SS_6_17_10)  
 &emsp;&emsp;&emsp; [one-definition rule](#SS_6_17_11)  
 &emsp;&emsp;&emsp; [ODR](#SS_6_17_12)  
 &emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_17_13)  
@@ -15649,7 +15649,7 @@ enum classは通常の[enum](#SS_6_2)の問題を解決するためにC++11か�
 ```
 
 ### スコープドenum <a id="SS_6_2_2"></a>
-enum classは、[スコープドenum](#SS_6_2_2)と呼ばれることがある。
+[enum class](#SS_6_2_1)はスコープドenum(scoped enum)と呼ばれることがある。
 
 
 ### underlying type <a id="SS_6_2_3"></a>
@@ -16584,7 +16584,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 そのような関数は、`abi::__cxa_demangle`である。
 
 `std::type_info::name()`と`abi::__cxa_demangle`を利用して、
-オブジェクトの[被修飾型](#SS_6_17_9)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
+オブジェクトの[被修飾型](#SS_6_17_10)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
 
 ```cpp
     //  example/term_explanation/rtti_ut.cpp 191
@@ -22623,7 +22623,7 @@ C++11からはエラーとならず、TRRはT&となる。
 
 ### danglingリファレンス <a id="SS_6_14_5"></a>
 Dangling リファレンスとは、破棄後のオブジェクトを指しているリファレンスを指す。
-このようなリファレンスにアクセスすると、[未定義動作](#SS_6_17_6)に繋がるに繋がる。
+このようなリファレンスにアクセスすると、[未定義動作](#SS_6_17_7)に繋がるに繋がる。
 
 ```cpp
     //  example/term_explanation/dangling_ut.cpp 9
@@ -23365,7 +23365,7 @@ operator& がオーバーロードされている場合には、
 ### 演算子のオペランドの評価順位 <a id="SS_6_17_2"></a>
 
 C++17で、演算子のオペランドに対する評価順序が明確に規定された。
-それに対し、C++14までは、演算子のオペランド部分式の評価順序は[未規定動作](#SS_6_17_7)であった。
+それに対し、C++14までは、演算子のオペランド部分式の評価順序は[未規定動作](#SS_6_17_8)であった。
 以下の表で示す演算子に関しては、オペランドaがオペランドbよりも先に評価される。
 
 | 演算子               |説明                                                                   |
@@ -23439,7 +23439,7 @@ conditionの評価結果に基づき、expr1または expr2 のどちらかが�
 ### ill-formed <a id="SS_6_17_5"></a>
 [標準規格と処理系](https://cpprefjp.github.io/implementation-compliance.html)に詳しい解説があるが、
 
-* well-formed(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
+* [well-formed](#SS_6_17_6)(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
   単一定義規則を満たすことである。
 * ill-formed(不適格)とはプログラムが適格でないことである。
 
@@ -23447,7 +23447,10 @@ conditionの評価結果に基づき、expr1または expr2 のどちらかが�
 プログラムがill-formedになった場合、通常はコンパイルエラーになるが、
 対象がテンプレートの場合、事情は少々異なり、[SFINAE](#SS_6_10_1)によりコンパイルできることもある。
 
-### 未定義動作 <a id="SS_6_17_6"></a>
+### well-formed <a id="SS_6_17_6"></a>
+「[ill-formed](#SS_6_17_5)」を参照せよ。
+
+### 未定義動作 <a id="SS_6_17_7"></a>
 未定義動作(Undefined Behavior)とは、
 C++標準が特定の操作や状況に対して一切の制約を設けないケースである。
 未定義動作が発生すると、プログラムの実行結果が予測できなくなり、
@@ -23466,7 +23469,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 
 ```
 
-### 未規定動作 <a id="SS_6_17_7"></a>
+### 未規定動作 <a id="SS_6_17_8"></a>
 未規定動作(Unspecified Behavior)とは、C++標準がある操作の動作を完全には決めておらず、
 複数の許容可能な選択肢がある場合でのコードの動作を指す。
 未規定動作は、実装ごとに異なる可能性があり、標準は少なくとも「何らかの合理的な結果」を保証する。
@@ -23483,14 +23486,14 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
     auto result = lambda(a++, a++);  // 未規定 - 引数評価の順序が決まっていない
 ```
 
-### 未定義動作と未規定動作 <a id="SS_6_17_8"></a>
+### 未定義動作と未規定動作 <a id="SS_6_17_9"></a>
 | 種類            |定義                                                               | 例                               | 結果                           |
 |-----------------|-------------------------------------------------------------------|----------------------------------|--------------------------------|
-|[未定義動作](#SS_6_17_6)|C++標準が全く保証しない動作                                        | ゼロ除算、配列範囲外アクセス     | 予測不能(クラッシュなど)       |
-|[未規定動作](#SS_6_17_7)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
+|[未定義動作](#SS_6_17_7)|C++標準が全く保証しない動作                                        | ゼロ除算、配列範囲外アクセス     | 予測不能(クラッシュなど)       |
+|[未規定動作](#SS_6_17_8)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
 
 
-### 被修飾型 <a id="SS_6_17_9"></a>
+### 被修飾型 <a id="SS_6_17_10"></a>
 被修飾型(unqualified type)とは、変数の宣言において付加される修飾子(const、
 volatile など)やポインタやリファレンスなどの間接指定子を除いた素の型を指す。
 
@@ -23505,9 +23508,6 @@ volatile など)やポインタやリファレンスなどの間接指定子を�
 |const T* C   |C       |
 |const D d    |D       |
 
-
-### well-formed <a id="SS_6_17_10"></a>
-「[ill-formed](#SS_6_17_5)」を参照せよ。
 
 ### one-definition rule <a id="SS_6_17_11"></a>
 「[ODR](#SS_6_17_12)」を参照せよ。
@@ -24506,124 +24506,125 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
          88         Inner_::header_t const* operator*() noexcept { return header_; }
          89 
          90         // clang-format off
-         91     #if __cplusplus <= 201703L  // c++17
-         92         bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
-         93         bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
-         94 
+         91 
+         92     #if __cplusplus <= 201703L  // c++17
+         93         bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
+         94         bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
          95     #else  // c++20
-         96         auto operator<=>(const const_iterator&) const = default;
-         97     #endif
-         98         // clang-format on
-         99 
-        100     private:
-        101         Inner_::header_t const* header_;
-        102     };
-        103 
-        104     const_iterator begin() const noexcept { return const_iterator{header_}; }
-        105     const_iterator end() const noexcept { return const_iterator{nullptr}; }
-        106     const_iterator cbegin() const noexcept { return const_iterator{header_}; }
-        107     const_iterator cend() const noexcept { return const_iterator{nullptr}; }
-        108     // @@@ sample end
-        109     // @@@ sample begin 0:3
-        110 
-        111 private:
-        112     using header_t = Inner_::header_t;
-        113 
-        114     Inner_::buffer_t<MEM_SIZE> buff_{};
-        115     header_t*                  header_{reinterpret_cast<header_t*>(buff_.buffer)};
-        116     mutable SpinLock           spin_lock_{};
-        117     size_t                     unit_count_{sizeof(buff_) / Inner_::unit_size};
-        118     size_t                     unit_count_min_{sizeof(buff_) / Inner_::unit_size};
-        119 
-        120     virtual void* alloc(size_t size) noexcept override
-        121     {
-        122         // @@@ ignore begin
-        123         // size分のメモリとヘッダ
-        124         auto n_nuits = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
-        125 
-        126         auto lock = std::lock_guard{spin_lock_};
-        127 
-        128         auto curr = header_;
-        129 
-        130         for (header_t* prev{nullptr}; curr != nullptr; prev = curr, curr = curr->next) {
-        131             auto opt_next = std::optional<header_t*>{sprit(curr, n_nuits)};
-        132 
-        133             if (!opt_next) {
-        134                 continue;
-        135             }
-        136 
-        137             auto next = *opt_next;
-        138             if (prev == nullptr) {
-        139                 header_ = next;
-        140             }
-        141             else {
-        142                 prev->next = next;
-        143             }
-        144             break;
-        145         }
-        146 
-        147         if (curr != nullptr) {
-        148             unit_count_ -= curr->n_nuits;
-        149             unit_count_min_ = std::min(unit_count_, unit_count_min_);
-        150             ++curr;
-        151         }
-        152 
-        153         return curr;
-        154         // @@@ ignore end
-        155     }
-        156 
-        157     virtual void free(void* mem) noexcept override
-        158     {
-        159         // @@@ ignore begin
-        160         header_t* to_free = Inner_::set_back(mem);
-        161 
-        162         to_free->next = nullptr;
-        163 
-        164         auto lock = std::lock_guard{spin_lock_};
-        165 
-        166         unit_count_ += to_free->n_nuits;
-        167         unit_count_min_ = std::min(unit_count_, unit_count_min_);
-        168 
-        169         if (header_ == nullptr) {
-        170             header_ = to_free;
-        171             return;
-        172         }
-        173 
-        174         if (to_free < header_) {
-        175             concat(to_free, header_);
-        176             header_ = to_free;
-        177             return;
-        178         }
-        179 
-        180         header_t* curr = header_;
-        181 
-        182         for (; curr->next != nullptr; curr = curr->next) {
-        183             if (to_free < curr->next) {  // 常に curr < to_free
-        184                 concat(to_free, curr->next);
-        185                 concat(curr, to_free);
-        186                 return;
-        187             }
-        188         }
-        189 
-        190         concat(curr, to_free);
-        191         // @@@ ignore end
-        192     }
-        193 
-        194     virtual size_t get_size() const noexcept override { return 1; }
-        195     virtual size_t get_count() const noexcept override { return unit_count_ * Inner_::unit_size; }
-        196     virtual size_t get_count_min() const noexcept override
-        197     {
-        198         return unit_count_min_ * Inner_::unit_size;
-        199     }
-        200 
-        201     virtual bool is_valid(void const* mem) const noexcept override
-        202     {
-        203         return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
-        204     }
-        205     // @@@ sample end
-        206     // @@@ sample begin 0:4
-        207 };
-        208 // @@@ sample end
+         96 
+         97         auto operator<=>(const const_iterator&) const = default;
+         98     #endif
+         99         // clang-format on
+        100 
+        101     private:
+        102         Inner_::header_t const* header_;
+        103     };
+        104 
+        105     const_iterator begin() const noexcept { return const_iterator{header_}; }
+        106     const_iterator end() const noexcept { return const_iterator{nullptr}; }
+        107     const_iterator cbegin() const noexcept { return const_iterator{header_}; }
+        108     const_iterator cend() const noexcept { return const_iterator{nullptr}; }
+        109     // @@@ sample end
+        110     // @@@ sample begin 0:3
+        111 
+        112 private:
+        113     using header_t = Inner_::header_t;
+        114 
+        115     Inner_::buffer_t<MEM_SIZE> buff_{};
+        116     header_t*                  header_{reinterpret_cast<header_t*>(buff_.buffer)};
+        117     mutable SpinLock           spin_lock_{};
+        118     size_t                     unit_count_{sizeof(buff_) / Inner_::unit_size};
+        119     size_t                     unit_count_min_{sizeof(buff_) / Inner_::unit_size};
+        120 
+        121     virtual void* alloc(size_t size) noexcept override
+        122     {
+        123         // @@@ ignore begin
+        124         // size分のメモリとヘッダ
+        125         auto n_nuits = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
+        126 
+        127         auto lock = std::lock_guard{spin_lock_};
+        128 
+        129         auto curr = header_;
+        130 
+        131         for (header_t* prev{nullptr}; curr != nullptr; prev = curr, curr = curr->next) {
+        132             auto opt_next = std::optional<header_t*>{sprit(curr, n_nuits)};
+        133 
+        134             if (!opt_next) {
+        135                 continue;
+        136             }
+        137 
+        138             auto next = *opt_next;
+        139             if (prev == nullptr) {
+        140                 header_ = next;
+        141             }
+        142             else {
+        143                 prev->next = next;
+        144             }
+        145             break;
+        146         }
+        147 
+        148         if (curr != nullptr) {
+        149             unit_count_ -= curr->n_nuits;
+        150             unit_count_min_ = std::min(unit_count_, unit_count_min_);
+        151             ++curr;
+        152         }
+        153 
+        154         return curr;
+        155         // @@@ ignore end
+        156     }
+        157 
+        158     virtual void free(void* mem) noexcept override
+        159     {
+        160         // @@@ ignore begin
+        161         header_t* to_free = Inner_::set_back(mem);
+        162 
+        163         to_free->next = nullptr;
+        164 
+        165         auto lock = std::lock_guard{spin_lock_};
+        166 
+        167         unit_count_ += to_free->n_nuits;
+        168         unit_count_min_ = std::min(unit_count_, unit_count_min_);
+        169 
+        170         if (header_ == nullptr) {
+        171             header_ = to_free;
+        172             return;
+        173         }
+        174 
+        175         if (to_free < header_) {
+        176             concat(to_free, header_);
+        177             header_ = to_free;
+        178             return;
+        179         }
+        180 
+        181         header_t* curr = header_;
+        182 
+        183         for (; curr->next != nullptr; curr = curr->next) {
+        184             if (to_free < curr->next) {  // 常に curr < to_free
+        185                 concat(to_free, curr->next);
+        186                 concat(curr, to_free);
+        187                 return;
+        188             }
+        189         }
+        190 
+        191         concat(curr, to_free);
+        192         // @@@ ignore end
+        193     }
+        194 
+        195     virtual size_t get_size() const noexcept override { return 1; }
+        196     virtual size_t get_count() const noexcept override { return unit_count_ * Inner_::unit_size; }
+        197     virtual size_t get_count_min() const noexcept override
+        198     {
+        199         return unit_count_min_ * Inner_::unit_size;
+        200     }
+        201 
+        202     virtual bool is_valid(void const* mem) const noexcept override
+        203     {
+        204         return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
+        205     }
+        206     // @@@ sample end
+        207     // @@@ sample begin 0:4
+        208 };
+        209 // @@@ sample end
 ```
 
 
