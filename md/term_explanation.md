@@ -210,7 +210,7 @@ enum classは通常の[用語解説|enum](---)の問題を解決するためにC
 ```
 
 ### スコープドenum
-enum classは、[スコープドenum](---)と呼ばれることがある。
+[enum class](---)はスコープドenum(scoped enum)と呼ばれることがある。
 
 
 ### underlying type
