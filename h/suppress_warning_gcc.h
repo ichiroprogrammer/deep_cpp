@@ -19,6 +19,8 @@
 #define SUPPRESS_WARN_GCC_FORMAT_SEC _Pragma("GCC diagnostic ignored \"-Wformat-security\"")
 #define SUPPRESS_WARN_GCC_IGNORE_QUAL _Pragma("GCC diagnostic ignored \"-Wignored-qualifiers\"")
 #define SUPPRESS_WARN_GCC_IMPLICIT_INT _Pragma("GCC diagnostic ignored \"-Wimplicit-int\"")
+#define SUPPRESS_WARN_GCC_INACCESSIBLE_BASE \
+    _Pragma("GCC diagnostic ignored \"-Winaccessible-base\"")
 #define SUPPRESS_WARN_GCC_MISLEADING_INDENT \
     _Pragma("GCC diagnostic ignored \"-Wmisleading-indentation\"")
 #define SUPPRESS_WARN_GCC_INIT_OVERRIDE _Pragma("GCC diagnostic ignored \"-Woverride-init\"")
@@ -61,11 +63,8 @@
 #define SUPPRESS_WARN_GCC_CAST_FUNC_TYPE _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
 #define SUPPRESS_WARN_GCC_CATCH_ASSIGN _Pragma("GCC diagnostic ignored \"-Wcatch-value=\"")
 #define SUPPRESS_WARN_GCC_CLASS_MEMACCESS _Pragma("GCC diagnostic ignored \"-Wclass-memaccess\"")
-#define SUPPRESS_WARN_GCC_INACCESSIBLE_BASE \
-    _Pragma("GCC diagnostic ignored \"-Winaccessible-base\"")
 #define SUPPRESS_WARN_GCC_TYPE_LIMITS _Pragma("GCC diagnostic ignored \"-Wtype-limits\"")
 #define SUPPRESS_WARN_GCC_FALLTHROUGH _Pragma("GCC diagnostic ignored \"-Wimplicit-fallthrough\"")
-#define SUPPRESS_WARN_GCC_INACCESS_BASE _Pragma("GCC diagnostic ignored \"-Winaccessible-base\"")
 #define SUPPRESS_WARN_GCC_LOCAL_RETURN _Pragma("GCC diagnostic ignored \"-Wreturn-local-addr\"")
 #define SUPPRESS_WARN_GCC_MISSING_FIELD_INIT \
     _Pragma("GCC diagnostic ignored \"-Wmissing-field-initializers\"")
@@ -97,6 +96,7 @@
 #define SUPPRESS_WARN_GCC_FORMAT_SEC
 #define SUPPRESS_WARN_GCC_IGNORE_QUAL
 #define SUPPRESS_WARN_GCC_IMPLICIT_INT
+#define SUPPRESS_WARN_GCC_INACCESSIBLE_BASE
 #define SUPPRESS_WARN_GCC_MISLEADING_INDENT
 #define SUPPRESS_WARN_GCC_INIT_OVERRIDE
 #define SUPPRESS_WARN_GCC_MISSING_BRACES

@@ -25,6 +25,8 @@
 #define SUPPRESS_WARN_CLANG_IMPLICIT_INT _Pragma("clang diagnostic ignored \"-Wimplicit-int\"")
 #define SUPPRESS_WARN_CLANG_IMPLICIT_CONST_FLOAT \
     _Pragma("clang diagnostic ignored \"-Wimplicit-const-int-float-conversion\"")
+#define SUPPRESS_WARN_CLANG_INACCESSIBLE_BASE \
+    _Pragma("clang diagnostic ignored \"-Winaccessible-base\"")
 #define SUPPRESS_WARN_CLANG_INIT_OVERRIDE \
     _Pragma("clang diagnostic ignored \"-Winitializer-overrides\"")
 #define SUPPRESS_WARN_CLANG_MISSING_BRACES _Pragma("clang diagnostic ignored \"-Wmissing-braces\"")
@@ -146,6 +148,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_DEPRECATED_DECL
 #define SUPPRESS_WARN_CLANG_IMPLICIT_INT
 #define SUPPRESS_WARN_CLANG_IMPLICIT_CONST_FLOAT
+#define SUPPRESS_WARN_CLANG_INACCESSIBLE_BASE
 #define SUPPRESS_WARN_CLANG_INIT_OVERRIDE
 #define SUPPRESS_WARN_CLANG_MISSING_BRACES
 #define SUPPRESS_WARN_CLANG_MISSING_FIELD_INIT
