@@ -1038,54 +1038,6 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
     // @@@ example/term_explanation/constructor_ut.cpp #2:0 begin
 ```
 
-### 非explicitなコンストラクタによる暗黙の型変換
-非explicitなコンストラクタによる暗黙の型変換とは、
-
-```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:0 begin
-```
-
-上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
-
-```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:1 begin
-```
-
-この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
-
-```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:2 begin
-```
-
-この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
-
-```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:3 begin -2
-```
-
-以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
-
-```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:4 begin -2
-```
-
-下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
-
-```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:5 begin
-```
-
-std::stringは暗黙の型変換を許して良く、(多くの場合)Personには暗黙の型変換をしない方が良い理由は、
-
-* std::stringの役割は文字列の管理と演算のみであるため、
-  std::stringを文字列リテラルと等価なもののように扱っても違和感がない
-* Personは、明らかに文字列リテラルと等価なものではない
-
-といったセマンティクス的観点(「[シンタックス、セマンティクス](---)」参照)によるものである。
-
-クラスPersonと同様に、
-ほとんどのユーザ定義クラスには非explicitなコンストラクタによる暗黙の型変換は必要ない。
-
 ### 非静的なメンバ変数の初期化
 非静的なメンバ変数の初期化には下記の3つの方法がある。
 
@@ -1584,7 +1536,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
     // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #1:0 begin
 ```
 
-* 暗黙の型変換を利用した以下に示すようなシンプルな記述ができる場合がある。
+* [暗黙の型変換](---)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
     // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #1:1 begin -2
@@ -3017,13 +2969,64 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 
 この節で説明するexplicitの機能は下記のような項目に渡って説明を行う。
 
+- [暗黙の型変換](---)
 - [暗黙の型変換抑止](---)
 - [explicit type operator()](---)
 - [explicit(COND)](---)
 
+### 暗黙の型変換
+この節で扱う暗黙の型変換とは、
+以下に示したような「非explicitなコンストラクタを持つクラス」による暗黙の型変換を指し、
+[汎整数型昇格](---)や[算術変換](---)等を指さない。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:0 begin
+```
+
+上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:1 begin
+```
+
+この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:2 begin
+```
+
+この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:3 begin -2
+```
+
+以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:4 begin -2
+```
+
+下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:5 begin
+```
+
+std::stringは暗黙の型変換を許して良く、(多くの場合)Personには暗黙の型変換をしない方が良い理由は、
+
+* std::stringの役割は文字列の管理と演算のみであるため、
+  std::stringを文字列リテラルと等価なもののように扱っても違和感がない
+* Personは、明らかに文字列リテラルと等価なものではない
+
+といったセマンティクス的観点(「[シンタックス、セマンティクス](---)」参照)によるものである。
+
+クラスPersonと同様に、
+ほとんどのユーザ定義クラスには非explicitなコンストラクタによる暗黙の型変換は必要ない。
+
 ### 暗黙の型変換抑止
 explicit宣言されていないコンストラクタを持つクラスは、
-下記のコードのように暗黙のの型変換が起こる。
+下記のコードのように[暗黙の型変換](---)が起こる。
 
 ```cpp
     // @@@ example/term_explanation/explicit_ut.cpp #0:0 begin
@@ -3640,8 +3643,7 @@ Derived用のoperator==を
 ```
 
 これは、文字列リテラルを第1引数に取るstd::stringのコンストラクタが非explicitであることによって、
-文字列リテラルからstd::stringへの暗黙の型変換が起こるために成立する
-(「[非explicitなコンストラクタによる暗黙の型変換](---)」参照)。
+文字列リテラルからstd::stringへの[暗黙の型変換](---)が起こるために成立する。
 
 以上で見てきたように、等価性のセマンティクスを守ったoperator==の実装には多くの観点が必要になる。
 

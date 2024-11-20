@@ -442,7 +442,7 @@ Rectangleの全派生クラスに依存した、変更に弱い関数となる�
 ```
 
 このSetX()は、Rectangleからの派生クラスに依存していないため、良い解法に見える。
-ところが実際にはオブジェクトの[スライシング](#SS_6_5_9_3)という別の問題を引き起こす。  
+ところが実際にはオブジェクトの[スライシング](#SS_6_5_8_3)という別の問題を引き起こす。  
 
 例示した問題は結局のところデザインの誤りが原因であり、それを修正しない限り、
 問題の回避は容易ではない。
@@ -1691,7 +1691,7 @@ immutableとして扱うことができる。
 
 
 ## Clone(仮想コンストラクタ) <a id="SS_3_7"></a>
-オブジェクトコピーによる[スライシング](#SS_6_5_9_3)を回避するためのイデオムである。
+オブジェクトコピーによる[スライシング](#SS_6_5_8_3)を回避するためのイデオムである。
 
 下記は、オブジェクトコピーによるスライシングを起こしてしまう例である。
 
@@ -7117,7 +7117,7 @@ SafeArrayにはメンバ変数が存在しないため、
 には名前が非規定の配列メンバのみを持つため、
 これを初期化するためには初期化子リスト
 (「[初期化子リストコンストラクタ](#SS_6_5_1)」、
-「[一様初期化](#SS_6_5_6)」参照)を用いるのが良い。
+「[一様初期化](#SS_6_5_5)」参照)を用いるのが良い。
 
 ということは、SafeArrayの初期化子リストコンストラクタには、
 「基底クラスstd::arrayに初期子リストを与えて初期化する」形式が必要になる。
@@ -12895,8 +12895,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     static_assert("1234" != StaticString{"123"});
 ```
 
-[非explicitなコンストラクタによる暗黙の型変換](#SS_6_5_4)
-を利用した文字列リテラルからStaticStringオブジェクトへの変換は、
+[暗黙の型変換](#SS_6_12_1)を利用した文字列リテラルからStaticStringオブジェクトへの変換は、
 StaticStringがテンプレートであるため機能せず、上記のように書く必要がある。
 
 同様にoperator + を追加する。
@@ -14220,7 +14219,7 @@ MPoolから派生したクラスが、
 
 静的オブジェクトを含まないアプリケーションでは、
 上記のコードのsetupで行っているmpool_tableの初期化は
-[一様初期化](#SS_6_5_6)で行った方が良いが、
+[一様初期化](#SS_6_5_5)で行った方が良いが、
 例で用いたアプリケーションにはnewを行う静的オブジェクトが存在するため
 (google testは静的オブジェクトを利用する)、
 setupで行っているような方法以外では、
@@ -15108,22 +15107,21 @@ __この章の構成__
 &emsp;&emsp;&emsp; [初期化子リストコンストラクタ](#SS_6_5_1)  
 &emsp;&emsp;&emsp; [継承コンストラクタ](#SS_6_5_2)  
 &emsp;&emsp;&emsp; [委譲コンストラクタ](#SS_6_5_3)  
-&emsp;&emsp;&emsp; [非explicitなコンストラクタによる暗黙の型変換](#SS_6_5_4)  
-&emsp;&emsp;&emsp; [非静的なメンバ変数の初期化](#SS_6_5_5)  
-&emsp;&emsp;&emsp;&emsp; [NSDMI](#SS_6_5_5_1)  
-&emsp;&emsp;&emsp;&emsp; [初期化子リストでの初期化](#SS_6_5_5_2)  
-&emsp;&emsp;&emsp;&emsp; [コンストラクタ内での非静的なメンバ変数の初期値の代入](#SS_6_5_5_3)  
+&emsp;&emsp;&emsp; [非静的なメンバ変数の初期化](#SS_6_5_4)  
+&emsp;&emsp;&emsp;&emsp; [NSDMI](#SS_6_5_4_1)  
+&emsp;&emsp;&emsp;&emsp; [初期化子リストでの初期化](#SS_6_5_4_2)  
+&emsp;&emsp;&emsp;&emsp; [コンストラクタ内での非静的なメンバ変数の初期値の代入](#SS_6_5_4_3)  
 
-&emsp;&emsp;&emsp; [一様初期化](#SS_6_5_6)  
-&emsp;&emsp;&emsp; [オブジェクトの所有権](#SS_6_5_7)  
-&emsp;&emsp;&emsp;&emsp; [オブジェクトの排他所有](#SS_6_5_7_1)  
-&emsp;&emsp;&emsp;&emsp; [オブジェクトの共有所有](#SS_6_5_7_2)  
+&emsp;&emsp;&emsp; [一様初期化](#SS_6_5_5)  
+&emsp;&emsp;&emsp; [オブジェクトの所有権](#SS_6_5_6)  
+&emsp;&emsp;&emsp;&emsp; [オブジェクトの排他所有](#SS_6_5_6_1)  
+&emsp;&emsp;&emsp;&emsp; [オブジェクトの共有所有](#SS_6_5_6_2)  
 
-&emsp;&emsp;&emsp; [オブジェクトのライフタイム](#SS_6_5_8)  
-&emsp;&emsp;&emsp; [オブジェクトのコピー](#SS_6_5_9)  
-&emsp;&emsp;&emsp;&emsp; [シャローコピー](#SS_6_5_9_1)  
-&emsp;&emsp;&emsp;&emsp; [ディープコピー](#SS_6_5_9_2)  
-&emsp;&emsp;&emsp;&emsp; [スライシング](#SS_6_5_9_3)  
+&emsp;&emsp;&emsp; [オブジェクトのライフタイム](#SS_6_5_7)  
+&emsp;&emsp;&emsp; [オブジェクトのコピー](#SS_6_5_8)  
+&emsp;&emsp;&emsp;&emsp; [シャローコピー](#SS_6_5_8_1)  
+&emsp;&emsp;&emsp;&emsp; [ディープコピー](#SS_6_5_8_2)  
+&emsp;&emsp;&emsp;&emsp; [スライシング](#SS_6_5_8_3)  
 
 &emsp;&emsp; [リテラル](#SS_6_6)  
 &emsp;&emsp;&emsp; [生文字列リテラル](#SS_6_6_1)  
@@ -15211,9 +15209,10 @@ __この章の構成__
 &emsp;&emsp;&emsp; [後置戻り値型auto](#SS_6_11_6)  
 
 &emsp;&emsp; [explicit](#SS_6_12)  
-&emsp;&emsp;&emsp; [暗黙の型変換抑止](#SS_6_12_1)  
-&emsp;&emsp;&emsp; [explicit type operator()](#SS_6_12_2)  
-&emsp;&emsp;&emsp; [explicit(COND)](#SS_6_12_3)  
+&emsp;&emsp;&emsp; [暗黙の型変換](#SS_6_12_1)  
+&emsp;&emsp;&emsp; [暗黙の型変換抑止](#SS_6_12_2)  
+&emsp;&emsp;&emsp; [explicit type operator()](#SS_6_12_3)  
+&emsp;&emsp;&emsp; [explicit(COND)](#SS_6_12_4)  
 
 &emsp;&emsp; [expressionと値カテゴリ](#SS_6_13)  
 &emsp;&emsp;&emsp; [expression](#SS_6_13_1)  
@@ -15407,7 +15406,7 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
     static_assert(std::is_same<decltype(ret_9), long>::value, "");
 ```
 
-[一様初期化](#SS_6_5_6)を使用することで、
+[一様初期化](#SS_6_5_5)を使用することで、
 変数定義時の算術変換による意図しない値の変換(縮小型変換)を防ぐことができる。
 
 ```cpp
@@ -15703,7 +15702,7 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 
 上記コードにもあるが、underlying typeインスタンスによる初期化を行う場合は、
 意図しない縮小型変換によるバグの発生を防ぐためにも、
-[一様初期化](#SS_6_5_6)を使用するべきだろう。
+[一様初期化](#SS_6_5_5)を使用するべきだろう。
 
 一部の例外を除くとunderlying typeを指定しないenumやenum classはコンパイル時にサイズが確定できないため、
 前方宣言できないが、underlying typeを指定したenum、enum classは前方宣言することができる。
@@ -15982,7 +15981,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 特殊メンバ関数の挙動を正しく定義しないと、
 リソースの不適切な管理(例: メモリリーク、リソースの二重解放)を招く可能性がある。
 自動生成されるメンバ関数では、
-複雑なリソース管理の要件を満たせないことがある(「[シャローコピー](#SS_6_5_9_1)」参照)。
+複雑なリソース管理の要件を満たせないことがある(「[シャローコピー](#SS_6_5_8_1)」参照)。
 
 なお、「五の原則」は、「六の原則」と呼ばれることもある。
 その場合、この原則が対象とする関数は、[特殊メンバ関数](#SS_6_3_1)のすべてとなる。
@@ -17166,159 +17165,18 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
     };
 ```
 
-### 非explicitなコンストラクタによる暗黙の型変換 <a id="SS_6_5_4"></a>
-非explicitなコンストラクタによる暗黙の型変換とは、
-
-```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 8
-
-    class Person {
-    public:
-        Person(char const* name, uint32_t age = 0) : name_{name}, age_{age} {}
-        Person(Person const&)            = default;
-        Person& operator=(Person const&) = default;
-
-        std::string const& GetName() const noexcept { return name_; }
-        uint32_t           GetAge() const noexcept { return age_; }
-
-    private:
-        std::string name_;  // コピーをするため非const
-        uint32_t    age_;
-    };
-
-    #if __cplusplus <= 201703L  // c++17
-    bool operator==(Person const& lhs, Person const& rhs) noexcept
-    {
-        return std::tuple(lhs.GetName(), lhs.GetAge()) == std::tuple(rhs.GetName(), rhs.GetAge());
-    }
-
-    #else  // c++20
-    auto operator<=>(Person const& lhs, Person const& rhs) noexcept
-    {
-        return std::tuple(lhs.GetName(), lhs.GetAge()) <=> std::tuple(rhs.GetName(), rhs.GetAge());
-    }
-
-    // <=>から自動的に==が生成されないため、明示的に定義する必要がある
-    bool operator==(Person const& lhs, Person const& rhs) noexcept { return (lhs <=> rhs) == 0; }
-    #endif
-```
-
-上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
-
-```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 40
-
-    void f(Person const& person) noexcept
-    {
-        ...
-    }
-
-    void using_implicit_coversion()
-    {
-        f("Ohtani");  // "Ohtani"はPerson型ではないが、コンパイル可能
-    }
-```
-
-この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
-
-```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 54
-
-    void not_using_implicit_coversion()
-    {
-        f(Person{"Ohtani"});  // 本来は、fの引数はPerson型
-    }
-```
-
-この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
-
-```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 66
-
-    auto otani = std::string{"Ohtani"};
-
-    ...
-
-    if (otani == "Ohtani") {  // 暗黙の型変換によりコンパイルできる
-        ...
-    }
-```
-
-以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
-
-```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 80
-
-    auto otani = Person{"Ohtani", 26};
-
-    ...
-
-    if (otani == "Otani") {  // このコードがコンパイルされる。
-        ...
-    }
-```
-
-下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
-
-```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 107
-
-    class Person {
-    public:
-        explicit Person(char const* name, uint32_t age = 0) : name_{name}, age_{age} {}
-        Person(Person const&)            = default;
-        Person& operator=(Person const&) = default;
-
-        ...
-    };
-
-    void prohibit_implicit_coversion()
-    {
-    #if 0  // explicit付きのコンストラクタを持つPersonと違い、コンパイルできない。
-        f("Ohtani");
-    #else
-        f(Person{"Ohtani"});
-    #endif
-
-        auto otani = Person{"Ohtani", 26};
-
-        ...
-
-    #if 0
-        if (otani == "Otani") {  // このコードもコンパイルできない。
-            ...
-        }
-    #else
-        if (otani == Person{"Otani", 26}) {  // この記述を強制できる。
-            ...
-        }
-    #endif
-    }
-```
-
-std::stringは暗黙の型変換を許して良く、(多くの場合)Personには暗黙の型変換をしない方が良い理由は、
-
-* std::stringの役割は文字列の管理と演算のみであるため、
-  std::stringを文字列リテラルと等価なもののように扱っても違和感がない
-* Personは、明らかに文字列リテラルと等価なものではない
-
-といったセマンティクス的観点(「[シンタックス、セマンティクス](#SS_6_16)」参照)によるものである。
-
-クラスPersonと同様に、
-ほとんどのユーザ定義クラスには非explicitなコンストラクタによる暗黙の型変換は必要ない。
-
-### 非静的なメンバ変数の初期化 <a id="SS_6_5_5"></a>
+### 非静的なメンバ変数の初期化 <a id="SS_6_5_4"></a>
 非静的なメンバ変数の初期化には下記の3つの方法がある。
 
-* [NSDMI](#SS_6_5_5_1)
-* [初期化子リストでの初期化](#SS_6_5_5_2)
-* [コンストラクタ内での非静的なメンバ変数の初期値の代入](#SS_6_5_5_3)
+* [NSDMI](#SS_6_5_4_1)
+* [初期化子リストでの初期化](#SS_6_5_4_2)
+* [コンストラクタ内での非静的なメンバ変数の初期値の代入](#SS_6_5_4_3)
 
 同一変数に対して、
-「[NSDMI](#SS_6_5_5_1)」と「[初期化子リストでの初期化](#SS_6_5_5_2)」
+「[NSDMI](#SS_6_5_4_1)」と「[初期化子リストでの初期化](#SS_6_5_4_2)」
 が行われた場合、その変数に対するNSDMIは行われない。
 
-#### NSDMI <a id="SS_6_5_5_1"></a>
+#### NSDMI <a id="SS_6_5_4_1"></a>
 NSDMIとは、non-static data member initializerの略語であり、
 下記のような非静的なメンバ変数の初期化子を指す。
 
@@ -17338,13 +17196,13 @@ NSDMIとは、non-static data member initializerの略語であり、
     };
 ```
 
-#### 初期化子リストでの初期化 <a id="SS_6_5_5_2"></a>
+#### 初期化子リストでの初期化 <a id="SS_6_5_4_2"></a>
 「非静的メンバ変数をコンストラクタの本体よりも前に初期化する」言語機能である。
 メンバ変数は宣言された順序で初期化されるため、
 初期化子リストでの順序は、実際の初期化の順序とは関係がない。
 
 この機能を使うことで、メンバ変数の初期化処理が簡素に記述できる。
-constメンバ変数は、初期化子リストでの初期化か[NSDMI](#SS_6_5_5_1)でしか初期化できない。
+constメンバ変数は、初期化子リストでの初期化か[NSDMI](#SS_6_5_4_1)でしか初期化できない。
 
 ```cpp
     //  example/term_explanation/nsdmi.cpp 25
@@ -17361,11 +17219,11 @@ constメンバ変数は、初期化子リストでの初期化か[NSDMI](#SS_6_5
     };
 ```
 
-#### コンストラクタ内での非静的なメンバ変数の初期値の代入 <a id="SS_6_5_5_3"></a>
+#### コンストラクタ内での非静的なメンバ変数の初期値の代入 <a id="SS_6_5_4_3"></a>
 この方法は単なる代入でありメンバ変数の初期化ではない。
 
-[NSDMI](#SS_6_5_5_1)、
-[初期化子リストでの初期化](#SS_6_5_5_2)で初期化できない変数を未初期化でない状態にするための唯一の方法である。
+[NSDMI](#SS_6_5_4_1)、
+[初期化子リストでの初期化](#SS_6_5_4_2)で初期化できない変数を未初期化でない状態にするための唯一の方法である。
 
 ```cpp
     //  example/term_explanation/nsdmi.cpp 40
@@ -17384,7 +17242,7 @@ constメンバ変数は、初期化子リストでの初期化か[NSDMI](#SS_6_5
     };
 ```
 
-### 一様初期化 <a id="SS_6_5_6"></a>
+### 一様初期化 <a id="SS_6_5_5"></a>
 一様初期化(uniform initialization)とは、
 C++11で導入された、コンストラクタの呼び出しをリスト初期化と合わせて{}で記述する構文である。
 
@@ -17445,7 +17303,7 @@ C++11で導入された、コンストラクタの呼び出しをリスト初期
     // int i2{d};  // 縮小型変換のため、コンパイルエラー
 ```
 
-### オブジェクトの所有権 <a id="SS_6_5_7"></a>
+### オブジェクトの所有権 <a id="SS_6_5_6"></a>
 オブジェクトxがオブジェクトaの解放責務を持つ場合、
 xはaの所有権を持つ(もしくは、所有する) という。
 
@@ -17489,9 +17347,9 @@ x0、x1、...、xNがaを共有所有する場合、x0、x1、...、xN全体で�
 ```
 
 こういった問題に対処するためのプログラミングパターンを以下の
-「[オブジェクトの排他所有](#SS_6_5_7_1)」と「[オブジェクトの共有所有](#SS_6_5_7_2)」で解説する。
+「[オブジェクトの排他所有](#SS_6_5_6_1)」と「[オブジェクトの共有所有](#SS_6_5_6_2)」で解説する。
 
-#### オブジェクトの排他所有 <a id="SS_6_5_7_1"></a>
+#### オブジェクトの排他所有 <a id="SS_6_5_6_1"></a>
 オブジェクトの排他所有や、それを容易に実現するための
 [std::unique_ptr](https://cpprefjp.github.io/reference/memory/unique_ptr.html)
 の仕様をを説明するために、下記のようにクラスA、Xを定義する。
@@ -17696,7 +17554,7 @@ std::unique_ptr、std::move()、[rvalue](#SS_6_13_3)の関係を解説する。
 
 こういった機能によりstd::unique_ptrはオブジェクトの排他所有を実現している。
 
-#### オブジェクトの共有所有 <a id="SS_6_5_7_2"></a>
+#### オブジェクトの共有所有 <a id="SS_6_5_6_2"></a>
 オブジェクトの共有所有や、それを容易に実現するための
 [std::shared_ptr](https://cpprefjp.github.io/reference/memory/shared_ptr.html)
 の仕様をを説明するために、下記のようにクラスA、Xを定義する。
@@ -17913,7 +17771,7 @@ std::shared_ptr、std::move()、[rvalue](#SS_6_13_3)の関係を解説する。
 こういった機能によりstd::shared_ptrはオブジェクトの共有所有を実現している。
 
 
-### オブジェクトのライフタイム <a id="SS_6_5_8"></a>
+### オブジェクトのライフタイム <a id="SS_6_5_7"></a>
 オブジェクトは、以下のような種類のライフタイムを持つ。
 
 * 静的に生成されたオブジェクトのライフタイム
@@ -17932,11 +17790,11 @@ rvalueをバインドするリファレンスが存在しない状態で、
 このような状態のリファレンスを[danglingリファレンス](#SS_6_14_5)と呼ぶ。
 同様に、このような状態のポインタを[danglingポインタ](#SS_6_14_6)と呼ぶ。
 
-### オブジェクトのコピー <a id="SS_6_5_9"></a>
-#### シャローコピー <a id="SS_6_5_9_1"></a>
+### オブジェクトのコピー <a id="SS_6_5_8"></a>
+#### シャローコピー <a id="SS_6_5_8_1"></a>
 シャローコピー(浅いコピー)とは、暗黙的、
 もしくは=defaultによってコンパイラが生成するようなcopyコンストラクタ、
-copy代入演算子が行うコピーであり、[ディープコピー](#SS_6_5_9_2)と対比的に使われる概念である。
+copy代入演算子が行うコピーであり、[ディープコピー](#SS_6_5_8_2)と対比的に使われる概念である。
 
 以下のクラスShallowOKには、コンパイラが生成するcopyコンストラクタ、
 copy代入演算子と同等なものを定義したが、これは問題のないシャローコピーである
@@ -18005,8 +17863,8 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
     //    s0、s2のスコープアウト時に、~ShallowNG()により、2重解放される。
 ```
 
-#### ディープコピー <a id="SS_6_5_9_2"></a>
-ディープコピーとは、[シャローコピー](#SS_6_5_9_1)が発生させる問題を回避したコピーである。
+#### ディープコピー <a id="SS_6_5_8_2"></a>
+ディープコピーとは、[シャローコピー](#SS_6_5_8_1)が発生させる問題を回避したコピーである。
 
 以下に例を示す。
 
@@ -18057,7 +17915,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
 ポインタが指しているオブジェクトを複製することにより、シャローコピーの問題を防ぐ。
 
 
-#### スライシング <a id="SS_6_5_9_3"></a>
+#### スライシング <a id="SS_6_5_8_3"></a>
 オブジェクトのスライシングとは、
 
 * クラスBaseとその派生クラスDerived
@@ -18469,7 +18327,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
     };
 ```
 
-* 暗黙の型変換を利用した以下に示すようなシンプルな記述ができる場合がある。
+* [暗黙の型変換](#SS_6_12_1)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
     //  example/term_explanation_cpp20/comparison_operator_ut.cpp 84
@@ -21981,13 +21839,157 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 
 この節で説明するexplicitの機能は下記のような項目に渡って説明を行う。
 
-- [暗黙の型変換抑止](#SS_6_12_1)
-- [explicit type operator()](#SS_6_12_2)
-- [explicit(COND)](#SS_6_12_3)
+- [暗黙の型変換](#SS_6_12_1)
+- [暗黙の型変換抑止](#SS_6_12_2)
+- [explicit type operator()](#SS_6_12_3)
+- [explicit(COND)](#SS_6_12_4)
 
-### 暗黙の型変換抑止 <a id="SS_6_12_1"></a>
+### 暗黙の型変換 <a id="SS_6_12_1"></a>
+この節で扱う暗黙の型変換とは、
+以下に示したような「非explicitなコンストラクタを持つクラス」による暗黙の型変換を指し、
+[汎整数型昇格](#SS_6_1_7)や[算術変換](#SS_6_1_6)等を指さない。
+
+```cpp
+    //  example/term_explanation/implicit_conversion_ut.cpp 8
+
+    class Person {
+    public:
+        Person(char const* name, uint32_t age = 0) : name_{name}, age_{age} {}
+        Person(Person const&)            = default;
+        Person& operator=(Person const&) = default;
+
+        std::string const& GetName() const noexcept { return name_; }
+        uint32_t           GetAge() const noexcept { return age_; }
+
+    private:
+        std::string name_;  // コピーをするため非const
+        uint32_t    age_;
+    };
+
+    #if __cplusplus <= 201703L  // c++17
+    bool operator==(Person const& lhs, Person const& rhs) noexcept
+    {
+        return std::tuple(lhs.GetName(), lhs.GetAge()) == std::tuple(rhs.GetName(), rhs.GetAge());
+    }
+
+    #else  // c++20
+    auto operator<=>(Person const& lhs, Person const& rhs) noexcept
+    {
+        return std::tuple(lhs.GetName(), lhs.GetAge()) <=> std::tuple(rhs.GetName(), rhs.GetAge());
+    }
+
+    // <=>から自動的に==が生成されないため、明示的に定義する必要がある
+    bool operator==(Person const& lhs, Person const& rhs) noexcept { return (lhs <=> rhs) == 0; }
+    #endif
+```
+
+上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
+
+```cpp
+    //  example/term_explanation/implicit_conversion_ut.cpp 40
+
+    void f(Person const& person) noexcept
+    {
+        ...
+    }
+
+    void using_implicit_coversion()
+    {
+        f("Ohtani");  // "Ohtani"はPerson型ではないが、コンパイル可能
+    }
+```
+
+この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
+
+```cpp
+    //  example/term_explanation/implicit_conversion_ut.cpp 54
+
+    void not_using_implicit_coversion()
+    {
+        f(Person{"Ohtani"});  // 本来は、fの引数はPerson型
+    }
+```
+
+この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
+
+```cpp
+    //  example/term_explanation/implicit_conversion_ut.cpp 66
+
+    auto otani = std::string{"Ohtani"};
+
+    ...
+
+    if (otani == "Ohtani") {  // 暗黙の型変換によりコンパイルできる
+        ...
+    }
+```
+
+以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
+
+```cpp
+    //  example/term_explanation/implicit_conversion_ut.cpp 80
+
+    auto otani = Person{"Ohtani", 26};
+
+    ...
+
+    if (otani == "Otani") {  // このコードがコンパイルされる。
+        ...
+    }
+```
+
+下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
+
+```cpp
+    //  example/term_explanation/implicit_conversion_ut.cpp 107
+
+    class Person {
+    public:
+        explicit Person(char const* name, uint32_t age = 0) : name_{name}, age_{age} {}
+        Person(Person const&)            = default;
+        Person& operator=(Person const&) = default;
+
+        ...
+    };
+
+    void prohibit_implicit_coversion()
+    {
+    #if 0  // explicit付きのコンストラクタを持つPersonと違い、コンパイルできない。
+        f("Ohtani");
+    #else
+        f(Person{"Ohtani"});
+    #endif
+
+        auto otani = Person{"Ohtani", 26};
+
+        ...
+
+    #if 0
+        if (otani == "Otani") {  // このコードもコンパイルできない。
+            ...
+        }
+    #else
+        if (otani == Person{"Otani", 26}) {  // この記述を強制できる。
+            ...
+        }
+    #endif
+    }
+```
+
+std::stringは暗黙の型変換を許して良く、(多くの場合)Personには暗黙の型変換をしない方が良い理由は、
+
+* std::stringの役割は文字列の管理と演算のみであるため、
+  std::stringを文字列リテラルと等価なもののように扱っても違和感がない
+* Personは、明らかに文字列リテラルと等価なものではない
+
+といったセマンティクス的観点(「[シンタックス、セマンティクス](#SS_6_16)」参照)によるものである。
+
+クラスPersonと同様に、
+ほとんどのユーザ定義クラスには非explicitなコンストラクタによる暗黙の型変換は必要ない。
+
+### 暗黙の型変換抑止 <a id="SS_6_12_2"></a>
 explicit宣言されていないコンストラクタを持つクラスは、
-下記のコードのように暗黙のの型変換が起こる。
+下記のコードのように[暗黙の型変換](#SS_6_12_1)が起こる。
 
 ```cpp
     //  example/term_explanation/explicit_ut.cpp 10
@@ -22029,10 +22031,10 @@ explicit宣言されていないコンストラクタを持つクラスは、
     // auto b = f(2);  // A::Aがexplicitであるため、コンパイルエラー
 ```
 
-C++03までは、[一様初期化](#SS_6_5_6)がサポートされていなかったため、
+C++03までは、[一様初期化](#SS_6_5_5)がサポートされていなかったため、
 explicitは単一引数のコンストラクタに使用されることが一般的であった。
 
-C++11からサポートされた[一様初期化](#SS_6_5_6)を下記のように使用することで、
+C++11からサポートされた[一様初期化](#SS_6_5_5)を下記のように使用することで、
 暗黙の型変換を使用できる。
 
 ```cpp
@@ -22079,7 +22081,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
     // auto b = f({2, 1});  // A::Aがexplicitであるため、コンパイルエラー
 ```
 
-### explicit type operator() <a id="SS_6_12_2"></a>
+### explicit type operator() <a id="SS_6_12_3"></a>
 型変換演算子のオーバーロードの戻り値をさらに別の型に変換すると、
 きわめてわかりづらいバグを生み出してしまうことがあるため、
 この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
@@ -22126,7 +22128,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
     // int b = a + 1;  // operator boolがexplicitであるため、コンパイルエラー
 ```
 
-### explicit(COND) <a id="SS_6_12_3"></a>
+### explicit(COND) <a id="SS_6_12_4"></a>
 C++20から導入されたexplicit(COND)は、
 コンストラクタや変換演算子に対して、
 特定の条件下で暗黙の型変換を許可または禁止する機能である。
@@ -23181,8 +23183,7 @@ Derived用のoperator==を
 ```
 
 これは、文字列リテラルを第1引数に取るstd::stringのコンストラクタが非explicitであることによって、
-文字列リテラルからstd::stringへの暗黙の型変換が起こるために成立する
-(「[非explicitなコンストラクタによる暗黙の型変換](#SS_6_5_4)」参照)。
+文字列リテラルからstd::stringへの[暗黙の型変換](#SS_6_12_1)が起こるために成立する。
 
 以上で見てきたように、等価性のセマンティクスを守ったoperator==の実装には多くの観点が必要になる。
 
@@ -23249,7 +23250,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
     ASSERT_FALSE(b == d);  // copyセマンティクスを満たしていない
 ```
 
-原因は、copy代入で[スライシング](#SS_6_5_9_3)が起こるためである。
+原因は、copy代入で[スライシング](#SS_6_5_8_3)が起こるためである。
 
 
 ### moveセマンティクス <a id="SS_6_16_3"></a>
