@@ -9,6 +9,7 @@
 #define SUPPRESS_WARN_GCC_BOOL_OP _Pragma("GCC diagnostic ignored \"-Wbool-operation\"")
 #define SUPPRESS_WARN_GCC_ADDRESS _Pragma("GCC diagnostic ignored \"-Waddress\"")
 #define SUPPRESS_WARN_GCC_COMMENT _Pragma("GCC diagnostic ignored \"-Wcomment\"")
+#define SUPPRESS_WARN_GCC_CATCH_VALUE _Pragma("GCC diagnostic ignored \"-Wcatch-value=\"")
 #define SUPPRESS_WARN_GCC_CONV_NULL _Pragma("GCC diagnostic ignored \"-Wconversion-null\"")
 #define SUPPRESS_WARN_GCC_DEL_INCOMP _Pragma("GCC diagnostic ignored \"-Wdelete-incomplete\"")
 #define SUPPRESS_WARN_GCC_EMPTY_BODY _Pragma("GCC diagnostic ignored \"-Wempty-body\"")
@@ -87,6 +88,7 @@
 #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS
 #define SUPPRESS_WARN_GCC_BOOL_OP
 #define SUPPRESS_WARN_GCC_COMMENT
+#define SUPPRESS_WARN_GCC_CATCH_VALUE
 #define SUPPRESS_WARN_GCC_CONV_NULL
 #define SUPPRESS_WARN_GCC_DEL_INCOMP
 #define SUPPRESS_WARN_GCC_EMPTY_BODY
