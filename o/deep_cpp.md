@@ -13650,6 +13650,8 @@ __この章の構成__
 &emsp;&emsp;&emsp; [可変長メモリプール](#SS_5_4_2)  
 &emsp;&emsp;&emsp; [デバッグ用イテレータ](#SS_5_4_3)  
 &emsp;&emsp;&emsp; [エクセプション処理機構の変更](#SS_5_4_4)  
+
+&emsp;&emsp; [Polymorphic Memory Resource(pmr)](#SS_5_5)  
   
   
 
@@ -15039,6 +15041,37 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 これを適用できるコンパイラは限られている。
 しかし、多くのコンパイラはこれと同様の拡張方法を備えているため、
 安易にエクセプションやSTLコンテナを使用禁止することなく、安全に使用する方法を探るべきだろう。
+
+## Polymorphic Memory Resource(pmr) <a id="SS_5_5"></a>
+Polymorphic Memory Resource(pmr)は、
+動的メモリ管理の柔軟性と効率性を向上させるための、C++17から導入された仕組みである。
+
+std::pmr名前空間でポリモーフィックメモリリソース(Polymorphic Memory Resource, pmr)が導入され、
+std::pmrは、カスタマイズ可能なメモリ管理を標準ライブラリのデータ構造に統合するための統一的なフレームワークであり、
+特にSTLコンテナと連携して、動的メモリ管理を効率化することができる。
+
+std::pmrは以下のようなメモリ管理のカスタマイズを可能にする。
+
+* メモリアロケータをポリモーフィック(動的に選択可能)にする。
+* メモリ管理ポリシーをstd::pmr::memory_resourceで定義する。
+* メモリリソースを再利用して効率的な動的メモリ管理を実現する。
+
+std::pmrの主要なコンポーネントは以下の通りである。
+
+* std::pmr::memory_resource  
+  抽象基底クラスとして、カスタムメモリリソースのインターフェースを提供。
+
+* std::pmr::polymorphic_allocator  
+  STLコンテナで動的にメモリリソースを切り替えられるアロケータ。
+
+* std::pmr::synchronized_pool_resource / std::pmr::unsynchronized_pool_resource  
+  メモリプールを管理する標準のメモリリソース実装。
+
+
+std::pmr::memory_resourceのコードの使用例を下記のリストに従って提供せよ
+- memory_resourceの動作をgtest用いて解説せよ
+- コメントは「である」調か、体言止めにせよ
+- gtestはEXPECTではなく、ASSERTを使え
 
 
 <!-- ./md/term_explanation.md -->
