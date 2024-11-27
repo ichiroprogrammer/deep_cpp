@@ -10,6 +10,7 @@
 
 ## 改訂履歴
 * V20.01
+    * pmrの解説を追加
     * templateメタプログラミング
         * 浮動小数点IsEqual
         * FixedPoint

@@ -11,6 +11,7 @@
 
 ## 改訂履歴 <a id="SS_1_1"></a>
 * V20.01
+    * pmrの解説を追加
     * templateメタプログラミング
         * 浮動小数点IsEqual
         * FixedPoint
