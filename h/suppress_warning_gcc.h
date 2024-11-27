@@ -53,6 +53,7 @@
 #define SUPPRESS_WARN_GCC_SWITCH_BOOL _Pragma("GCC diagnostic ignored \"-Wswitch-bool\"")
 #define SUPPRESS_WARN_GCC_CONVERSION_VEXING_PARSE \
     _Pragma("GCC diagnostic ignored \"-Wvexing-parse\"")
+#define SUPPRESS_WARN_GCC_WRITE_STR _Pragma("GCC diagnostic ignored \"-Wwrite-strings\"")
 #define SUPPRESS_WARN_GCC_ENUM_COMP _Pragma("GCC diagnostic ignored \"-Wenum-compare\"")
 #define SUPPRESS_WARN_GCC_EXCEPTIONS _Pragma("GCC diagnostic ignored \"-Wexceptions\"")
 #define SUPPRESS_WARN_GCC_UNUSED_BUT_SET_VAR \
@@ -120,6 +121,7 @@
 #define SUPPRESS_WARN_GCC_UNUSED_VAR
 #define SUPPRESS_WARN_GCC_USER_DEFINED_LITERAL
 #define SUPPRESS_WARN_GCC_CONVERSION_VEXING_PARSE
+#define SUPPRESS_WARN_GCC_WRITE_STR
 #define SUPPRESS_WARN_GCC_ENUM_COMP_SWITCH
 
 // only gcc
