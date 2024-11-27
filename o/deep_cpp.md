@@ -13652,6 +13652,9 @@ __この章の構成__
 &emsp;&emsp;&emsp; [エクセプション処理機構の変更](#SS_5_4_4)  
 
 &emsp;&emsp; [Polymorphic Memory Resource(pmr)](#SS_5_5)  
+&emsp;&emsp;&emsp; [std::pmr::memory_resource](#SS_5_5_1)  
+&emsp;&emsp;&emsp; [std::pmr::polymorphic_allocator](#SS_5_5_2)  
+&emsp;&emsp;&emsp; [pool_resource](#SS_5_5_3)  
   
   
 
@@ -14964,10 +14967,10 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 コンパイラに[g++](#SS_6_18_1)や[clang++](#SS_6_18_2)を使っている場合、
 下記関数を置き換えることでそういった要望を叶えることができる。
 
-|関数                                         |機能                            |
-|---------------------------------------------|--------------------------------|
-|__cxa_allocate_exception(size_t thrown_size) |エクセプション処理用のメモリ確保|
-|__cxa_free_exception(void\* thrown_exception)|上記で確保したメモリの解放      |
+|関数                                           |機能                            |
+|-----------------------------------------------|--------------------------------|
+|`__cxa_allocate_exception(size_t thrown_size)` |エクセプション処理用のメモリ確保|
+|`__cxa_free_exception(void\* thrown_exception)`|上記で確保したメモリの解放      |
 
 オープンソースである[static exception](https://github.com/ApexAI/static_exception)を使うことで、
 上記2関数を置き換えることもできるが、この実装が複雑すぎると思うのであれば、
@@ -15046,8 +15049,10 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 Polymorphic Memory Resource(pmr)は、
 動的メモリ管理の柔軟性と効率性を向上させるための、C++17から導入された仕組みである。
 
-std::pmr名前空間でポリモーフィックメモリリソース(Polymorphic Memory Resource, pmr)が導入され、
-std::pmrは、カスタマイズ可能なメモリ管理を標準ライブラリのデータ構造に統合するための統一的なフレームワークであり、
+C++17で導入されたstd::pmr名前空間は、カスタマイズ可能なメモリ管理を提供し、
+特にSTLコンテナと連携して効率化を図るための統一フレームワークを提供する。
+std::pmrは、
+カスタマイズ可能なメモリ管理を標準ライブラリのデータ構造に統合するための統一的なフレームワークであり、
 特にSTLコンテナと連携して、動的メモリ管理を効率化することができる。
 
 std::pmrは以下のようなメモリ管理のカスタマイズを可能にする。
@@ -15058,20 +15063,180 @@ std::pmrは以下のようなメモリ管理のカスタマイズを可能にす
 
 std::pmrの主要なコンポーネントは以下の通りである。
 
-* std::pmr::memory_resource  
-  抽象基底クラスとして、カスタムメモリリソースのインターフェースを提供。
+* [std::pmr::memory_resource](#SS_5_5_1)  
+* [std::pmr::polymorphic_allocator](#SS_5_5_2)  
+* [pool_resource](#SS_5_5_3)
 
-* std::pmr::polymorphic_allocator  
-  STLコンテナで動的にメモリリソースを切り替えられるアロケータ。
+### std::pmr::memory_resource <a id="SS_5_5_1"></a>
+std::pmr::memory_resourceは、
+ユーザー定義のメモリリソースをカスタマイズし、
+[std::pmr::polymorphic_allocator](#SS_5_5_2)を通じて利用可能にする[インターフェースクラス](#SS_6_3_12)である。
 
-* std::pmr::synchronized_pool_resource / std::pmr::unsynchronized_pool_resource  
-  メモリプールを管理する標準のメモリリソース実装。
+[可変長メモリプール](#SS_5_4_2)の実装で示したコードとほぼ同様の、
+std::pmr::memory_resourceから派生した具象クラスの実装を以下に示す。
+
+```cpp
+    //  example/dynamic_memory_allocation/pmr_memory_resource_ut.cpp 64
+
+    template <uint32_t MEM_SIZE>
+    class memory_resource_variable final : public std::pmr::memory_resource {
+    public:
+        memory_resource_variable() noexcept
+        {
+            header_->next    = nullptr;
+            header_->n_nuits = sizeof(buff_) / Inner_::unit_size;
+        }
+
+        size_t get_count() const noexcept { return unit_count_ * Inner_::unit_size; }
+        bool   is_valid(void const* mem) const noexcept
+        {
+            return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
+        }
+
+        ...
+
+    private:
+        using header_t = Inner_::header_t;
+
+        Inner_::buffer_t<MEM_SIZE> buff_{};
+        header_t*                  header_{reinterpret_cast<header_t*>(buff_.buffer)};
+        mutable SpinLock           spin_lock_{};
+        size_t                     unit_count_{sizeof(buff_) / Inner_::unit_size};
+        size_t                     unit_count_min_{sizeof(buff_) / Inner_::unit_size};
+
+        void* do_allocate(size_t size, size_t) override
+        {
+            // MPoolVariable::allocとほぼ同じ
+            ...
+        }
+
+        void do_deallocate(void* mem, size_t, size_t) noexcept override
+        {
+            // MPoolVariable::freeとほぼ同じ
+            ...
+        }
+
+        bool do_is_equal(const memory_resource& other) const noexcept override
+        {
+            return this == &other;
+        }
+    };
+```
+
+### std::pmr::polymorphic_allocator <a id="SS_5_5_2"></a>
+std::pmr::polymorphic_allocatorはC++17で導入された標準ライブラリのクラスで、
+C++のメモリリソース管理を抽象化するための機能を提供する。
+[std::pmr::memory_resource](#SS_5_5_1)を基盤とし、
+コンテナやアルゴリズムにカスタムメモリアロケーション戦略を容易に適用可能にする。
+std::allocatorと異なり、型に依存せず、
+ポリモーフィズムを活用してメモリリソースを切り替えられる点が特徴である。
+
+すでに示したmemory_resource_variable([std::pmr::memory_resource](#SS_5_5_1))の単体テストを以下に示すことにより、
+polymorphic_allocatorの使用例とする。
+
+```cpp
+    //  example/dynamic_memory_allocation/pmr_memory_resource_ut.cpp 217
+
+    constexpr uint32_t            max = 1024;
+    memory_resource_variable<max> mrv;
+    memory_resource_variable<max> mrv2;
+
+    ASSERT_EQ(mrv, mrv);
+    ASSERT_NE(mrv, mrv2);
+
+    {
+        auto remaings1 = mrv.get_count();
+
+        ASSERT_GE(max, remaings1);
+
+        // std::basic_stringにカスタムアロケータを適用
+        using pmr_string = std::basic_string<char, std::char_traits<char>,
+                                             std::pmr::polymorphic_allocator<char>>;
+        std::pmr::polymorphic_allocator<char> allocator(&mrv);
+
+        // カスタムアロケータを使って文字列を作成
+        pmr_string str("custom allocator!", allocator);
+        auto       remaings2 = mrv.get_count();
+        // アサーション: 文字列の内容を確認
+
+        ASSERT_GT(remaings1, remaings2);
+        ASSERT_EQ("custom allocator!", str);
+
+        ASSERT_TRUE(mrv.is_valid(str.c_str()));  // strの内部メモリがmrvの内部であることの確認
+
+        auto str3 = str + str + str;
+        ASSERT_EQ(str.size() * 3 + 1, str3.size() + 1);
+        ASSERT_THROW(str3 = pmr_string(2000, 'a'), std::bad_alloc);  // メモリの枯渇テスト
+    }
+
+    ASSERT_GE(max, mrv.get_count());  // 解放後のメモリの回復のテスト
+```
+
+### pool_resource <a id="SS_5_5_3"></a>
+pool_resourceは[std::pmr::memory_resource](#SS_5_5_1)を基底とする下記の2つの具象クラスである。
+
+* std::pmr::synchronized_pool_resourceは下記のような特徴を持つメモリプールである。
+    * 非同期のメモリプールリソース
+    * シングルスレッド環境での高速なメモリ割り当てに適する
+    * 排他制御のオーバーヘッドがない
+    * 以下に使用例を示す。
+
+```cpp
+    //  example/dynamic_memory_allocation/pool_resource_ut.cpp 10
+
+    std::pmr::unsynchronized_pool_resource pool_resource(
+        std::pmr::pool_options{
+            .max_blocks_per_chunk        = 10,   // チャンクあたりの最大ブロック数
+            .largest_required_pool_block = 1024  // 最大ブロックサイズ
+        },
+        std::pmr::new_delete_resource()  // フォールバックリソース
+    );
+
+    // vectorを使用したメモリ割り当てのテスト
+    {
+        std::pmr::vector<int> vec{&pool_resource};
+
+        // ベクターへの要素追加
+        vec.push_back(42);
+        vec.push_back(100);
+
+        // メモリ割り当てと要素の検証
+        ASSERT_EQ(vec.size(), 2);
+        ASSERT_EQ(vec[0], 42);
+        ASSERT_EQ(vec[1], 100);
+    }
+```
+
+* std::pmr::unsynchronized_pool_resource は下記のような特徴を持つメモリプールである。
+    * スレッドセーフなメモリプールリソース
+    * 複数のスレッドから同時にアクセス可能
+    * 内部で排他制御を行う
+    * 以下に使用例を示す。
+
+```cpp
+    //  example/dynamic_memory_allocation/pool_resource_ut.cpp 38
+
+    std::pmr::synchronized_pool_resource shared_pool;
+
+    auto thread_func = [&shared_pool](int thread_id) {
+        std::pmr::vector<int> local_vec{&shared_pool};
+
+        // スレッドごとに異なる要素を追加
+        local_vec.push_back(thread_id * 10);
+        local_vec.push_back(thread_id * 20);
+
+        ASSERT_EQ(local_vec.size(), 2);
+    };
+
+    // 複数スレッドでの同時使用
+    std::thread t1(thread_func, 1);
+    std::thread t2(thread_func, 2);
+
+    t1.join();
+    t2.join();
+```
 
 
-std::pmr::memory_resourceのコードの使用例を下記のリストに従って提供せよ
-- memory_resourceの動作をgtest用いて解説せよ
-- コメントは「である」調か、体言止めにせよ
-- gtestはEXPECTではなく、ASSERTを使え
 
 
 <!-- ./md/term_explanation.md -->
