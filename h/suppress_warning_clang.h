@@ -112,6 +112,7 @@
 
 #define SUPPRESS_WARN_CLANG_UNEVALUATED_EXPRESSION \
     _Pragma("clang diagnostic ignored \"-Wunevaluated-expression\"")
+#define SUPPRESS_WARN_CLANG_VARARGS _Pragma("clang diagnostic ignored \"-Wvarargs\"")
 #define SUPPRESS_WARN_CLANG_UNKNOWN_ESCAPE_SEQUENCE
 _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_UNSEQUENCED _Pragma("clang diagnostic ignored \"-Wunsequenced\"")
@@ -199,6 +200,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-escape-sequence\"")
 #define SUPPRESS_WARN_CLANG_OVERLAP_COMP
 #define SUPPRESS_WARN_CLANG_INT_FLOAT_CONVERSION
 #define SUPPRESS_WARN_CLANG_UNEVALUATED_EXPRESSION
+#define SUPPRESS_WARN_CLANG_VARARGS
 #define SUPPRESS_WARN_CLANG_UNKNOWN_ESCAPE_SEQUENCE
 #define SUPPRESS_WARN_CLANG_UNSEQUENCED
 #define SUPPRESS_WARN_CLANG_UNUSED_CONST_VAR
