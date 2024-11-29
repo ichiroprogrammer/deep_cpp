@@ -2265,6 +2265,34 @@ ADLは思わぬname lookupによるバグを誘発することもあるが、
 [ADL](---)(実引数依存探索)によってname lookupの対象になった宣言を含む名前空間のことである。
 
 
+### hidden-friend関数
+hidden-friend関数(隠れたフレンド関数、あるいは単にhidden-friend)とは、
+
+* クラスの内部で定義された、
+* 名前空間スコープでの通常の[name lookup](---)できず、[ADL](---)のみでname lookupできる
+
+friend関数のことを指す。このような性質から、non-namespace-visible friend関数と呼ばれることもある。
+
+これにより、意図的に外部からのアクセスを制限し、
+必要な場合にのみ利用されることを保証する設計が可能となる。
+
+hidden-friend関数(隠れたフレンド関数)の目的は、
+
+* カプセル化の強化：
+  クラスの内部実装を外部から隠しつつ、特定の操作だけを許可する。
+* 名前空間汚染の防止：
+  関数が名前空間スコープに現れないため、他の名前と衝突しにくい。
+* 最適化：
+  コンパイラによる最適化を妨げることなく、特定の機能を提供する。
+
+```cpp
+    // @@@ example/term_explanation/hidden_friend_ut.cpp #0:0 begin 
+```
+```cpp
+    // @@@ example/term_explanation/hidden_friend_ut.cpp #0:1 begin -1
+```
+
+
 ### name-hiding
 name-hidingとは
 「前方の識別子が、その後方に同一の名前をもつ識別子があるために、

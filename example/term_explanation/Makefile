@@ -2,7 +2,7 @@ SRCS20:=literal_ut.cpp decltype_ut.cpp concept_ut.cpp  explicit_ut.cpp enum_ut.c
         const_xxx_ut.cpp if_switch_init_ut.cpp
 
 SRCS:=\
-    aaa.cpp argument.cpp class_layout_ut.cpp constructor_ut.cpp \
+    aaa.cpp argument.cpp class_layout_ut.cpp constructor_ut.cpp hidden_friend_ut.cpp \
     deep_shallow_copy_ut.cpp func_try_block.cpp interface_class.cpp flold_expression_ut.cpp \
     implicit_conversion_ut.cpp incomplete_type_ut.cpp integral_promotion_ut.cpp \
     generic_lambda_ut.cpp lack_of_cohesion_ut.cpp lambda.cpp trivial_ut.cpp nsdmi.cpp \

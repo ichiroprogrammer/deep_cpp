@@ -24,6 +24,7 @@
         * explicit
         * コンセプト
         * <=>
+        * hidden-friend関数
 
 * V18.07
     * 静的な文字列オブジェクトの強化
@@ -15375,17 +15376,18 @@ __この章の構成__
 &emsp;&emsp;&emsp; [実引数依存探索](#SS_6_9_4)  
 &emsp;&emsp;&emsp; [ADL](#SS_6_9_5)  
 &emsp;&emsp;&emsp; [関連名前空間](#SS_6_9_6)  
-&emsp;&emsp;&emsp; [name-hiding](#SS_6_9_7)  
-&emsp;&emsp;&emsp; [ダイヤモンド継承](#SS_6_9_8)  
-&emsp;&emsp;&emsp; [仮想継承](#SS_6_9_9)  
-&emsp;&emsp;&emsp; [仮想基底](#SS_6_9_10)  
-&emsp;&emsp;&emsp; [ドミナンス](#SS_6_9_11)  
-&emsp;&emsp;&emsp;&emsp; [ダイヤモンド継承を含まない場合](#SS_6_9_11_1)  
-&emsp;&emsp;&emsp;&emsp; [ダイヤモンド継承かつそれが仮想継承でない場合](#SS_6_9_11_2)  
-&emsp;&emsp;&emsp;&emsp; [ダイヤモンド継承かつそれが仮想継承である場合](#SS_6_9_11_3)  
+&emsp;&emsp;&emsp; [hidden-friend関数](#SS_6_9_7)  
+&emsp;&emsp;&emsp; [name-hiding](#SS_6_9_8)  
+&emsp;&emsp;&emsp; [ダイヤモンド継承](#SS_6_9_9)  
+&emsp;&emsp;&emsp; [仮想継承](#SS_6_9_10)  
+&emsp;&emsp;&emsp; [仮想基底](#SS_6_9_11)  
+&emsp;&emsp;&emsp; [ドミナンス](#SS_6_9_12)  
+&emsp;&emsp;&emsp;&emsp; [ダイヤモンド継承を含まない場合](#SS_6_9_12_1)  
+&emsp;&emsp;&emsp;&emsp; [ダイヤモンド継承かつそれが仮想継承でない場合](#SS_6_9_12_2)  
+&emsp;&emsp;&emsp;&emsp; [ダイヤモンド継承かつそれが仮想継承である場合](#SS_6_9_12_3)  
 
-&emsp;&emsp;&emsp; [using宣言](#SS_6_9_12)  
-&emsp;&emsp;&emsp; [usingディレクティブ](#SS_6_9_13)  
+&emsp;&emsp;&emsp; [using宣言](#SS_6_9_13)  
+&emsp;&emsp;&emsp; [usingディレクティブ](#SS_6_9_14)  
 
 &emsp;&emsp; [template強化機能](#SS_6_10)  
 &emsp;&emsp;&emsp; [SFINAE](#SS_6_10_1)  
@@ -16536,7 +16538,7 @@ X、Y、Zのメモリレイアウトは以下の様に出力される。
 
 ### オーバーライドとオーバーロードの違い <a id="SS_6_3_9"></a>
 下記例では、Base::g()がオーバーロードで、Derived::f()がオーバーライドである
-(Derived::g()はオーバーロードでもオーバーライドでもない(「[name-hiding](#SS_6_9_7)」参照))。
+(Derived::g()はオーバーロードでもオーバーライドでもない(「[name-hiding](#SS_6_9_8)」参照))。
 
 
 ```cpp
@@ -19902,7 +19904,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
        このためTypeName定義より前方で宣言されたグローバル名前空間と、
        tの型がNS_TPLU::Xであるため[関連名前空間](#SS_6_9_6)となったNS_TPLUがname lookupの対象となるが、
        グローバル名前空間内のToTypeは、
-       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](#SS_6_9_7)が起こり、
+       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](#SS_6_9_8)が起こり、
        TypeNameからは非可視となるためname lookupの対象から外れる。
        このため、ToType(t)の呼び出しは、NS_TPLU::ToType(X const&)の宣言と関連付けられる。
 
@@ -19926,7 +19928,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
        tの型がintであるためNS_TPLUは[関連名前空間](#SS_6_9_6)とならず、通常のname lookupと同様に
        ToType(t)の呼び出し前方のグローバル名前空間とNS_TPLUがname lookupの対象になるが、
        グローバル名前空間内のToTypeは、
-       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](#SS_6_9_7)が起こり、
+       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](#SS_6_9_8)が起こり、
        TypeNameからは非可視となるためname lookupの対象から外れる。
        また、ToType(int const&)は、TypeNameの定義より後方で宣言されているため、
        name lookupの対象外となり、
@@ -20217,7 +20219,64 @@ ADLは思わぬname lookupによるバグを誘発することもあるが、
 [ADL](#SS_6_9_5)(実引数依存探索)によってname lookupの対象になった宣言を含む名前空間のことである。
 
 
-### name-hiding <a id="SS_6_9_7"></a>
+### hidden-friend関数 <a id="SS_6_9_7"></a>
+hidden-friend関数(隠れたフレンド関数、あるいは単にhidden-friend)とは、
+
+* クラスの内部で定義された、
+* 名前空間スコープでの通常の[name lookup](#SS_6_9_2)できず、[ADL](#SS_6_9_5)のみでname lookupできる
+
+friend関数のことを指す。このような性質から、non-namespace-visible friend関数と呼ばれることもある。
+
+これにより、意図的に外部からのアクセスを制限し、
+必要な場合にのみ利用されることを保証する設計が可能となる。
+
+hidden-friend関数(隠れたフレンド関数)の目的は、
+
+* カプセル化の強化：
+  クラスの内部実装を外部から隠しつつ、特定の操作だけを許可する。
+* 名前空間汚染の防止：
+  関数が名前空間スコープに現れないため、他の名前と衝突しにくい。
+* 最適化：
+  コンパイラによる最適化を妨げることなく、特定の機能を提供する。
+
+```cpp
+    //  example/term_explanation/hidden_friend_ut.cpp 7
+
+    namespace NS {
+    class Person {
+    public:
+        Person(std::string name, uint32_t age) : name_{std::move(name)}, age_{age} {}
+
+        // hidden-friend関数
+        friend std::ostream& operator<<(std::ostream& os, const Person& person)
+        {
+            os << "Name:" << person.name_ << ", Age:" << person.age_;
+            return os;
+        }
+
+    private:
+        std::string const name_;
+        uint32_t const    age_;
+    };
+    }  // namespace NS
+```
+```cpp
+    //  example/term_explanation/hidden_friend_ut.cpp 31
+
+    NS::Person         alice("Alice", 30);
+    std::ostringstream oss;
+
+    oss << alice;  // フレンド関数を呼び出す(ADLによって見つかる)
+    ASSERT_EQ("Name:Alice, Age:30", oss.str());
+
+    // 以下はエラー（operator<<がNS名前空間スコープで見えない）
+    // NS::Person::operator<<(oss, alice);
+    // 上記は以下のようなコンパイルエラーになる
+    //  error: ‘operator<<’ is not a member of ‘NS::Person’
+```
+
+
+### name-hiding <a id="SS_6_9_8"></a>
 name-hidingとは
 「前方の識別子が、その後方に同一の名前をもつ識別子があるために、
 [name lookup](#SS_6_9_2)の対象外になる」現象一般をを指す通称である
@@ -20258,7 +20317,7 @@ Base::f()には、修飾しない形式でのDerivedクラス経由のアクセ�
 Base::fがその後方にあるDerived::f(int)によりname-hidingされたために起こる現象である
 (name lookupによる探索には識別子が使われるため、シグネチャの違いはname-hidingに影響しない)。
 
-下記のように[using宣言](#SS_6_9_12)を使用することで、
+下記のように[using宣言](#SS_6_9_13)を使用することで、
 修飾しない形式でのDerivedクラス経由のBase::f()へのアクセスが可能となる。
 
 ```cpp
@@ -20390,7 +20449,7 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 全チームメンバがこういったname lookupを正しく扱えると確信できないのであれば、
 前述の通り、デフォルトでは名前空間を使用して修飾を行うのが良いだろう。
 
-### ダイヤモンド継承 <a id="SS_6_9_8"></a>
+### ダイヤモンド継承 <a id="SS_6_9_9"></a>
 ダイヤモンド継承(Diamond Inheritance)とは、以下のような構造のクラス継承を指す。
 
 * 基底クラス(Base)が一つ存在し、その基底クラスから二つのクラス(Derived_0、Derived_1)が派生する。
@@ -20403,9 +20462,9 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 <!-- pu:plant_uml/diamond_inheritance.pu--><p><img src="data:image/png;base64,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" /></p>
 
 ダイヤモンド継承は、
-[仮想継承](#SS_6_9_9)(virtual inheritance)を使ったものと、使わないものに分類できる。
+[仮想継承](#SS_6_9_10)(virtual inheritance)を使ったものと、使わないものに分類できる。
 
-[仮想継承](#SS_6_9_9)を使わないダイヤモンド継承のコードを以下に示す。
+[仮想継承](#SS_6_9_10)を使わないダイヤモンド継承のコードを以下に示す。
 
 ```cpp
     //  example/term_explanation/diamond_inheritance_ut.cpp 6
@@ -20474,7 +20533,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     ASSERT_EQ(2, dd.Derived_1::get());  // Derived_1::Base::x_は2に変更
 ```
 
-次に示すのは、[仮想継承](#SS_6_9_9)を使用したダイヤモンド継承の例である。
+次に示すのは、[仮想継承](#SS_6_9_10)を使用したダイヤモンド継承の例である。
 
 ```cpp
     //  example/term_explanation/diamond_inheritance_ut.cpp 70
@@ -20507,7 +20566,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 
 仮想継承の効果で、DerivedDerivedインスタンスの中に存在するBaseインスタンスは1つになるため、
 上で示した仮想継承を使わないダイヤモンド継承での問題は解消される
-(が、[仮想継承](#SS_6_9_9)による別の問題が発生する)。
+(が、[仮想継承](#SS_6_9_10)による別の問題が発生する)。
 
 ```cpp
     //  example/term_explanation/diamond_inheritance_ut.cpp 99
@@ -20523,7 +20582,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     ASSERT_EQ(2, dd.get());
 ```
 
-### 仮想継承 <a id="SS_6_9_9"></a>
+### 仮想継承 <a id="SS_6_9_10"></a>
 下記に示した継承方法を仮想継承、仮想継承の基底クラスを仮想基底クラスと呼ぶ。
 
 ```cpp
@@ -20544,7 +20603,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     };
 ```
 
-仮想継承は、[ダイヤモンド継承](#SS_6_9_8)の基底クラスのインスタンスを、
+仮想継承は、[ダイヤモンド継承](#SS_6_9_9)の基底クラスのインスタンスを、
 その継承ヒエラルキーの中で1つのみにするための言語機能である。
 
 仮想継承の独特の動作を示すため、
@@ -20621,7 +20680,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     ASSERT_EQ(1, ddn.get());
 ```
 「仮想継承のコンストラクタ呼び出し」仕様は、
-[ダイヤモンド継承](#SS_6_9_8)での基底クラスのコンストラクタ呼び出しを一度にするために存在する。
+[ダイヤモンド継承](#SS_6_9_9)での基底クラスのコンストラクタ呼び出しを一度にするために存在する。
 
 もし、この機能がなければ、下記のコードでの基底クラスのコンストラクタ呼び出しは2度になるため、
 デバッグ困難なバグが発生してしまうことは容易に想像できるだろう。
@@ -20704,26 +20763,26 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     };
 ```
 
-### 仮想基底 <a id="SS_6_9_10"></a>
-仮想基底(クラス)とは、[仮想継承](#SS_6_9_9)の基底クラス指す。
+### 仮想基底 <a id="SS_6_9_11"></a>
+仮想基底(クラス)とは、[仮想継承](#SS_6_9_10)の基底クラス指す。
 
-### ドミナンス <a id="SS_6_9_11"></a>
+### ドミナンス <a id="SS_6_9_12"></a>
 [ドミナンス(Dominance、支配性)](https://en.wikipedia.org/wiki/Dominance_(C%2B%2B))とは、
 「探索対称の名前が継承の中にも存在するような場合の[name lookup](#SS_6_9_2)の仕様の一部」
 を指す慣用句である。
 
 以下に
 
-* [ダイヤモンド継承を含まない場合](#SS_6_9_11_1)
-* [ダイヤモンド継承かつそれが仮想継承でない場合](#SS_6_9_11_2)
-* [ダイヤモンド継承かつそれが仮想継承である場合](#SS_6_9_11_3)
+* [ダイヤモンド継承を含まない場合](#SS_6_9_12_1)
+* [ダイヤモンド継承かつそれが仮想継承でない場合](#SS_6_9_12_2)
+* [ダイヤモンド継承かつそれが仮想継承である場合](#SS_6_9_12_3)
 
 のドミナンスについてのコードを例示する。
 
-この例で示したように、[ダイヤモンド継承](#SS_6_9_8)を通常の継承で行うか、
-[仮想継承](#SS_6_9_9)で行うかでは結果が全く異なるため、注意が必要である。
+この例で示したように、[ダイヤモンド継承](#SS_6_9_9)を通常の継承で行うか、
+[仮想継承](#SS_6_9_10)で行うかでは結果が全く異なるため、注意が必要である。
 
-#### ダイヤモンド継承を含まない場合 <a id="SS_6_9_11_1"></a>
+#### ダイヤモンド継承を含まない場合 <a id="SS_6_9_12_1"></a>
 
 ```cpp
     //  example/term_explanation/dominance_ut.cpp 9
@@ -20757,9 +20816,9 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     ASSERT_EQ(3, dd.g());
 ```
 
-この[name lookup](#SS_6_9_2)については、[name-hiding](#SS_6_9_7)で説明した通りである。
+この[name lookup](#SS_6_9_2)については、[name-hiding](#SS_6_9_8)で説明した通りである。
 
-#### ダイヤモンド継承かつそれが仮想継承でない場合 <a id="SS_6_9_11_2"></a>
+#### ダイヤモンド継承かつそれが仮想継承でない場合 <a id="SS_6_9_12_2"></a>
 
 ```cpp
     //  example/term_explanation/dominance_ut.cpp 45
@@ -20791,7 +20850,7 @@ Derived_0のドミナンスにより、DerivedDerived::gはDerived_0::fを呼び
 Derived_1によるドミナンスも働き、その結果として、呼び出しが曖昧(ambiguous)になることで、
 このような結果となる。
 
-#### ダイヤモンド継承かつそれが仮想継承である場合 <a id="SS_6_9_11_3"></a>
+#### ダイヤモンド継承かつそれが仮想継承である場合 <a id="SS_6_9_12_3"></a>
 
 ```cpp
     //  example/term_explanation/dominance_ut.cpp 71
@@ -20822,13 +20881,13 @@ Derived_1によるドミナンスも働き、その結果として、呼び出�
     ASSERT_EQ(3, dd.g());
 ```
 
-これまでと同様にDerived_0のドミナンスによりBase::fは[name-hiding](#SS_6_9_7)されることになる。
-この時、Derived_0、Derived_1がBaseから[仮想継承](#SS_6_9_9)した効果により、
+これまでと同様にDerived_0のドミナンスによりBase::fは[name-hiding](#SS_6_9_8)されることになる。
+この時、Derived_0、Derived_1がBaseから[仮想継承](#SS_6_9_10)した効果により、
 この継承ヒエラルキーの中でBaseは１つのみ存在することになるため、
-Derived_1により導入されたBase::fも併せて[name-hiding](#SS_6_9_7)される。
+Derived_1により導入されたBase::fも併せて[name-hiding](#SS_6_9_8)される。
 結果として、曖昧性は排除され、コンパイルエラーにはならず、このような結果となる。
 
-### using宣言 <a id="SS_6_9_12"></a>
+### using宣言 <a id="SS_6_9_13"></a>
 using宣言とは、"using XXX::func"のような記述である。
 この記述が行われたスコープでは、この記述後の行から名前空間XXXでの修飾をすることなく、
 funcが使用できる。
@@ -20854,7 +20913,7 @@ funcが使用できる。
 
 ```
 
-### usingディレクティブ <a id="SS_6_9_13"></a>
+### usingディレクティブ <a id="SS_6_9_14"></a>
 usingディレクティブとは、"using namespace XXX"のような記述である。
 この記述が行われたスコープでは、下記例のように、この記述後から名前空間XXXでの修飾をすることなく、
 XXXの識別子が使用できる。
@@ -20880,8 +20939,8 @@ XXXの識別子が使用できる。
 ```
 
 より多くの識別子が名前空間の修飾無しで使えるようになる点において、
-[using宣言](#SS_6_9_12)よりも危険であり、また、
-下記のように[name-hiding](#SS_6_9_7)された識別子の導入には効果がない。
+[using宣言](#SS_6_9_13)よりも危険であり、また、
+下記のように[name-hiding](#SS_6_9_8)された識別子の導入には効果がない。
 
 ```cpp
     //  example/term_explanation/namespace_ut.cpp 6
