@@ -10,13 +10,13 @@ SRCS:=\
     override_overload_ut.cpp range_for_ut.cpp ref_collapsing_ut.cpp rtti_ut.cpp \
     rvalue_lvalue_ut.cpp semantics_ut.cpp slice_ut.cpp spurious_wakeup_ut.cpp \
     two_phase_name_lookup_ut.cpp uniform_initialization_ut.cpp constexpr_if_ut.cpp \
-    ambiguous_ownership_ut.cpp unique_ptr_ownership_ut.cpp shared_ptr_ownership_ut.cpp \
-    universal_ref_ut.cpp user_defined_literal_ut.cpp dominance_ut.cpp \
+    ambiguous_ownership_ut.cpp universal_ref_ut.cpp user_defined_literal_ut.cpp dominance_ut.cpp \
+    unique_ptr_ownership_ut.cpp shared_ptr_ownership_ut.cpp weak_ptr_ut.cpp \
     diamond_inheritance_ut.cpp virtual_inheritance_ut.cpp most_vexing_parse_ut.cpp \
-    structured_binding_ut.cpp heap_allocation_elision_ut.cpp \
-    dangling_ut.cpp class_relation_ut.cpp attr_ut.cpp aliging_ut.cpp \
-    template_ut.cpp noexcept_ut.cpp float_ut.cpp undefined_ut.cpp \
-    etc_ut.cpp transient_lambda_ut.cpp deduction_guide_ut.cpp rule_of_zero_ut.cpp
+    structured_binding_ut.cpp heap_allocation_elision_ut.cpp  dangling_ut.cpp \
+    class_relation_ut.cpp attr_ut.cpp aliging_ut.cpp template_ut.cpp noexcept_ut.cpp \
+    float_ut.cpp undefined_ut.cpp etc_ut.cpp transient_lambda_ut.cpp deduction_guide_ut.cpp \
+    rule_of_zero_ut.cpp
 
 SRCS+=$(SRCS20)
 

@@ -1275,6 +1275,133 @@ std::shared_ptr、std::move()、[expressionと値カテゴリ|rvalue](---)の関
 こういった機能によりstd::shared_ptrはオブジェクトの共有所有を実現している。
 
 
+#### オブジェクトの循環所有
+[std::unique_ptr](https://cpprefjp.github.io/reference/memory/unique_ptr.html)の使い方を誤ると、
+以下のコード例が示すようにメモリーリークが発生する。
+
+なお、この節の題名である「オブジェクトの循環所有」という用語は、
+この前後の節がダイナミックに確保されたオブジェクトの所有の概念についての解説しているため、
+この用語を選択したが、文脈によっては、「オブジェクトの循環参照」といった方がふさわしい場合もある。
+
+まずは、リークが発生しないstd::unique_ptrの正しい使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:0 begin
+```
+
+上記のクラスの使用例を示す。下記をステップ1とする。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #1:0 begin -1
+```
+
+![shread_ptrメモリーリーク](plant_uml/shared_each_1.png)
+
+
+上記の続きを以下に示し、ステップ2とする。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #1:1 begin -1
+```
+
+![shread_ptrメモリーリーク](plant_uml/shared_each_2.png)
+
+
+上記の続きを以下に示し、ステップ3とする。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #1:2 begin -1
+```
+
+![shread_ptrメモリーリーク](plant_uml/shared_each_3.png)
+
+
+上記の続きを以下に示し、ステップ4とする。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #1:3 begin -1
+```
+
+![shread_ptrメモリーリーク](plant_uml/shared_each_4.png)
+
+
+このような動作により、`std::make_shared<>`で生成されたX、Yオブジェクトは解放される。
+
+次にshare_ptrを使用し、循環する参照を作ったためにオブジェクトが解放されないコード例を示す。
+まずはクラスの定義から。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:0 begin
+```
+
+上記のクラスの動作を以下に示したコードで示す。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:1 begin -1
+```
+
+x0のライフタイムに差を作るために新しいスコープを導入し、そのスコープ内で、y0を生成し、
+X::Register`、`Y::Register`を用いて、循環を作ってしまう例(メモリーリークを起こすバグ)を示す。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:2 begin -1
+```
+
+![shread_ptrメモリーリーク](plant_uml/shared_cyclic.png)
+
+下記のコードでは、y0がスコープアウトするが、、そのタイミングでは、x0はまだ健在であるため、
+Yオブジェクトの参照カウントは1になる(x0::y_が存在するため0にならない)。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:3 begin -1
+```
+
+![shread_ptrメモリーリーク](plant_uml/shared_cyclic_2.png)
+
+次に、x0がスコープアウトし、そのタイミングではY::x_が健在であるため、
+Xオブジェクトの参照カウントも1になる。このため、x0、y0がスコープアウトした状態でも、
+X、Yオブジェクトの参照カウントは0にならず、従ってこれらのオブジェクトは解放されない
+(shared_ptrは参照カウントが0->1に変化するタイミングで保持するオブジェクトを解放する)。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:4 begin -1
+```
+
+![shread_ptrメモリーリーク](plant_uml/shared_cyclic_3.png)
+
+X、Yオブジェクトへのハンドルを完全に失った状態であり、X、Yオブジェクトを解放する手段はない。
+
+### std::weak_ptr
+std::weak_ptrは、[スマートポインタ](---)の一種である。
+
+std::weak_ptrは参照カウントに影響を与えず、共有所有ではなく参照のみを保持するのため、
+[オブジェクトの循環所有](---)の問題を解決できる。
+
+[オブジェクトの循環所有](---)で示した問題のあるクラスの修正版を以下に示す
+(以下の例では、Xは前のままで、Yのみ修正した)。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:0 begin
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:1 begin
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:2 begin
+```
+
+このコードからわかるように修正版YはXオブジェクトを参照するために、
+`std::weak_ptr<X>`を使用する。
+`std::weak_ptr<X>`にアクセスする必要があるときに、
+下記のY::DoSomething()のようにすることで、`std::weak_ptr<X>`オブジェクトを取得できる。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:1 begin
+```
+
+Xと修正版Yの単体テストによりメモリーリークが修正されたことを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:3 begin -1
+```
+
+
 ### オブジェクトのライフタイム
 オブジェクトは、以下のような種類のライフタイムを持つ。
 
@@ -1800,6 +1927,26 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 ```
 
 ## 言語機能
+### スマートポインタ
+スマートポインタは、C++標準ライブラリが提供するメモリ管理クラス群を指す。
+生のポインタの代わりに使用され、リソース管理を容易にし、
+メモリリークや二重解放といった問題を防ぐことを目的としている。
+
+スマートポインタは通常、所有権とスコープに基づいてメモリの解放を自動的に行う。
+C++標準ライブラリでは、主に以下の3種類のスマートポインタが提供されている。
+
+* **`std::unique_ptr`** 
+   はダイナミックにアロケートされた[オブジェクトの排他所有](---)を表すために用いられる。  
+* **`std::shared_ptr`** 
+   はダイナミックにアロケート[オブジェクトの共有所有](---)を表現、管理するために用いられる。   
+* **`std::weak_ptr`**
+   は`std::shared_ptr`と組み合わせて使用される補助的なスマートポインタである。
+   参照カウントに影響を与えず、[オブジェクトの循環所有](---)よるメモリリークを防ぐために用いられる。
+   std::weak_ptr`はリソースへの弱い参照を保持し、リソースの有効性を確認する際に使用される。  
+* `std::auto_ptr`はC++11以前に導入された初期のスマートポインタであるが、
+   異常な[copyセマンティクス](---)を持つため、多くの誤用を生み出し、
+   C++11から非推奨とされ、C++17から規格から排除された。
+
 ### コルーチン
 コルーチンはC++20から導入された機能であり、以下の新しいキーワードによりサポートされる。
 
