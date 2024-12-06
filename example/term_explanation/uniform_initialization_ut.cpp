@@ -18,22 +18,22 @@ TEST(UniformInitialization, uniform_initialization)
     X x0(0);   // 通常従来のコンストラクタ呼び出し
     X x1 = 0;  // 暗黙の型変換を使用した従来のコンストラクタ呼び出し
 
-    X x2{0};     // 一様初期化
-    X x3 = {0};  // 暗黙の型変換を使用した一様初期化
+    X x2{0};     // リスト初期化
+    X x3 = {0};  // 暗黙の型変換を使用したリスト初期化
 
     struct Y {
         Y(int, double, std::string) {}
     };
 
     auto lamda = [](int, double, std::string) -> Y {
-        return {1, 3.14, "hello"};  // 暗黙の型変換を使用した一様初期化でのYの生成
+        return {1, 3.14, "hello"};  // 暗黙の型変換を使用したリスト初期化でのYの生成
     };
     // @@@ sample end
     IGNORE_UNUSED_VAR(x0, x1, x2, x3, lamda);
 
     // @@@ sample begin 0:1
 
-    int i{0};  // 一様初期化
+    int i{0};  // リスト初期化
 
     bool b0 = 7;  // 縮小型変換のため、b0の値はtrue(通常は1)となる
     ASSERT_EQ(b0, 1);
@@ -47,7 +47,7 @@ TEST(UniformInitialization, uniform_initialization)
     // uint8_t u8_1{256};  // 縮小型変換のため、コンパイルエラー
     // uint8_t u8_2{i};    // 縮小型変換のため、コンパイルエラー
 
-    uint8_t array0[3]{1, 2, 255};  // 一様初期化
+    uint8_t array0[3]{1, 2, 255};  // リスト初期化
     // uint8_t array1[3] = {1, 2, 256};  // 縮小型変換のため、コンパイルエラー
     // uint8_t array2[3]{1, 2, 256};     // 縮小型変換のため、コンパイルエラー
     // uint8_t array2[3]{1, 2, i};       // 縮小型変換のため、コンパイルエラー
