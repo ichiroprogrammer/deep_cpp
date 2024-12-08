@@ -2140,9 +2140,12 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
 | `std::basic_string`  | カスタム文字型をサポートする文字列コンテナ                 |
 
 ### std::optional
-std::ootionalには、以下のような2つの用途がある。
-用途2からこのクラスがダイナミックなオブジェクト生成を行うような印象を受けるが、
+C++17から導入されたstd::optionalには、以下のような2つの用途がある。
+以下の用途2から、
+このクラスがオブジェクトのダイナミックなメモリアロケーションを行うような印象を受けるが、
 そのようなことは行わない。
+このクラスがオブジェクトのダイナミックな生成が必要になった場合、プレースメントnewを実行する。
+ただし、std::optionalが保持する型自身がnewを実行する場合は、この限りではない。
 
 1. 関数の任意の型の[戻り値の無効表現](---)を持たせる
 2. [オブジェクトの遅延初期化](---)する(初期化処理が重く、
@@ -2164,6 +2167,29 @@ std::ootionalには、以下のような2つの用途がある。
     // @@@ example/term_explanation/optional_ut.cpp #1:1 begin -1
 ```
 
+### std::variant
+std::variantは、C++17で導入された型安全なunionである。
+このクラスは複数の型のうち1つの値を保持することができ、
+従来のunionに伴う低レベルな操作の安全性の問題を解消するために設計された。
+
+std::variant自身では、オブジェクトのダイナミックな生成が必要な場合でも通常のnewを実行せず、
+代わりにプレースメントnewを用いる
+(以下のコード例のようにstd::variantが保持する型自身がnewを実行する場合は、この限りではない)。
+
+以下にstd::variantの典型的な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/variant_ut.cpp #0:0 begin -1
+```
+
+std::variantとstd::visit([Visitor](---)パターンの実装の一種)を組み合わせた場合の使用例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/variant_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/variant_ut.cpp #1:1 begin -1
+```
 
 ## name lookupと名前空間
 ここではname lookupとそれに影響を与える名前空間について解説する。

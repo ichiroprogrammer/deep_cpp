@@ -15387,6 +15387,8 @@ __この章の構成__
 &emsp;&emsp;&emsp;&emsp; [戻り値の無効表現](#SS_6_9_3_1)  
 &emsp;&emsp;&emsp;&emsp; [オブジェクトの遅延初期化](#SS_6_9_3_2)  
 
+&emsp;&emsp;&emsp; [std::variant](#SS_6_9_4)  
+
 &emsp;&emsp; [name lookupと名前空間](#SS_6_10)  
 &emsp;&emsp;&emsp; [ルックアップ](#SS_6_10_1)  
 &emsp;&emsp;&emsp; [name lookup](#SS_6_10_2)  
@@ -20176,9 +20178,12 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
 | `std::basic_string`  | カスタム文字型をサポートする文字列コンテナ                 |
 
 ### std::optional <a id="SS_6_9_3"></a>
-std::ootionalには、以下のような2つの用途がある。
-用途2からこのクラスがダイナミックなオブジェクト生成を行うような印象を受けるが、
+C++17から導入されたstd::optionalには、以下のような2つの用途がある。
+以下の用途2から、
+このクラスがオブジェクトのダイナミックなメモリアロケーションを行うような印象を受けるが、
 そのようなことは行わない。
+このクラスがオブジェクトのダイナミックな生成が必要になった場合、プレースメントnewを実行する。
+ただし、std::optionalが保持する型自身がnewを実行する場合は、この限りではない。
 
 1. 関数の任意の型の[戻り値の無効表現](#SS_6_9_3_1)を持たせる
 2. [オブジェクトの遅延初期化](#SS_6_9_3_2)する(初期化処理が重く、
@@ -20246,7 +20251,7 @@ std::ootionalには、以下のような2つの用途がある。
     ASSERT_NE(0xdeadbeaf, (*resource)[0]);  // 未定義動作
 
     // resourceの内部のHeavyResourceの遅延初期化
-    resource.emplace();     // std::optionalの内部でplacement newが実行される
+    resource.emplace();  // std::optionalの内部でplacement newが実行される
 
     // ここから下は定義動作
     ASSERT_TRUE(HeavyResource::initialied);  // resourceの内部のHeavyResourceは初期化済み
@@ -20256,6 +20261,68 @@ std::ootionalには、以下のような2つの用途がある。
     ASSERT_EQ(0xdeadbeaf, (*resource)[0]);
 ```
 
+### std::variant <a id="SS_6_9_4"></a>
+std::variantは、C++17で導入された型安全なunionである。
+このクラスは複数の型のうち1つの値を保持することができ、
+従来のunionに伴う低レベルな操作の安全性の問題を解消するために設計された。
+
+std::variant自身では、オブジェクトのダイナミックな生成が必要な場合でも通常のnewを実行せず、
+代わりにプレースメントnewを用いる
+(以下のコード例のようにstd::variantが保持する型自身がnewを実行する場合は、この限りではない)。
+
+以下にstd::variantの典型的な使用例を示す。
+
+```cpp
+    //  example/term_explanation/variant_ut.cpp 13
+
+    std::variant<int, std::string, double> var = 10;
+    auto var2 = var;  // コピーコンストラクタの呼び出し
+
+    ASSERT_EQ(std::get<int>(var), 10);  // 型intの値を取り出す
+
+    // 型std::stringの値を取り出すが、その値は持っていないのでエクセプション発生
+    ASSERT_THROW(std::get<std::string>(var), std::bad_variant_access);
+
+    var = "variant";  // "variant"はstd::stringに変更され、varにムーブされる
+    ASSERT_EQ(std::get<std::string>(var), "variant");
+
+    ASSERT_NE(var, var2);  // 保持している値の型が違う
+
+    var2.emplace<std::string>("variant");  // "variant"からvar2の値を直接生成するため、
+                                           // 文字列代入より若干効率的
+    ASSERT_EQ(var, var2);
+
+    var = 1.0;
+    ASSERT_FLOAT_EQ(std::get<2>(var), 1.0);  // 2番目の型の値を取得
+```
+
+std::variantとstd::visit([Visitor](#SS_3_20)パターンの実装の一種)を組み合わせた場合の使用例を以下に示す。
+
+```cpp
+    //  example/term_explanation/variant_ut.cpp 37
+
+    void output_from_variant(std::variant<int, double, std::string> const& var, std::ostringstream& oss)
+    {
+        std::visit([&oss](auto&& arg) { oss.str().empty() ? oss << arg : oss << "|" << arg; }, var);
+    }
+```
+```cpp
+    //  example/term_explanation/variant_ut.cpp 47
+
+    std::ostringstream                     oss;
+    std::variant<int, double, std::string> var = 42;
+
+    output_from_variant(var, oss);
+    ASSERT_EQ("42", oss.str());
+
+    var = 3.14;
+    output_from_variant(var, oss);
+    ASSERT_EQ("42|3.14", oss.str());
+
+    var = "Hello, world!";
+    output_from_variant(var, oss);
+    ASSERT_EQ("42|3.14|Hello, world!", oss.str());
+```
 
 ## name lookupと名前空間 <a id="SS_6_10"></a>
 ここではname lookupとそれに影響を与える名前空間について解説する。

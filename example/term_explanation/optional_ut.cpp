@@ -71,7 +71,7 @@ TEST(ExpTerm, optional_1)
     ASSERT_NE(0xdeadbeaf, (*resource)[0]);  // 未定義動作
 
     // resourceの内部のHeavyResourceの遅延初期化
-    resource.emplace();     // std::optionalの内部でplacement newが実行される
+    resource.emplace();  // std::optionalの内部でplacement newが実行される
 
     // ここから下は定義動作
     ASSERT_TRUE(HeavyResource::initialied);  // resourceの内部のHeavyResourceは初期化済み
