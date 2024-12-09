@@ -2058,6 +2058,34 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 #### transient lambda
 「[言語機能|ラムダ式|一時的ラムダ](---)」を参照せよ。
 
+
+### 指示付き初期化
+指示付き初期化(designated initialization)とは、C++20から導入されたシンタックスであり、
+構造体やクラスのメンバを明示的に指定して初期化できるようにする機能である。
+この構文により、コードの可読性と安全性が向上し、初期化漏れや順序の誤りを防ぐことができる。
+
+まずは、この機能を有効に使えるクラス例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/designated_init_ut.cpp #0:0 begin 
+```
+```cpp
+    // @@@ example/term_explanation_cpp20/designated_init_ut.cpp #0:1 begin -1
+```
+
+下記に示すように、[Polymorphic Memory Resource(pmr)](---)のpool_resourceの初期化には、
+この機能を使うと可読性の改善が期待できる。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/designated_init_ut.cpp #1:0 begin -2
+```
+
+指示付き初期化を使わない以下のコード例と上記を比べれば可読性の改善に議論の余地はないだろう。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/designated_init_ut.cpp #1:1 begin -2
+```
+
 ## プログラミング概念と標準ライブラリ
 ### スマートポインタ
 スマートポインタは、C++標準ライブラリが提供するメモリ管理クラス群を指す。

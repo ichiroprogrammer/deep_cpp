@@ -20,7 +20,7 @@ SRCS:=\
 
 SRCS+=$(SRCS20)
 
-CPP_VER = c++17
+CPP_VER:= c++17
 SHARED:=../../
 include $(SHARED)make/env.mk
 

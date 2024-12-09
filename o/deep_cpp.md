@@ -27,6 +27,7 @@
         * <=>
         * hidden-friend関数
         * プログラミング概念と標準ライブラリ
+        * 指示付き初期化
 
 * V18.07
     * 静的な文字列オブジェクトの強化
@@ -15374,6 +15375,8 @@ __この章の構成__
 &emsp;&emsp;&emsp;&emsp; [一時的ラムダ](#SS_6_8_3_3)  
 &emsp;&emsp;&emsp;&emsp; [transient lambda](#SS_6_8_3_4)  
 
+&emsp;&emsp;&emsp; [指示付き初期化](#SS_6_8_4)  
+
 &emsp;&emsp; [プログラミング概念と標準ライブラリ](#SS_6_9)  
 &emsp;&emsp;&emsp; [スマートポインタ](#SS_6_9_1)  
 &emsp;&emsp;&emsp; [コンテナ](#SS_6_9_2)  
@@ -20095,6 +20098,100 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 
 #### transient lambda <a id="SS_6_8_3_4"></a>
 「[一時的ラムダ](#SS_6_8_3_3)」を参照せよ。
+
+
+### 指示付き初期化 <a id="SS_6_8_4"></a>
+指示付き初期化(designated initialization)とは、C++20から導入されたシンタックスであり、
+構造体やクラスのメンバを明示的に指定して初期化できるようにする機能である。
+この構文により、コードの可読性と安全性が向上し、初期化漏れや順序の誤りを防ぐことができる。
+
+まずは、この機能を有効に使えるクラス例を以下に示す。
+
+```cpp
+    //  example/term_explanation_cpp20/designated_init_ut.cpp 11
+
+    struct Point {
+        int  x;
+        int  y;
+        bool operator==(Point const& rhs) const noexcept = default;
+    };
+
+    class Circl {
+    public:
+        Circl(Point center, uint32_t radius) : center_{center}, radius_{radius} {}
+
+        std::string to_string()
+        {
+            std::ostringstream oss;
+
+            oss << "center x:" << center_.x << " y:" << center_.y << " radius:" << radius_;
+            return oss.str();
+        }
+
+        bool operator==(Circl const& rhs) const noexcept = default;
+
+    private:
+        Point const center_;
+        uint32_t    radius_;
+    };
+```
+```cpp
+    //  example/term_explanation_cpp20/designated_init_ut.cpp 41
+
+    struct Point p0 {
+        10, 20
+    };
+    struct Point p1 {
+        .x = 10, .y = 20
+    };  // x、yを明示できるため、可読性向上が見込める
+
+    ASSERT_EQ(p0, p1);
+
+    Circl circl_0{p1, 2U};
+    ASSERT_EQ("center x:10 y:20 radius:2", circl_0.to_string());
+
+    Circl circl_1{{10, 20}, 2U};  // circl_2に比べると可読性に劣る
+    ASSERT_EQ("center x:10 y:20 radius:2", circl_1.to_string());
+
+    Circl circl_2{{.x = 10, .y = 20}, 2U};  // x、yを明示できるため、可読性向上が見込める
+    ASSERT_EQ("center x:10 y:20 radius:2", circl_2.to_string());
+
+    ASSERT_EQ(circl_1, circl_2);
+```
+
+下記に示すように、[Polymorphic Memory Resource(pmr)](#SS_5_5)のpool_resourceの初期化には、
+この機能を使うと可読性の改善が期待できる。
+
+```cpp
+    //  example/term_explanation_cpp20/designated_init_ut.cpp 68
+
+    std::pmr::unsynchronized_pool_resource pool_resource(
+        std::pmr::pool_options{
+            .max_blocks_per_chunk        = 10,  // チャンクあたりの最大ブロック数
+            .largest_required_pool_block = 1024  // 最大ブロックサイズ
+        },
+        std::pmr::new_delete_resource()  // フォールバックリソース
+    );
+
+    std::pmr::vector<int> vec{&pool_resource};  // pmrを使用するベクタの定義
+```
+
+指示付き初期化を使わない以下のコード例と上記を比べれば可読性の改善に議論の余地はないだろう。
+
+```cpp
+    //  example/term_explanation_cpp20/designated_init_ut.cpp 83
+
+    // 指示付き初期化を使わずにstd::pmr::unsynchronized_pool_resourceの初期化
+    std::pmr::unsynchronized_pool_resource pool_resource(
+        std::pmr::pool_options{
+            10,   // チャンクあたりの最大ブロック数
+            1024  // 最大ブロックサイズ
+        },
+        std::pmr::new_delete_resource()  // フォールバックリソース
+    );
+
+    std::pmr::vector<int> vec{&pool_resource};  // pmrを使用するベクタの定義
+```
 
 ## プログラミング概念と標準ライブラリ <a id="SS_6_9"></a>
 ### スマートポインタ <a id="SS_6_9_1"></a>
