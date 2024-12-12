@@ -1270,7 +1270,7 @@ std::shared_ptr、std::move()、[expressionと値カテゴリ|rvalue](---)の関
     * moveすることことで、保持中のオブジェクトの所有権を移動できる。
     * copyすることことで、保持中のオブジェクトの所有権を共有できる。
 * 下記のようなコードはstd::shared_ptrの仕様が想定するセマンティクスに沿っておらず、
-  未定義動作に繋がる。
+  [未定義動作](---)に繋がる。
 
 ```cpp
     // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #1:0 begin -1
@@ -1353,7 +1353,7 @@ X::Register`、`Y::Register`を用いて、循環を作ってしまう例(メモ
 
 ![shread_ptrメモリーリーク](plant_uml/shared_cyclic.png)
 
-下記のコードでは、y0がスコープアウトするが、、そのタイミングでは、x0はまだ健在であるため、
+下記のコードでは、y0がスコープアウトするが、そのタイミングでは、x0はまだ健在であるため、
 Yオブジェクトの参照カウントは1になる(x0::y_が存在するため0にならない)。
 
 ```cpp
@@ -1393,7 +1393,12 @@ std::weak_ptrは参照カウントに影響を与えず、共有所有ではな�
 このコードからわかるように修正版YはXオブジェクトを参照するために、
 `std::weak_ptr<X>`を使用する。
 `std::weak_ptr<X>`にアクセスする必要があるときに、
-下記のY::DoSomething()のようにすることで、`std::weak_ptr<X>`オブジェクトを取得できる。
+下記のY::DoSomething()関数の内部処理のようにすることで、
+`std::weak_ptr<X>`オブジェクトから、
+それと紐づいた`std::shared_ptr<X>`オブジェクトを生成できる。
+
+なお、上記コードは[初期化付きif文](---)を使うことで、
+生成した`std::shared_ptr<X>`オブジェクトのスコープを最小に留めている。
 
 ```cpp
     // @@@ example/term_explanation/weak_ptr_ut.cpp #3:1 begin

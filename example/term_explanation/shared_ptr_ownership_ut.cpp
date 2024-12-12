@@ -105,7 +105,7 @@ TEST(SharedOwnership, move)
     ASSERT_EQ(-1, A::LastDestructedNum());      // x0がA{0}を所有するため、A{0}は未解放
     ASSERT_FALSE(a1);                           // a1は何も所有していない
     ASSERT_EQ(1, x1.GetA()->GetNum());          // x1はA{1}を所有
-    ASSERT_EQ(1, x1.UseCount());                // A{0}の共有所有カウント数は1
+    ASSERT_EQ(1, x1.UseCount());                // A{1}の共有所有カウント数は1
     // @@@ sample end
     // @@@ sample begin 0:6
 
