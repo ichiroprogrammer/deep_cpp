@@ -79,5 +79,27 @@ TEST(Pod, pod)
         static_assert(!is_pod_v<Trivial>);
         // @@@ sample end
     }
+
+    {
+        // @@@ sample begin 1:0
+
+        static_assert(std::is_trivially_destructible_v<int>);
+        static_assert(std::is_trivially_destructible_v<int*>);
+        static_assert(std::is_trivially_destructible_v<int[1]>);
+        static_assert(std::is_trivially_destructible_v<int&>);
+
+        enum class SizeUndefined { su_0, su_1 };
+
+        struct Trivial {      // トリビアルに破壊可能でないため、トリビアル型ではない
+            int           a;
+            SizeUndefined b;
+            ~Trivial(){}
+        };
+
+        static_assert(std::is_standard_layout_v<Trivial>);
+        static_assert(!std::is_trivial_v<Trivial>);
+        static_assert(!std::is_trivially_destructible_v<Trivial>);
+        // @@@ sample end
+    }
 }
 }  // namespace Nstd
