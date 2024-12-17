@@ -38,4 +38,50 @@ TEST(ExpTerm, etc)
 #endif
 }
 SUPPRESS_WARN_END;
+TEST(ExpTerm, narrowing)
+{
+    // @@@ sample begin 1:0
+
+    int32_t large  = 300;
+    int8_t  small  = large;  // 縮小型変換
+    bool    b      = large;
+    double  d      = large;  // 単単なる型変換(縮小ではない)
+    int32_t large2 = d;      // 縮小型変換
+
+    // large = int32_t{d};   縮小型変換回避のためリスト初期化の使用。コンパイルエラー
+    // @@@ sample end
+    IGNORE_UNUSED_VAR(large, large2, b, d, small);
+}
 }  // namespace
+
+void func();
+namespace A {
+void func() {}
+}  // namespace A
+
+struct Base {
+    void func() const noexcept {}
+};
+
+TEST(ExpTerm, qualified_call)
+{
+    // @@@ sample begin 2:0
+
+    A::func();  // 名前空間名による修飾
+
+    struct Derived : Base {
+        void        func() { Base::func(); /* クラス名での修飾 */ }
+        void        func(int) { ::func(); /* グローバル修飾 */ }
+        void        func(Base) { this->func(); /* thisによる修飾 */ }
+        static void func(std::string) {}
+    };
+
+    Base b;
+    b.func();        // 通常の関数呼び出し
+    b.Base::func();  // クラス名での修飾による関数呼び出し
+
+    Derived d;
+    Derived::func("str");  // クラス名での修飾による関数呼び出し
+    d.func("str");         // 通常の関数呼び出し
+    // @@@ sample end
+}
