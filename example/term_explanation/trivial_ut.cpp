@@ -90,10 +90,10 @@ TEST(Pod, pod)
 
         enum class SizeUndefined { su_0, su_1 };
 
-        struct Trivial {      // トリビアルに破壊可能でないため、トリビアル型ではない
+        struct Trivial {  // トリビアルに破壊可能でないため、トリビアル型ではない
             int           a;
             SizeUndefined b;
-            ~Trivial(){}
+            ~Trivial() {}
         };
 
         static_assert(std::is_standard_layout_v<Trivial>);

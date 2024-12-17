@@ -15367,8 +15367,9 @@ __この章の構成__
 &emsp;&emsp;&emsp; [構造化束縛](#SS_6_7_4)  
 &emsp;&emsp;&emsp; [初期化付きif/switch文](#SS_6_7_5)  
 &emsp;&emsp;&emsp;&emsp; [初期化付きfor文(従来のfor文)](#SS_6_7_5_1)  
-&emsp;&emsp;&emsp;&emsp; [初期化付きif文](#SS_6_7_5_2)  
-&emsp;&emsp;&emsp;&emsp; [初期化付きswitch文](#SS_6_7_5_3)  
+&emsp;&emsp;&emsp;&emsp; [初期化付きwhile文(従来のwhile文)](#SS_6_7_5_2)  
+&emsp;&emsp;&emsp;&emsp; [初期化付きif文](#SS_6_7_5_3)  
+&emsp;&emsp;&emsp;&emsp; [初期化付きswitch文](#SS_6_7_5_4)  
 
 &emsp;&emsp; [言語機能](#SS_6_8)  
 &emsp;&emsp;&emsp; [コルーチン](#SS_6_8_1)  
@@ -16284,10 +16285,10 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 
     enum class SizeUndefined { su_0, su_1 };
 
-    struct Trivial {      // トリビアルに破壊可能でないため、トリビアル型ではない
+    struct Trivial {  // トリビアルに破壊可能でないため、トリビアル型ではない
         int           a;
         SizeUndefined b;
-        ~Trivial(){}
+        ~Trivial() {}
     };
 
     static_assert(std::is_standard_layout_v<Trivial>);
@@ -18342,7 +18343,7 @@ std::weak_ptrは参照カウントに影響を与えず、共有所有ではな�
 `std::weak_ptr<X>`オブジェクトから、
 それと紐づいた`std::shared_ptr<X>`オブジェクトを生成できる。
 
-なお、上記コードは[初期化付きif文](#SS_6_7_5_2)を使うことで、
+なお、上記コードは[初期化付きif文](#SS_6_7_5_3)を使うことで、
 生成した`std::shared_ptr<X>`オブジェクトのスコープを最小に留めている。
 
 ```cpp
@@ -19385,9 +19386,9 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 対比できるようにした。
 
 - [初期化付きfor文(従来のfor文)](#SS_6_7_5_1)
-- [初期化付きif文](#SS_6_7_5_2)
-- [初期化付きswitch文](#SS_6_7_5_3)
-
+- [初期化付きwhile文(従来のwhile文)](#SS_6_7_5_2)
+- [初期化付きif文](#SS_6_7_5_3)
+- [初期化付きswitch文](#SS_6_7_5_4)
 
 
 #### 初期化付きfor文(従来のfor文) <a id="SS_6_7_5_1"></a>
@@ -19406,8 +19407,9 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     class OperationResult {
     public:
         enum class ErrorCode { NoError, ErrorPattern1, ErrorPattern2, ErrorPattern3 };
-        bool      IsError();
+        bool      IsError() const noexcept;
         ErrorCode Get() const noexcept;
+                  operator bool() const noexcept { return IsError(); }
 
     private:
         // 何らかの定義
@@ -19417,15 +19419,38 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 ```
 ```cpp
-    //  example/term_explanation/if_switch_init_ut.cpp 35
+    //  example/term_explanation/if_switch_init_ut.cpp 36
 
     for (auto result = DoOperation(); result.IsError(); result = DoOperation()) {
         RecoverOperation(result.Get());  // エラー処理
     }
-    // 成功処理
+
+    // 以下、成功時の処理
 ```
 
-#### 初期化付きif文 <a id="SS_6_7_5_2"></a>
+#### 初期化付きwhile文(従来のwhile文) <a id="SS_6_7_5_2"></a>
+下記の疑似コードこの節で説明しようとしているwhile文の構造を表す(従来からのwhile文)。
+
+```cpp
+    while (type-specifier-seq declarator) {
+        // 条件がtrueの場合の処理
+    }
+```
+
+[初期化付きif文](#SS_6_7_5_3)/[初期化付きswitch文](#SS_6_7_5_4)はC++17から導入されたシンタックスであるが、
+それと同様のシンタックスはwhileには存在しないが、
+以下のコード例のように従来の記法は広く知られているため、念とため紹介する。
+
+```cpp
+    //  example/term_explanation/if_switch_init_ut.cpp 48
+
+    while (auto result = DoOperation()) {  // resultはboolへの暗黙の型変換が行われる
+        // エラー処理
+    }
+    // resultはスコープアウトする
+```
+
+#### 初期化付きif文 <a id="SS_6_7_5_3"></a>
 下記の疑似コードこの節で説明しようとしているif文の構造を表す。
 
 ```cpp
@@ -19442,8 +19467,9 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     class OperationResult {
     public:
         enum class ErrorCode { NoError, ErrorPattern1, ErrorPattern2, ErrorPattern3 };
-        bool      IsError();
+        bool      IsError() const noexcept;
         ErrorCode Get() const noexcept;
+                  operator bool() const noexcept { return IsError(); }
 
     private:
         // 何らかの定義
@@ -19453,7 +19479,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 ```
 ```cpp
-    //  example/term_explanation/if_switch_init_ut.cpp 46
+    //  example/term_explanation/if_switch_init_ut.cpp 59
 
     if (auto result = DoOperation(); !result.IsError()) {
         // 成功処理
@@ -19467,7 +19493,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 クラスの独自の[<=>演算子](#SS_6_6_8_3)を定義する場合、下記のように使用することができる。
 
 ```cpp
-    //  example/term_explanation/if_switch_init_ut.cpp 77
+    //  example/term_explanation/if_switch_init_ut.cpp 72
 
     struct DoubleName {
         std::string name0;
@@ -19486,8 +19512,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     }
 ```
 
-
-#### 初期化付きswitch文 <a id="SS_6_7_5_3"></a>
+#### 初期化付きswitch文 <a id="SS_6_7_5_4"></a>
 下記の疑似コードはこの節で説明しようとしているswitch文の構造を表す。
 
 ```cpp
@@ -19510,8 +19535,9 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     class OperationResult {
     public:
         enum class ErrorCode { NoError, ErrorPattern1, ErrorPattern2, ErrorPattern3 };
-        bool      IsError();
+        bool      IsError() const noexcept;
         ErrorCode Get() const noexcept;
+                  operator bool() const noexcept { return IsError(); }
 
     private:
         // 何らかの定義
@@ -19521,7 +19547,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 ```
 ```cpp
-    //  example/term_explanation/if_switch_init_ut.cpp 60
+    //  example/term_explanation/if_switch_init_ut.cpp 103
 
     switch (auto result = DoOperation(); result.Get()) {
     case OperationResult::ErrorCode::ErrorPattern1:

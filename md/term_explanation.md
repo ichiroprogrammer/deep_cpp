@@ -1876,9 +1876,9 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 対比できるようにした。
 
 - [初期化付きfor文(従来のfor文)](---)
+- [初期化付きwhile文(従来のwhile文)](---)
 - [初期化付きif文](---)
 - [初期化付きswitch文](---)
-
 
 
 #### 初期化付きfor文(従来のfor文)
@@ -1898,6 +1898,23 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     // @@@ example/term_explanation/if_switch_init_ut.cpp #1:0 begin -1
 ```
 
+#### 初期化付きwhile文(従来のwhile文)
+下記の疑似コードこの節で説明しようとしているwhile文の構造を表す(従来からのwhile文)。
+
+```cpp
+    while (type-specifier-seq declarator) {
+        // 条件がtrueの場合の処理
+    }
+```
+
+[初期化付きif文](---)/[初期化付きswitch文](---)はC++17から導入されたシンタックスであるが、
+それと同様のシンタックスはwhileには存在しないが、
+以下のコード例のように従来の記法は広く知られているため、念とため紹介する。
+
+```cpp
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #2:0 begin -1
+```
+
 #### 初期化付きif文
 下記の疑似コードこの節で説明しようとしているif文の構造を表す。
 
@@ -1913,15 +1930,14 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     // @@@ example/term_explanation/if_switch_init_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #3:0 begin -1
 ```
 
 クラスの独自の[<=>演算子](---)を定義する場合、下記のように使用することができる。
 
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #4:0 begin
 ```
-
 
 #### 初期化付きswitch文
 下記の疑似コードはこの節で説明しようとしているswitch文の構造を表す。
@@ -1944,7 +1960,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     // @@@ example/term_explanation/if_switch_init_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #1:2 begin -1
+    // @@@ example/term_explanation/if_switch_init_ut.cpp #5:0 begin -1
 ```
 
 ## 言語機能

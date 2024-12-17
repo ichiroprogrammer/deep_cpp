@@ -10,8 +10,9 @@ namespace {
 class OperationResult {
 public:
     enum class ErrorCode { NoError, ErrorPattern1, ErrorPattern2, ErrorPattern3 };
-    bool      IsError();
+    bool      IsError() const noexcept;
     ErrorCode Get() const noexcept;
+              operator bool() const noexcept { return IsError(); }
 
 private:
     // 何らかの定義
@@ -21,7 +22,7 @@ OperationResult DoOperation();                                 // 何らかの�
 void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 // @@@ sample end
 
-bool                       OperationResult::IsError() { return false; }
+bool                       OperationResult::IsError() const noexcept { return false; }
 OperationResult::ErrorCode OperationResult::Get() const noexcept
 {
     return OperationResult::ErrorCode::ErrorPattern1;
@@ -37,13 +38,25 @@ TEST(TermExp, if_switch_init0)
     for (auto result = DoOperation(); result.IsError(); result = DoOperation()) {
         RecoverOperation(result.Get());  // エラー処理
     }
-    // 成功処理
+
+    // 以下、成功時の処理
+    // @@@ sample end
+}
+
+TEST(TermExp, while)
+{
+    // @@@ sample begin 2:0
+
+    while (auto result = DoOperation()) {  // resultはboolへの暗黙の型変換が行われる
+        // エラー処理
+    }
+    // resultはスコープアウトする
     // @@@ sample end
 }
 
 TEST(TermExp, if_switch_init1)
 {
-    // @@@ sample begin 1:1
+    // @@@ sample begin 3:0
 
     if (auto result = DoOperation(); !result.IsError()) {
         // 成功処理
@@ -55,26 +68,8 @@ TEST(TermExp, if_switch_init1)
     // @@@ sample end
 }
 
-TEST(TermExp, if_switch_init2)
-{
-    // @@@ sample begin 1:2
-
-    switch (auto result = DoOperation(); result.Get()) {
-    case OperationResult::ErrorCode::ErrorPattern1:
-        RecoverOperation(result.Get());  // エラー処理
-        break;
-        // エラー処理のいくつかのパターン
-    case OperationResult::ErrorCode::NoError:
-        // 成功処理
-    default:
-        assert(false);  // ここには来ないはず
-    }
-    // resultはスコープアウトする
-    // @@@ sample end
-}
-
 #if __cplusplus >= 202002L  // C++20
-// @@@ sample begin 2:0
+// @@@ sample begin 4:0
 
 struct DoubleName {
     std::string name0;
@@ -102,4 +97,23 @@ TEST(TermExp, if_switch_init)
     ASSERT_GE(taro_hanako, kotaro_hanako);
 }
 #endif
+
+TEST(TermExp, if_switch_init2)
+{
+    // @@@ sample begin 5:0
+
+    switch (auto result = DoOperation(); result.Get()) {
+    case OperationResult::ErrorCode::ErrorPattern1:
+        RecoverOperation(result.Get());  // エラー処理
+        break;
+        // エラー処理のいくつかのパターン
+    case OperationResult::ErrorCode::NoError:
+        // 成功処理
+    default:
+        assert(false);  // ここには来ないはず
+    }
+    // resultはスコープアウトする
+    // @@@ sample end
+}
+
 }  // namespace
