@@ -111,6 +111,23 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 ### 汎整数型拡張
 汎整数型拡張とは[汎整数型昇格](---)と同じ概念を指す。
 
+### 浮動小数点型昇格
+浮動小数点型昇格とは、float型とdouble型の演算で、
+float型オブジェクトがdoulbe型に変換されることを指す。
+
+```cpp
+    // @@@ example/term_explanation/integral_promotion_ut.cpp #2:0 begin -1
+```
+
+### デフォルト引数昇格
+デフォルト引数昇格(Default Argument Promotions)とは、可変長引数`(...)`や、
+プロトタイプを持たない関数に[算術型](---)引数を渡す際に適用される昇格ルールの総称である。
+
+デフォルト引数昇格には以下が含まれる。
+
+- [汎整数型昇格](---)
+- [浮動小数点型昇格](---)
+
 ### 縮小型変換
 縮小型変換(Narrowing Conversion) とは、あるデータ型から別のデータ型に変換する際に、
 変換先の型が元の型の表現範囲を完全にカバーしていない場合に発生する変換を指す。

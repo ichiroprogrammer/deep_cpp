@@ -120,4 +120,19 @@ TEST(ArithmeticConversion, integral_promotion)
     static_assert(std::is_same<int, decltype(sval + usval)>::value, "");
     // @@@ sample end
 }
+
+TEST(ArithmeticConversion, float_promotion)
+{
+    // @@@ sample begin 2:0
+
+    double d = 0.05;  // 0.05は循環少数
+    float  f = 0.05f;
+
+    bool b1 = d == f;  // fはdoubleに昇格
+    ASSERT_FALSE(b1);  // 0.05は循環少数であるため、0.5と0.5fは異なる。
+
+    bool b2 = std::abs(d - f) <= std::numeric_limits<decltype(d - f)>::epsilon();
+    ASSERT_FALSE(b2);  // dとfの差はdoubleのイプシロンには収まらない。
+    // @@@ sample end
+}
 }  // namespace
