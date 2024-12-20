@@ -23134,12 +23134,16 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
     if (otani == "Otani") {  // このコードがコンパイルされる。
         ...
     }
+
+    if (otani == Person{"Otani"}) {  // 暗黙の型変換を使わない記法
+        ...
+    }
 ```
 
 下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 107
+    //  example/term_explanation/implicit_conversion_ut.cpp 112
 
     class Person {
     public:

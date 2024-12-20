@@ -88,6 +88,11 @@ TEST(ImplicitConversion, implicit_conversion)
             // @@@ ignore begin
             // @@@ ignore end
         }
+
+        if (otani == Person{"Otani"}) {  // 暗黙の型変換を使わない記法
+            // @@@ ignore begin
+            // @@@ ignore end
+        }
         // @@@ sample end
     }
 }
