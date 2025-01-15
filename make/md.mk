@@ -74,7 +74,7 @@ o/%.html: o/%.md $(VERSION_TXT)
 	$(MD_GEN)/md_to_html.py --author "$(AUTHOR)" --title "$(TITLE)" -o $@ $<
 
 %.png: %.pu
-	$(MD_GEN)/plant_uml_encode.py $< -o $@
+	$(MD_GEN)/../sh/pu2png.sh $< 
 	$(MD_GEN)/png_checker.py $@ || (rm $@; exit 1)
 
 .PHONY: clean help
