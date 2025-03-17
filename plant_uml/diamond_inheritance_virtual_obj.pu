@@ -1,0 +1,12 @@
+@startuml
+object base as "Base (single instance)"
+object d0 as "Derived_0"
+object d1 as "Derived_1"
+object dd as "DerivedDerived"
+
+d0 -up-> base
+d1 -up-> base
+dd -up-> d0
+dd -up-> d1
+@enduml
+

@@ -26,6 +26,7 @@ public:
 
 class DerivedDerivedVirtual : public DerivedVirtual {  // 仮想継承を通常の継承
 public:
+    // 注: DerivedDerivedVirtualのコンストラクタは、Baseのデフォルトコンストラクタを呼び出す
     explicit DerivedDerivedVirtual(int32_t x) noexcept : DerivedVirtual{x} {}
 };
 
@@ -34,7 +35,7 @@ public:
     explicit DerivedNormal(int32_t x) noexcept : Base{x} {}
 };
 
-class DerivedDerivedNormal : public DerivedNormal {  // 通常の継承を通常の継承
+class DerivedDerivedNormal : public DerivedNormal {  // 通常継承を通常の継承
 public:
     explicit DerivedDerivedNormal(int32_t x) noexcept : DerivedNormal{x} {}
 };
@@ -50,10 +51,10 @@ TEST(VirtualInheritance, virtual_inherit_0)
     ASSERT_EQ(1, dv.get());  // これは非仮想継承と同じ動作
     ASSERT_EQ(1, dn.get());
 
-    auto ddv = DerivedDerivedVirtual{1};  // 仮想継承クラスを継承したクラス
-    auto ddn = DerivedDerivedNormal{1};   // 通常の継承クラスを継承したクラス
+    auto ddv = DerivedDerivedVirtual{1};  // 仮想継承クラスを継承したクラス Base::Base()が呼ばれる
+    auto ddn = DerivedDerivedNormal{1};  // 通常継承クラスを継承したクラス Base::Base(1)が呼ばれる
 
-    ASSERT_EQ(0, ddv.get());  // Baseのデフォルトコンストラクタが呼ばれる
+    ASSERT_EQ(0, ddv.get());  // ddvのBaseインスタンスはのデフォルトコンストラクタで初期化されている
     ASSERT_EQ(1, ddn.get());
     // @@@ sample end
 }

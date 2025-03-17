@@ -1,0 +1,13 @@
+@startuml
+object base1 as "Base (from Derived_0)"
+object base2 as "Base (from Derived_1)"
+object d0 as "Derived_0"
+object d1 as "Derived_1"
+object dd as "DerivedDerived"
+
+d0 -up-> base1
+d1 -up-> base2
+dd -up-> d0
+dd -up-> d1
+@enduml
+
