@@ -15517,17 +15517,19 @@ __この章の構成__
 
 &emsp;&emsp; [ソフトウェア一般](#SS_6_20)  
 &emsp;&emsp;&emsp; [フリースタンディング環境](#SS_6_20_1)  
-&emsp;&emsp;&emsp; [凝集度](#SS_6_20_2)  
-&emsp;&emsp;&emsp; [サイクロマティック複雑度](#SS_6_20_3)  
-&emsp;&emsp;&emsp; [凝集度の欠如](#SS_6_20_4)  
-&emsp;&emsp;&emsp; [Spurious Wakeup](#SS_6_20_5)  
-&emsp;&emsp;&emsp; [副作用](#SS_6_20_6)  
-&emsp;&emsp;&emsp; [is-a](#SS_6_20_7)  
-&emsp;&emsp;&emsp; [has-a](#SS_6_20_8)  
-&emsp;&emsp;&emsp; [is-implemented-in-terms-of](#SS_6_20_9)  
-&emsp;&emsp;&emsp;&emsp; [public継承によるis-implemented-in-terms-of](#SS_6_20_9_1)  
-&emsp;&emsp;&emsp;&emsp; [private継承によるis-implemented-in-terms-of](#SS_6_20_9_2)  
-&emsp;&emsp;&emsp;&emsp; [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_20_9_3)  
+&emsp;&emsp;&emsp; [サイクロマティック複雑度](#SS_6_20_2)  
+&emsp;&emsp;&emsp; [凝集度](#SS_6_20_3)  
+&emsp;&emsp;&emsp;&emsp; [凝集度の欠如](#SS_6_20_3_1)  
+&emsp;&emsp;&emsp;&emsp; [LCOMの評価基準](#SS_6_20_3_2)  
+
+&emsp;&emsp;&emsp; [Spurious Wakeup](#SS_6_20_4)  
+&emsp;&emsp;&emsp; [副作用](#SS_6_20_5)  
+&emsp;&emsp;&emsp; [is-a](#SS_6_20_6)  
+&emsp;&emsp;&emsp; [has-a](#SS_6_20_7)  
+&emsp;&emsp;&emsp; [is-implemented-in-terms-of](#SS_6_20_8)  
+&emsp;&emsp;&emsp;&emsp; [public継承によるis-implemented-in-terms-of](#SS_6_20_8_1)  
+&emsp;&emsp;&emsp;&emsp; [private継承によるis-implemented-in-terms-of](#SS_6_20_8_2)  
+&emsp;&emsp;&emsp;&emsp; [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_20_8_3)  
 
 &emsp;&emsp; [非ソフトウェア用語](#SS_6_21)  
 &emsp;&emsp;&emsp; [割れ窓理論](#SS_6_21_1)  
@@ -25019,18 +25021,30 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 [フリースタンディング環境](https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%AA%E3%83%BC%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E7%92%B0%E5%A2%83)
 とは、組み込みソフトウェアやOSのように、その実行にOSの補助を受けられないソフトウエアを指す。
 
-### 凝集度 <a id="SS_6_20_2"></a>
+### サイクロマティック複雑度 <a id="SS_6_20_2"></a>
+[サイクロマティック複雑度](https://ja.wikipedia.org/wiki/%E5%BE%AA%E7%92%B0%E7%9A%84%E8%A4%87%E9%9B%91%E5%BA%A6)
+とは関数の複雑さを表すメトリクスである。
+このメトリクスの解釈は諸説あるものの、概ね以下のテーブルのようなものである。
+
+|サイクロマティック複雑度(CC)|複雑さの状態                              |
+|:--------------------------:|:-----------------------------------------|
+|           CC <= 10         |非常に良い構造                            |
+|      11 < CC <  30         |やや複雑                                  |
+|      31 < CC <  50         |構造的なリスクあり                        |
+|      51 < CC               |テスト不可能、デグレードリスクが非常に高い|
+
+### 凝集度 <a id="SS_6_20_3"></a>
 [凝集度](https://ja.wikipedia.org/wiki/%E5%87%9D%E9%9B%86%E5%BA%A6)
 とはクラス設計の妥当性を表す尺度の一種であり、
-Lack of Cohesion in Methodsというメトリクスで計測される。
+「[凝集度の欠如](#SS_6_20_3_1)(LCOM)」というメトリクスで計測される。
 
-* Lack of Cohesion in Methodsの値が1に近ければ凝集度は低く、この値が0に近ければ凝集度は高い。
-* 凝集度とは結合度とも呼ばれ、メンバ(メンバ変数、メンバ関数等)間の結びつきを表す。
-  メンバ間の結びつきが強いほど、良い設計とされる。
+* [凝集度の欠如](#SS_6_20_3_1)メトリクスの値が1に近ければ凝集度は低く、この値が0に近ければ凝集度は高い。
 * メンバ変数やメンバ関数が多くなれば、凝集度は低くなりやすい。
+* 凝集度は、クラスのメンバがどれだけ一貫した責任を持つかを示す。
 * 「[単一責任の原則(SRP)](#SS_2_1)」を守ると凝集度は高くなりやすい。
-* 「[Accessor](#SS_3_4)」を多用すれば凝集度は低くなる。従って、下記のようなクラスは凝集度が低い。
-   言い換えれば、凝集度を下げることなく、より小さいクラスに分割できる。
+* 「[Accessor](#SS_3_4)」を多用すれば、振る舞いが分散しがちになるため、通常、凝集度は低くなる。
+   従って、下記のようなクラスは凝集度が低い。言い換えれば、凝集度を下げることなく、
+   より小さいクラスに分割できる。
 
 ```cpp
     //  example/term_explanation/lack_of_cohesion_ut.cpp 7
@@ -25099,51 +25113,42 @@ Lack of Cohesion in Methodsというメトリクスで計測される。
     }
 ```
 
+#### 凝集度の欠如 <a id="SS_6_20_3_1"></a>
+[凝集度](#SS_6_20_3)の欠如(Lack of Cohesion in Methods/LCOM)とは、
+クラス設計の妥当性を表す尺度の一種であり、`0 ～ 1`の値で表すメトリクスである。
 
-### サイクロマティック複雑度 <a id="SS_6_20_3"></a>
-[サイクロマティック複雑度](https://ja.wikipedia.org/wiki/%E5%BE%AA%E7%92%B0%E7%9A%84%E8%A4%87%E9%9B%91%E5%BA%A6)
-とは関数の複雑さを表すメトリクスである。
-このメトリクスの解釈は諸説あるものの、概ね以下のテーブルのようなものである。
-
-|サイクロマティック複雑度(CC)|複雑さの状態                              |
-|:--------------------------:|:-----------------------------------------|
-|           CC <= 10         |非常に良い構造                            |
-|      11 < CC <  30         |やや複雑                                  |
-|      31 < CC <  50         |構造的なリスクあり                        |
-|      51 < CC               |テスト不可能、デグレードリスクが非常に高い|
-
-
-### 凝集度の欠如 <a id="SS_6_20_4"></a>
-凝集度の欠如(LOCM)とは、クラス設計の良し悪しを`0 ～ 1`の値で表すメトリクスである。
-
-LOCMの値が大きい(1か1に近い値)場合、「クラス内のメソッドが互いに関連性を持たず、
+LCOMの値が大きい(1か1に近い値)場合、「クラス内のメソッドが互いに関連性を持たず、
 それぞれが独立した責務やデータに依存するため、クラス全体の統一性が欠けている」ことを表す。
 
-クラスデザイン見直しの基準値としてLOCMを活用する場合、以下のテーブルで具体的なを推奨値を示す。
+クラスデザイン見直しの基準値としてLCOMを活用する場合、
+[LCOMの評価基準](#SS_6_20_3_2)に具体的な推奨値を示す。
 
-| 凝集度の欠如(LOCM) | クラスの状態 |
-|--------------------|--------------|
-|        LOCM <= 0.4 | 理想的な状態 |
-| 0.4 <  LOCM <  0.6 | 要注意状態   |
-| 0.6 <= LOCM        | 改善必須状態 |
+#### LCOMの評価基準 <a id="SS_6_20_3_2"></a>
+クラスデザイン良し悪しの基準値としてLCOMを活用する場合の推奨値を以下に示す。
+
+| 凝集度の欠如(LCOM)  | クラスの状態 |
+|:-------------------:|:------------:|
+|       `LCOM <= 0.4` | 理想的な状態 |
+|`0.4 <  LCOM <  0.6` | 要注意状態   |
+|`0.6 <= LCOM`        | 改善必須状態 |
 
 
-* `LOCM <= 0.4`  
+* `LCOM <= 0.4`  
   クラスが非常に凝集しており、[単一責任の原則(SRP)](#SS_2_1)を強く遵守している状態であるため、
   通常、デザインの見直しは不要である。
 
-* `0.4 < LOCM <0.6`  
+* `0.4 < LCOM < 0.6`  
   クラスの凝集度がやや弱くなり始めている。
   デザイン見直しの必要な時期が迫りつつあると考えるべきだろう。
   このタイミングであればリファクタリングは低コストで完了できるだろう。
 
-* `0.6 <= LOCM`  
+* `0.6 <= LCOM`  
   クラス内のメソッド間の関連性が低く、凝集度が不十分である。
   メソッドが異なる責務にまたがっている可能性が高いため、
   一刻も早くデザインの見直しを行うべきだろう。
 
 
-### Spurious Wakeup <a id="SS_6_20_5"></a>
+### Spurious Wakeup <a id="SS_6_20_4"></a>
 [Spurious Wakeup](https://en.wikipedia.org/wiki/Spurious_wakeup)とは、
 条件変数に対する通知待ちの状態であるスレッドが、その通知がされていないにもかかわらず、
 起き上がってしまう現象のことを指す。
@@ -25209,7 +25214,7 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
     }
 ```
 
-### 副作用 <a id="SS_6_20_6"></a>
+### 副作用 <a id="SS_6_20_5"></a>
 プログラミングにおいて、式の評価による作用には、
 主たる作用とそれ以外の
 [副作用](https://ja.wikipedia.org/wiki/%E5%89%AF%E4%BD%9C%E7%94%A8_(%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0))
@@ -25220,7 +25225,7 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
 ファイルの読み書き等のI/O実行、等がある。
 
 
-### is-a <a id="SS_6_20_7"></a>
+### is-a <a id="SS_6_20_6"></a>
 「is-a」の関係は、オブジェクト指向プログラミング（OOP）
 においてクラス間の継承関係を説明する際に使われる概念である。
 クラスDerivedとBaseが「is-a」の関係である場合、
@@ -25373,10 +25378,10 @@ penguinとbirdの関係はis-aの関係ではあるが、
 ```
 
 修正されたKyukancho はstd::string インスタンスをメンバ変数として持ち、
-kyukanchoとstd::stringの関係を[has-a](#SS_6_20_8)の関係と呼ぶ。
+kyukanchoとstd::stringの関係を[has-a](#SS_6_20_7)の関係と呼ぶ。
 
 
-### has-a <a id="SS_6_20_8"></a>
+### has-a <a id="SS_6_20_7"></a>
 「has-a」の関係は、
 あるクラスのインスタンスが別のクラスのインスタンスを構成要素として含む関係を指す。
 つまり、あるクラスのオブジェクトが別のクラスのオブジェクトを保持している関係である。
@@ -25409,19 +25414,19 @@ Carクラスの例ではCarクラスにはEngine型のメンバ変数が存在�
     };
 ```
 
-### is-implemented-in-terms-of <a id="SS_6_20_9"></a>
+### is-implemented-in-terms-of <a id="SS_6_20_8"></a>
 「is-implemented-in-terms-of」の関係は、
 オブジェクト指向プログラミング（OOP）において、
 あるクラスが別のクラスの機能を内部的に利用して実装されていることを示す概念である。
 これは、あるクラスが他のクラスのインターフェースやメソッドを用いて、
 自身の機能を提供する場合に使われる。
-[has-a](#SS_6_20_8)の関係は、is-implemented-in-terms-of の関係の一種である。
+[has-a](#SS_6_20_7)の関係は、is-implemented-in-terms-of の関係の一種である。
 
 is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 
-*手段1.* [public継承によるis-implemented-in-terms-of](#SS_6_20_9_1)  
-*手段2.* [private継承によるis-implemented-in-terms-of](#SS_6_20_9_2)  
-*手段3.* [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_20_9_3)  
+*手段1.* [public継承によるis-implemented-in-terms-of](#SS_6_20_8_1)  
+*手段2.* [private継承によるis-implemented-in-terms-of](#SS_6_20_8_2)  
+*手段3.* [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_20_8_3)  
 
 手段1-3にはそれぞれ、長所、短所があるため、必要に応じて手段を選択する必要がある。
 以下の議論を単純にするため、下記のようにクラスS、C、CCを定める。
@@ -25434,7 +25439,7 @@ is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 依存関係の複雑さから考えた場合、CはSに強く依存する。
 場合によっては、この依存はCCからSへの依存間にも影響をあたえる。
 従って、手段3が依存関係を単純にしやすい。
-手段1は[is-a](#SS_6_20_7)に見え、以下に示すような問題も考慮する必要があるため、
+手段1は[is-a](#SS_6_20_6)に見え、以下に示すような問題も考慮する必要があるため、
 可読性、保守性を劣化させる可能性がある。
 
 ```cpp
@@ -25457,7 +25462,7 @@ is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 の実現手段でもあるため、一概にコーディング規約などで排除することもできない。
 
 
-#### public継承によるis-implemented-in-terms-of <a id="SS_6_20_9_1"></a>
+#### public継承によるis-implemented-in-terms-of <a id="SS_6_20_8_1"></a>
 public継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 
 ```cpp
@@ -25476,11 +25481,11 @@ public継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 ```
 
 すでに述べたようにこの方法は、
-[private継承によるis-implemented-in-terms-of](#SS_6_20_9_2)や、
-[コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_20_9_3)
+[private継承によるis-implemented-in-terms-of](#SS_6_20_8_2)や、
+[コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_20_8_3)
 と比べコードがシンプルになる。 
 
-#### private継承によるis-implemented-in-terms-of <a id="SS_6_20_9_2"></a>
+#### private継承によるis-implemented-in-terms-of <a id="SS_6_20_8_2"></a>
 private継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 
 ```cpp
@@ -25505,11 +25510,11 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
     ASSERT_EQ(str.size(), 0);
 ```
 
-この方法は、[public継承によるis-implemented-in-terms-of](#SS_6_20_9_1)が持つデストラクタ問題は発生せす、
-[is-a](#SS_6_20_7)と誤解してしまう問題も発生しない。
+この方法は、[public継承によるis-implemented-in-terms-of](#SS_6_20_8_1)が持つデストラクタ問題は発生せす、
+[is-a](#SS_6_20_6)と誤解してしまう問題も発生しない。
 
 
-#### コンポジションによる(has-a)is-implemented-in-terms-of <a id="SS_6_20_9_3"></a>
+#### コンポジションによる(has-a)is-implemented-in-terms-of <a id="SS_6_20_8_3"></a>
 コンポジションによる(has-a)is-implemented-in-terms-ofの実装例を示す。
 
 ```cpp
