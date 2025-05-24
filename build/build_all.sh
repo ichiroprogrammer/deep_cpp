@@ -90,5 +90,6 @@ $CLEAN && cmd_launcher make clean
 cmd_launcher make $PARA 
 
 $FULL && cmd_launcher make $PARA html
+$FULL && cmd_launcher make $PARA md_pu
 
 exit 0

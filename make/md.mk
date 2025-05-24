@@ -21,8 +21,8 @@ html: $(TARGET_HTML) $(HTMLS)
 pdf: html $(TARGET_PDF)
 all: md html pdf
 
-.PHONY: mds_pu
-mds_pu: $(MDS_PU) $(TARGET_PU)
+.PHONY: md_pu
+md_pu: $(MDS_PU) $(TARGET_PU)
 
 CLEANS:=$(patsubst clean%,clean, $(MAKECMDGOALS))
 ifneq ($(CLEANS), clean)
@@ -90,7 +90,7 @@ help:
 	@echo "make md MD_SEC_NUM=      :generate $(TARGET) without section number"
 	@echo "make html                :generate $(TARGET_HTML)"
 	@echo "make pdf                 :generate $(TARGET_PDF)"
-	@echo "make mds_pu              :generate $(TARGET_PU)"
+	@echo "make md_pu              :generate $(TARGET_PU)"
 	@echo "make clean               :generated files are deleted"
 	@echo "make help                :show this message"
 
