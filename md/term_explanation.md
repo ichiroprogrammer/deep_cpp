@@ -351,21 +351,31 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
       move代入演算子の代わりにcopy代入演算子が使われる。
 * 「= delete」とは「コンパイラによってその関数が= deleteと宣言された」状態であることを表す。
 
-|user-defined     |default ctor |dtor       |copy ctor      |copy assign    |move ctor   |move assign |`==`        |`<=>`       |
-|:---------------:|:-----------:|:---------:|:-------------:|:-------------:|:----------:|:----------:|:----------:|:----------:|
-|undeclared       | = default   | = default | = default     | = default     | = default  | = default  | undeclared | undeclared |
-|non-default ctor | undeclared  | = default | = default     | = default     | = default  | = default  | undeclared | undeclared |
-|default ctor     | -           | = default | = default     | = default     | = default  | = default  | undeclared | undeclared |
-|dtor             | = default   | -         | ~~= default~~ | ~~= default~~ | undeclared | undeclared | undeclared | undeclared |
-|copy ctor        | undeclared  | = default | -             | ~~= default~~ | undeclared | undeclared | undeclared | undeclared |
-|copy assign      | = default   | = default | ~~= default~~ | -             | undeclared | undeclared | undeclared | undeclared |
-|move ctor        | undeclared  | = default | = delete      | = delete      | -          | undeclared | undeclared | undeclared |
-|move assign      | = default   | = default | = delete      | = delete      | undeclared | -          | undeclared | undeclared |
-|`==`             | -           | -         | -             | -             | -          | -          | -          | undeclared |
-|`<=>`            | -           | -         | -             | -             | -          | -          | undeclared | -          |
+|  user-defined  |default ctor|   dtor  |  copy ctor  | copy assign |move ctor|move assign|   `==`   |   `<=>`  |
+|:--------------:|:----------:|:-------:|:-----------:|:-----------:|:-------:|:---------:|:--------:|:--------:|
+|   undeclared   |  = default |= default|  = default  |  = default  |= default| = default |undeclared|undeclared|
+|non-default ctor| undeclared |= default|  = default  |  = default  |= default| = default |undeclared|undeclared|
+|  default ctor  |      -     |= default|  = default  |  = default  |= default| = default |undeclared|undeclared|
+|      dtor      |  = default |    -    |~~= default~~|~~= default~~|= default| = default |undeclared|undeclared|
+|    copy ctor   |  = default |= default|      -      |~~= default~~|= default| = default |undeclared|undeclared|
+|   copy assign  |  = default |= default|~~= default~~|      -      |= default| = default |undeclared|undeclared|
+|    move ctor   |  = default |= default|   = delete  |   = delete  |    -    | = default |undeclared|undeclared|
+|   move assign  |  = default |= default|   = delete  |   = delete  |= default|     -     |undeclared|undeclared|
+|      `==`      |      -     |    -    |      -      |      -      |    -    |     -     |     -    |undeclared|
+|      `<=>`     |      -     |    -    |      -      |      -      |    -    |     -     |undeclared|     -    |
+
 
 **テーブル注**  
 
+* C++14以前と、C++17以降での仕様の差は以下のようになる。
+    * C++14以前では、コピーコンストラクタやコピー代入演算子をユーザ定義すると、
+      ムーブコンストラクタ／ムーブ代入演算子は自動生成されず` = delete`となる。
+    * C++17以降では、コピー系をユーザ定義していても、ムーブ系は自動生成される(` = default`と同等になる)ことがある。
+      コンパイラは「コピー系の存在」だけではムーブ系を削除しない。
+      ただし、ムーブ不可能なメンバや基底がある場合は、結果的に` = delete`になる。
+    * C++17以降では、` = default`された特殊メンバ関数は明示的に`noexcept`推定され、ムーブセマンティクスの活用がしやすくなる。
+    * C++20以降では、比較演算子(`==, <=>`)も`= default`によって自動生成可能だが、特殊メンバ関数とは分類が異なるが、
+      上記テーブルでは同じように扱う。
 * ctor: コンストラクタを指す。
 * dtor: デストラクタを指す。
 * assign: 代入演算子（assignment）を指す。
@@ -3148,7 +3158,8 @@ C++17から、
 ```
 
 ### テンプレートの型推論ガイド
-テンプレートの型推論ガイドは、C++17で導入された機能である。この機能により、
+テンプレートの型推論ガイド([CTAD(Class Template Argument Deduction)](---))は、
+C++17で導入された機能である。この機能により、
 クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
 引数から自動的に型を推論できるようになる。型推論ガイドを使用することで、
 コードの可読性と簡潔性が向上する。
@@ -3177,6 +3188,9 @@ C++17から、
 ```cpp
     // @@@ example/term_explanation/deduction_guide_ut.cpp #0:3 begin -1
 ```
+
+### CTAD(Class Template Argument Deduction)
+CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論ガイド](---)のことである。
 
 ### 変数テンプレート
 変数テンプレートとは、下記のコード示したような機能である。
@@ -3350,6 +3364,8 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 ```cpp
     // @@@ example/term_explanation/decltype_ut.cpp #0:2 begin -1
 ```
+
+### CTAD（Class Template Argument Deduction）
 
 ### 戻り値型を後置する関数宣言
 関数の戻り値型後置構文は戻り値型をプレースホルダ(auto)にして、
@@ -4475,6 +4491,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 * 「[Accessor](---)」を多用すれば、振る舞いが分散しがちになるため、通常、凝集度は低くなる。
    従って、下記のようなクラスは凝集度が低い。言い換えれば、凝集度を下げることなく、
    より小さいクラスに分割できる。
+   なお、以下のクラスでは、```LCOM == 9```となっており、凝集性が欠如していることがわかる。
 
 ```cpp
     // @@@ example/term_explanation/lack_of_cohesion_ut.cpp #0:0 begin
@@ -4483,6 +4500,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 良く設計されたクラスは、下記のようにメンバが結合しあっているため凝集度が高い
 (ただし、「[Immutable](---)」の観点からは、QuadraticEquation::Set()がない方が良い)。
 言い換えれば、凝集度を落とさずにクラスを分割することは難しい。
+なお、上記の```LCOM == 9```なっているクラスを凝集性を高く、修正した例を以下に示す。
 
 ```cpp
     // @@@ example/term_explanation/lack_of_cohesion_ut.cpp #0:1 begin
