@@ -21159,11 +21159,18 @@ C++で関数やメンバ関数を明示的にスコープやクラス名で修�
 一方で、[ADL](#SS_6_10_5)が働かなくなるため、フレキシブルな[name lookup](#SS_6_10_2)ができなくなる。
 
 ```cpp
-    //  example/term_explanation/etc_ut.cpp 68
+    //  example/term_explanation/etc_ut.cpp 64
+
+    extern void func();  // グローバル名前空間での宣言
+
+    struct Base {
+        void func() const noexcept {}
+    };
 
     A::func();  // 名前空間名による修飾
 
     struct Derived : Base {
+        // void        func() { func(); /* funcの無限リカーシブコール */ }
         void        func() { Base::func(); /* クラス名での修飾 */ }
         void        func(int) { ::func(); /* グローバル修飾 */ }
         void        func(Base) { this->func(); /* thisによる修飾 */ }

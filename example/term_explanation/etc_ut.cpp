@@ -59,17 +59,20 @@ namespace A {
 void func() {}
 }  // namespace A
 
-struct Base {
-    void func() const noexcept {}
-};
-
 TEST(ExpTerm, qualified_call)
 {
     // @@@ sample begin 2:0
 
+    extern void func();  // グローバル名前空間での宣言
+
+    struct Base {
+        void func() const noexcept {}
+    };
+
     A::func();  // 名前空間名による修飾
 
     struct Derived : Base {
+        // void        func() { func(); /* funcの無限リカーシブコール */ }
         void        func() { Base::func(); /* クラス名での修飾 */ }
         void        func(int) { ::func(); /* グローバル修飾 */ }
         void        func(Base) { this->func(); /* thisによる修飾 */ }
