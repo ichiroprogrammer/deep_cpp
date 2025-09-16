@@ -17582,7 +17582,7 @@ NSDMIとは、non-static data member initializerの略語であり、
 下記のような非静的なメンバ変数の初期化子を指す。
 
 ```cpp
-    //  example/term_explanation/nsdmi.cpp 9
+    //  example/term_explanation/nsdmi.cpp 11
 
     class A {
     public:
@@ -17606,11 +17606,14 @@ NSDMIとは、non-static data member initializerの略語であり、
 constメンバ変数は、初期化子リストでの初期化か[NSDMI](#SS_6_5_6_1)でしか初期化できない。
 
 ```cpp
-    //  example/term_explanation/nsdmi.cpp 25
+    //  example/term_explanation/nsdmi.cpp 27
 
     class A {
     public:
-        A(int a, int b) : a_{a}, v_{a, b, 3}  // 非静的なメンバ初期化子による初期化
+        A(int a, int b) : v_{a, b, 3}, a_{a}  // 非静的なメンバ初期化子による初期化
+        //                 ^^^^^^^^^^^^^ メンバ変数の初期化は
+        //                                  - 宣言順に行われる。
+        //                                  - 初期化リストの順番と、初期化の順番には関係がない。
         {
         }
 
@@ -17627,7 +17630,7 @@ constメンバ変数は、初期化子リストでの初期化か[NSDMI](#SS_6_5
 [初期化子リストでの初期化](#SS_6_5_6_2)で初期化できない変数を未初期化でない状態にするための唯一の方法である。
 
 ```cpp
-    //  example/term_explanation/nsdmi.cpp 40
+    //  example/term_explanation/nsdmi.cpp 45
 
     class A {
     public:
