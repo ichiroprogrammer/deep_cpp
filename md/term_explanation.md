@@ -1549,6 +1549,10 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
     // @@@ example/term_explanation/slice_ut.cpp #0:0 begin
 ```
 
+```cpp
+    // @@@ example/term_explanation/slice_ut.cpp #0:1 begin -1
+```
+
 copy代入演算子(=)によりコピーが行われた場合、=の両辺のオブジェクトは等価になるべきだが
 (copy代入演算子をオーバーロードした場合も、そうなるように定義すべきである)、
 スライシングが起こった場合、そうならないことが問題である(「[等価性のセマンティクス](---)」参照)。
@@ -1577,6 +1581,8 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 
 ```cpp
     d2_ref.Base::operator=(d1);   // Base::operator=(Base const&)が呼び出される
+                                  // 関数Base::operator=(Base const&)の中では、
+                                  // d1の型はBase型のリファレンスとなる
 ```
 
 次に示すのは、

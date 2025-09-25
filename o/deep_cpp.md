@@ -18660,29 +18660,28 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
     private:
         char const* name1_;
     };
+```
 
-    TEST(Slicing, reference)
-    {
-        auto const d0     = Derived{"d0", "d0"};
-        auto const d1     = Derived{"d1", "d1"};
-        auto       d2     = Derived{"d2", "d2"};
-        Base&      d2_ref = d2;
+```cpp
+    //  example/term_explanation/slice_ut.cpp 41
 
-        ASSERT_STREQ("d2", d2.Name0());  // OK
-        ASSERT_STREQ("d2", d2.Name1());  // OK
+    auto const d0     = Derived{"d0", "d0"};
+    auto const d1     = Derived{"d1", "d1"};
+    auto       d2     = Derived{"d2", "d2"};
+    Base&      d2_ref = d2;
 
-        d2 = d0;
-        ASSERT_STREQ("d0", d2.Name0());  // OK
-        ASSERT_STREQ("d0", d2.Name1());  // OK
+    ASSERT_STREQ("d2", d2.Name0());  // OK
+    ASSERT_STREQ("d2", d2.Name1());  // OK
 
-        d2_ref = d1;                     // d2_refはBase&型で、d2へのリファレンス
-        ASSERT_STREQ("d1", d2.Name0());  // OK
-    #if 0
-        ASSERT_STREQ("d1", d2.Name1());  // 本来ならこうなってほしいが、
-    #else
-        ASSERT_STREQ("d0", d2.Name1());  // スライシングの影響でDerived::name1_はコピーされない
-    #endif
-    }
+    d2 = d0;
+    ASSERT_STREQ("d0", d2.Name0());  // OK
+    ASSERT_STREQ("d0", d2.Name1());  // OK
+
+    d2_ref = d1;                     // d2_refはBase&型で、d2へのリファレンス
+    ASSERT_STREQ("d1", d2.Name0());  // OK
+    /*  本来なら↓が成立してほしいが...
+    ASSERT_STREQ("d1", d2.Name1()); */
+    ASSERT_STREQ("d0", d2.Name1());  // スライシングの影響でDerived::name1_はコピーされない
 ```
 
 copy代入演算子(=)によりコピーが行われた場合、=の両辺のオブジェクトは等価になるべきだが
@@ -18713,6 +18712,8 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 
 ```cpp
     d2_ref.Base::operator=(d1);   // Base::operator=(Base const&)が呼び出される
+                                  // 関数Base::operator=(Base const&)の中では、
+                                  // d1の型はBase型のリファレンスとなる
 ```
 
 次に示すのは、
@@ -18720,7 +18721,7 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 そのポインタを配列のように使用した場合に発生する」スライシングと類似の現象である。
 
 ```cpp
-    //  example/term_explanation/slice_ut.cpp 61
+    //  example/term_explanation/slice_ut.cpp 62
 
     TEST(Slicing, array)
     {

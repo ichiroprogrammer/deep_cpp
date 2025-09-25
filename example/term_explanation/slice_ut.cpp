@@ -34,9 +34,12 @@ public:
 private:
     char const* name1_;
 };
+// @@@ sample end
 
 TEST(Slicing, reference)
 {
+    // @@@ sample begin 0:1
+
     auto const d0     = Derived{"d0", "d0"};
     auto const d1     = Derived{"d1", "d1"};
     auto       d2     = Derived{"d2", "d2"};
@@ -51,13 +54,11 @@ TEST(Slicing, reference)
 
     d2_ref = d1;                     // d2_refはBase&型で、d2へのリファレンス
     ASSERT_STREQ("d1", d2.Name0());  // OK
-#if 0
-    ASSERT_STREQ("d1", d2.Name1());  // 本来ならこうなってほしいが、
-#else
+    /*  本来なら↓が成立してほしいが...
+    ASSERT_STREQ("d1", d2.Name1()); */
     ASSERT_STREQ("d0", d2.Name1());  // スライシングの影響でDerived::name1_はコピーされない
-#endif
+    // @@@ sample end
 }
-// @@@ sample end
 // @@@ sample begin 1:0
 
 TEST(Slicing, array)
