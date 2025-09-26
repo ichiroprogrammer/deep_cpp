@@ -5,30 +5,67 @@
 namespace Rvalue {
 
 void f()
-// @@@ sample begin 0:0
 
 {
-    // sを初期化するためにstd::string{}により生成されるオブジェクトはprvalue
-    // sはlvalue
+    // @@@ sample begin 0:0
+    // sを初期化するためにstd::string{}により生成されるオブジェクトはprvalue、 sはlvalue
+    //   ↓lvalue
+    auto s = std::string{};  // この式の左辺はテンポラリオブジェクト(つまりrvalue)
 
-    auto s = std::string{};
-
-#if 0
-    // 下記はコンパイルエラー
-
+    /*
     auto* sp = &std::string{};
-    // 下記はg++のエラーメッセージ
-    // programming_convention_type.cpp|709 col 29| error: taking address of rvalue [-fpermissive]
-    // ||   709 |     auto* sp = &std::string{};
-#else
+    ↑は、コンパイルエラー
+    ↓は、その時のg++のエラーメッセージ
+    error: taking address of rvalue
+    */
+
     // 下記のようにすればアドレスを取得できるが、このようなことはすべきではない。
     auto&& rvalue_ref = std::string{};
-    auto   sp         = &rvalue_ref;
-#endif
+    auto   sp = &rvalue_ref;  // spはrvalue_refのアドレスを指しているが、、、
+    // @@@ sample end
+
     static_assert(std::is_same_v<std::string*, decltype(sp)>);
-    IGNORE_UNUSED_VAR(s, sp);  // @@@ delete
+    IGNORE_UNUSED_VAR(s, sp);
 }
-// @@@ sample end
+
+namespace pattern1 {
+// clang-format off
+char const* f(std::string&)       { return "lvalue ref"; }
+char const* f(std::string const&) { return "lvalue const ref"; }
+// clang-format on
+
+TEST(Expression, rvalue_ref1)
+{
+    std::string       str;
+    std::string const cstr;
+
+    ASSERT_STREQ("lvalue ref", f(str));
+    ASSERT_STREQ("lvalue const ref", f(cstr));
+    ASSERT_STREQ("lvalue const ref",
+                 f(std::string{}));  // T const&はrvalueリファレンスをバインドできる
+}
+}  // namespace pattern1
+
+namespace pattern2 {
+// clang-format off
+char const* f(std::string&)       { return "lvalue ref"; }
+char const* f(std::string const&) { return "lvalue const ref"; }
+char const* f(std::string&&)      { return "rvalue ref"; }
+// clang-format on
+
+TEST(Expression, rvalue_ref2)
+{
+    std::string       str;
+    std::string const cstr;
+
+    ASSERT_STREQ("lvalue ref", f(str));
+    ASSERT_STREQ("lvalue const ref", f(cstr));
+    ASSERT_STREQ("rvalue ref", f(std::string{}));
+    ASSERT_STREQ("rvalue ref", f(std::string{}));
+    ASSERT_STREQ("rvalue ref", f(std::move(str)));
+    ASSERT_STREQ("lvalue const ref", f(std::move(cstr)));
+}
+}  // namespace pattern2
 
 void g0()
 {
@@ -62,7 +99,7 @@ void g2()
     IGNORE_UNUSED_VAR(str0);
 }
 
-// @@@ sample begin 0:4
+// @@@ sample begin 1:0
 
 #define IS_LVALUE(EXPR_) std::is_lvalue_reference_v<decltype((EXPR_))>
 #define IS_XVALUE(EXPR_) std::is_rvalue_reference_v<decltype((EXPR_))>
@@ -88,7 +125,7 @@ TEST(Expression, rvalue)
 namespace RvalueLvalue {
 SUPPRESS_WARN_BEGIN;
 SUPPRESS_WARN_UNUSED_VAR;
-// @@@ sample begin 1:0
+// @@@ sample begin 4:0
 
 class C {
 public:
@@ -129,7 +166,7 @@ private:
 
 void f()
 {
-    // @@@ sample begin 1:1
+    // @@@ sample begin 4:1
 
     auto        c    = C{"c0"};
     auto const& s0_0 = c.GetString0();        // OK cが解放されるまでs0_0は有効

@@ -73,7 +73,7 @@ TEST(Slicing, array)
     /* スライシングに類似した問題で、以下のテストは失敗する。
     ASSERT_STREQ("2", b_ptr[1].Name0());    NG */
     // こうすればテストは通るが、、、
-    ASSERT_STREQ("1", b_ptr[1].Name0());  // NG 
+    ASSERT_STREQ("1", b_ptr[1].Name0());  // NG
     // @@@ sample end
 }
 }  // namespace

@@ -1188,7 +1188,7 @@ x0、x1、...、xNがaを共有所有する場合、x0、x1、...、xN全体で�
 
 下記に示した上記クラスの単体テストにより、
 オブジェクトの所有権やその移動、
-std::unique_ptr、std::move()、[expressionと値カテゴリ|rvalue](---)の関係を解説する。
+std::unique_ptr、std::move()、[expressionと値カテゴリ|expression|rvalue](---)の関係を解説する。
 
 ```cpp
     // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:1 begin -1
@@ -1262,7 +1262,7 @@ std::unique_ptr、std::move()、[expressionと値カテゴリ|rvalue](---)の関
 
 下記に示した上記クラスの単体テストにより、
 オブジェクトの所有権やその移動、共有、
-std::shared_ptr、std::move()、[expressionと値カテゴリ|rvalue](---)の関係を解説する。
+std::shared_ptr、std::move()、[expressionと値カテゴリ|expression|rvalue](---)の関係を解説する。
 
 ```cpp
     // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:1 begin -1
@@ -1470,7 +1470,7 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 * thread_localに生成されたオブジェクトのライフタイム
 * newで生成されたオブジェクトのライフタイム
 * スタック上に生成されたオブジェクトのライフタイム
-* prvalue(「[expressionと値カテゴリ|rvalue](---)」参照)のライフタイム
+* prvalue(「[expressionと値カテゴリ|expression|rvalue](---)」参照)のライフタイム
 
 なお、リファレンスの初期化をrvalueで行った場合、
 そのrvalueはリファレンスがスコープを抜けるまで存続し続ける。
@@ -3615,9 +3615,68 @@ C++においてexpression、lvalue、rvalue、xvalue、glvalue、prvalueは以�
 
 ![expression分類](plant_uml/rvalue.png)
 
-ざっくりと言えば、lvalueとは代入式の左辺になり得る式、rvalueとは代入式の左辺にはなり得ない式である。
+
+#### lvalue
+「[expression](---)」を参照せよ。
+
+#### rvalue
+「[expression](---)」を参照せよ。
+
+#### xvalue
+「[expression](---)」を参照せよ。
+
+#### prvalue
+「[expression](---)」を参照せよ。
+
+### decltypeとexpression
+エッセンシャルタイプがTであるlvalue、xvalue、prvalueに対して
+(例えば、std::string const&のエッセンシャルタイプはstd::stringである)、
+decltypeの算出結果は下表のようになる。
+
+|decltype           |算出された型|
+|:------------------|:-----------|
+|decltype(lvalue)   |T           |
+|decltype((lvalue)) |T&          |
+|decltype(xvalue)   |T&&         |
+|decltype((xvalue)) |T&&         |
+|decltype(prvalue)  |T           |
+|decltype((prvalue))|T           |
+
+この表の結果を使用した下記の関数型マクロ群により式を分類できる。
+定義から明らかな通り、これらは
+[テンプレートメタプログラミング](https://ja.wikipedia.org/wiki/%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%A1%E3%82%BF%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0)
+に有効に活用できる。
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:0 begin
+```
+
+## リファレンス
+ここでは、C++11から導入された
+
+* [rvalueリファレンス](---)
+* [ユニバーサルリファレンス](---)
+* [リファレンスcollapsing](---)
+
+について解説する。
+
+### rvalueリファレンス
+本節を読み進む前に、「[expressionと値カテゴリ](---)」を理解することを強く勧める。
+
+rvalueリファレンスは「一時オブジェクト（rvalue）」にバインドできる参照で、
+C++11の[moveセマンティクス](---)と
+[perfect forwarding](---)を実現するために導入されたシンタックスである。
+rvalueリファレンスのの形式は任意の型Tに対して、`T&&`である。
+
+正確さよりも判りやすさを優先して説明すると、
+
+* lvalueとは代入式の左辺になり得る式であるため、左辺値と呼ばれることがある
+* rvalueとは代入式の左辺にはなり得ない式であるため、右辺値と呼ばれることがある
+
+である。
+
 T const&は左辺になり得ないが、lvalueである。rvalueリファレンス(T&&)もlvalueであるため、
-rvalueであることとrvalueリファレンスであることとは全く異なる。
+rvalueであることとrvalueリファレンスであることとは全く異なる(「[decltypeとexpression](---)」参照)。
 
 xvalueとは、多くの場合、「std::move()の呼び出し式のことである」と考えても差し支えない。
 
@@ -3626,10 +3685,11 @@ prvalueとは、いわゆるテンポラリオブジェクトのことである�
 また、アドレス演算子(&)のオペランドになれない。
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #0:0 begin -1
 ```
 
-C++11でrvalueの概念の整理やstd::move()の導入が行われた目的はプログラム実行速度の向上である。
+C++11でrvalueの概念の整理やrvalueリファレンス、
+std::move()の導入が行われた目的はプログラム実行速度の向上である。
 
 * lvalueからの代入
 * rvalueからの代入
@@ -3697,77 +3757,6 @@ C++11でrvalueの概念の整理やstd::move()の導入が行われた目的は�
 ![std::move(lvalue)からの代入](plant_uml/rvalue_from_move.png)
 
 
-エッセンシャルタイプがTであるlvalue、xvalue、prvalueに対して
-(例えば、std::string const&のエッセンシャルタイプはstd::stringである)、
-decltypeの算出結果は下表のようになる。
-
-|decltype           |算出された型|
-|:------------------|:-----------|
-|decltype(lvalue)   |T           |
-|decltype((lvalue)) |T&          |
-|decltype(xvalue)   |T&&         |
-|decltype((xvalue)) |T&&         |
-|decltype(prvalue)  |T           |
-|decltype((prvalue))|T           |
-
-この表の結果を使用した下記の関数型マクロ群により式を分類できる。
-定義から明らかな通り、これらは
-[テンプレートメタプログラミング](https://ja.wikipedia.org/wiki/%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%A1%E3%82%BF%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0)
-に有効に活用できる。
-
-```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #0:4 begin
-```
-
-### lvalue
-「[expression](---)」を参照せよ。
-
-### rvalue
-「[expression](---)」を参照せよ。
-
-#### xvalue
-「[expression](---)」を参照せよ。
-
-#### prvalue
-「[expression](---)」を参照せよ。
-
-### rvalue修飾
-下記GetString0()のような関数が返すオブジェクトの内部メンバに対するハンドルは、
-オブジェクトのライフタイム終了後にもアクセスすることができるため、
-そのハンドルを通じて、
-ライフタイム終了後のオブジェクトのメンバオブジェクトにもアクセスできてしまう。
-
-ライフタイム終了後のオブジェクトにアクセスすることは未定義動作であり、
-特にそのオブジェクトがrvalueであった場合、さらにその危険性は高まる。
-
-こういったコードに対処するためのシンタックスが、lvalue修飾、rvalue修飾である。
-
-下記GetString1()、GetString3()、GetString4()のようにメンバ関数をlvalue修飾やrvalue修飾することで、
-rvalueの内部ハンドルを返さないようにすることが可能となり、上記の危険性を緩和することができる。
-
-```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:0 begin
-```
-```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:1 begin -1
-```
-
-### lvalue修飾
-[rvalue修飾](---)を参照せよ。
-
-
-### リファレンス修飾
-[rvalue修飾](---)と[lvalue修飾](---)とを併せて、リファレンス修飾と呼ぶ。
-
-
-## リファレンス
-ここでは、C++11から導入された
-
-* [ユニバーサルリファレンス](---)
-* [リファレンスcollapsing](---)
-
-について解説する。
-
 ### ユニバーサルリファレンス
 関数テンプレートの型パラメータや型推論autoに&&をつけて宣言された変数を、
 ユニバーサルリファレンスと呼ぶ(C++17から「forwardingリファレンス」という正式名称が与えられた)。
@@ -3794,8 +3783,8 @@ rvalueの内部ハンドルを返さないようにすることが可能とな�
 「[ユニバーサルリファレンス](---)」を参照せよ。
 
 ### perfect forwarding
-perfect forwarding とは、引数の[expressionと値カテゴリ|rvalue](---)性や
-[expressionと値カテゴリ|lvalue](---)性を損失することなく、
+perfect forwarding(完全転送)とは、引数の[expression|rvalue](---)性や
+[expression|lvalue](---)性を損失することなく、
 その引数を別の関数に転送する技術のことを指す。
 通常は、[ユニバーサルリファレンス](---)である関数の仮引数をstd::forwardを用いて、
 他の関数に渡すことで実現される。
@@ -3880,6 +3869,33 @@ Dangling リファレンスとは、破棄後のオブジェクトを指して�
 
 ### danglingポインタ
 danglingポインタとは、[danglingリファレンス](---)と同じような状態になったポインタを指す。
+
+## リファレンス修飾
+[rvalue修飾](---)と[lvalue修飾](---)とを併せて、リファレンス修飾と呼ぶ。
+
+### rvalue修飾
+下記GetString0()のような関数が返すオブジェクトの内部メンバに対するハンドルは、
+オブジェクトのライフタイム終了後にもアクセスすることができるため、
+そのハンドルを通じて、
+ライフタイム終了後のオブジェクトのメンバオブジェクトにもアクセスできてしまう。
+
+ライフタイム終了後のオブジェクトにアクセスすることは未定義動作であり、
+特にそのオブジェクトがrvalueであった場合、さらにその危険性は高まる。
+
+こういったコードに対処するためのシンタックスが、lvalue修飾、rvalue修飾である。
+
+下記GetString1()、GetString3()、GetString4()のようにメンバ関数をlvalue修飾やrvalue修飾することで、
+rvalueの内部ハンドルを返さないようにすることが可能となり、上記の危険性を緩和することができる。
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #4:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #4:1 begin -1
+```
+
+### lvalue修飾
+[rvalue修飾](---)を参照せよ。
 
 ## エクセプション安全性の保証
 関数のエクセプション発生時の安全性の保証には以下の3つのレベルが規定されている。
@@ -4164,7 +4180,7 @@ moveセマンティクスとは以下を満たすようなセマンティクス�
     * a == cはtrueにならなくても良い(aはmove代入により破壊されるかもしれない)。
 
   必須ではないが、「aがポインタ等のリソースを保有している場合、move代入後には、
-  そのリソースはcに移動している」ことが一般的である(「[expressionと値カテゴリ|rvalue](---)」参照)。
+  そのリソースはcに移動している」ことが一般的である(「[expression|rvalue](---)」参照)。
 
 * [no-fail保証](---)をする(noexceptと宣言し、エクセプションをthrowしない)。
 

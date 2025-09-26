@@ -1605,7 +1605,7 @@ setterを使用する場合、上記のように処理の隠蔽化には特に�
 
 コード内のコメントで示したように、このコードには以下のような問題がある。
 
-* copy代入演算子には、[エクセプション安全性の保証](#SS_6_16)がない。
+* copy代入演算子には、[エクセプション安全性の保証](#SS_6_17)がない。
 * 上記4関数は似ているにも関わらず、微妙な違いがあるためコードクローンとなっている。
 
 ここで紹介するCopy-And-Swapはこのような問題を解決するためのイデオムである。
@@ -1681,7 +1681,7 @@ setterを使用する場合、上記のように処理の隠蔽化には特に�
 また、CopyAndSwap::Swapに関してもstd::vector等が持つswapと同様のものである。
 このイデオムの特徴は、copy代入演算子、
 move代入演算子が各コンストラクタとSwap関数により実装されている所にある。
-これにより[エクセプション安全性の保証](#SS_6_16)を持つ4関数をコードクローンすることなく実装できる。
+これにより[エクセプション安全性の保証](#SS_6_17)を持つ4関数をコードクローンすることなく実装できる。
 
 
 ## Immutable <a id="SS_3_6"></a>
@@ -6603,8 +6603,8 @@ Loggerを宣言しているLoggingの3つである。
     }
 ```
 
-このドキュメントで使用している[g++](#SS_6_19_1)ではこのコードはコンパイルでき、
-動作も問題ないように思われるが、[clang++](#SS_6_19_2)では以下のようなエラーが発生し、コンパイルできない。
+このドキュメントで使用している[g++](#SS_6_20_1)ではこのコードはコンパイルでき、
+動作も問題ないように思われるが、[clang++](#SS_6_20_2)では以下のようなエラーが発生し、コンパイルできない。
 
 ```
     ./logger_0.h:37:21: error: call to function 'operator<<' that is neither 
@@ -6636,7 +6636,7 @@ clang++は「LOGGERの前にoperator<<を宣言せよ」と言っている。
   という名前空間Appローカルな宣言をグローバル名前空間で行うことによって、
   グローバル名前空間を汚染してしまう
   (このコードは名前空間を正しく使うことに対しての割れ窓
-  (「[割れ窓理論](#SS_6_21_1)」参照)になってしまうかもしれない)。
+  (「[割れ窓理論](#SS_6_22_1)」参照)になってしまうかもしれない)。
 * 例示したコードでのoperator<<(std::ostream& os, App::Ints_t const& ints)の定義は、
   単体テストファイル内にあったが、実際には何らかのヘッダファイル内で定義されることになる。
   その場合、ロガーのヘッダファイルよりも、
@@ -6815,7 +6815,7 @@ App::ToString()によりstd::stringへ変換する必要があり、残念なイ
 
 「[operator\<\<を使わない](#SS_4_1_6_6)」で導入したコードは、短いながらも汎用性が高い。
 このようなコードをローカルなファイルに閉じ込めてしまうと、
-コードクローンや、[車輪の再発明](#SS_6_21_2)による開発効率の低下につながることがある。
+コードクローンや、[車輪の再発明](#SS_6_22_2)による開発効率の低下につながることがある。
 
 通常、プロジェクトの全ファイルから参照可能で且つ、
 プロジェクトの他のパッケージに非依存なパッケージを用意することで、このような問題を回避できる。
@@ -7390,8 +7390,8 @@ std::enable_ifの使用例を下記に示す。
 
 実装例から明らかなように
 
-* std::enable_if\<true>::typeは[well-formed](#SS_6_18_6)
-* std::enable_if\<false>::typeは[ill-formed](#SS_6_18_5)
+* std::enable_if\<true>::typeは[well-formed](#SS_6_19_6)
+* std::enable_if\<false>::typeは[ill-formed](#SS_6_19_5)
 
 となるため、下記のコードはコンパイルできない。
 
@@ -8518,7 +8518,7 @@ SFINAEと関数テンプレート/関数のオーバーライドを使用し以�
 AreConvertibleWithoutNarrowConvはNstdで定義するため、その内部のみで用いる
 is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 
-上記を抜粋した下記のコードは「縮小型変換を発生さる{}による初期化は[ill-formed](#SS_6_18_5)になる」
+上記を抜粋した下記のコードは「縮小型変換を発生さる{}による初期化は[ill-formed](#SS_6_19_5)になる」
 ことをSFINAEに利用している。
 
 ```cpp
@@ -8948,8 +8948,8 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 
 上記で使用したstd::void_tは、テンプレートパラメータが
 
-* [ill-formed](#SS_6_18_5)ならばill-formedになる
-* [well-formed](#SS_6_18_6)ならvoidを生成する
+* [ill-formed](#SS_6_19_5)ならばill-formedになる
+* [well-formed](#SS_6_19_6)ならvoidを生成する
 
 テンプレートである。
 
@@ -8978,7 +8978,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
     std::declval<int[3]>())
 ```
 
-の戻り型が配列型の[rvalue](#SS_6_14_3)である"int (&&) [3]"となり、
+の戻り型が配列型の[rvalue](#SS_6_14_1_2)である"int (&&) [3]"となり、
 これに対応するstd::beginが定義されていないためである。
 
 これに対処する方法方はいくつかあるが、
@@ -9015,7 +9015,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 ということで、このコードは却下して、別のアイデアを試そう。
 
 テンプレートパラメータが配列である場合でも、
-そのオブジェクトが[lvalue](#SS_6_14_2)(この例ではint (&)[3])であれば、
+そのオブジェクトが[lvalue](#SS_6_14_1_1)(この例ではint (&)[3])であれば、
 std::beginはそのオブジェクトを使用できるので、
 decltype内で使用できるlvalueのT型オブジェクトを生成できれば、
 と考えれば下記のような実装を思いつくだろう。
@@ -10434,7 +10434,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ```
 
 ただし、このようなコードはコンパイラのバグによりコンパイルできないことがある。
-実際、現在使用中の[g++](#SS_6_19_1)ではこのコードはコンパイルできず、
+実際、現在使用中の[g++](#SS_6_20_1)ではこのコードはコンパイルできず、
 上記コードでコメントにも書いた通り、Inner_の中でPrintableを再定義することで、
 そのワークアラウンドを行っている。
 
@@ -11417,7 +11417,7 @@ FixedPointの単体テストコードを以下に示す。
 ```
 
 このコードは正しく動作するものの、move代入できず、パフォーマンス問題を引き起こす可能性があるため、
-[ユニバーサルリファレンス](#SS_6_15_1)を使って下記のように書き直した。
+[ユニバーサルリファレンス](#SS_6_15_2)を使って下記のように書き直した。
 
 ```cpp
     //  example/template_cpp17/universal_ref_ut.cpp 41
@@ -11450,8 +11450,8 @@ FixedPointの単体テストコードを以下に示す。
 ```
 
 この原因は、
-「関数が受け取った[rvalue](#SS_6_14_3)リファレンスは、
-その関数から別の関数に受け渡される時に[lvalue](#SS_6_14_2)リファレンスとして扱われる」からである。
+「関数が受け取った[rvalue](#SS_6_14_1_2)リファレンスは、
+その関数から別の関数に受け渡される時に[lvalue](#SS_6_14_1_1)リファレンスとして扱われる」からである。
 
 この現象について下記の関数テンプレートを用いて解説を行う。
 
@@ -11633,8 +11633,8 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 ```
 
 ユニバーサルリファレンスはconstにすることができないが
-(T const&&はconstな[rvalue](#SS_6_14_3)リファレンスである)、
-ユニバーサルリファレンスが[lvalue](#SS_6_14_2)リファレンスであった場合は、
+(T const&&はconstな[rvalue](#SS_6_14_1_2)リファレンスである)、
+ユニバーサルリファレンスが[lvalue](#SS_6_14_1_1)リファレンスであった場合は、
 constなlvalueリファレンスとして扱うべきである。
 
 従って、下記のようなコードは書くべきではない。
@@ -11704,7 +11704,7 @@ constなlvalueリファレンスとして扱うべきである。
     f(std::string{});  // f(std::string&&)にはバインドできる
 ```
 
-なお、ユニバーサルリファレンスは、[リファレンスcollapsing](#SS_6_15_4)の一機能としても理解できる。
+なお、ユニバーサルリファレンスは、[リファレンスcollapsing](#SS_6_15_5)の一機能としても理解できる。
 
 ### ジェネリックラムダによる関数内での関数テンプレートの定義 <a id="SS_4_7_2"></a>
 下記のようなクラスとoperator<<があった場合を考える。
@@ -12537,7 +12537,7 @@ typeid::name()が返す文字列リテラルは引数の型の文字列表現を
 マングリングされているためヒューマンリーダブルではない。
 それをデマングルするのがabi::\_\_cxa\_demangleであるが、
 残念なことにこの関数は非標準であるため、
-それを使っているNstd::Inner\_::demangleは[g++](#SS_6_19_1)/[clang++](#SS_6_19_2)
+それを使っているNstd::Inner\_::demangleは[g++](#SS_6_20_1)/[clang++](#SS_6_20_2)
 でなければコンパイルできないだろう。
 
 それを除けば、
@@ -13564,7 +13564,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
   。
 
 * ユニバーサルリファレンス引数を他の関数に渡すのであれば、std::forwardを使う
-  (「[ユニバーサルリファレンス](#SS_6_15_1)」、「[ユニバーサルリファレンスとstd::forward](#SS_4_7_1)」参照)。
+  (「[ユニバーサルリファレンス](#SS_6_15_2)」、「[ユニバーサルリファレンスとstd::forward](#SS_4_7_1)」参照)。
 
 * 関数テンプレートとその特殊化はソースコード上なるべく近い位置で定義する
   (「[two phase name lookup](#SS_6_10_3)」参照)。
@@ -13807,7 +13807,7 @@ sbrkは
 によるメモリ確保のトリガーとなる。
 これはOSのファイルシステムの動作を含む処理であるため、やはりリアルタイム性の保証は困難である。
 
-[フリースタンディング環境](#SS_6_20_1)では、sbrkのようなシステムコールは存在しないため、
+[フリースタンディング環境](#SS_6_21_1)では、sbrkのようなシステムコールは存在しないため、
 アプリケーションの未使用領域や静的に確保した領域を上記コードで示したようなリスト構造で管理し、
 mallocで使用することになる。
 このような環境では、sbrkによるリアルタイム性の阻害は発生しないものの、
@@ -14980,7 +14980,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 リアルタイム性が不要な処理であるため使用しているSTLコンテナにすら、
 既存のエクセプション処理機構を使わせたく無くなるものである。
 
-コンパイラに[g++](#SS_6_19_1)や[clang++](#SS_6_19_2)を使っている場合、
+コンパイラに[g++](#SS_6_20_1)や[clang++](#SS_6_20_2)を使っている場合、
 下記関数を置き換えることでそういった要望を叶えることができる。
 
 |関数                                           |機能                            |
@@ -15459,83 +15459,86 @@ __この章の構成__
 
 &emsp;&emsp; [expressionと値カテゴリ](#SS_6_14)  
 &emsp;&emsp;&emsp; [expression](#SS_6_14_1)  
-&emsp;&emsp;&emsp; [lvalue](#SS_6_14_2)  
-&emsp;&emsp;&emsp; [rvalue](#SS_6_14_3)  
-&emsp;&emsp;&emsp;&emsp; [xvalue](#SS_6_14_3_1)  
-&emsp;&emsp;&emsp;&emsp; [prvalue](#SS_6_14_3_2)  
+&emsp;&emsp;&emsp;&emsp; [lvalue](#SS_6_14_1_1)  
+&emsp;&emsp;&emsp;&emsp; [rvalue](#SS_6_14_1_2)  
+&emsp;&emsp;&emsp;&emsp; [xvalue](#SS_6_14_1_3)  
+&emsp;&emsp;&emsp;&emsp; [prvalue](#SS_6_14_1_4)  
 
-&emsp;&emsp;&emsp; [rvalue修飾](#SS_6_14_4)  
-&emsp;&emsp;&emsp; [lvalue修飾](#SS_6_14_5)  
-&emsp;&emsp;&emsp; [リファレンス修飾](#SS_6_14_6)  
+&emsp;&emsp;&emsp; [decltypeとexpression](#SS_6_14_2)  
 
 &emsp;&emsp; [リファレンス](#SS_6_15)  
-&emsp;&emsp;&emsp; [ユニバーサルリファレンス](#SS_6_15_1)  
-&emsp;&emsp;&emsp; [forwardingリファレンス](#SS_6_15_2)  
-&emsp;&emsp;&emsp; [perfect forwarding](#SS_6_15_3)  
-&emsp;&emsp;&emsp; [リファレンスcollapsing](#SS_6_15_4)  
-&emsp;&emsp;&emsp; [danglingリファレンス](#SS_6_15_5)  
-&emsp;&emsp;&emsp; [danglingポインタ](#SS_6_15_6)  
+&emsp;&emsp;&emsp; [rvalueリファレンス](#SS_6_15_1)  
+&emsp;&emsp;&emsp; [ユニバーサルリファレンス](#SS_6_15_2)  
+&emsp;&emsp;&emsp; [forwardingリファレンス](#SS_6_15_3)  
+&emsp;&emsp;&emsp; [perfect forwarding](#SS_6_15_4)  
+&emsp;&emsp;&emsp; [リファレンスcollapsing](#SS_6_15_5)  
+&emsp;&emsp;&emsp; [danglingリファレンス](#SS_6_15_6)  
+&emsp;&emsp;&emsp; [danglingポインタ](#SS_6_15_7)  
 
-&emsp;&emsp; [エクセプション安全性の保証](#SS_6_16)  
-&emsp;&emsp;&emsp; [no-fail保証](#SS_6_16_1)  
-&emsp;&emsp;&emsp; [強い安全性の保証](#SS_6_16_2)  
-&emsp;&emsp;&emsp; [基本的な安全性の保証](#SS_6_16_3)  
-&emsp;&emsp;&emsp; [noexcept](#SS_6_16_4)  
-&emsp;&emsp;&emsp; [exception-unfriendly](#SS_6_16_5)  
+&emsp;&emsp; [リファレンス修飾](#SS_6_16)  
+&emsp;&emsp;&emsp; [rvalue修飾](#SS_6_16_1)  
+&emsp;&emsp;&emsp; [lvalue修飾](#SS_6_16_2)  
 
-&emsp;&emsp; [シンタックス、セマンティクス](#SS_6_17)  
-&emsp;&emsp;&emsp; [等価性のセマンティクス](#SS_6_17_1)  
-&emsp;&emsp;&emsp; [copyセマンティクス](#SS_6_17_2)  
-&emsp;&emsp;&emsp; [moveセマンティクス](#SS_6_17_3)  
-&emsp;&emsp;&emsp; [MoveAssignable要件](#SS_6_17_4)  
-&emsp;&emsp;&emsp; [CopyAssignable要件](#SS_6_17_5)  
+&emsp;&emsp; [エクセプション安全性の保証](#SS_6_17)  
+&emsp;&emsp;&emsp; [no-fail保証](#SS_6_17_1)  
+&emsp;&emsp;&emsp; [強い安全性の保証](#SS_6_17_2)  
+&emsp;&emsp;&emsp; [基本的な安全性の保証](#SS_6_17_3)  
+&emsp;&emsp;&emsp; [noexcept](#SS_6_17_4)  
+&emsp;&emsp;&emsp; [exception-unfriendly](#SS_6_17_5)  
 
-&emsp;&emsp; [C++その他](#SS_6_18)  
-&emsp;&emsp;&emsp; [型特性キーワード](#SS_6_18_1)  
-&emsp;&emsp;&emsp;&emsp; [alignof](#SS_6_18_1_1)  
-&emsp;&emsp;&emsp;&emsp; [alignas](#SS_6_18_1_2)  
-&emsp;&emsp;&emsp;&emsp; [addressof](#SS_6_18_1_3)  
+&emsp;&emsp; [シンタックス、セマンティクス](#SS_6_18)  
+&emsp;&emsp;&emsp; [等価性のセマンティクス](#SS_6_18_1)  
+&emsp;&emsp;&emsp; [copyセマンティクス](#SS_6_18_2)  
+&emsp;&emsp;&emsp; [moveセマンティクス](#SS_6_18_3)  
+&emsp;&emsp;&emsp; [MoveAssignable要件](#SS_6_18_4)  
+&emsp;&emsp;&emsp; [CopyAssignable要件](#SS_6_18_5)  
 
-&emsp;&emsp;&emsp; [演算子のオペランドの評価順位](#SS_6_18_2)  
-&emsp;&emsp;&emsp; [実引数/仮引数](#SS_6_18_3)  
-&emsp;&emsp;&emsp; [単純代入](#SS_6_18_4)  
-&emsp;&emsp;&emsp; [ill-formed](#SS_6_18_5)  
-&emsp;&emsp;&emsp; [well-formed](#SS_6_18_6)  
-&emsp;&emsp;&emsp; [未定義動作](#SS_6_18_7)  
-&emsp;&emsp;&emsp; [未規定動作](#SS_6_18_8)  
-&emsp;&emsp;&emsp; [未定義動作と未規定動作](#SS_6_18_9)  
-&emsp;&emsp;&emsp; [被修飾型](#SS_6_18_10)  
-&emsp;&emsp;&emsp; [one-definition rule](#SS_6_18_11)  
-&emsp;&emsp;&emsp; [ODR](#SS_6_18_12)  
-&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_18_13)  
-&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_18_14)  
-&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_18_15)  
-&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_18_16)  
-&emsp;&emsp;&emsp; [トライグラフ](#SS_6_18_17)  
+&emsp;&emsp; [C++その他](#SS_6_19)  
+&emsp;&emsp;&emsp; [型特性キーワード](#SS_6_19_1)  
+&emsp;&emsp;&emsp;&emsp; [alignof](#SS_6_19_1_1)  
+&emsp;&emsp;&emsp;&emsp; [alignas](#SS_6_19_1_2)  
+&emsp;&emsp;&emsp;&emsp; [addressof](#SS_6_19_1_3)  
 
-&emsp;&emsp; [C++コンパイラ](#SS_6_19)  
-&emsp;&emsp;&emsp; [g++](#SS_6_19_1)  
-&emsp;&emsp;&emsp; [clang++](#SS_6_19_2)  
+&emsp;&emsp;&emsp; [演算子のオペランドの評価順位](#SS_6_19_2)  
+&emsp;&emsp;&emsp; [実引数/仮引数](#SS_6_19_3)  
+&emsp;&emsp;&emsp; [単純代入](#SS_6_19_4)  
+&emsp;&emsp;&emsp; [ill-formed](#SS_6_19_5)  
+&emsp;&emsp;&emsp; [well-formed](#SS_6_19_6)  
+&emsp;&emsp;&emsp; [未定義動作](#SS_6_19_7)  
+&emsp;&emsp;&emsp; [未規定動作](#SS_6_19_8)  
+&emsp;&emsp;&emsp; [未定義動作と未規定動作](#SS_6_19_9)  
+&emsp;&emsp;&emsp; [被修飾型](#SS_6_19_10)  
+&emsp;&emsp;&emsp; [one-definition rule](#SS_6_19_11)  
+&emsp;&emsp;&emsp; [ODR](#SS_6_19_12)  
+&emsp;&emsp;&emsp; [RVO(Return Value Optimization)](#SS_6_19_13)  
+&emsp;&emsp;&emsp; [SSO(Small String Optimization)](#SS_6_19_14)  
+&emsp;&emsp;&emsp; [heap allocation elision](#SS_6_19_15)  
+&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_6_19_16)  
+&emsp;&emsp;&emsp; [トライグラフ](#SS_6_19_17)  
 
-&emsp;&emsp; [ソフトウェア一般](#SS_6_20)  
-&emsp;&emsp;&emsp; [フリースタンディング環境](#SS_6_20_1)  
-&emsp;&emsp;&emsp; [サイクロマティック複雑度](#SS_6_20_2)  
-&emsp;&emsp;&emsp; [凝集度](#SS_6_20_3)  
-&emsp;&emsp;&emsp;&emsp; [凝集度の欠如](#SS_6_20_3_1)  
-&emsp;&emsp;&emsp;&emsp; [LCOMの評価基準](#SS_6_20_3_2)  
+&emsp;&emsp; [C++コンパイラ](#SS_6_20)  
+&emsp;&emsp;&emsp; [g++](#SS_6_20_1)  
+&emsp;&emsp;&emsp; [clang++](#SS_6_20_2)  
 
-&emsp;&emsp;&emsp; [Spurious Wakeup](#SS_6_20_4)  
-&emsp;&emsp;&emsp; [副作用](#SS_6_20_5)  
-&emsp;&emsp;&emsp; [is-a](#SS_6_20_6)  
-&emsp;&emsp;&emsp; [has-a](#SS_6_20_7)  
-&emsp;&emsp;&emsp; [is-implemented-in-terms-of](#SS_6_20_8)  
-&emsp;&emsp;&emsp;&emsp; [public継承によるis-implemented-in-terms-of](#SS_6_20_8_1)  
-&emsp;&emsp;&emsp;&emsp; [private継承によるis-implemented-in-terms-of](#SS_6_20_8_2)  
-&emsp;&emsp;&emsp;&emsp; [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_20_8_3)  
+&emsp;&emsp; [ソフトウェア一般](#SS_6_21)  
+&emsp;&emsp;&emsp; [フリースタンディング環境](#SS_6_21_1)  
+&emsp;&emsp;&emsp; [サイクロマティック複雑度](#SS_6_21_2)  
+&emsp;&emsp;&emsp; [凝集度](#SS_6_21_3)  
+&emsp;&emsp;&emsp;&emsp; [凝集度の欠如](#SS_6_21_3_1)  
+&emsp;&emsp;&emsp;&emsp; [LCOMの評価基準](#SS_6_21_3_2)  
 
-&emsp;&emsp; [非ソフトウェア用語](#SS_6_21)  
-&emsp;&emsp;&emsp; [割れ窓理論](#SS_6_21_1)  
-&emsp;&emsp;&emsp; [車輪の再発明](#SS_6_21_2)  
+&emsp;&emsp;&emsp; [Spurious Wakeup](#SS_6_21_4)  
+&emsp;&emsp;&emsp; [副作用](#SS_6_21_5)  
+&emsp;&emsp;&emsp; [is-a](#SS_6_21_6)  
+&emsp;&emsp;&emsp; [has-a](#SS_6_21_7)  
+&emsp;&emsp;&emsp; [is-implemented-in-terms-of](#SS_6_21_8)  
+&emsp;&emsp;&emsp;&emsp; [public継承によるis-implemented-in-terms-of](#SS_6_21_8_1)  
+&emsp;&emsp;&emsp;&emsp; [private継承によるis-implemented-in-terms-of](#SS_6_21_8_2)  
+&emsp;&emsp;&emsp;&emsp; [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_21_8_3)  
+
+&emsp;&emsp; [非ソフトウェア用語](#SS_6_22)  
+&emsp;&emsp;&emsp; [割れ窓理論](#SS_6_22_1)  
+&emsp;&emsp;&emsp; [車輪の再発明](#SS_6_22_2)  
   
   
 
@@ -16295,9 +16298,9 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 
 このガイドラインに従って、コピーやムーブを実装する場合、
 
-* [等価性のセマンティクス](#SS_6_17_1)
-* [copyセマンティクス](#SS_6_17_2)
-* [moveセマンティクス](#SS_6_17_3)
+* [等価性のセマンティクス](#SS_6_18_1)
+* [copyセマンティクス](#SS_6_18_2)
+* [moveセマンティクス](#SS_6_18_3)
 
 に従わなけならない。
 
@@ -16566,7 +16569,7 @@ C言語の構造体のレイアウトと互換性を持つことが一般的で�
 
 <!-- pu:plant_uml/class_layout.pu--><p><img src="data:image/png;base64,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" /></p>
 
-各クラスがvtblへのポインタを保持するため、このドキュメントで使用している[g++](#SS_6_19_1)では、
+各クラスがvtblへのポインタを保持するため、このドキュメントで使用している[g++](#SS_6_20_1)では、
 sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24ではなく32となる。
 
 g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
@@ -16997,11 +17000,11 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 
 `std::type_info::name()`が返すCスタイルの文字列リテラルを、
 「人間が認知できる元の型名に戻す関数」を通常のコンパイラは独自に提供する。
-このドキュメントのコードのコンパイルに使用している[g++](#SS_6_19_1)/[clang++](#SS_6_19_2)では、
+このドキュメントのコードのコンパイルに使用している[g++](#SS_6_20_1)/[clang++](#SS_6_20_2)では、
 そのような関数は、`abi::__cxa_demangle`である。
 
 `std::type_info::name()`と`abi::__cxa_demangle`を利用して、
-オブジェクトの[被修飾型](#SS_6_18_10)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
+オブジェクトの[被修飾型](#SS_6_19_10)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
 
 ```cpp
     //  example/term_explanation/rtti_ut.cpp 191
@@ -17158,7 +17161,7 @@ C++11以前で定数を定義する方法は、
 ```
 
 constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_11_10)することで、
-[ill-formed](#SS_6_18_5)を使用した場合分けが可能になる。
+[ill-formed](#SS_6_19_5)を使用した場合分けが可能になる。
 
 
 ### constexpr関数 <a id="SS_6_4_2"></a>
@@ -17739,7 +17742,7 @@ x0、x1、...、xNがaを共有所有する場合、x0、x1、...、xN全体で�
 
 下記に示した上記クラスの単体テストにより、
 オブジェクトの所有権やその移動、
-std::unique_ptr、std::move()、[rvalue](#SS_6_14_3)の関係を解説する。
+std::unique_ptr、std::move()、[rvalue](#SS_6_14_1_2)の関係を解説する。
 
 ```cpp
     //  example/term_explanation/unique_ptr_ownership_ut.cpp 48
@@ -17943,7 +17946,7 @@ std::unique_ptr、std::move()、[rvalue](#SS_6_14_3)の関係を解説する。
 
 下記に示した上記クラスの単体テストにより、
 オブジェクトの所有権やその移動、共有、
-std::shared_ptr、std::move()、[rvalue](#SS_6_14_3)の関係を解説する。
+std::shared_ptr、std::move()、[rvalue](#SS_6_14_1_2)の関係を解説する。
 
 ```cpp
     //  example/term_explanation/shared_ptr_ownership_ut.cpp 47
@@ -18093,7 +18096,7 @@ std::shared_ptr、std::move()、[rvalue](#SS_6_14_3)の関係を解説する。
     * moveすることことで、保持中のオブジェクトの所有権を移動できる。
     * copyすることことで、保持中のオブジェクトの所有権を共有できる。
 * 下記のようなコードはstd::shared_ptrの仕様が想定するセマンティクスに沿っておらず、
-  [未定義動作](#SS_6_18_7)に繋がる。
+  [未定義動作](#SS_6_19_7)に繋がる。
 
 ```cpp
     //  example/term_explanation/shared_ptr_ownership_ut.cpp 162
@@ -18483,7 +18486,7 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 * thread_localに生成されたオブジェクトのライフタイム
 * newで生成されたオブジェクトのライフタイム
 * スタック上に生成されたオブジェクトのライフタイム
-* prvalue(「[rvalue](#SS_6_14_3)」参照)のライフタイム
+* prvalue(「[rvalue](#SS_6_14_1_2)」参照)のライフタイム
 
 なお、リファレンスの初期化をrvalueで行った場合、
 そのrvalueはリファレンスがスコープを抜けるまで存続し続ける。
@@ -18492,8 +18495,8 @@ rvalueをバインドするリファレンスが存在しない状態で、
 そのrvalueがメンバ変数へのリファレンスを返す関数を呼び出し、
 そのリファレンスをバインドするリファレンス変数を初期化した場合、
 リファレンスが指すオブジェクトはすでにライフタイムを終了している。
-このような状態のリファレンスを[danglingリファレンス](#SS_6_15_5)と呼ぶ。
-同様に、このような状態のポインタを[danglingポインタ](#SS_6_15_6)と呼ぶ。
+このような状態のリファレンスを[danglingリファレンス](#SS_6_15_6)と呼ぶ。
+同様に、このような状態のポインタを[danglingポインタ](#SS_6_15_7)と呼ぶ。
 
 ### オブジェクトのコピー <a id="SS_6_5_9"></a>
 #### シャローコピー <a id="SS_6_5_9_1"></a>
@@ -18686,7 +18689,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
 
 copy代入演算子(=)によりコピーが行われた場合、=の両辺のオブジェクトは等価になるべきだが
 (copy代入演算子をオーバーロードした場合も、そうなるように定義すべきである)、
-スライシングが起こった場合、そうならないことが問題である(「[等価性のセマンティクス](#SS_6_17_1)」参照)。
+スライシングが起こった場合、そうならないことが問題である(「[等価性のセマンティクス](#SS_6_18_1)」参照)。
 
 下記にこの現象の発生メカニズムについて解説する。
 
@@ -18733,7 +18736,7 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
     /* スライシングに類似した問題で、以下のテストは失敗する。
     ASSERT_STREQ("2", b_ptr[1].Name0());    NG */
     // こうすればテストは通るが、、、
-    ASSERT_STREQ("1", b_ptr[1].Name0());  // NG 
+    ASSERT_STREQ("1", b_ptr[1].Name0());  // NG
 ```
 
 <!-- pu:plant_uml/slicing_array.pu--><p><img src="data:image/png;base64,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" /></p>
@@ -20350,7 +20353,7 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
    参照カウントに影響を与えず、[オブジェクトの循環所有](#SS_6_5_7_3)よるメモリリークを防ぐために用いられる。
    std::weak_ptr`はリソースへの弱い参照を保持し、リソースの有効性を確認する際に使用される。  
 * `std::auto_ptr`はC++11以前に導入された初期のスマートポインタであるが、
-   異常な[copyセマンティクス](#SS_6_17_2)を持つため、多くの誤用を生み出し、
+   異常な[copyセマンティクス](#SS_6_18_2)を持つため、多くの誤用を生み出し、
    C++11から非推奨とされ、C++17から規格から排除された。
 
 ### コンテナ <a id="SS_6_9_2"></a>
@@ -20871,7 +20874,7 @@ std::variantとstd::visit([Visitor](#SS_3_20)パターンの実装の一種)を�
 two phase lookupが実装されていないコンパイラ(こういったコンパイラは存在する)では、
 結果が異なるため注意が必要である
 (本ドキュメントではこのような問題をできる限り避けるために、
-サンプルコードを[g++](#SS_6_19_1)と[clang++](#SS_6_19_2)でコンパイルしている)。
+サンプルコードを[g++](#SS_6_20_1)と[clang++](#SS_6_20_2)でコンパイルしている)。
 
 以下に、two phase lookupにまつわるさらに驚くべきコード例を紹介する。
 上と同じ定義、宣言がある場合の以下のコードの動作を考える。
@@ -20903,7 +20906,7 @@ NS_TPLU::TypeName(int{})のintをlongにしただけなので、この単体テ�
 その特殊化の検索範囲はコンパイル単位内になることがあるからである
 ([template_specialization](https://en.cppreference.com/w/cpp/language/template_specialization)
 によるとこの動作は未定義のようだが、
-[g++](#SS_6_19_1)/[clang++](#SS_6_19_2)両方ともこのコードを警告なしでコンパイルする)。
+[g++](#SS_6_20_1)/[clang++](#SS_6_20_2)両方ともこのコードを警告なしでコンパイルする)。
 
 TypeName(long{})内でのtwo phase name lookupは、TypeName(int{})とほぼ同様に進み、
 template<> ToTypeの宣言を探し出すが、
@@ -21046,10 +21049,10 @@ TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y con
 
 これまでのtwo phase name lookupの説明では、
 operator+(NS_TPLU2::Y const& y, int i)はTypeNum内でのname lookupの対象にはならないため、
-このテストはエラーとならなければならないが、[g++](#SS_6_19_1)ではパスしてしまう。
+このテストはエラーとならなければならないが、[g++](#SS_6_20_1)ではパスしてしまう。
 2nd name lookupのロジックにバグがあるようである。
 
-有難いことに、[clang++](#SS_6_19_2)では仕様通りこのテストはエラーとなり、
+有難いことに、[clang++](#SS_6_20_2)では仕様通りこのテストはエラーとなり、
 当然ながら以下のテストはパスする(つまり、g++ではエラーする)。
 
 ```cpp
@@ -21946,7 +21949,7 @@ XXXの識別子が使用できる。
 ### SFINAE <a id="SS_6_11_1"></a>
 [SFINAE](https://cpprefjp.github.io/lang/cpp11/sfinae_expressions.html)
 (Substitution Failure Is Not An Errorの略称、スフィネェと読む)とは、
-「テンプレートのパラメータ置き換えに失敗した([ill-formed](#SS_6_18_5)になった)際に、
+「テンプレートのパラメータ置き換えに失敗した([ill-formed](#SS_6_19_5)になった)際に、
 即時にコンパイルエラーとはせず、置き換えに失敗したテンプレートを
 [name lookup](#SS_6_10_2)の候補から除外する」
 という言語機能である。
@@ -23227,7 +23230,7 @@ std::stringは暗黙の型変換を許して良く、(多くの場合)Personに�
   std::stringを文字列リテラルと等価なもののように扱っても違和感がない
 * Personは、明らかに文字列リテラルと等価なものではない
 
-といったセマンティクス的観点(「[シンタックス、セマンティクス](#SS_6_17)」参照)によるものである。
+といったセマンティクス的観点(「[シンタックス、セマンティクス](#SS_6_18)」参照)によるものである。
 
 クラスPersonと同様に、
 ほとんどのユーザ定義クラスには非explicitなコンストラクタによる暗黙の型変換は必要ない。
@@ -23508,9 +23511,88 @@ C++においてexpression、lvalue、rvalue、xvalue、glvalue、prvalueは以�
 
 <!-- pu:plant_uml/rvalue.pu--><p><img src="data:image/png;base64,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" /></p>
 
-ざっくりと言えば、lvalueとは代入式の左辺になり得る式、rvalueとは代入式の左辺にはなり得ない式である。
+
+#### lvalue <a id="SS_6_14_1_1"></a>
+「[expression](#SS_6_14_1)」を参照せよ。
+
+#### rvalue <a id="SS_6_14_1_2"></a>
+「[expression](#SS_6_14_1)」を参照せよ。
+
+#### xvalue <a id="SS_6_14_1_3"></a>
+「[expression](#SS_6_14_1)」を参照せよ。
+
+#### prvalue <a id="SS_6_14_1_4"></a>
+「[expression](#SS_6_14_1)」を参照せよ。
+
+### decltypeとexpression <a id="SS_6_14_2"></a>
+エッセンシャルタイプがTであるlvalue、xvalue、prvalueに対して
+(例えば、std::string const&のエッセンシャルタイプはstd::stringである)、
+decltypeの算出結果は下表のようになる。
+
+|decltype           |算出された型|
+|:------------------|:-----------|
+|decltype(lvalue)   |T           |
+|decltype((lvalue)) |T&          |
+|decltype(xvalue)   |T&&         |
+|decltype((xvalue)) |T&&         |
+|decltype(prvalue)  |T           |
+|decltype((prvalue))|T           |
+
+この表の結果を使用した下記の関数型マクロ群により式を分類できる。
+定義から明らかな通り、これらは
+[テンプレートメタプログラミング](https://ja.wikipedia.org/wiki/%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%A1%E3%82%BF%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0)
+に有効に活用できる。
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 102
+
+    #define IS_LVALUE(EXPR_) std::is_lvalue_reference_v<decltype((EXPR_))>
+    #define IS_XVALUE(EXPR_) std::is_rvalue_reference_v<decltype((EXPR_))>
+    #define IS_PRVALUE(EXPR_) !std::is_reference_v<decltype((EXPR_))>
+    #define IS_RVALUE(EXPR_) (IS_PRVALUE(EXPR_) || IS_XVALUE(EXPR_))
+
+    TEST(Expression, rvalue)
+    {
+        auto str = std::string{};
+
+        static_assert(IS_LVALUE(str), "EXPR_ must be lvalue");
+        static_assert(!IS_RVALUE(str), "EXPR_ must NOT be rvalue");
+
+        static_assert(IS_XVALUE(std::move(str)), "EXPR_ must be xvalue");
+        static_assert(!IS_PRVALUE(std::move(str)), "EXPR_ must NOT be prvalue");
+
+        static_assert(IS_PRVALUE(std::string{}), "EXPR_ must be prvalue");
+        static_assert(IS_RVALUE(std::string{}), "EXPR_ must be rvalue");
+        static_assert(!IS_LVALUE(std::string{}), "EXPR_ must NOT be lvalue");
+    }
+```
+
+## リファレンス <a id="SS_6_15"></a>
+ここでは、C++11から導入された
+
+* [rvalueリファレンス](#SS_6_15_1)
+* [ユニバーサルリファレンス](#SS_6_15_2)
+* [リファレンスcollapsing](#SS_6_15_5)
+
+について解説する。
+
+### rvalueリファレンス <a id="SS_6_15_1"></a>
+本節を読み進む前に、「[expressionと値カテゴリ](#SS_6_14)」を理解することを強く勧める。
+
+rvalueリファレンスは「一時オブジェクト（rvalue）」にバインドできる参照で、
+C++11の[moveセマンティクス](#SS_6_18_3)と
+[perfect forwarding](#SS_6_15_4)を実現するために導入されたシンタックスである。
+rvalueリファレンスのの形式は任意の型Tに対して、`T&&`である。
+
+正確さよりも判りやすさを優先して説明すると、
+
+* lvalueとは代入式の左辺になり得る式であるため、左辺値と呼ばれることがある
+* rvalueとは代入式の左辺にはなり得ない式であるため、右辺値と呼ばれることがある
+
+である。
+
 T const&は左辺になり得ないが、lvalueである。rvalueリファレンス(T&&)もlvalueであるため、
-rvalueであることとrvalueリファレンスであることとは全く異なる。
+rvalueであることとrvalueリファレンスであることとは全く異なる(「[decltypeとexpression](#SS_6_14_2)」参照)。
 
 xvalueとは、多くの場合、「std::move()の呼び出し式のことである」と考えても差し支えない。
 
@@ -23519,31 +23601,25 @@ prvalueとは、いわゆるテンポラリオブジェクトのことである�
 また、アドレス演算子(&)のオペランドになれない。
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 8
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 10
+    // sを初期化するためにstd::string{}により生成されるオブジェクトはprvalue、 sはlvalue
+    //   ↓lvalue
+    auto s = std::string{};  // この式の左辺はテンポラリオブジェクト(つまりrvalue)
 
-    {
-        // sを初期化するためにstd::string{}により生成されるオブジェクトはprvalue
-        // sはlvalue
+    /*
+    auto* sp = &std::string{};
+    ↑は、コンパイルエラー
+    ↓は、その時のg++のエラーメッセージ
+    error: taking address of rvalue
+    */
 
-        auto s = std::string{};
-
-    #if 0
-        // 下記はコンパイルエラー
-
-        auto* sp = &std::string{};
-        // 下記はg++のエラーメッセージ
-        // programming_convention_type.cpp|709 col 29| error: taking address of rvalue [-fpermissive]
-        // ||   709 |     auto* sp = &std::string{};
-    #else
-        // 下記のようにすればアドレスを取得できるが、このようなことはすべきではない。
-        auto&& rvalue_ref = std::string{};
-        auto   sp         = &rvalue_ref;
-    #endif
-        static_assert(std::is_same_v<std::string*, decltype(sp)>);
-    }
+    // 下記のようにすればアドレスを取得できるが、このようなことはすべきではない。
+    auto&& rvalue_ref = std::string{};
+    auto   sp = &rvalue_ref;  // spはrvalue_refのアドレスを指しているが、、、
 ```
 
-C++11でrvalueの概念の整理やstd::move()の導入が行われた目的はプログラム実行速度の向上である。
+C++11でrvalueの概念の整理やrvalueリファレンス、
+std::move()の導入が行われた目的はプログラム実行速度の向上である。
 
 * lvalueからの代入
 * rvalueからの代入
@@ -23554,7 +23630,7 @@ C++11でrvalueの概念の整理やstd::move()の導入が行われた目的は�
 1. 下記コードにより「lvalueからの代入」を説明する。
 
     ```.cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 35
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 72
 
     auto str0 = std::string{};        // str0はlvalue
     auto str1 = std::string{"hehe"};  // str1もlvalue
@@ -23577,7 +23653,7 @@ C++11でrvalueの概念の整理やstd::move()の導入が行われた目的は�
 2. 下記コードにより「rvalueからの代入」を説明する。
 
     ```.cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 46
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 83
 
     auto str0 = std::string{};        // str0はlvalue
     str0      = std::string{"hehe"};  // rvalueからの代入
@@ -23602,7 +23678,7 @@ C++11でrvalueの概念の整理やstd::move()の導入が行われた目的は�
 3. 下記コードにより「std::move(lvalue)からの代入」を説明する。
 
     ```.cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 56
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 93
 
     auto str0 = std::string{};        // str0はlvalue
     auto str1 = std::string{"hehe"};  // str1もlvalue
@@ -23622,153 +23698,7 @@ C++11でrvalueの概念の整理やstd::move()の導入が行われた目的は�
 <!-- pu:plant_uml/rvalue_from_move.pu--><p><img src="data:image/png;base64,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jx594MAB53x0lnQVM7FlgwYNcj5Ur169nnzySTk5ZMgQ9fElZpyykpKStLS08ePHq+cCgELk2Ene/fv27fviiy/u3btXbnTksLKy0jl/YpFz2mmnvfnmm7t3777pppvy8vK+/PLLTssGDBiwdu3a/fv3q5MAoBA5dpJ3/1mzZjlzub+Rw6VLlzrnTyxy5s2b58x37Nghh6tXr+60rLi4WB0Cmqy8rJBd8vPz9UXimIgcO4ViwsA57Or8MebaYXNzsxzKnVOnZYsWLVKHgEZ2yNJtS20asqJIJCJN0dLS0tra2tbWpq8ZRyNy7BQbBs5hZmZmWVmZc7KioqKrmIl9+rRp05z5qlWr5HD9+vWdlkUfAhorIyccDjc0NDQ2NkrwqO/TQVeIHDt1FQaXX355//79JXVKS0uzso78KUenMRP79LS0tEmTJt17773y9AsuuMD5h6LyEcaMGXPPPfd0+r0JgMbKyKmtra2rq6uvr5fUkXsdfc04GpFjp9jMcA63b99+xRVXZGdnFxUVzZ07Nycnp9OYiX26RIs8RZ44bty4HTt2OOenT58ut03Dhw93vtOayMGxWRk5VVVVNTU1kjpyryM3OvqacTQiB/GRJUgIKyOnoqJCUkfudcLhcCQS0deMoxE5iI/IQUJYGTkrVqyorKysrq6WG53GxkZ9zTgakYP4iouL165dq58FuonIAZEDwCPdipwHah+Y/frs+evmy68Pb314TPGYO5+7M7asq9Gteu1zxRZ0NYic7iJyAHikW5EzefFkqR/505Hy6183/lV+nTh7YmxZV6Nb9drnii3oahA53UXkAPBItyKn5IkSqf/xtT9OS09b8vGSbkXI0m5Gjva5Ygu6GkROdxE5wJGfgf3OO++Ul5c/9thjn3322ddff/300087P6FO1ezfv//VV1+V8/X19erksmXLKioq1KE8/Z///KdM9u3bt3r1ailuaGhQj6JbkfPHf/xR6n955y8zczOdN3eJkLtfvvuGP99wy99uWfzR4ujiRf+zaOrfp970wE1/+tefnDPdqtc+1/EPIqe7iBzgyFthjx49Qh369+8/YsQIZ65+AveuXbvOP/9852RWVtZzzz3nPPHKK6/Mz893/s351q1b5dG//OUvO3fuVB8hJydn3bp10Z8ryELdiZz56+affdHZJeUlF1x5gfPmXnBmgfOqiqEj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" /></p>
 
 
-エッセンシャルタイプがTであるlvalue、xvalue、prvalueに対して
-(例えば、std::string const&のエッセンシャルタイプはstd::stringである)、
-decltypeの算出結果は下表のようになる。
-
-|decltype           |算出された型|
-|:------------------|:-----------|
-|decltype(lvalue)   |T           |
-|decltype((lvalue)) |T&          |
-|decltype(xvalue)   |T&&         |
-|decltype((xvalue)) |T&&         |
-|decltype(prvalue)  |T           |
-|decltype((prvalue))|T           |
-
-この表の結果を使用した下記の関数型マクロ群により式を分類できる。
-定義から明らかな通り、これらは
-[テンプレートメタプログラミング](https://ja.wikipedia.org/wiki/%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%A1%E3%82%BF%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0)
-に有効に活用できる。
-
-```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 65
-
-    #define IS_LVALUE(EXPR_) std::is_lvalue_reference_v<decltype((EXPR_))>
-    #define IS_XVALUE(EXPR_) std::is_rvalue_reference_v<decltype((EXPR_))>
-    #define IS_PRVALUE(EXPR_) !std::is_reference_v<decltype((EXPR_))>
-    #define IS_RVALUE(EXPR_) (IS_PRVALUE(EXPR_) || IS_XVALUE(EXPR_))
-
-    TEST(Expression, rvalue)
-    {
-        auto str = std::string{};
-
-        static_assert(IS_LVALUE(str), "EXPR_ must be lvalue");
-        static_assert(!IS_RVALUE(str), "EXPR_ must NOT be rvalue");
-
-        static_assert(IS_XVALUE(std::move(str)), "EXPR_ must be xvalue");
-        static_assert(!IS_PRVALUE(std::move(str)), "EXPR_ must NOT be prvalue");
-
-        static_assert(IS_PRVALUE(std::string{}), "EXPR_ must be prvalue");
-        static_assert(IS_RVALUE(std::string{}), "EXPR_ must be rvalue");
-        static_assert(!IS_LVALUE(std::string{}), "EXPR_ must NOT be lvalue");
-    }
-```
-
-### lvalue <a id="SS_6_14_2"></a>
-「[expression](#SS_6_14_1)」を参照せよ。
-
-### rvalue <a id="SS_6_14_3"></a>
-「[expression](#SS_6_14_1)」を参照せよ。
-
-#### xvalue <a id="SS_6_14_3_1"></a>
-「[expression](#SS_6_14_1)」を参照せよ。
-
-#### prvalue <a id="SS_6_14_3_2"></a>
-「[expression](#SS_6_14_1)」を参照せよ。
-
-### rvalue修飾 <a id="SS_6_14_4"></a>
-下記GetString0()のような関数が返すオブジェクトの内部メンバに対するハンドルは、
-オブジェクトのライフタイム終了後にもアクセスすることができるため、
-そのハンドルを通じて、
-ライフタイム終了後のオブジェクトのメンバオブジェクトにもアクセスできてしまう。
-
-ライフタイム終了後のオブジェクトにアクセスすることは未定義動作であり、
-特にそのオブジェクトがrvalueであった場合、さらにその危険性は高まる。
-
-こういったコードに対処するためのシンタックスが、lvalue修飾、rvalue修飾である。
-
-下記GetString1()、GetString3()、GetString4()のようにメンバ関数をlvalue修飾やrvalue修飾することで、
-rvalueの内部ハンドルを返さないようにすることが可能となり、上記の危険性を緩和することができる。
-
-```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 91
-
-    class C {
-    public:
-        explicit C(char const* str) : str_{str} {}
-
-        // lvalue修飾なし、rvalue修飾なし
-        std::string& GetString0() noexcept { return str_; }
-
-        // lvalue修飾
-        std::string const& GetString1() const& noexcept { return str_; }
-
-        // rvalue修飾
-        // *thisがrvalueの場合でのGetString1()の呼び出しは、この関数を呼び出すため、
-        // class内部のハンドルを返してはならない。
-        // また、それによりstd::stringを生成するため、noexcept指定してはならない。
-        std::string GetString1() const&& { return str_; }
-
-        // lvalue修飾だが、const関数はrvalueからでも呼び出せる。
-        // rvalueに対しての呼び出しを禁止したい場合には、GetString4のようにする。
-        std::string const& GetString2() const& noexcept { return str_; }
-
-        // lvalue修飾
-        // 非constなのでrvalueからは呼び出せない。
-        std::string const& GetString3() & noexcept { return str_; }
-
-        // lvalue修飾
-        std::string const& GetString4() const& noexcept { return str_; }
-
-        // rvalue修飾
-        // rvalueからこの関数を呼び出されるとrvalueオブジェクトの内部ハンドルを返してしまい、
-        // 危険なので=deleteすべき。
-        std::string const& GetString4() const&& = delete;
-
-    private:
-        std::string str_;
-    };
-```
-```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 132
-
-    auto        c    = C{"c0"};
-    auto const& s0_0 = c.GetString0();        // OK cが解放されるまでs0_0は有効
-    auto        s0_1 = C{"c1"}.GetString0();  // NG 危険なコード
-    // s0_1が指すオブジェクトは、次の行で無効になる
-
-    auto const& s1_0 = c.GetString1();        // OK GetString1()&が呼び出される
-    auto const& s1_1 = C{"c1"}.GetString1();  // OK GetString1()&&が呼び出される
-    // s1_0が指すrvalueはs1_0がスコープアウトするまで有効
-
-    auto const& s2_0 = c.GetString2();        // OK GetString2()&が呼び出される
-    auto const& s2_1 = C{"c1"}.GetString2();  // NG const関数はlvalue修飾しても呼び出し可能
-    // s2_1が指すオブジェクトは、次の行で無効になる
-
-    auto const& s3_0 = c.GetString3();  // OK GetString3()&が呼び出される
-    // auto const& s3_1 = C{"c1"}.GetString3();  // 危険なのでコンパイルさせない
-
-    auto const& s4_0 = c.GetString4();  // OK GetString4()&が呼び出される
-    // auto const& s4_1 = C{"c1"}.GetString4();  // 危険なのでコンパイルさせない
-```
-
-### lvalue修飾 <a id="SS_6_14_5"></a>
-[rvalue修飾](#SS_6_14_4)を参照せよ。
-
-
-### リファレンス修飾 <a id="SS_6_14_6"></a>
-[rvalue修飾](#SS_6_14_4)と[lvalue修飾](#SS_6_14_5)とを併せて、リファレンス修飾と呼ぶ。
-
-
-## リファレンス <a id="SS_6_15"></a>
-ここでは、C++11から導入された
-
-* [ユニバーサルリファレンス](#SS_6_15_1)
-* [リファレンスcollapsing](#SS_6_15_4)
-
-について解説する。
-
-### ユニバーサルリファレンス <a id="SS_6_15_1"></a>
+### ユニバーサルリファレンス <a id="SS_6_15_2"></a>
 関数テンプレートの型パラメータや型推論autoに&&をつけて宣言された変数を、
 ユニバーサルリファレンスと呼ぶ(C++17から「forwardingリファレンス」という正式名称が与えられた)。
 ユニバーサルリファレンスは一見rvalueリファレンスのように見えるが、
@@ -23834,17 +23764,17 @@ rvalueの内部ハンドルを返さないようにすることが可能とな�
 通常、ユニバーサルリファレンスはstd::forwardと組み合わせて使用される。
 
 
-### forwardingリファレンス <a id="SS_6_15_2"></a>
-「[ユニバーサルリファレンス](#SS_6_15_1)」を参照せよ。
+### forwardingリファレンス <a id="SS_6_15_3"></a>
+「[ユニバーサルリファレンス](#SS_6_15_2)」を参照せよ。
 
-### perfect forwarding <a id="SS_6_15_3"></a>
-perfect forwarding とは、引数の[rvalue](#SS_6_14_3)性や
-[lvalue](#SS_6_14_2)性を損失することなく、
+### perfect forwarding <a id="SS_6_15_4"></a>
+perfect forwarding(完全転送)とは、引数の[rvalue](#SS_6_14_1_2)性や
+[lvalue](#SS_6_14_1_1)性を損失することなく、
 その引数を別の関数に転送する技術のことを指す。
-通常は、[ユニバーサルリファレンス](#SS_6_15_1)である関数の仮引数をstd::forwardを用いて、
+通常は、[ユニバーサルリファレンス](#SS_6_15_2)である関数の仮引数をstd::forwardを用いて、
 他の関数に渡すことで実現される。
 
-### リファレンスcollapsing <a id="SS_6_15_4"></a>
+### リファレンスcollapsing <a id="SS_6_15_5"></a>
 Tを任意の型とし、TRを下記のように宣言した場合、
 
 ```cpp
@@ -23950,9 +23880,9 @@ C++11からはエラーとならず、TRRはT&となる。
 このようなテンプレートの特殊化を不要にするリファレンスcollapsingは、
 有用な機能拡張であると言える。
 
-### danglingリファレンス <a id="SS_6_15_5"></a>
+### danglingリファレンス <a id="SS_6_15_6"></a>
 Dangling リファレンスとは、破棄後のオブジェクトを指しているリファレンスを指す。
-このようなリファレンスにアクセスすると、[未定義動作](#SS_6_18_7)に繋がるに繋がる。
+このようなリファレンスにアクセスすると、[未定義動作](#SS_6_19_7)に繋がるに繋がる。
 
 ```cpp
     //  example/term_explanation/dangling_ut.cpp 9
@@ -23992,36 +23922,118 @@ Dangling リファレンスとは、破棄後のオブジェクトを指して�
     ASSERT_TRUE(A_destructed && X_destructed);
 ```
 
-### danglingポインタ <a id="SS_6_15_6"></a>
-danglingポインタとは、[danglingリファレンス](#SS_6_15_5)と同じような状態になったポインタを指す。
+### danglingポインタ <a id="SS_6_15_7"></a>
+danglingポインタとは、[danglingリファレンス](#SS_6_15_6)と同じような状態になったポインタを指す。
 
-## エクセプション安全性の保証 <a id="SS_6_16"></a>
+## リファレンス修飾 <a id="SS_6_16"></a>
+[rvalue修飾](#SS_6_16_1)と[lvalue修飾](#SS_6_16_2)とを併せて、リファレンス修飾と呼ぶ。
+
+### rvalue修飾 <a id="SS_6_16_1"></a>
+下記GetString0()のような関数が返すオブジェクトの内部メンバに対するハンドルは、
+オブジェクトのライフタイム終了後にもアクセスすることができるため、
+そのハンドルを通じて、
+ライフタイム終了後のオブジェクトのメンバオブジェクトにもアクセスできてしまう。
+
+ライフタイム終了後のオブジェクトにアクセスすることは未定義動作であり、
+特にそのオブジェクトがrvalueであった場合、さらにその危険性は高まる。
+
+こういったコードに対処するためのシンタックスが、lvalue修飾、rvalue修飾である。
+
+下記GetString1()、GetString3()、GetString4()のようにメンバ関数をlvalue修飾やrvalue修飾することで、
+rvalueの内部ハンドルを返さないようにすることが可能となり、上記の危険性を緩和することができる。
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 128
+
+    class C {
+    public:
+        explicit C(char const* str) : str_{str} {}
+
+        // lvalue修飾なし、rvalue修飾なし
+        std::string& GetString0() noexcept { return str_; }
+
+        // lvalue修飾
+        std::string const& GetString1() const& noexcept { return str_; }
+
+        // rvalue修飾
+        // *thisがrvalueの場合でのGetString1()の呼び出しは、この関数を呼び出すため、
+        // class内部のハンドルを返してはならない。
+        // また、それによりstd::stringを生成するため、noexcept指定してはならない。
+        std::string GetString1() const&& { return str_; }
+
+        // lvalue修飾だが、const関数はrvalueからでも呼び出せる。
+        // rvalueに対しての呼び出しを禁止したい場合には、GetString4のようにする。
+        std::string const& GetString2() const& noexcept { return str_; }
+
+        // lvalue修飾
+        // 非constなのでrvalueからは呼び出せない。
+        std::string const& GetString3() & noexcept { return str_; }
+
+        // lvalue修飾
+        std::string const& GetString4() const& noexcept { return str_; }
+
+        // rvalue修飾
+        // rvalueからこの関数を呼び出されるとrvalueオブジェクトの内部ハンドルを返してしまい、
+        // 危険なので=deleteすべき。
+        std::string const& GetString4() const&& = delete;
+
+    private:
+        std::string str_;
+    };
+```
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 169
+
+    auto        c    = C{"c0"};
+    auto const& s0_0 = c.GetString0();        // OK cが解放されるまでs0_0は有効
+    auto        s0_1 = C{"c1"}.GetString0();  // NG 危険なコード
+    // s0_1が指すオブジェクトは、次の行で無効になる
+
+    auto const& s1_0 = c.GetString1();        // OK GetString1()&が呼び出される
+    auto const& s1_1 = C{"c1"}.GetString1();  // OK GetString1()&&が呼び出される
+    // s1_0が指すrvalueはs1_0がスコープアウトするまで有効
+
+    auto const& s2_0 = c.GetString2();        // OK GetString2()&が呼び出される
+    auto const& s2_1 = C{"c1"}.GetString2();  // NG const関数はlvalue修飾しても呼び出し可能
+    // s2_1が指すオブジェクトは、次の行で無効になる
+
+    auto const& s3_0 = c.GetString3();  // OK GetString3()&が呼び出される
+    // auto const& s3_1 = C{"c1"}.GetString3();  // 危険なのでコンパイルさせない
+
+    auto const& s4_0 = c.GetString4();  // OK GetString4()&が呼び出される
+    // auto const& s4_1 = C{"c1"}.GetString4();  // 危険なのでコンパイルさせない
+```
+
+### lvalue修飾 <a id="SS_6_16_2"></a>
+[rvalue修飾](#SS_6_16_1)を参照せよ。
+
+## エクセプション安全性の保証 <a id="SS_6_17"></a>
 関数のエクセプション発生時の安全性の保証には以下の3つのレベルが規定されている。
 
-* [no-fail保証](#SS_6_16_1)
-* [強い安全性の保証](#SS_6_16_2)
-* [基本的な安全性の保証](#SS_6_16_3)
+* [no-fail保証](#SS_6_17_1)
+* [強い安全性の保証](#SS_6_17_2)
+* [基本的な安全性の保証](#SS_6_17_3)
 
-### no-fail保証 <a id="SS_6_16_1"></a>
+### no-fail保証 <a id="SS_6_17_1"></a>
 「no-fail保証」を満たす関数はエクセプションをthrowしない。
 no-failを保証する関数は、
-[noexcept](#SS_6_16_4)を使用してエクセプションを発生させないことを明示できる。
+[noexcept](#SS_6_17_4)を使用してエクセプションを発生させないことを明示できる。
 
 標準テンプレートクラスのパラメータとして使用するクラスのメンバ関数には、
 正確にnoexceptの宣言をしないと、
 テンプレートクラスのメンバ関数によってはパフォーマンスを起こしてしまう可能性がある。
 
-### 強い安全性の保証 <a id="SS_6_16_2"></a>
+### 強い安全性の保証 <a id="SS_6_17_2"></a>
 「強い保証」を満たす関数は、この関数がエクセプションによりスコープから外れた場合でも、
 この関数が呼ばれなかった状態と同じ(プログラムカウンタ以外の状態は同じ)であることを保証する。
 従って、この関数呼び出しは成功したか、完全な無効だったかのどちらかになる。
 
-### 基本的な安全性の保証 <a id="SS_6_16_3"></a>
+### 基本的な安全性の保証 <a id="SS_6_17_3"></a>
 「基本的な安全性の保証」を満たす関数は、この関数がエクセプションによりスコープから外れた場合でも、
 メモリ等のリソースリークは起こさず、
 オブジェクトは(変更されたかもしれないが)引き続き使えることを保証する。
 
-### noexcept <a id="SS_6_16_4"></a>
+### noexcept <a id="SS_6_17_4"></a>
 C++11で導入されたnoexceptキーワードには、以下の2つの意味がある。
 
 * C++03までのthrowキーワードによる例外仕様の代替。
@@ -24099,7 +24111,7 @@ C++11で導入されたnoexceptキーワードには、以下の2つの意味が
     static_assert(!noexcept(t_f(p)));
 ```
 
-### exception-unfriendly <a id="SS_6_16_5"></a>
+### exception-unfriendly <a id="SS_6_17_5"></a>
 以下のような関数  
 
 * 初期化に関連する関数やコンストラクタ
@@ -24114,11 +24126,11 @@ C++11で導入されたnoexceptキーワードには、以下の2つの意味が
 * C言語との互換性を持つ関数
     * Cとのリンケージを持つすべての関数
 
-の呼び出しでエクセプションがthrowされると、[未定義動作](#SS_6_18_7)や[未規定動作](#SS_6_18_8)が発生するため、
+の呼び出しでエクセプションがthrowされると、[未定義動作](#SS_6_19_7)や[未規定動作](#SS_6_19_8)が発生するため、
 exception-unfriendly(エクセプションに不向き)であるとされる。
 従って上記の関数は暗黙的または明示的に`noexcept`であることが求められる。
 
-## シンタックス、セマンティクス <a id="SS_6_17"></a>
+## シンタックス、セマンティクス <a id="SS_6_18"></a>
 直訳すれば、シンタックスとは構文論のことであり、セマンティクスとは意味論のことである。
 この二つの概念の違いをはっきりと際立たせる有名な文を例示する。
 
@@ -24138,15 +24150,15 @@ C++プログラミングにおいては、コンパイルできることがシ�
       そのクラスが保持する値集合の先頭や最後尾の次を指すイテレータを返す
     * 等
 
-* 「[等価性のセマンティクス](#SS_6_17_1)」を守ってる
-* 「[copyセマンティクス](#SS_6_17_2)」を守ってる
-* 「[moveセマンティクス](#SS_6_17_3)」を守っている
+* 「[等価性のセマンティクス](#SS_6_18_1)」を守ってる
+* 「[copyセマンティクス](#SS_6_18_2)」を守ってる
+* 「[moveセマンティクス](#SS_6_18_3)」を守っている
 
 等がセマンティクス的な正しさである。
 
 セマンティクス的に正しいソースコードは読みやすく、保守性、拡張性に優れている。
 
-### 等価性のセマンティクス <a id="SS_6_17_1"></a>
+### 等価性のセマンティクス <a id="SS_6_18_1"></a>
 純粋数学での実数の等号(=)は、任意の実数x、y、zに対して、
 
 | 律   |意味                     |
@@ -24450,13 +24462,13 @@ Derived用のoperator==を
 
 以上で見てきたように、等価性のセマンティクスを守ったoperator==の実装には多くの観点が必要になる。
 
-### copyセマンティクス <a id="SS_6_17_2"></a>
+### copyセマンティクス <a id="SS_6_18_2"></a>
 copyセマンティクスとは以下を満たすようなセマンティクスである。
 
 * a = bが行われた後に、aとbが等価である。
 * a = bが行われた前後でbの値が変わっていない。
 
-従って、これらのオブジェクトに対して[等価性のセマンティクス](#SS_6_17_1)
+従って、これらのオブジェクトに対して[等価性のセマンティクス](#SS_6_18_1)
 を満たすoperator==が定義されている場合、
 以下を満たすようなセマンティクスであると言い換えることができる。
 
@@ -24500,7 +24512,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 この仕様は極めて不自然であり、std::auto_ptrはC++11で非推奨となり、C++17で規格から排除された。
 
 下記の単体テストから明らかな通り、
-「[等価性のセマンティクス](#SS_6_17_1)」で示した最後の例も、copyセマンティクスを満たしていない。
+「[等価性のセマンティクス](#SS_6_18_1)」で示した最後の例も、copyセマンティクスを満たしていない。
 
 ```cpp
     //  example/term_explanation/semantics_ut.cpp 367
@@ -24516,7 +24528,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 原因は、copy代入で[スライシング](#SS_6_5_9_3)が起こるためである。
 
 
-### moveセマンティクス <a id="SS_6_17_3"></a>
+### moveセマンティクス <a id="SS_6_18_3"></a>
 moveセマンティクスとは以下を満たすようなセマンティクスである(operator==が定義されていると前提)。
 
 * copy代入の実行コスト >= move代入の実行コスト
@@ -24525,9 +24537,9 @@ moveセマンティクスとは以下を満たすようなセマンティクス�
     * a == cはtrueにならなくても良い(aはmove代入により破壊されるかもしれない)。
 
   必須ではないが、「aがポインタ等のリソースを保有している場合、move代入後には、
-  そのリソースはcに移動している」ことが一般的である(「[rvalue](#SS_6_14_3)」参照)。
+  そのリソースはcに移動している」ことが一般的である(「[rvalue](#SS_6_14_1_2)」参照)。
 
-* [no-fail保証](#SS_6_16_1)をする(noexceptと宣言し、エクセプションをthrowしない)。
+* [no-fail保証](#SS_6_17_1)をする(noexceptと宣言し、エクセプションをthrowしない)。
 
 moveセマンティクスはcopy代入後に使用されなくなるオブジェクト(主にrvalue)
 からのcopy代入の実行コストを下げるために導入されたため、
@@ -24616,7 +24628,7 @@ moveセマンティクスはcopy代入後に使用されなくなるオブジェ
 
 ```
 
-### MoveAssignable要件 <a id="SS_6_17_4"></a>
+### MoveAssignable要件 <a id="SS_6_18_4"></a>
 MoveAssignable要件は、C++において型がムーブ代入をサポートするために満たすべき条件を指す。
 ムーブ代入はリソースを効率的に転送する操作であり、以下の条件を満たす必要がある。
 
@@ -24632,14 +24644,14 @@ MoveAssignable要件は、C++において型がムーブ代入をサポートす
 
 4. 効率性  
    ムーブ代入は通常、コピー代入よりも効率的であることが求められる。
-   これは、リソースの複製を避けることで達成される(「[moveセマンティクス](#SS_6_17_3)」参照)。
+   これは、リソースの複製を避けることで達成される(「[moveセマンティクス](#SS_6_18_3)」参照)。
 
 5. デフォルト実装  
    ムーブ代入演算子が明示的に定義されていない場合でも、
    クラスが一定の条件(例: ムーブ不可能なメンバが存在しないこと)を満たしていれば、
    コンパイラがデフォルトの実装(「[特殊メンバ関数](#SS_6_3_1)」参照)を生成する。
 
-### CopyAssignable要件 <a id="SS_6_17_5"></a>
+### CopyAssignable要件 <a id="SS_6_18_5"></a>
 CopyAssignable要件は、C++において型がコピー代入をサポートするために満たすべき条件を指す。
 
 1. 動作が定義されていること  
@@ -24649,7 +24661,7 @@ CopyAssignable要件は、C++において型がコピー代入をサポートす
    代入後、代入先のオブジェクトの値は代入元のオブジェクトの値と一致していなければならない。
 
 3. 正しいセマンティクス  
-   コピー代入によって代入元のオブジェクトが変更されてはならない(「[copyセマンティクス](#SS_6_17_2)」参照)。
+   コピー代入によって代入元のオブジェクトが変更されてはならない(「[copyセマンティクス](#SS_6_18_2)」参照)。
    代入先のオブジェクトが保持していたリソース(例: メモリ)は適切に解放される必要がある。
 
 4. デフォルト実装  
@@ -24657,16 +24669,16 @@ CopyAssignable要件は、C++において型がコピー代入をサポートす
    クラスが一定の条件(例: コピー不可能なメンバが存在しないこと)を満たしていれば、
    コンパイラがデフォルトの実装(「[特殊メンバ関数](#SS_6_3_1)」参照)を生成する。
 
-## C++その他 <a id="SS_6_18"></a>
-### 型特性キーワード <a id="SS_6_18_1"></a>
+## C++その他 <a id="SS_6_19"></a>
+### 型特性キーワード <a id="SS_6_19_1"></a>
 アライメントとは、
 データが効率的にアクセスされるために特定のメモリアドレス境界に配置される規則である。
 C++03までの規約では、アライメントのコントロールは実装依存した#pragmaなどで行っていた。
 
-[alignas](#SS_6_18_1_2)、
-[alignof](#SS_6_18_1_1)によりコンパイラの標準的な方法でアライメントのコントロールできるようになった。
+[alignas](#SS_6_19_1_2)、
+[alignof](#SS_6_19_1_1)によりコンパイラの標準的な方法でアライメントのコントロールできるようになった。
 
-#### alignof <a id="SS_6_18_1_1"></a>
+#### alignof <a id="SS_6_19_1_1"></a>
 C++11で導入されたキーワードで、型のアライメント要求を取得するために使用する。
 
 ```cpp
@@ -24686,7 +24698,7 @@ C++11で導入されたキーワードで、型のアライメント要求を取
     ASSERT_EQ(alignof(AlignedStruct), 16);  // アライメントが正しいか確認
 ```
 
-#### alignas <a id="SS_6_18_1_2"></a>
+#### alignas <a id="SS_6_19_1_2"></a>
 C++11で導入されたキーワードで、メモリのアライメントを指定するために使用する。
 
 ```cpp
@@ -24698,7 +24710,7 @@ C++11で導入されたキーワードで、メモリのアライメントを指
     ASSERT_EQ(alignof(int), 4);           // アライメントが正しいか確認
 ```
 
-#### addressof <a id="SS_6_18_1_3"></a>
+#### addressof <a id="SS_6_19_1_3"></a>
 addressofは、オブジェクトの「実際の」
 アドレスを取得するために使用されるC++標準ライブラリのユーティリティ関数である。
 通常、オブジェクトのアドレスを取得するには&演算子を使うが、
@@ -24749,10 +24761,10 @@ operator& がオーバーロードされている場合には、
     ASSERT_EQ(p1, p2);
 ```
 
-### 演算子のオペランドの評価順位 <a id="SS_6_18_2"></a>
+### 演算子のオペランドの評価順位 <a id="SS_6_19_2"></a>
 
 C++17で、演算子のオペランドに対する評価順序が明確に規定された。
-それに対し、C++14までは、演算子のオペランド部分式の評価順序は[未規定動作](#SS_6_18_8)であった。
+それに対し、C++14までは、演算子のオペランド部分式の評価順序は[未規定動作](#SS_6_19_8)であった。
 以下の表で示す演算子に関しては、オペランドaがオペランドbよりも先に評価される。
 
 | 演算子               |説明                                                                   |
@@ -24798,7 +24810,7 @@ conditionの評価結果に基づき、expr1または expr2 のどちらかが�
 
 なお、単項演算子のオペランドは1つであるため、優先順位の定義は不要である。
 
-### 実引数/仮引数 <a id="SS_6_18_3"></a>
+### 実引数/仮引数 <a id="SS_6_19_3"></a>
 引数(もしくは実引数、argument)、仮引数(parameter)とは下記のように定義される。
 
 ```cpp
@@ -24817,16 +24829,16 @@ conditionの評価結果に基づき、expr1または expr2 のどちらかが�
     }
 ```
 
-### 単純代入 <a id="SS_6_18_4"></a>
+### 単純代入 <a id="SS_6_19_4"></a>
 代入は下記のように分類される。
 
 * 単純代入(=)
 * 複合代入(+=，++ 等)
 
-### ill-formed <a id="SS_6_18_5"></a>
+### ill-formed <a id="SS_6_19_5"></a>
 [標準規格と処理系](https://cpprefjp.github.io/implementation-compliance.html)に詳しい解説があるが、
 
-* [well-formed](#SS_6_18_6)(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
+* [well-formed](#SS_6_19_6)(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
   単一定義規則を満たすことである。
 * ill-formed(不適格)とはプログラムが適格でないことである。
 
@@ -24834,10 +24846,10 @@ conditionの評価結果に基づき、expr1または expr2 のどちらかが�
 プログラムがill-formedになった場合、通常はコンパイルエラーになるが、
 対象がテンプレートの場合、事情は少々異なり、[SFINAE](#SS_6_11_1)によりコンパイルできることもある。
 
-### well-formed <a id="SS_6_18_6"></a>
-「[ill-formed](#SS_6_18_5)」を参照せよ。
+### well-formed <a id="SS_6_19_6"></a>
+「[ill-formed](#SS_6_19_5)」を参照せよ。
 
-### 未定義動作 <a id="SS_6_18_7"></a>
+### 未定義動作 <a id="SS_6_19_7"></a>
 未定義動作(Undefined Behavior)とは、
 C++標準が特定の操作や状況に対して一切の制約を設けないケースである。
 未定義動作が発生すると、プログラムの実行結果が予測できなくなり、
@@ -24856,7 +24868,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 
 ```
 
-### 未規定動作 <a id="SS_6_18_8"></a>
+### 未規定動作 <a id="SS_6_19_8"></a>
 未規定動作(Unspecified Behavior)とは、C++標準がある操作の動作を完全には決めておらず、
 複数の許容可能な選択肢がある場合でのコードの動作を指す。
 未規定動作は、実装ごとに異なる可能性があり、標準は少なくとも「何らかの合理的な結果」を保証する。
@@ -24873,14 +24885,14 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
     auto result = lambda(a++, a++);  // 未規定 - 引数評価の順序が決まっていない
 ```
 
-### 未定義動作と未規定動作 <a id="SS_6_18_9"></a>
+### 未定義動作と未規定動作 <a id="SS_6_19_9"></a>
 | 種類            |定義                                                               | 例                               | 結果                           |
 |-----------------|-------------------------------------------------------------------|----------------------------------|--------------------------------|
-|[未定義動作](#SS_6_18_7)|C++標準が全く保証しない動作                                        | ゼロ除算、配列範囲外アクセス     | 予測不能(クラッシュなど)       |
-|[未規定動作](#SS_6_18_8)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
+|[未定義動作](#SS_6_19_7)|C++標準が全く保証しない動作                                        | ゼロ除算、配列範囲外アクセス     | 予測不能(クラッシュなど)       |
+|[未規定動作](#SS_6_19_8)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
 
 
-### 被修飾型 <a id="SS_6_18_10"></a>
+### 被修飾型 <a id="SS_6_19_10"></a>
 被修飾型(unqualified type)とは、変数の宣言において付加される修飾子(const、
 volatile など)やポインタやリファレンスなどの間接指定子を除いた素の型を指す。
 
@@ -24897,10 +24909,10 @@ volatile など)やポインタやリファレンスなどの間接指定子を�
 
 見た目が類似する[修飾付き関数呼び出し](#SS_6_10_7)とは無関係である。
 
-### one-definition rule <a id="SS_6_18_11"></a>
-「[ODR](#SS_6_18_12)」を参照せよ。
+### one-definition rule <a id="SS_6_19_11"></a>
+「[ODR](#SS_6_19_12)」を参照せよ。
 
-### ODR <a id="SS_6_18_12"></a>
+### ODR <a id="SS_6_19_12"></a>
 ODRとは、One Definition Ruleの略語であり、下記のようなことを定めている。
 
 * どの翻訳単位でも、テンプレート、型、関数、またはオブジェクトは、複数の定義を持つことができない。
@@ -24911,7 +24923,7 @@ ODRとは、One Definition Ruleの略語であり、下記のようなことを�
 [https://en.cppreference.com/w/cpp/language/definition](https://en.cppreference.com/w/cpp/language/definition)
 が参考になる。
 
-### RVO(Return Value Optimization) <a id="SS_6_18_13"></a>
+### RVO(Return Value Optimization) <a id="SS_6_19_13"></a>
 関数の戻り値がオブジェクトである場合、
 戻り値オブジェクトは、その関数の呼び出し元のオブジェクトにコピーされた後、すぐに破棄される。
 この「オブジェクトをコピーして、その後すぐにそのオブジェクトを破棄する」動作は、
@@ -24922,7 +24934,7 @@ RVOとはこのような最適化を指す。
 [C++17から規格化](https://cpprefjp.github.io/lang/cpp17/guaranteed_copy_elision.html)された。
 
 
-### SSO(Small String Optimization) <a id="SS_6_18_14"></a>
+### SSO(Small String Optimization) <a id="SS_6_19_14"></a>
 一般にstd::stringで文字列を保持する場合、newしたメモリが使用される。
 64ビット環境であれば、newしたメモリのアドレスを保持する領域は8バイトになる。
 std::stringで保持する文字列が終端の'\0'も含め8バイト以下である場合、
@@ -24931,7 +24943,7 @@ std::stringで保持する文字列が終端の'\0'も含め8バイト以下で�
 
 SOOとはこのような最適化を指す。
 
-### heap allocation elision <a id="SS_6_18_15"></a>
+### heap allocation elision <a id="SS_6_19_15"></a>
 C++11までの仕様では、new式によるダイナミックメモリアロケーションはコードに書かれた通りに、
 実行されなければならず、ひとまとめにしたり省略したりすることはできなかった。
 つまり、ヒープ割り当てに対する最適化は認められなかった。
@@ -24979,7 +24991,7 @@ new/deleteの呼び出しをまとめたり省略したりすることができ�
 ダイナミックメモリアロケーションが1回に抑えられるため、メモリアクセスが高速化される。
 
 
-### Most Vexing Parse <a id="SS_6_18_16"></a>
+### Most Vexing Parse <a id="SS_6_19_16"></a>
 Most Vexing Parse(最も困惑させる構文解析)とは、C++の文法に関連する問題で、
 Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつけたことに由来する。
 
@@ -25015,17 +25027,17 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 このような問題を回避できる。
 
 
-### トライグラフ <a id="SS_6_18_17"></a>
+### トライグラフ <a id="SS_6_19_17"></a>
 トライグラフとは、2つの疑問符とその後に続く1文字によって表される、下記の文字列である。
 
 ```
     ??=  ??/  ??'  ??(  ??)  ??!  ??<  ??>  ??-
 ```
 
-## C++コンパイラ <a id="SS_6_19"></a>
+## C++コンパイラ <a id="SS_6_20"></a>
 本ドキュメントで使用するg++/clang++のバージョンは以下のとおりである。
 
-### g++ <a id="SS_6_19_1"></a>
+### g++ <a id="SS_6_20_1"></a>
 ```
     g++ (Ubuntu 11.3.0-1ubuntu1~22.04) 11.3.0
     Copyright (C) 2021 Free Software Foundation, Inc.
@@ -25033,7 +25045,7 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
     warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
-### clang++ <a id="SS_6_19_2"></a>
+### clang++ <a id="SS_6_20_2"></a>
 ```
     Ubuntu clang version 14.0.0-1ubuntu1
     Target: x86_64-pc-linux-gnu
@@ -25041,12 +25053,12 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
     InstalledDir: /usr/bin
 ```
 
-## ソフトウェア一般 <a id="SS_6_20"></a>
-### フリースタンディング環境 <a id="SS_6_20_1"></a>
+## ソフトウェア一般 <a id="SS_6_21"></a>
+### フリースタンディング環境 <a id="SS_6_21_1"></a>
 [フリースタンディング環境](https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%AA%E3%83%BC%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E7%92%B0%E5%A2%83)
 とは、組み込みソフトウェアやOSのように、その実行にOSの補助を受けられないソフトウエアを指す。
 
-### サイクロマティック複雑度 <a id="SS_6_20_2"></a>
+### サイクロマティック複雑度 <a id="SS_6_21_2"></a>
 [サイクロマティック複雑度](https://ja.wikipedia.org/wiki/%E5%BE%AA%E7%92%B0%E7%9A%84%E8%A4%87%E9%9B%91%E5%BA%A6)
 とは関数の複雑さを表すメトリクスである。
 このメトリクスの解釈は諸説あるものの、概ね以下のテーブルのようなものである。
@@ -25058,12 +25070,12 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 |      31 < CC <  50         |構造的なリスクあり                        |
 |      51 < CC               |テスト不可能、デグレードリスクが非常に高い|
 
-### 凝集度 <a id="SS_6_20_3"></a>
+### 凝集度 <a id="SS_6_21_3"></a>
 [凝集度](https://ja.wikipedia.org/wiki/%E5%87%9D%E9%9B%86%E5%BA%A6)
 とはクラス設計の妥当性を表す尺度の一種であり、
-「[凝集度の欠如](#SS_6_20_3_1)(LCOM)」というメトリクスで計測される。
+「[凝集度の欠如](#SS_6_21_3_1)(LCOM)」というメトリクスで計測される。
 
-* [凝集度の欠如](#SS_6_20_3_1)メトリクスの値が1に近ければ凝集度は低く、この値が0に近ければ凝集度は高い。
+* [凝集度の欠如](#SS_6_21_3_1)メトリクスの値が1に近ければ凝集度は低く、この値が0に近ければ凝集度は高い。
 * メンバ変数やメンバ関数が多くなれば、凝集度は低くなりやすい。
 * 凝集度は、クラスのメンバがどれだけ一貫した責任を持つかを示す。
 * 「[単一責任の原則(SRP)](#SS_2_1)」を守ると凝集度は高くなりやすい。
@@ -25140,17 +25152,17 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
     }
 ```
 
-#### 凝集度の欠如 <a id="SS_6_20_3_1"></a>
-[凝集度](#SS_6_20_3)の欠如(Lack of Cohesion in Methods/LCOM)とは、
+#### 凝集度の欠如 <a id="SS_6_21_3_1"></a>
+[凝集度](#SS_6_21_3)の欠如(Lack of Cohesion in Methods/LCOM)とは、
 クラス設計の妥当性を表す尺度の一種であり、`0 ～ 1`の値で表すメトリクスである。
 
 LCOMの値が大きい(1か1に近い値)場合、「クラス内のメソッドが互いに関連性を持たず、
 それぞれが独立した責務やデータに依存するため、クラス全体の統一性が欠けている」ことを表す。
 
 クラスデザイン見直しの基準値としてLCOMを活用する場合、
-[LCOMの評価基準](#SS_6_20_3_2)に具体的な推奨値を示す。
+[LCOMの評価基準](#SS_6_21_3_2)に具体的な推奨値を示す。
 
-#### LCOMの評価基準 <a id="SS_6_20_3_2"></a>
+#### LCOMの評価基準 <a id="SS_6_21_3_2"></a>
 クラスデザイン良し悪しの基準値としてLCOMを活用する場合の推奨値を以下に示す。
 
 | 凝集度の欠如(LCOM)  | クラスの状態 |
@@ -25175,7 +25187,7 @@ LCOMの値が大きい(1か1に近い値)場合、「クラス内のメソッド
   一刻も早くデザインの見直しを行うべきだろう。
 
 
-### Spurious Wakeup <a id="SS_6_20_4"></a>
+### Spurious Wakeup <a id="SS_6_21_4"></a>
 [Spurious Wakeup](https://en.wikipedia.org/wiki/Spurious_wakeup)とは、
 条件変数に対する通知待ちの状態であるスレッドが、その通知がされていないにもかかわらず、
 起き上がってしまう現象のことを指す。
@@ -25241,7 +25253,7 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
     }
 ```
 
-### 副作用 <a id="SS_6_20_5"></a>
+### 副作用 <a id="SS_6_21_5"></a>
 プログラミングにおいて、式の評価による作用には、
 主たる作用とそれ以外の
 [副作用](https://ja.wikipedia.org/wiki/%E5%89%AF%E4%BD%9C%E7%94%A8_(%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0))
@@ -25252,7 +25264,7 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
 ファイルの読み書き等のI/O実行、等がある。
 
 
-### is-a <a id="SS_6_20_6"></a>
+### is-a <a id="SS_6_21_6"></a>
 「is-a」の関係は、オブジェクト指向プログラミング（OOP）
 においてクラス間の継承関係を説明する際に使われる概念である。
 クラスDerivedとBaseが「is-a」の関係である場合、
@@ -25405,10 +25417,10 @@ penguinとbirdの関係はis-aの関係ではあるが、
 ```
 
 修正されたKyukancho はstd::string インスタンスをメンバ変数として持ち、
-kyukanchoとstd::stringの関係を[has-a](#SS_6_20_7)の関係と呼ぶ。
+kyukanchoとstd::stringの関係を[has-a](#SS_6_21_7)の関係と呼ぶ。
 
 
-### has-a <a id="SS_6_20_7"></a>
+### has-a <a id="SS_6_21_7"></a>
 「has-a」の関係は、
 あるクラスのインスタンスが別のクラスのインスタンスを構成要素として含む関係を指す。
 つまり、あるクラスのオブジェクトが別のクラスのオブジェクトを保持している関係である。
@@ -25441,19 +25453,19 @@ Carクラスの例ではCarクラスにはEngine型のメンバ変数が存在�
     };
 ```
 
-### is-implemented-in-terms-of <a id="SS_6_20_8"></a>
+### is-implemented-in-terms-of <a id="SS_6_21_8"></a>
 「is-implemented-in-terms-of」の関係は、
 オブジェクト指向プログラミング（OOP）において、
 あるクラスが別のクラスの機能を内部的に利用して実装されていることを示す概念である。
 これは、あるクラスが他のクラスのインターフェースやメソッドを用いて、
 自身の機能を提供する場合に使われる。
-[has-a](#SS_6_20_7)の関係は、is-implemented-in-terms-of の関係の一種である。
+[has-a](#SS_6_21_7)の関係は、is-implemented-in-terms-of の関係の一種である。
 
 is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 
-*手段1.* [public継承によるis-implemented-in-terms-of](#SS_6_20_8_1)  
-*手段2.* [private継承によるis-implemented-in-terms-of](#SS_6_20_8_2)  
-*手段3.* [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_20_8_3)  
+*手段1.* [public継承によるis-implemented-in-terms-of](#SS_6_21_8_1)  
+*手段2.* [private継承によるis-implemented-in-terms-of](#SS_6_21_8_2)  
+*手段3.* [コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_21_8_3)  
 
 手段1-3にはそれぞれ、長所、短所があるため、必要に応じて手段を選択する必要がある。
 以下の議論を単純にするため、下記のようにクラスS、C、CCを定める。
@@ -25466,7 +25478,7 @@ is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 依存関係の複雑さから考えた場合、CはSに強く依存する。
 場合によっては、この依存はCCからSへの依存間にも影響をあたえる。
 従って、手段3が依存関係を単純にしやすい。
-手段1は[is-a](#SS_6_20_6)に見え、以下に示すような問題も考慮する必要があるため、
+手段1は[is-a](#SS_6_21_6)に見え、以下に示すような問題も考慮する必要があるため、
 可読性、保守性を劣化させる可能性がある。
 
 ```cpp
@@ -25489,7 +25501,7 @@ is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 の実現手段でもあるため、一概にコーディング規約などで排除することもできない。
 
 
-#### public継承によるis-implemented-in-terms-of <a id="SS_6_20_8_1"></a>
+#### public継承によるis-implemented-in-terms-of <a id="SS_6_21_8_1"></a>
 public継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 
 ```cpp
@@ -25508,11 +25520,11 @@ public継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 ```
 
 すでに述べたようにこの方法は、
-[private継承によるis-implemented-in-terms-of](#SS_6_20_8_2)や、
-[コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_20_8_3)
+[private継承によるis-implemented-in-terms-of](#SS_6_21_8_2)や、
+[コンポジションによる(has-a)is-implemented-in-terms-of](#SS_6_21_8_3)
 と比べコードがシンプルになる。 
 
-#### private継承によるis-implemented-in-terms-of <a id="SS_6_20_8_2"></a>
+#### private継承によるis-implemented-in-terms-of <a id="SS_6_21_8_2"></a>
 private継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 
 ```cpp
@@ -25537,11 +25549,11 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
     ASSERT_EQ(str.size(), 0);
 ```
 
-この方法は、[public継承によるis-implemented-in-terms-of](#SS_6_20_8_1)が持つデストラクタ問題は発生せす、
-[is-a](#SS_6_20_6)と誤解してしまう問題も発生しない。
+この方法は、[public継承によるis-implemented-in-terms-of](#SS_6_21_8_1)が持つデストラクタ問題は発生せす、
+[is-a](#SS_6_21_6)と誤解してしまう問題も発生しない。
 
 
-#### コンポジションによる(has-a)is-implemented-in-terms-of <a id="SS_6_20_8_3"></a>
+#### コンポジションによる(has-a)is-implemented-in-terms-of <a id="SS_6_21_8_3"></a>
 コンポジションによる(has-a)is-implemented-in-terms-ofの実装例を示す。
 
 ```cpp
@@ -25593,8 +25605,8 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
 逆に実装例から昭なとおり、コード量が増えてしまう。
 
 
-## 非ソフトウェア用語 <a id="SS_6_21"></a>
-### 割れ窓理論 <a id="SS_6_21_1"></a>
+## 非ソフトウェア用語 <a id="SS_6_22"></a>
+### 割れ窓理論 <a id="SS_6_22_1"></a>
 [割れ窓理論](https://ja.wikipedia.org/wiki/%E5%89%B2%E3%82%8C%E7%AA%93%E7%90%86%E8%AB%96)とは、
 軽微な犯罪も徹底的に取り締まることで、凶悪犯罪を含めた犯罪を抑止できるとする環境犯罪学上の理論。
 アメリカの犯罪学者ジョージ・ケリングが考案した。
@@ -25610,7 +25622,7 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
 等の重要な狙いがある。
 
 
-### 車輪の再発明 <a id="SS_6_21_2"></a>
+### 車輪の再発明 <a id="SS_6_22_2"></a>
 [車輪の再発明](https://ja.wikipedia.org/wiki/%E8%BB%8A%E8%BC%AA%E3%81%AE%E5%86%8D%E7%99%BA%E6%98%8E)
 とは、広く受け入れられ確立されている技術や解決法を（知らずに、または意図的に無視して）
 再び一から作ること」を指すための慣用句である。

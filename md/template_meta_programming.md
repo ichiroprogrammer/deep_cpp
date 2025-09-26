@@ -1830,7 +1830,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
     std::declval<int[3]>())
 ```
 
-の戻り型が配列型の[expressionと値カテゴリ|rvalue](---)である"int (&&) [3]"となり、
+の戻り型が配列型の[expressionと値カテゴリ|expression|rvalue](---)である"int (&&) [3]"となり、
 これに対応するstd::beginが定義されていないためである。
 
 これに対処する方法方はいくつかあるが、
@@ -2692,7 +2692,7 @@ FixedPointの単体テストコードを以下に示す。
 ```
 
 この原因は、
-「関数が受け取った[expressionと値カテゴリ|rvalue](---)リファレンスは、
+「関数が受け取った[expressionと値カテゴリ|expression|rvalue](---)リファレンスは、
 その関数から別の関数に受け渡される時に[lvalue](---)リファレンスとして扱われる」からである。
 
 この現象について下記の関数テンプレートを用いて解説を行う。
@@ -2771,7 +2771,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 ```
 
 ユニバーサルリファレンスはconstにすることができないが
-(T const&&はconstな[expressionと値カテゴリ|rvalue](---)リファレンスである)、
+(T const&&はconstな[expressionと値カテゴリ|expression|rvalue](---)リファレンスである)、
 ユニバーサルリファレンスが[lvalue](---)リファレンスであった場合は、
 constなlvalueリファレンスとして扱うべきである。
 
