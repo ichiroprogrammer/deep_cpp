@@ -15463,6 +15463,7 @@ __この章の構成__
 &emsp;&emsp;&emsp;&emsp; [rvalue](#SS_6_14_1_2)  
 &emsp;&emsp;&emsp;&emsp; [xvalue](#SS_6_14_1_3)  
 &emsp;&emsp;&emsp;&emsp; [prvalue](#SS_6_14_1_4)  
+&emsp;&emsp;&emsp;&emsp; [glvalue](#SS_6_14_1_5)  
 
 &emsp;&emsp;&emsp; [decltypeとexpression](#SS_6_14_2)  
 
@@ -16575,7 +16576,7 @@ sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24で�
 g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
 
 ```cpp
-    //  example/term_explanation/Makefile 28
+    //  example/term_explanation/Makefile 29
 
     CCFLAGS_ADD:=-fdump-lang-class
 ```
@@ -23470,59 +23471,98 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 
 ### expression <a id="SS_6_14_1"></a>
 
-C++においてexpression、lvalue、rvalue、xvalue、glvalue、prvalueは以下のように定められている。
+[expression](https://ja.cppreference.com/w/cpp/language/expressions)(式)とは、
+「演算子とそのオペランドの並び」である(オペランドのみの記述も式である)。
+演算子とは以下のようなものである。
 
-* [expression](https://ja.cppreference.com/w/cpp/language/expressions)(式)
-  とは「演算子とそのオペランドの並び」である(オペランドのみの記述も式である)。
-  演算子とは以下のようなものである。
-    * 四則演算、代入(a = b、a += b ...)、インクリメント、比較、論理式
-    * 明示的キャストや型変換
-    * メンバアクセス(a.b、a->b、a[x]、 \*a、&a ...)
-    * 関数呼び出し演算子(f(...))、sizeof、decltype等
+* 四則演算、代入(a = b、a += b ...)、インクリメント、比較、論理式
+* 明示的キャストや型変換
+* メンバアクセス(a.b、a->b、a[x]、 \*a、&a ...)
+* 関数呼び出し演算子(f(...))、sizeof、decltype等
 
-* expressionは、以下のいずれかに分類される。lvalueでないexpressionがrvalueである。
-    * lvalue
-    * rvalue
 
-* lvalueとは、関数もしくはオブジェクトを指す。
+expressionは、
 
-* rvalueは、以下のいずれかに分類される。
-    * xvalue
-    * prvalue
+* [lvalue](#SS_6_14_1_1)
+* [rvalue](#SS_6_14_1_2)
+* [xvalue](#SS_6_14_1_3)
+* [glvalue](#SS_6_14_1_5)
+* [prvalue](#SS_6_14_1_4)
 
-* xvalueとは以下のようなものである。
-    * 戻り値の型がT&&(Tは任意の型)である関数の呼び出し式(std::move(x))
-    * オブジェクトへのT&&へのキャスト式(static_cast<char&&>(x))
-    * aを配列のrvalueとした場合のa[N]や、
-      cをクラス型のrvalueとした場合のc.m(mはaの非staticメンバ)等
-
-* prvalueとは、オブジェクトやビットフィールドを初期化する、
-  もしくはオペランドの値を計算する式であり、以下のようなものである。
-    * 文字列リテラルを除くリテラル
-    * 戻り値の型が非リファレンスである関数呼び出し式、
-      または前置++と前置--を除くオーバーロードされた演算子式(path.string()、str1 + str2、it++ ...)
-    * 組み込み型インスタンスaのa++、a\-\-(++a、\-\-aはlvalue)
-    * 組み込み型インスタンスa、bに対する
-      a + b、 a % b、 a & b、 a && b、 a || b、 !a、 a < b、 a == b等
-
-* glvalueは、以下のいずれかに分類される。
-    * lvalue
-    * xvalue
-
+に分類される。
 <!-- pu:plant_uml/rvalue.pu--><p><img src="data:image/png;base64,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" /></p>
 
 
+expressionは、[lvalue](#SS_6_14_1_1)か[rvalue](#SS_6_14_1_2)である。
+
+
 #### lvalue <a id="SS_6_14_1_1"></a>
-「[expression](#SS_6_14_1)」を参照せよ。
+lvalueとは、
+
+* 名前を持つオブジェクト(識別子で参照可能)や関数を指す式
+* 代入式の左辺になり得る式であるため、左辺値と呼ばれることがある。
+* [rvalue](#SS_6_14_1_2)でない[expression](#SS_6_14_1)がlvalueである。
+
+`T const&`は代入式の左辺になりは得ないがlvalueである。[rvalueリファレンス](#SS_6_15_1)もlvalueである。
 
 #### rvalue <a id="SS_6_14_1_2"></a>
-「[expression](#SS_6_14_1)」を参照せよ。
+rvalueとは、
+
+* 一時的な値を表す式(代入式の右辺値として使われることが多い)
+* [xvalue](#SS_6_14_1_3)か[prvalue](#SS_6_14_1_4)である。
+* [lvalue](#SS_6_14_1_1)でない[expression](#SS_6_14_1)がrvalueである。
+
+[rvalueリファレンス](#SS_6_15_1)はlvalueであるため、
+expressionがrvalueリファレンスであることとrvalueであることとは全く異なる概念である。
 
 #### xvalue <a id="SS_6_14_1_3"></a>
-「[expression](#SS_6_14_1)」を参照せよ。
+xvalueとは以下のようなものである。
+
+* 戻り値の型がT&&(Tは任意の型)である関数の呼び出し式(std::move(x))
+* オブジェクトへのT&&へのキャスト式(static_cast<char&&>(x))
+* aを配列のxvalueとした場合のa[N]や、cをクラス型のrvalueとした場合のc.m(mはaの非staticメンバ)等
 
 #### prvalue <a id="SS_6_14_1_4"></a>
-「[expression](#SS_6_14_1)」を参照せよ。
+prvalueとは、オブジェクトやビットフィールドを初期化する、
+もしくはオペランドの値を計算する式であり、以下のようなものである。
+
+* 文字列リテラルを除くリテラル
+* 戻り値の型が非リファレンスである関数呼び出し式、
+  または前置++と前置--を除くオーバーロードされた演算子式(`path.string()`、`str1 + str2`、`it++` ...)
+* 組み込み型インスタンスaの`a++`、`a--`(`++a`や`--a`はlvalue)
+* 組み込み型インスタンスa、bに対する
+  `a + b`、 `a % b`、 `a & b`、 `a && b`、 `a || b`、 `!a`、 `a < b`、 `a == b`等
+
+つまり、prvalueとはいわゆるテンポラリオブジェクトのことであるため
+(下記のstd::string()で作られるようなオブジェクト)、名前はない。
+また、アドレス演算子(&)のオペランドになれない。
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 10
+    // sを初期化するためにstd::string{}により生成されるオブジェクトはprvalue、 sはlvalue
+    //   ↓lvalue
+    auto s = std::string{};  // この式の左辺はテンポラリオブジェクト(つまりprvalue)
+
+    /*
+    auto* sp = &std::string{};
+    ↑は、コンパイルエラー
+    ↓は、その時のg++のエラーメッセージ
+    error: taking address of rvalue
+    */
+
+    // 下記のようにすればアドレスを取得できるが、このようなことはすべきではない。
+    auto&& rvalue_ref = std::string{};
+    auto   sp = &rvalue_ref;  // spはrvalue_refのアドレスを指しているが、、、
+```
+
+正確にはprvalueと呼ぶべき場面で、単にrvalueと呼ばれることがある。
+このドキュメントでも、そうなっていることもある。
+
+#### glvalue <a id="SS_6_14_1_5"></a>
+glvalueは、
+
+* [lvalue](#SS_6_14_1_1)か[xvalue](#SS_6_14_1_3)である。
+* "generalized lvalue"の略称
 
 ### decltypeとexpression <a id="SS_6_14_2"></a>
 エッセンシャルタイプがTであるlvalue、xvalue、prvalueに対して
@@ -23544,27 +23584,24 @@ decltypeの算出結果は下表のようになる。
 に有効に活用できる。
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 102
+    //  example/term_explanation/decltype_expression_ut.cpp 7
 
     #define IS_LVALUE(EXPR_) std::is_lvalue_reference_v<decltype((EXPR_))>
     #define IS_XVALUE(EXPR_) std::is_rvalue_reference_v<decltype((EXPR_))>
     #define IS_PRVALUE(EXPR_) !std::is_reference_v<decltype((EXPR_))>
     #define IS_RVALUE(EXPR_) (IS_PRVALUE(EXPR_) || IS_XVALUE(EXPR_))
 
-    TEST(Expression, rvalue)
-    {
-        auto str = std::string{};
+    auto str = std::string{};
 
-        static_assert(IS_LVALUE(str), "EXPR_ must be lvalue");
-        static_assert(!IS_RVALUE(str), "EXPR_ must NOT be rvalue");
+    static_assert(IS_LVALUE(str), "EXPR_ must be lvalue");
+    static_assert(!IS_RVALUE(str), "EXPR_ must NOT be rvalue");
 
-        static_assert(IS_XVALUE(std::move(str)), "EXPR_ must be xvalue");
-        static_assert(!IS_PRVALUE(std::move(str)), "EXPR_ must NOT be prvalue");
+    static_assert(IS_XVALUE(std::move(str)), "EXPR_ must be xvalue");
+    static_assert(!IS_PRVALUE(std::move(str)), "EXPR_ must NOT be prvalue");
 
-        static_assert(IS_PRVALUE(std::string{}), "EXPR_ must be prvalue");
-        static_assert(IS_RVALUE(std::string{}), "EXPR_ must be rvalue");
-        static_assert(!IS_LVALUE(std::string{}), "EXPR_ must NOT be lvalue");
-    }
+    static_assert(IS_PRVALUE(std::string{}), "EXPR_ must be prvalue");
+    static_assert(IS_RVALUE(std::string{}), "EXPR_ must be rvalue");
+    static_assert(!IS_LVALUE(std::string{}), "EXPR_ must NOT be lvalue");
 ```
 
 ## リファレンス <a id="SS_6_15"></a>
@@ -23579,44 +23616,10 @@ decltypeの算出結果は下表のようになる。
 ### rvalueリファレンス <a id="SS_6_15_1"></a>
 本節を読み進む前に、「[expressionと値カテゴリ](#SS_6_14)」を理解することを強く勧める。
 
-rvalueリファレンスは「一時オブジェクト（rvalue）」にバインドできる参照で、
+rvalueリファレンスは「一時オブジェクト(rvalue)」にバインドできる参照で、
 C++11の[moveセマンティクス](#SS_6_18_3)と
 [perfect forwarding](#SS_6_15_4)を実現するために導入されたシンタックスである。
 rvalueリファレンスのの形式は任意の型Tに対して、`T&&`である。
-
-正確さよりも判りやすさを優先して説明すると、
-
-* lvalueとは代入式の左辺になり得る式であるため、左辺値と呼ばれることがある
-* rvalueとは代入式の左辺にはなり得ない式であるため、右辺値と呼ばれることがある
-
-である。
-
-T const&は左辺になり得ないが、lvalueである。rvalueリファレンス(T&&)もlvalueであるため、
-rvalueであることとrvalueリファレンスであることとは全く異なる(「[decltypeとexpression](#SS_6_14_2)」参照)。
-
-xvalueとは、多くの場合、「std::move()の呼び出し式のことである」と考えても差し支えない。
-
-prvalueとは、いわゆるテンポラリオブジェクトのことであるため
-(下記のstd::string()で作られるようなオブジェクト)、名前はない。
-また、アドレス演算子(&)のオペランドになれない。
-
-```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 10
-    // sを初期化するためにstd::string{}により生成されるオブジェクトはprvalue、 sはlvalue
-    //   ↓lvalue
-    auto s = std::string{};  // この式の左辺はテンポラリオブジェクト(つまりrvalue)
-
-    /*
-    auto* sp = &std::string{};
-    ↑は、コンパイルエラー
-    ↓は、その時のg++のエラーメッセージ
-    error: taking address of rvalue
-    */
-
-    // 下記のようにすればアドレスを取得できるが、このようなことはすべきではない。
-    auto&& rvalue_ref = std::string{};
-    auto   sp = &rvalue_ref;  // spはrvalue_refのアドレスを指しているが、、、
-```
 
 C++11でrvalueの概念の整理やrvalueリファレンス、
 std::move()の導入が行われた目的はプログラム実行速度の向上である。
@@ -23630,7 +23633,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 1. 下記コードにより「lvalueからの代入」を説明する。
 
     ```.cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 72
+    //  example/term_explanation/rvalue_move_ut.cpp 9
 
     auto str0 = std::string{};        // str0はlvalue
     auto str1 = std::string{"hehe"};  // str1もlvalue
@@ -23653,7 +23656,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 2. 下記コードにより「rvalueからの代入」を説明する。
 
     ```.cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 83
+    //  example/term_explanation/rvalue_move_ut.cpp 20
 
     auto str0 = std::string{};        // str0はlvalue
     str0      = std::string{"hehe"};  // rvalueからの代入
@@ -23678,7 +23681,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 3. 下記コードにより「std::move(lvalue)からの代入」を説明する。
 
     ```.cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 93
+    //  example/term_explanation/rvalue_move_ut.cpp 30
 
     auto str0 = std::string{};        // str0はlvalue
     auto str1 = std::string{"hehe"};  // str1もlvalue
@@ -23943,7 +23946,7 @@ danglingポインタとは、[danglingリファレンス](#SS_6_15_6)と同じ�
 rvalueの内部ハンドルを返さないようにすることが可能となり、上記の危険性を緩和することができる。
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 128
+    //  example/term_explanation/ref_qualifiers_ut.cpp 8
 
     class C {
     public:
@@ -23982,7 +23985,7 @@ rvalueの内部ハンドルを返さないようにすることが可能とな�
     };
 ```
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 169
+    //  example/term_explanation/ref_qualifiers_ut.cpp 49
 
     auto        c    = C{"c0"};
     auto const& s0_0 = c.GetString0();        // OK cが解放されるまでs0_0は有効

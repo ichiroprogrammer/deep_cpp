@@ -3574,59 +3574,84 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 
 ### expression
 
-C++においてexpression、lvalue、rvalue、xvalue、glvalue、prvalueは以下のように定められている。
+[expression](https://ja.cppreference.com/w/cpp/language/expressions)(式)とは、
+「演算子とそのオペランドの並び」である(オペランドのみの記述も式である)。
+演算子とは以下のようなものである。
 
-* [expression](https://ja.cppreference.com/w/cpp/language/expressions)(式)
-  とは「演算子とそのオペランドの並び」である(オペランドのみの記述も式である)。
-  演算子とは以下のようなものである。
-    * 四則演算、代入(a = b、a += b ...)、インクリメント、比較、論理式
-    * 明示的キャストや型変換
-    * メンバアクセス(a.b、a->b、a[x]、 \*a、&a ...)
-    * 関数呼び出し演算子(f(...))、sizeof、decltype等
+* 四則演算、代入(a = b、a += b ...)、インクリメント、比較、論理式
+* 明示的キャストや型変換
+* メンバアクセス(a.b、a->b、a[x]、 \*a、&a ...)
+* 関数呼び出し演算子(f(...))、sizeof、decltype等
 
-* expressionは、以下のいずれかに分類される。lvalueでないexpressionがrvalueである。
-    * lvalue
-    * rvalue
 
-* lvalueとは、関数もしくはオブジェクトを指す。
+expressionは、
 
-* rvalueは、以下のいずれかに分類される。
-    * xvalue
-    * prvalue
+* [expression|lvalue](---)
+* [expression|rvalue](---)
+* [expression|xvalue](---)
+* [expression|glvalue](---)
+* [expression|prvalue](---)
 
-* xvalueとは以下のようなものである。
-    * 戻り値の型がT&&(Tは任意の型)である関数の呼び出し式(std::move(x))
-    * オブジェクトへのT&&へのキャスト式(static_cast<char&&>(x))
-    * aを配列のrvalueとした場合のa[N]や、
-      cをクラス型のrvalueとした場合のc.m(mはaの非staticメンバ)等
-
-* prvalueとは、オブジェクトやビットフィールドを初期化する、
-  もしくはオペランドの値を計算する式であり、以下のようなものである。
-    * 文字列リテラルを除くリテラル
-    * 戻り値の型が非リファレンスである関数呼び出し式、
-      または前置++と前置--を除くオーバーロードされた演算子式(path.string()、str1 + str2、it++ ...)
-    * 組み込み型インスタンスaのa++、a\-\-(++a、\-\-aはlvalue)
-    * 組み込み型インスタンスa、bに対する
-      a + b、 a % b、 a & b、 a && b、 a || b、 !a、 a < b、 a == b等
-
-* glvalueは、以下のいずれかに分類される。
-    * lvalue
-    * xvalue
-
+に分類される。
 ![expression分類](plant_uml/rvalue.png)
 
 
+expressionは、[expression|lvalue](---)か[expression|rvalue](---)である。
+
+
 #### lvalue
-「[expression](---)」を参照せよ。
+lvalueとは、
+
+* 名前を持つオブジェクト(識別子で参照可能)や関数を指す式
+* 代入式の左辺になり得る式であるため、左辺値と呼ばれることがある。
+* [expression|rvalue](---)でない[expression](---)がlvalueである。
+
+`T const&`は代入式の左辺になりは得ないがlvalueである。[rvalueリファレンス](---)もlvalueである。
 
 #### rvalue
-「[expression](---)」を参照せよ。
+rvalueとは、
+
+* 一時的な値を表す式(代入式の右辺値として使われることが多い)
+* [expression|xvalue](---)か[expression|prvalue](---)である。
+* [expression|lvalue](---)でない[expression](---)がrvalueである。
+
+[rvalueリファレンス](---)はlvalueであるため、
+expressionがrvalueリファレンスであることとrvalueであることとは全く異なる概念である。
 
 #### xvalue
-「[expression](---)」を参照せよ。
+xvalueとは以下のようなものである。
+
+* 戻り値の型がT&&(Tは任意の型)である関数の呼び出し式(std::move(x))
+* オブジェクトへのT&&へのキャスト式(static_cast<char&&>(x))
+* aを配列のxvalueとした場合のa[N]や、cをクラス型のrvalueとした場合のc.m(mはaの非staticメンバ)等
 
 #### prvalue
-「[expression](---)」を参照せよ。
+prvalueとは、オブジェクトやビットフィールドを初期化する、
+もしくはオペランドの値を計算する式であり、以下のようなものである。
+
+* 文字列リテラルを除くリテラル
+* 戻り値の型が非リファレンスである関数呼び出し式、
+  または前置++と前置--を除くオーバーロードされた演算子式(`path.string()`、`str1 + str2`、`it++` ...)
+* 組み込み型インスタンスaの`a++`、`a--`(`++a`や`--a`はlvalue)
+* 組み込み型インスタンスa、bに対する
+  `a + b`、 `a % b`、 `a & b`、 `a && b`、 `a || b`、 `!a`、 `a < b`、 `a == b`等
+
+つまり、prvalueとはいわゆるテンポラリオブジェクトのことであるため
+(下記のstd::string()で作られるようなオブジェクト)、名前はない。
+また、アドレス演算子(&)のオペランドになれない。
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #0:0 begin -1
+```
+
+正確にはprvalueと呼ぶべき場面で、単にrvalueと呼ばれることがある。
+このドキュメントでも、そうなっていることもある。
+
+#### glvalue
+glvalueは、
+
+* [expression|lvalue](---)か[expression|xvalue](---)である。
+* "generalized lvalue"の略称
 
 ### decltypeとexpression
 エッセンシャルタイプがTであるlvalue、xvalue、prvalueに対して
@@ -3648,7 +3673,7 @@ decltypeの算出結果は下表のようになる。
 に有効に活用できる。
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/decltype_expression_ut.cpp #0:0 begin -1
 ```
 
 ## リファレンス
@@ -3663,30 +3688,10 @@ decltypeの算出結果は下表のようになる。
 ### rvalueリファレンス
 本節を読み進む前に、「[expressionと値カテゴリ](---)」を理解することを強く勧める。
 
-rvalueリファレンスは「一時オブジェクト（rvalue）」にバインドできる参照で、
+rvalueリファレンスは「一時オブジェクト(rvalue)」にバインドできる参照で、
 C++11の[moveセマンティクス](---)と
 [perfect forwarding](---)を実現するために導入されたシンタックスである。
 rvalueリファレンスのの形式は任意の型Tに対して、`T&&`である。
-
-正確さよりも判りやすさを優先して説明すると、
-
-* lvalueとは代入式の左辺になり得る式であるため、左辺値と呼ばれることがある
-* rvalueとは代入式の左辺にはなり得ない式であるため、右辺値と呼ばれることがある
-
-である。
-
-T const&は左辺になり得ないが、lvalueである。rvalueリファレンス(T&&)もlvalueであるため、
-rvalueであることとrvalueリファレンスであることとは全く異なる(「[decltypeとexpression](---)」参照)。
-
-xvalueとは、多くの場合、「std::move()の呼び出し式のことである」と考えても差し支えない。
-
-prvalueとは、いわゆるテンポラリオブジェクトのことであるため
-(下記のstd::string()で作られるようなオブジェクト)、名前はない。
-また、アドレス演算子(&)のオペランドになれない。
-
-```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #0:0 begin -1
-```
 
 C++11でrvalueの概念の整理やrvalueリファレンス、
 std::move()の導入が行われた目的はプログラム実行速度の向上である。
@@ -3700,7 +3705,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 1. 下記コードにより「lvalueからの代入」を説明する。
 
     ```.cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #0:1 begin -1
+    // @@@ example/term_explanation/rvalue_move_ut.cpp #0:0 begin -1
     ```
 
     * ステップ1。
@@ -3719,7 +3724,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 2. 下記コードにより「rvalueからの代入」を説明する。
 
     ```.cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #0:2 begin -1
+    // @@@ example/term_explanation/rvalue_move_ut.cpp #0:1 begin -1
     ```
 
     * ステップ1。str0、「std::string()により作られたテンポラリオブジェクト」がそれぞれ初期化される
@@ -3741,7 +3746,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 3. 下記コードにより「std::move(lvalue)からの代入」を説明する。
 
     ```.cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #0:3 begin -1
+    // @@@ example/term_explanation/rvalue_move_ut.cpp #0:2 begin -1
     ```
 
     * ステップ1。「lvalueからの代入」のステップ1と同じである。
@@ -3888,10 +3893,10 @@ danglingポインタとは、[danglingリファレンス](---)と同じような
 rvalueの内部ハンドルを返さないようにすることが可能となり、上記の危険性を緩和することができる。
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #4:0 begin
+    // @@@ example/term_explanation/ref_qualifiers_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #4:1 begin -1
+    // @@@ example/term_explanation/ref_qualifiers_ut.cpp #0:1 begin -1
 ```
 
 ### lvalue修飾
