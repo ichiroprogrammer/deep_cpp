@@ -10,6 +10,9 @@
 
 
 ## 改訂履歴 <a id="SS_1_1"></a>
+* V20.06
+    * expressionの説明の抜本的変更
+    * lvalueリファレンス、rvalueリファレンス、forwardingリファレンスの説明の修正と追加
 * V20.03
     * ダイヤモンド継承の図解と説明強化
     * 仮想継承の説明強化
@@ -5766,7 +5769,7 @@ __この章の構成__
 
 &emsp;&emsp; [ログ取得ライブラリの開発2](#SS_4_6)  
 &emsp;&emsp; [その他のテンプレートテクニック](#SS_4_7)  
-&emsp;&emsp;&emsp; [ユニバーサルリファレンスとstd::forward](#SS_4_7_1)  
+&emsp;&emsp;&emsp; [forwardingリファレンスとstd::forward](#SS_4_7_1)  
 &emsp;&emsp;&emsp; [ジェネリックラムダによる関数内での関数テンプレートの定義](#SS_4_7_2)  
 &emsp;&emsp;&emsp; [クラステンプレートと継承の再帰構造](#SS_4_7_3)  
 &emsp;&emsp;&emsp; [意図しないname lookupの防止](#SS_4_7_4)  
@@ -11384,7 +11387,7 @@ FixedPointの単体テストコードを以下に示す。
 ## その他のテンプレートテクニック <a id="SS_4_7"></a>
 ここでは、これまでの議論の対象にならなかったテンプレートのテクニックや注意点について記述する。
 
-### ユニバーサルリファレンスとstd::forward <a id="SS_4_7_1"></a>
+### forwardingリファレンスとstd::forward <a id="SS_4_7_1"></a>
 2個の文字列からstd::vector\<std::string>を生成する下記のような関数について考える。
 
 ```cpp
@@ -11417,7 +11420,7 @@ FixedPointの単体テストコードを以下に示す。
 ```
 
 このコードは正しく動作するものの、move代入できず、パフォーマンス問題を引き起こす可能性があるため、
-[ユニバーサルリファレンス](#SS_6_15_2)を使って下記のように書き直した。
+[forwardingリファレンス](#SS_6_15_3)を使って下記のように書き直した。
 
 ```cpp
     //  example/template_cpp17/universal_ref_ut.cpp 41
@@ -11632,9 +11635,9 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
     }
 ```
 
-ユニバーサルリファレンスはconstにすることができないが
+forwardingリファレンスはconstにすることができないが
 (T const&&はconstな[rvalue](#SS_6_14_1_2)リファレンスである)、
-ユニバーサルリファレンスが[lvalue](#SS_6_14_1_1)リファレンスであった場合は、
+forwardingリファレンスが[lvalue](#SS_6_14_1_1)リファレンスであった場合は、
 constなlvalueリファレンスとして扱うべきである。
 
 従って、下記のようなコードは書くべきではない。
@@ -11671,7 +11674,7 @@ constなlvalueリファレンスとして扱うべきである。
 ```
 
 任意の型Tのrvalueのみを引数に取る関数テンプレートを下記のように記述した場合、
-すでに述べたように引数はユニバーサルリファレンスとなってしまうため、lvalueにもバインドしてしまう。
+すでに述べたように引数はforwardingリファレンスとなってしまうため、lvalueにもバインドしてしまう。
 
 ```cpp
     //  example/template_cpp17/universal_ref_ut.cpp 273
@@ -11704,7 +11707,7 @@ constなlvalueリファレンスとして扱うべきである。
     f(std::string{});  // f(std::string&&)にはバインドできる
 ```
 
-なお、ユニバーサルリファレンスは、[リファレンスcollapsing](#SS_6_15_5)の一機能としても理解できる。
+なお、forwardingリファレンスは、[リファレンスcollapsing](#SS_6_15_6)の一機能としても理解できる。
 
 ### ジェネリックラムダによる関数内での関数テンプレートの定義 <a id="SS_4_7_2"></a>
 下記のようなクラスとoperator<<があった場合を考える。
@@ -13559,12 +13562,12 @@ C++17からサポートされた「クラステンプレートのテンプレー
   また、"namespace Inner\_"で宣言、定義されている宣言、定義は単体テストを除き、
   外部から参照しない(「[is_void_sfinae_f](#SS_4_3_2_3)の実装」参照)。
 
-* ユニバーサルリファレンスの実際の型がlvalueリファレンスであるならば、
+* [forwardingリファレンス](#SS_6_15_3)の実際の型がlvalueリファレンスであるならば、
   constなlvalueリファレンスとして扱う
   。
 
 * ユニバーサルリファレンス引数を他の関数に渡すのであれば、std::forwardを使う
-  (「[ユニバーサルリファレンス](#SS_6_15_2)」、「[ユニバーサルリファレンスとstd::forward](#SS_4_7_1)」参照)。
+  (「[forwardingリファレンス](#SS_6_15_3)」、「[forwardingリファレンスとstd::forward](#SS_4_7_1)」参照)。
 
 * 関数テンプレートとその特殊化はソースコード上なるべく近い位置で定義する
   (「[two phase name lookup](#SS_6_10_3)」参照)。
@@ -13607,9 +13610,9 @@ C++17からサポートされた「クラステンプレートのテンプレー
     static_assert(f(&i32) == 1);     // f-2ではなく、f-1が呼ばれる
 ```
 
-* ユニバーサルリファレンスを持つ関数テンプレートをオーバーロードしない。
-  「[ユニバーサルリファレンスとstd::forward](#SS_4_7_1)」で述べたように、
-  ユニバーサルリファレンスはオーバーロードするためのものではなく、
+* forwardingリファレンスを持つ関数テンプレートをオーバーロードしない。
+  「[forwardingリファレンスとstd::forward](#SS_4_7_1)」で述べたように、
+  forwardingリファレンスはオーバーロードするためのものではなく、
   lvalue、rvalue両方を受け取ることができる関数テンプレートを、
   オーバーロードを使わずに実現するための記法である。
 
@@ -15468,13 +15471,14 @@ __この章の構成__
 &emsp;&emsp;&emsp; [decltypeとexpression](#SS_6_14_2)  
 
 &emsp;&emsp; [リファレンス](#SS_6_15)  
-&emsp;&emsp;&emsp; [rvalueリファレンス](#SS_6_15_1)  
-&emsp;&emsp;&emsp; [ユニバーサルリファレンス](#SS_6_15_2)  
+&emsp;&emsp;&emsp; [lvalueリファレンス](#SS_6_15_1)  
+&emsp;&emsp;&emsp; [rvalueリファレンス](#SS_6_15_2)  
 &emsp;&emsp;&emsp; [forwardingリファレンス](#SS_6_15_3)  
-&emsp;&emsp;&emsp; [perfect forwarding](#SS_6_15_4)  
-&emsp;&emsp;&emsp; [リファレンスcollapsing](#SS_6_15_5)  
-&emsp;&emsp;&emsp; [danglingリファレンス](#SS_6_15_6)  
-&emsp;&emsp;&emsp; [danglingポインタ](#SS_6_15_7)  
+&emsp;&emsp;&emsp; [ユニバーサルリファレンス](#SS_6_15_4)  
+&emsp;&emsp;&emsp; [perfect forwarding](#SS_6_15_5)  
+&emsp;&emsp;&emsp; [リファレンスcollapsing](#SS_6_15_6)  
+&emsp;&emsp;&emsp; [danglingリファレンス](#SS_6_15_7)  
+&emsp;&emsp;&emsp; [danglingポインタ](#SS_6_15_8)  
 
 &emsp;&emsp; [リファレンス修飾](#SS_6_16)  
 &emsp;&emsp;&emsp; [rvalue修飾](#SS_6_16_1)  
@@ -18496,8 +18500,8 @@ rvalueをバインドするリファレンスが存在しない状態で、
 そのrvalueがメンバ変数へのリファレンスを返す関数を呼び出し、
 そのリファレンスをバインドするリファレンス変数を初期化した場合、
 リファレンスが指すオブジェクトはすでにライフタイムを終了している。
-このような状態のリファレンスを[danglingリファレンス](#SS_6_15_6)と呼ぶ。
-同様に、このような状態のポインタを[danglingポインタ](#SS_6_15_7)と呼ぶ。
+このような状態のリファレンスを[danglingリファレンス](#SS_6_15_7)と呼ぶ。
+同様に、このような状態のポインタを[danglingポインタ](#SS_6_15_8)と呼ぶ。
 
 ### オブジェクトのコピー <a id="SS_6_5_9"></a>
 #### シャローコピー <a id="SS_6_5_9_1"></a>
@@ -23503,7 +23507,7 @@ lvalueとは、
 * 代入式の左辺になり得る式であるため、左辺値と呼ばれることがある。
 * [rvalue](#SS_6_14_1_2)でない[expression](#SS_6_14_1)がlvalueである。
 
-`T const&`は代入式の左辺になりは得ないがlvalueである。[rvalueリファレンス](#SS_6_15_1)もlvalueである。
+`T const&`は代入式の左辺になりは得ないがlvalueである。[rvalueリファレンス](#SS_6_15_2)もlvalueである。
 
 #### rvalue <a id="SS_6_14_1_2"></a>
 rvalueとは、
@@ -23512,7 +23516,7 @@ rvalueとは、
 * [xvalue](#SS_6_14_1_3)か[prvalue](#SS_6_14_1_4)である。
 * [lvalue](#SS_6_14_1_1)でない[expression](#SS_6_14_1)がrvalueである。
 
-[rvalueリファレンス](#SS_6_15_1)はlvalueであるため、
+[rvalueリファレンス](#SS_6_15_2)はlvalueであるため、
 expressionがrvalueリファレンスであることとrvalueであることとは全く異なる概念である。
 
 #### xvalue <a id="SS_6_14_1_3"></a>
@@ -23605,21 +23609,112 @@ decltypeの算出結果は下表のようになる。
 ```
 
 ## リファレンス <a id="SS_6_15"></a>
-ここでは、C++11から導入された
 
-* [rvalueリファレンス](#SS_6_15_1)
-* [ユニバーサルリファレンス](#SS_6_15_2)
-* [リファレンスcollapsing](#SS_6_15_5)
+リファレンス(参照)とは、以下のいずれか、もしくはすべてを指すが、
+単にリファレンスと呼ぶ場合、lvalueリファレンスを指すことが多い。
 
-について解説する。
+* [lvalueリファレンス](#SS_6_15_1)
+* [rvalueリファレンス](#SS_6_15_2)
+* [forwardingリファレンス](#SS_6_15_3)
 
-### rvalueリファレンス <a id="SS_6_15_1"></a>
-本節を読み進む前に、「[expressionと値カテゴリ](#SS_6_14)」を理解することを強く勧める。
 
-rvalueリファレンスは「一時オブジェクト(rvalue)」にバインドできる参照で、
-C++11の[moveセマンティクス](#SS_6_18_3)と
-[perfect forwarding](#SS_6_15_4)を実現するために導入されたシンタックスである。
-rvalueリファレンスのの形式は任意の型Tに対して、`T&&`である。
+これらの概念と関わり強い、[リファレンスcollapsing](#SS_6_15_6)についても併せて解説を行う。
+
+### lvalueリファレンス <a id="SS_6_15_1"></a>
+lvalueリファレンスとは、
+
+* C++98(もしくは03)から導入されたシンタックスであり、任意の型Tに対して`T&`という形式で宣言される。
+* 既存のオブジェクトに対する別名(エイリアス)であり、宣言時に必ず初期化が必要で、
+  一度初期化後は別のオブジェクトを参照することはできない。
+* [rvalueリファレンス](#SS_6_15_2)導入前のC++では、すべてのリファレンスはlvalueリファレンスであったため、
+  lvalueリファレンスを単にリファレンスと呼んでいた。
+* オブジェクトaのエイリアスとして、
+   リファレンスa_refが宣言されることを「a_refはaをバインドする」という。
+* 以下のコード例で示すように、
+    * 非const lvalueリファレンスは[rvalue](#SS_6_14_1_2)をバインドできないが、
+    * const lvalueリファレンスは[rvalue](#SS_6_14_1_2)をバインドできる。
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 36
+
+    int  a     = 0;
+    int& a_ref = a;  // a_refはaのリファレンス
+                     // a_refはaをバインドする
+
+    ASSERT_EQ(&a, &a_ref);  // リファレンスは別名に過ぎないため、このテストが成立
+
+    int b = 1;
+    a_ref = b;  // 一見、a_refの再初期化に見えるが、実際は値の代入になるため、以下のテストが成立
+    ASSERT_EQ(a, b);  // リファレンスは別名に過ぎないため、このテストが成立
+
+    /*
+    int& t_ref = int(99);  非const lvalueリファレンスはrvalueをバインドできない */
+    int const& t_ref = int(99);  // 上記とは異なり、const lvalueリファレンスはrvalueをバインドできる
+    ASSERT_EQ(t_ref, 99);
+```
+
+このようなリファレンスのバインドの可否はオーバーロードにも影響を与える。
+
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 56
+
+    int f(int& )        { return 0; }
+    int f(int const & ) { return 1; }
+```
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 65
+
+    int       a = 0;
+    int const b = 0;
+
+    ASSERT_EQ(0, f(a));
+    ASSERT_EQ(1, f(b));      // constオブジェクトのバインド
+    ASSERT_EQ(1, f(int()));  // rvalueのバインド
+```
+
+### rvalueリファレンス <a id="SS_6_15_2"></a>
+rvalueリファレンスは、
+
+*  C++11で導入されたシンタックスであり、任意の型Tに対して、`T&&`で宣言される。
+* 「テンポラリオブジェクト(rvalue)」をバインドできるリファレンス
+*  C++11の[moveセマンティクス](#SS_6_18_3)と[perfect forwarding](#SS_6_15_5)を実現するために導入された。
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 81
+
+    int        a      = 0;
+    int const& a_ref0 = a;        // const lvalueリファレンス
+    int const& a_ref1 = int(99);  // const lvalueリファレンスはrvalueをバインドできる
+    int&&      a_ref2 = int(99);  // rvalueリファレンスはテンポラリオブジェクトをバインドできる
+
+    ASSERT_EQ(a_ref1, 99);
+    ASSERT_EQ(a_ref2, 99);
+```
+
+このようなリファレンスのバインドの可否はオーバーロードにも影響を与える。
+
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 94
+
+    int f(std::string&)       { return 0; } // f-0
+    int f(std::string const&) { return 1; } // f-1
+    int f(std::string&&)      { return 2; } // f-2
+```
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 105
+
+    std::string       str;
+    std::string const cstr;
+
+    ASSERT_EQ(0, f(str));            // f-0の呼び出し
+    ASSERT_EQ(1, f(cstr));           // f-1の呼び出し、const lvalueリファレンスのバインド
+    ASSERT_EQ(2, f(std::string{}));  // f-2の呼び出し、f-2が無ければ、f-1を呼び出すが
+    ASSERT_EQ(2, f(std::move(str))); // f-2の呼び出し
+```
 
 C++11でrvalueの概念の整理やrvalueリファレンス、
 std::move()の導入が行われた目的はプログラム実行速度の向上である。
@@ -23696,22 +23791,26 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
       str1が所有している文字列バッファをstr0の所有にする。
       この代入もmove代入と呼ぶ。
       この動作は「rvalueからの代入」と同じであり、同様に速度が向上するが、その副作用として、
-      str1.size() == 0となる。
+      str1への代入以外のアクセスは未定義動作になる可能性がある
+      (多くの実装では、str1.size() == 0となることが多いがこの動作は約束されない)。
 
 <!-- pu:plant_uml/rvalue_from_move.pu--><p><img src="data:image/png;base64,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jx594MAB53x0lnQVM7FlgwYNcj5Ur169nnzySTk5ZMgQ9fElZpyykpKStLS08ePHq+cCgELk2Ene/fv27fviiy/u3btXbnTksLKy0jl/YpFz2mmnvfnmm7t3777pppvy8vK+/PLLTssGDBiwdu3a/fv3q5MAoBA5dpJ3/1mzZjlzub+Rw6VLlzrnTyxy5s2b58x37Nghh6tXr+60rLi4WB0Cmqy8rJBd8vPz9UXimIgcO4ViwsA57Or8MebaYXNzsxzKnVOnZYsWLVKHgEZ2yNJtS20asqJIJCJN0dLS0tra2tbWpq8ZRyNy7BQbBs5hZmZmWVmZc7KioqKrmIl9+rRp05z5qlWr5HD9+vWdlkUfAhorIyccDjc0NDQ2NkrwqO/TQVeIHDt1FQaXX355//79JXVKS0uzso78KUenMRP79LS0tEmTJt17773y9AsuuMD5h6LyEcaMGXPPPfd0+r0JgMbKyKmtra2rq6uvr5fUkXsdfc04GpFjp9jMcA63b99+xRVXZGdnFxUVzZ07Nycnp9OYiX26RIs8RZ44bty4HTt2OOenT58ut03Dhw93vtOayMGxWRk5VVVVNTU1kjpyryM3OvqacTQiB/GRJUgIKyOnoqJCUkfudcLhcCQS0deMoxE5iI/IQUJYGTkrVqyorKysrq6WG53GxkZ9zTgakYP4iouL165dq58FuonIAZEDwCPdipwHah+Y/frs+evmy68Pb314TPGYO5+7M7asq9Gteu1zxRZ0NYic7iJyAHikW5EzefFkqR/505Hy6183/lV+nTh7YmxZV6Nb9drnii3oahA53UXkAPBItyKn5IkSqf/xtT9OS09b8vGSbkXI0m5Gjva5Ygu6GkROdxE5wJGfgf3OO++Ul5c/9thjn3322ddff/300087P6FO1ezfv//VV1+V8/X19erksmXLKioq1KE8/Z///KdM9u3bt3r1ailuaGhQj6JbkfPHf/xR6n955y8zczOdN3eJkLtfvvuGP99wy99uWfzR4ujiRf+zaOrfp970wE1/+tefnDPdqtc+1/EPIqe7iBzgyFthjx49Qh369+8/YsQIZ65+AveuXbvOP/9852RWVtZzzz3nPPHKK6/Mz893/s351q1b5dG//OUvO3fuVB8hJydn3bp10Z8ryELdiZz56+affdHZJeUlF1x5gfPmXnBmgfOqiqEj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" /></p>
 
 
-### ユニバーサルリファレンス <a id="SS_6_15_2"></a>
-関数テンプレートの型パラメータや型推論autoに&&をつけて宣言された変数を、
-ユニバーサルリファレンスと呼ぶ(C++17から「forwardingリファレンス」という正式名称が与えられた)。
-ユニバーサルリファレンスは一見rvalueリファレンスのように見えるが、
-下記に示す通り、lvalueにもrvalueにもバインドできる。
+### forwardingリファレンス <a id="SS_6_15_3"></a>
+関数テンプレートの型パラメータTに対して`T&&`として宣言された仮引数、
+または型推論を伴うauto&&として宣言された変数を、forwardingリファレンスと呼ぶ
+(この概念はC++14から存在し、慣用的にユニバーサルリファレンスと呼ばれていたが、
+C++17から正式にforwardingリファレンスと命名された)。
+forwardingリファレンスは一見rvalueリファレンスのように見えるが、
+下記に示す通り、lvalueにもrvalueにもバインドできる
+([リファレンスcollapsing](#SS_6_15_6)により、このようなバインドが可能になる)。
 
 ```cpp
     //  example/term_explanation/universal_ref_ut.cpp 8
 
     template <typename T>
-    void f(T&& t) noexcept  // tはユニバーサルリファレンス
+    void f(T&& t) noexcept  // tはforwardingリファレンス
     {
         ...
     }
@@ -23737,12 +23836,12 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
     g(std::vector<std::string>{"rvalue"});  // 引数はrvalue
 ```
 
-下記のコードは[ジェネリックラムダ](#SS_6_11_4)の引数をユニバーサルリファレンスにした例である。
+下記のコードは[ジェネリックラムダ](#SS_6_11_4)の引数をforwardingリファレンスにした例である。
 
 ```cpp
     //  example/term_explanation/universal_ref_ut.cpp 47
 
-    // sはユニバーサルリファレンス
+    // sはforwardingリファレンス
     auto value_type = [](auto&& s) noexcept {
         if (std::is_same_v<std::string&, decltype(s)>) {
             return 0;
@@ -23764,20 +23863,60 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
     ASSERT_EQ(2, value_type(std::string{"rvalue"}));
 ```
 
-通常、ユニバーサルリファレンスはstd::forwardと組み合わせて使用される。
+通常、forwardingリファレンスはstd::forwardと組み合わせて使用される。
 
 
-### forwardingリファレンス <a id="SS_6_15_3"></a>
-「[ユニバーサルリファレンス](#SS_6_15_2)」を参照せよ。
+### ユニバーサルリファレンス <a id="SS_6_15_4"></a>
+ユニバーサルリファレンスとは、「[forwardingリファレンス](#SS_6_15_3)」の通称、もしくは旧称である。
 
-### perfect forwarding <a id="SS_6_15_4"></a>
+### perfect forwarding <a id="SS_6_15_5"></a>
 perfect forwarding(完全転送)とは、引数の[rvalue](#SS_6_14_1_2)性や
 [lvalue](#SS_6_14_1_1)性を損失することなく、
 その引数を別の関数に転送する技術のことを指す。
-通常は、[ユニバーサルリファレンス](#SS_6_15_2)である関数の仮引数をstd::forwardを用いて、
+通常は、[forwardingリファレンス](#SS_6_15_3)である関数の仮引数をstd::forwardを用いて、
 他の関数に渡すことで実現される。
 
-### リファレンスcollapsing <a id="SS_6_15_5"></a>
+perfect forwardingの使用例を以下に示す。
+
+```cpp
+    //  example/term_explanation/perfect_forwarding_ut.cpp 7
+
+    class Widget {
+    public:
+        explicit Widget(std::string const& name) : name_{name} {}  // lvalueによるコンストラクタ
+        explicit Widget(std::string&& name) : name_{std::move(name)} {}  // rvalueによるコンストラクタ
+        std::string const& GetName() const { return name_; }
+
+    private:
+        std::string name_;  // コンストラクタの引数をcopy/move構築
+    };
+
+    template <typename T>
+    Widget make_Widget(T&& str)
+    {                                         // strはforwardingリファレンス
+        return Widget(std::forward<T>(str));  // perfect forwarding
+    }
+```
+```cpp
+    //  example/term_explanation/perfect_forwarding_ut.cpp 28
+
+    std::string       str{"lvalue ref"};
+    std::string const cstr{"lvalue const ref"};
+
+    Widget w0 = make_Widget(str);  // make_Widget -> Widget(std::string const&)
+    ASSERT_EQ(w0.GetName(), str);
+
+    Widget w1 = make_Widget(cstr);  // make_Widget -> Widget(std::string const&)
+    ASSERT_EQ(w1.GetName(), cstr);
+
+    Widget w2 = make_Widget(std::string{"rvalue ref"});  // make_Widget -> Widget(std::string &&)
+    ASSERT_EQ(w2.GetName(), "rvalue ref");
+
+    Widget w3 = make_Widget(std::move(str));  // make_Widget -> Widget(std::string &&)
+    ASSERT_EQ(w3.GetName(), "lvalue ref");    // strはムーブされたのでアクセス不可
+```
+
+### リファレンスcollapsing <a id="SS_6_15_6"></a>
 Tを任意の型とし、TRを下記のように宣言した場合、
 
 ```cpp
@@ -23883,7 +24022,7 @@ C++11からはエラーとならず、TRRはT&となる。
 このようなテンプレートの特殊化を不要にするリファレンスcollapsingは、
 有用な機能拡張であると言える。
 
-### danglingリファレンス <a id="SS_6_15_6"></a>
+### danglingリファレンス <a id="SS_6_15_7"></a>
 Dangling リファレンスとは、破棄後のオブジェクトを指しているリファレンスを指す。
 このようなリファレンスにアクセスすると、[未定義動作](#SS_6_19_7)に繋がるに繋がる。
 
@@ -23925,8 +24064,8 @@ Dangling リファレンスとは、破棄後のオブジェクトを指して�
     ASSERT_TRUE(A_destructed && X_destructed);
 ```
 
-### danglingポインタ <a id="SS_6_15_7"></a>
-danglingポインタとは、[danglingリファレンス](#SS_6_15_6)と同じような状態になったポインタを指す。
+### danglingポインタ <a id="SS_6_15_8"></a>
+danglingポインタとは、[danglingリファレンス](#SS_6_15_7)と同じような状態になったポインタを指す。
 
 ## リファレンス修飾 <a id="SS_6_16"></a>
 [rvalue修飾](#SS_6_16_1)と[lvalue修飾](#SS_6_16_2)とを併せて、リファレンス修飾と呼ぶ。

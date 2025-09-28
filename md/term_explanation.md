@@ -3677,21 +3677,67 @@ decltypeの算出結果は下表のようになる。
 ```
 
 ## リファレンス
-ここでは、C++11から導入された
 
+リファレンス(参照)とは、以下のいずれか、もしくはすべてを指すが、
+単にリファレンスと呼ぶ場合、lvalueリファレンスを指すことが多い。
+
+* [lvalueリファレンス](---)
 * [rvalueリファレンス](---)
-* [ユニバーサルリファレンス](---)
-* [リファレンスcollapsing](---)
+* [forwardingリファレンス](---)
 
-について解説する。
+
+これらの概念と関わり強い、[リファレンスcollapsing](---)についても併せて解説を行う。
+
+### lvalueリファレンス
+lvalueリファレンスとは、
+
+* C++98(もしくは03)から導入されたシンタックスであり、任意の型Tに対して`T&`という形式で宣言される。
+* 既存のオブジェクトに対する別名(エイリアス)であり、宣言時に必ず初期化が必要で、
+  一度初期化後は別のオブジェクトを参照することはできない。
+* [rvalueリファレンス](---)導入前のC++では、すべてのリファレンスはlvalueリファレンスであったため、
+  lvalueリファレンスを単にリファレンスと呼んでいた。
+* オブジェクトaのエイリアスとして、
+   リファレンスa_refが宣言されることを「a_refはaをバインドする」という。
+* 以下のコード例で示すように、
+    * 非const lvalueリファレンスは[expression|rvalue](---)をバインドできないが、
+    * const lvalueリファレンスは[expression|rvalue](---)をバインドできる。
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:0 begin -1
+```
+
+このようなリファレンスのバインドの可否はオーバーロードにも影響を与える。
+
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:1 begin
+```
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:2 begin -1
+```
 
 ### rvalueリファレンス
-本節を読み進む前に、「[expressionと値カテゴリ](---)」を理解することを強く勧める。
+rvalueリファレンスは、
 
-rvalueリファレンスは「一時オブジェクト(rvalue)」にバインドできる参照で、
-C++11の[moveセマンティクス](---)と
-[perfect forwarding](---)を実現するために導入されたシンタックスである。
-rvalueリファレンスのの形式は任意の型Tに対して、`T&&`である。
+*  C++11で導入されたシンタックスであり、任意の型Tに対して、`T&&`で宣言される。
+* 「テンポラリオブジェクト(rvalue)」をバインドできるリファレンス
+*  C++11の[moveセマンティクス](---)と[perfect forwarding](---)を実現するために導入された。
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:0 begin -1
+```
+
+このようなリファレンスのバインドの可否はオーバーロードにも影響を与える。
+
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:1 begin
+```
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:2 begin -1
+```
 
 C++11でrvalueの概念の整理やrvalueリファレンス、
 std::move()の導入が行われた目的はプログラム実行速度の向上である。
@@ -3757,16 +3803,20 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
       str1が所有している文字列バッファをstr0の所有にする。
       この代入もmove代入と呼ぶ。
       この動作は「rvalueからの代入」と同じであり、同様に速度が向上するが、その副作用として、
-      str1.size() == 0となる。
+      str1への代入以外のアクセスは未定義動作になる可能性がある
+      (多くの実装では、str1.size() == 0となることが多いがこの動作は約束されない)。
 
 ![std::move(lvalue)からの代入](plant_uml/rvalue_from_move.png)
 
 
-### ユニバーサルリファレンス
-関数テンプレートの型パラメータや型推論autoに&&をつけて宣言された変数を、
-ユニバーサルリファレンスと呼ぶ(C++17から「forwardingリファレンス」という正式名称が与えられた)。
-ユニバーサルリファレンスは一見rvalueリファレンスのように見えるが、
-下記に示す通り、lvalueにもrvalueにもバインドできる。
+### forwardingリファレンス
+関数テンプレートの型パラメータTに対して`T&&`として宣言された仮引数、
+または型推論を伴うauto&&として宣言された変数を、forwardingリファレンスと呼ぶ
+(この概念はC++14から存在し、慣用的にユニバーサルリファレンスと呼ばれていたが、
+C++17から正式にforwardingリファレンスと命名された)。
+forwardingリファレンスは一見rvalueリファレンスのように見えるが、
+下記に示す通り、lvalueにもrvalueにもバインドできる
+([リファレンスcollapsing](---)により、このようなバインドが可能になる)。
 
 ```cpp
     // @@@ example/term_explanation/universal_ref_ut.cpp #0:0 begin
@@ -3775,24 +3825,33 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
     // @@@ example/term_explanation/universal_ref_ut.cpp #0:1 begin -1
 ```
 
-下記のコードは[ジェネリックラムダ](---)の引数をユニバーサルリファレンスにした例である。
+下記のコードは[ジェネリックラムダ](---)の引数をforwardingリファレンスにした例である。
 
 ```cpp
     // @@@ example/term_explanation/universal_ref_ut.cpp #0:2 begin -1
 ```
 
-通常、ユニバーサルリファレンスはstd::forwardと組み合わせて使用される。
+通常、forwardingリファレンスはstd::forwardと組み合わせて使用される。
 
 
-### forwardingリファレンス
-「[ユニバーサルリファレンス](---)」を参照せよ。
+### ユニバーサルリファレンス
+ユニバーサルリファレンスとは、「[forwardingリファレンス](---)」の通称、もしくは旧称である。
 
 ### perfect forwarding
 perfect forwarding(完全転送)とは、引数の[expression|rvalue](---)性や
 [expression|lvalue](---)性を損失することなく、
 その引数を別の関数に転送する技術のことを指す。
-通常は、[ユニバーサルリファレンス](---)である関数の仮引数をstd::forwardを用いて、
+通常は、[forwardingリファレンス](---)である関数の仮引数をstd::forwardを用いて、
 他の関数に渡すことで実現される。
+
+perfect forwardingの使用例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/perfect_forwarding_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/perfect_forwarding_ut.cpp #0:1 begin -1
+```
 
 ### リファレンスcollapsing
 Tを任意の型とし、TRを下記のように宣言した場合、

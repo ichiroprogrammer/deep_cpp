@@ -8,7 +8,7 @@ namespace UniversalRef {
 // @@@ sample begin 0:0
 
 template <typename T>
-void f(T&& t) noexcept  // tはユニバーサルリファレンス
+void f(T&& t) noexcept  // tはforwardingリファレンス
 {
     // @@@ ignore begin
     IGNORE_UNUSED_VAR(t);
@@ -46,7 +46,7 @@ TEST(UniversalRef, universal_ref)
 {
     // @@@ sample begin 0:2
 
-    // sはユニバーサルリファレンス
+    // sはforwardingリファレンス
     auto value_type = [](auto&& s) noexcept {
         if (std::is_same_v<std::string&, decltype(s)>) {
             return 0;
