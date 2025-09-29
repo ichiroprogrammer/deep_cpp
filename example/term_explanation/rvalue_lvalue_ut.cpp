@@ -21,7 +21,7 @@ void f()
 
     // 下記のようにすればアドレスを取得できるが、このようなことはすべきではない。
     auto&& rvalue_ref = std::string{};
-    auto   sp = &rvalue_ref;  // spはrvalue_refのアドレスを指しているが、、、
+    auto   sp         = &rvalue_ref;  // spはrvalue_refのアドレスを指しているが、、、
     // @@@ sample end
 
     static_assert(std::is_same_v<std::string*, decltype(sp)>);
@@ -83,7 +83,7 @@ TEST(Expression, rvalue_ref1)
     int        a      = 0;
     int const& a_ref0 = a;        // const lvalueリファレンス
     int const& a_ref1 = int(99);  // const lvalueリファレンスはrvalueをバインドできる
-    int&&      a_ref2 = int(99);  // rvalueリファレンスはテンポラリオブジェクトをバインドできる
+    int&& a_ref2 = int(99);  // rvalueリファレンスはテンポラリオブジェクトをバインドできる
 
     ASSERT_EQ(a_ref1, 99);
     ASSERT_EQ(a_ref2, 99);

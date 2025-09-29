@@ -13,16 +13,12 @@ namespace Inner_ {
 constexpr size_t num_of_digits(size_t n) noexcept { return n > 0 ? 1 + num_of_digits(n / 10) : 0; }
 
 // 10のn乗を返す
-constexpr uint32_t ten_to_nth_power(uint32_t n) noexcept
-{
-    return n == 0 ? 1 : 10 * ten_to_nth_power(n - 1);
-}
+constexpr uint32_t ten_to_nth_power(uint32_t n) noexcept { return n == 0 ? 1 : 10 * ten_to_nth_power(n - 1); }
 
 // 10進数の桁の若い順番に左から並べなおす(12345 -> 54321)
 constexpr uint32_t reverse_num(uint32_t num) noexcept
 {
-    return num != 0 ? (num % 10) * ten_to_nth_power(num_of_digits(num) - 1) + reverse_num(num / 10)
-                    : 0;
+    return num != 0 ? (num % 10) * ten_to_nth_power(num_of_digits(num) - 1) + reverse_num(num / 10) : 0;
 }
 
 // 10進数一桁をacsii文字に変換

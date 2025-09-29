@@ -14,8 +14,7 @@ TEST(NewDelete_Opt, global_new_delete_32)
 {
     auto gnd = GlobalNewDeleteMonitor{};
 
-    auto mp32 = std::find_if(gnd.cbegin(), gnd.cend(),
-                             [](auto it) noexcept { return it->GetSize() == 32; });
+    auto mp32 = std::find_if(gnd.cbegin(), gnd.cend(), [](auto it) noexcept { return it->GetSize() == 32; });
 
     ASSERT_NE(mp32, gnd.cend());
     auto count = (*mp32)->GetCount();
@@ -31,8 +30,7 @@ TEST(NewDelete_Opt, global_new_delete_64)
 {
     auto gnd = GlobalNewDeleteMonitor{};
 
-    auto mp64 = std::find_if(gnd.cbegin(), gnd.cend(),
-                             [](auto it) noexcept { return it->GetSize() == 64; });
+    auto mp64 = std::find_if(gnd.cbegin(), gnd.cend(), [](auto it) noexcept { return it->GetSize() == 64; });
 
     ASSERT_NE(mp64, gnd.cend());
     auto count = (*mp64)->GetCount();
@@ -48,12 +46,10 @@ TEST(NewDelete_Opt, global_new_delete_empty_0)
 {
     auto gnd = GlobalNewDeleteMonitor{};
 
-    auto mp32    = std::find_if(gnd.cbegin(), gnd.cend(),
-                                [](auto it) noexcept { return it->GetSize() == 32; });
+    auto mp32    = std::find_if(gnd.cbegin(), gnd.cend(), [](auto it) noexcept { return it->GetSize() == 32; });
     auto count32 = (*mp32)->GetCount();
 
-    auto mp64    = std::find_if(gnd.cbegin(), gnd.cend(),
-                                [](auto it) noexcept { return it->GetSize() == 64; });
+    auto mp64    = std::find_if(gnd.cbegin(), gnd.cend(), [](auto it) noexcept { return it->GetSize() == 64; });
     auto count64 = (*mp64)->GetCount();
 
     {
@@ -93,8 +89,7 @@ TEST(NewDelete_Opt, global_new_delete_empty_1)
     auto gnd = GlobalNewDeleteMonitor{};
 
     // テスト対象のグローバルnewが持っているMPoolのメモリ最大長は1024バイト
-    auto mp1024    = std::find_if(gnd.cbegin(), gnd.cend(),
-                                  [](auto it) noexcept { return it->GetSize() == 1024; });
+    auto mp1024    = std::find_if(gnd.cbegin(), gnd.cend(), [](auto it) noexcept { return it->GetSize() == 1024; });
     auto count1024 = (*mp1024)->GetCount();
 
     {

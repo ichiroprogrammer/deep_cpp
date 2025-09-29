@@ -45,10 +45,7 @@ private:
 template <typename T>
 class AcceptableFileEntity : public FileEntity {  // CRTP
 public:
-    virtual void Accept(FileEntityVisitor& visitor) const override
-    {
-        visitor.Visit(*static_cast<T const*>(this));
-    }
+    virtual void Accept(FileEntityVisitor& visitor) const override { visitor.Visit(*static_cast<T const*>(this)); }
 
 private:
     // T : public AcceptableFileEntity<T> { ... };

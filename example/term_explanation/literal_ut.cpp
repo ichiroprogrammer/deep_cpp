@@ -14,7 +14,7 @@ TEST(ExpTerm, raw_literal)
 {
     // @@@ sample begin 0:0
 
-    std::regex raw_re{R"(\d+)"};  // 生文字リテラルで正規表現パターン。\のエスケープが不要
+    std::regex raw_re{R"(\d+)"};     // 生文字リテラルで正規表現パターン。\のエスケープが不要
     std::regex normal_re{"(\\d+)"};  // 生文字リテラルで正規表現パターン。\のエスケープが必要
 
     std::string test_str = "The year is 2024";  // テスト対象の文字列

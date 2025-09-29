@@ -52,7 +52,7 @@ TEST(VirtualInheritance, virtual_inherit_0)
     ASSERT_EQ(1, dn.get());
 
     auto ddv = DerivedDerivedVirtual{1};  // 仮想継承クラスを継承したクラス Base::Base()が呼ばれる
-    auto ddn = DerivedDerivedNormal{1};  // 通常継承クラスを継承したクラス Base::Base(1)が呼ばれる
+    auto ddn = DerivedDerivedNormal{1};   // 通常継承クラスを継承したクラス Base::Base(1)が呼ばれる
 
     ASSERT_EQ(0, ddv.get());  // ddvのBaseインスタンスはのデフォルトコンストラクタで初期化されている
     ASSERT_EQ(1, ddn.get());
@@ -72,9 +72,9 @@ TEST(VirtualInheritance, virtual_inherit_1)
 {
     // @@@ sample begin 0:4
 
-    DerivedDerivedVirtual ddv{1};  // 仮想継承クラスを継承したクラス
+    DerivedDerivedVirtual      ddv{1};   // 仮想継承クラスを継承したクラス
     DerivedDerivedVirtualFixed ddvf{1};  // 上記クラスのコンストラクタを修正したクラス
-    DerivedDerivedNormal ddn{1};         // 通常の継承クラスを継承したクラス
+    DerivedDerivedNormal       ddn{1};   // 通常の継承クラスを継承したクラス
 
     ASSERT_EQ(0, ddv.get());  // 仮想継承独特の動作
     ASSERT_EQ(1, ddvf.get());
@@ -128,7 +128,7 @@ TEST(VirtualInheritance, virtual_inherit_diamond_0)
     auto dd = DerivedDerived{2, 3};  // Base::Baseが最初に呼ばれないとassertion failする
 
     ASSERT_EQ(1, base_called);  // 「仮想継承のコンストラクタ呼び出し」仕様のため
-    ASSERT_EQ(0, dd.get());  // Baseのデフォルトコンストラクタは、x_を0にする
+    ASSERT_EQ(0, dd.get());     // Baseのデフォルトコンストラクタは、x_を0にする
     // @@@ sample end
 }
 
@@ -155,7 +155,7 @@ TEST(VirtualInheritance, virtual_inherit_diamond_1)
     auto dd = DerivedDerived{2, 3};  // Base::Baseが最初に呼ばれないとassertion failする
 
     ASSERT_EQ(1, base_called);  // 「仮想継承のコンストラクタ呼び出し」仕様のため
-    ASSERT_EQ(1, dd.get());  // Base{1}呼び出しの効果
+    ASSERT_EQ(1, dd.get());     // Base{1}呼び出しの効果
     // @@@ sample end
 }
 }  // namespace NG

@@ -84,29 +84,19 @@ public:
     {
         return (lhs.value_.num * rhs.value_.deno) == (rhs.value_.num * lhs.value_.deno);
     }
-    friend bool operator!=(Rational const& lhs, Rational const& rhs) noexcept
-    {
-        return !(lhs == rhs);
-    }
+    friend bool operator!=(Rational const& lhs, Rational const& rhs) noexcept { return !(lhs == rhs); }
     friend bool operator<(Rational const& lhs, Rational const& rhs) noexcept
     {
         return (lhs.value_.num * rhs.value_.deno) < (rhs.value_.num * lhs.value_.deno);
     }
-    friend bool operator<=(Rational const& lhs, Rational const& rhs) noexcept
-    {
-        return !(rhs < lhs);
-    }
+    friend bool operator<=(Rational const& lhs, Rational const& rhs) noexcept { return !(rhs < lhs); }
     friend bool operator>(Rational const& lhs, Rational const& rhs) noexcept { return rhs < lhs; }
-    friend bool operator>=(Rational const& lhs, Rational const& rhs) noexcept
-    {
-        return !(lhs < rhs);
-    }
+    friend bool operator>=(Rational const& lhs, Rational const& rhs) noexcept { return !(lhs < rhs); }
 #endif
     /// @brief put-to演算子の定義
     friend std::ostream& operator<<(std::ostream& os, const Rational& rhs)
     {
-        return (rhs.value_.deno == 1) ? os << rhs.value_.num
-                                      : os << rhs.value_.num << "/" << rhs.value_.deno;
+        return (rhs.value_.deno == 1) ? os << rhs.value_.num : os << rhs.value_.num << "/" << rhs.value_.deno;
     }
 
     /// @brief doubleへの変換演算子

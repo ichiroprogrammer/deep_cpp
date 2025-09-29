@@ -194,10 +194,7 @@ private:
 
     virtual size_t get_size() const noexcept override { return 1; }
     virtual size_t get_count() const noexcept override { return unit_count_ * Inner_::unit_size; }
-    virtual size_t get_count_min() const noexcept override
-    {
-        return unit_count_min_ * Inner_::unit_size;
-    }
+    virtual size_t get_count_min() const noexcept override { return unit_count_min_ * Inner_::unit_size; }
 
     virtual bool is_valid(void const* mem) const noexcept override
     {

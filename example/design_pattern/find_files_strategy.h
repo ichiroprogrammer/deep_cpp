@@ -17,8 +17,7 @@ using find_condition = std::function<bool(std::filesystem::path const&)>;
 /// @param path      リカーシブにディレクトリを辿るための起点となるパス
 /// @param condition 探索するファイルの条件
 /// @return 条件にマッチしたファイルをstd::vector<std::string>で返す
-extern std::vector<std::string> find_files_recursively(std::string const& path,
-                                                       find_condition     condition);
+extern std::vector<std::string> find_files_recursively(std::string const& path, find_condition condition);
 // @@@ sample end
 // @@@ sample begin 1:0
 
@@ -36,8 +35,7 @@ concept find_condition = requires(F f, std::filesystem::path const& p)
 
 template <Inner_::find_condition F>
 auto find_files_recursively2(std::string const& path, F condition)
-    -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>,
-                        std::vector<std::string>>
+    -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>, std::vector<std::string>>
 
 #else  // c++17
 template <typename F>  // Fはファンクタ
@@ -49,8 +47,7 @@ auto find_files_recursively2(std::string const& path, F&& condition) -> std::vec
     auto files = std::vector<fs::path>{};
 
     // recursive_directory_iteratorでディレクトリ内のファイルを再帰的に取得
-    std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{},
-              std::back_inserter(files));
+    std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{}, std::back_inserter(files));
 
     std::sort(files.begin(), files.end());  // ファイルリストをソート
 

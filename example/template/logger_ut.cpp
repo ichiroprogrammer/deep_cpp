@@ -47,8 +47,7 @@ TEST(Template, logger_X)
 
     auto s = Logging::Logger::InstConst().Get();
 
-    auto const exp
-        = log_str_exp(__FILE__, line_num - 1, ":1:name/3:x0/0, x1/1, x2/2:lx3/3, lx4/1\n");
+    auto const exp = log_str_exp(__FILE__, line_num - 1, ":1:name/3:x0/0, x1/1, x2/2:lx3/3, lx4/1\n");
     ASSERT_EQ(exp, s);
     // @@@ sample end
 }

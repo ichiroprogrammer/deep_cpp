@@ -9,7 +9,7 @@ class OpNew {
 public:
     [[nodiscard]] static void* operator new(size_t size) { return mpool_.Alloc(size); }
     static void                operator delete(void* mem) noexcept { mpool_.Free(mem); }
-    static void operator delete(void* mem, std::size_t) noexcept { mpool_.Free(mem); }
+    static void                operator delete(void* mem, std::size_t) noexcept { mpool_.Free(mem); }
 
     [[nodiscard]] static void* operator new[](size_t size)                             = delete;
     static void                operator delete[](void* mem) noexcept                   = delete;

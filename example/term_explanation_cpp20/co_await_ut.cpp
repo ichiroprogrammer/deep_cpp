@@ -18,10 +18,7 @@ public:
     struct promise_type {
         /// @brief コルーチンから Task 型のオブジェクトを返す関数
         /// @return Taskオブジェクト
-        Task get_return_object()
-        {
-            return Task{std::coroutine_handle<promise_type>::from_promise(*this)};
-        }
+        Task get_return_object() { return Task{std::coroutine_handle<promise_type>::from_promise(*this)}; }
 
         /// @brief コルーチンの最初のサスペンドポイント
         /// @return 常にサスペンドするオブジェクトを返す

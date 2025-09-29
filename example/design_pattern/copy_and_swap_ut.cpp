@@ -14,8 +14,7 @@ public:
 
     CopyAndSwap(CopyAndSwap const& rhs) : name0_{rhs.name0_}, name1_{rhs.name1_} {}
 
-    CopyAndSwap(CopyAndSwap&& rhs) noexcept
-        : name0_{std::exchange(rhs.name0_, nullptr)}, name1_{std::move(rhs.name1_)}
+    CopyAndSwap(CopyAndSwap&& rhs) noexcept : name0_{std::exchange(rhs.name0_, nullptr)}, name1_{std::move(rhs.name1_)}
     {
         // move後には、
         //  * name0_はnullptr

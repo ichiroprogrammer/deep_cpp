@@ -201,8 +201,8 @@ std::string type2str(T&& obj)
     int status;
 
     // objに基づく型情報を取得
-    auto demangled = std::unique_ptr<char, decltype(&std::free)>{
-        abi::__cxa_demangle(typeid(obj).name(), 0, 0, &status), &std::free};
+    auto demangled = std::unique_ptr<char, decltype(&std::free)>{abi::__cxa_demangle(typeid(obj).name(), 0, 0, &status),
+                                                                 &std::free};
 
     return demangled ? demangled.get() : "unknown";
 }
@@ -229,6 +229,6 @@ TEST(TermExp, type2str)
     Polymorphic_Base& b_ref_b = b;
 
     ASSERT_EQ(type2str(b_ref_d), "Polymorphic_Derived");  // b_ref_dの実際の型はPolymorphic_Derived
-    ASSERT_EQ(type2str(b_ref_b), "Polymorphic_Base");  // b_ref_bの実際の型はPolymorphic_Base
+    ASSERT_EQ(type2str(b_ref_b), "Polymorphic_Base");     // b_ref_bの実際の型はPolymorphic_Base
     // @@@ sample end
 }

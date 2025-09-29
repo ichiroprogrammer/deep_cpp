@@ -18,7 +18,7 @@ public:
 
 private:
     virtual std::unique_ptr<ThreadNewStyleState> run_thread() override;
-    virtual std::string_view get_state_str() const noexcept override { return "Idle"; }
+    virtual std::string_view                     get_state_str() const noexcept override { return "Idle"; }
     // @@@ ignore end
 };
 
@@ -32,7 +32,7 @@ public:
 private:
     virtual std::unique_ptr<ThreadNewStyleState> abort_thread() override;
     virtual std::unique_ptr<ThreadNewStyleState> suspend_thread() override;
-    virtual std::string_view get_state_str() const noexcept override { return "Running"; }
+    virtual std::string_view                     get_state_str() const noexcept override { return "Running"; }
     // @@@ ignore end
 };
 

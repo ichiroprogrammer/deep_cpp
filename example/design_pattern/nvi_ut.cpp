@@ -106,10 +106,7 @@ TEST(NVI, base_derived_ok)
 
 class NotNviBase {
 public:
-    virtual std::string Name(bool mangled = false) const
-    {
-        return mangled ? typeid(*this).name() : "NotNviBase";
-    }
+    virtual std::string Name(bool mangled = false) const { return mangled ? typeid(*this).name() : "NotNviBase"; }
 
     virtual ~NotNviBase() = default;
 };
@@ -152,10 +149,7 @@ public:
     virtual ~NviBase() = default;
 
 private:
-    virtual std::string name(bool mangled) const
-    {
-        return mangled ? typeid(*this).name() : "NviBase";
-    }
+    virtual std::string name(bool mangled) const { return mangled ? typeid(*this).name() : "NviBase"; }
 };
 
 class NviDerived : public NviBase {

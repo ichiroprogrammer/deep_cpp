@@ -18,10 +18,7 @@ struct XxxData {
 ///        データフォーマットを行うクラスのインターフェースクラス
 class XxxDataFormatterIF {
 public:
-    explicit XxxDataFormatterIF(std::string_view formatter_name) noexcept
-        : formatter_name_{formatter_name}
-    {
-    }
+    explicit XxxDataFormatterIF(std::string_view formatter_name) noexcept : formatter_name_{formatter_name} {}
     virtual ~XxxDataFormatterIF() = default;
     // @@@ sample end
     // @@@ sample begin 0:2
@@ -32,10 +29,7 @@ public:
     // @@@ sample end
     // @@@ sample begin 0:3
 
-    std::string ToString(XxxData const& xxx_data) const
-    {
-        return header() + body(xxx_data) + footer();
-    }
+    std::string ToString(XxxData const& xxx_data) const { return header() + body(xxx_data) + footer(); }
 
     std::string ToString(std::vector<XxxData> const& xxx_datas) const
     {

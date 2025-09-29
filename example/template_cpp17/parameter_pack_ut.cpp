@@ -235,16 +235,14 @@ TEST(Template, parameter_pack_product2)
 namespace SumAny {
 
 template <typename I>
-auto operator+(I i, std::string const& str) ->
-    typename std::enable_if_t<std::is_integral_v<I>, std::string>
+auto operator+(I i, std::string const& str) -> typename std::enable_if_t<std::is_integral_v<I>, std::string>
 
 {
     return std::to_string(i) + str;
 }
 
 template <typename I>
-auto operator+(std::string const& str, I i) ->
-    typename std::enable_if_t<std::is_integral_v<I>, std::string>
+auto operator+(std::string const& str, I i) -> typename std::enable_if_t<std::is_integral_v<I>, std::string>
 
 {
     return str + std::to_string(i);

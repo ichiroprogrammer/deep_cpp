@@ -31,7 +31,7 @@ TEST(Template, variant_usage)
 
     ASSERT_EQ(v.index(), 1);                                // std::stringを保持
     ASSERT_THROW(std::get<0>(v), std::bad_variant_access);  // intではないのでエクセプション
-    ASSERT_EQ(std::get<1>(v), std::string{"str"});  // std::stringなので問題なくアクセス
+    ASSERT_EQ(std::get<1>(v), std::string{"str"});          // std::stringなので問題なくアクセス
     ASSERT_THROW(std::get<2>(v), std::bad_variant_access);  // doubleではないのでエクセプション
     // @@@ sample end
     // @@@ sample begin 0:1

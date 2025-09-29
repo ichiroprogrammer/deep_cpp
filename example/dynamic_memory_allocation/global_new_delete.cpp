@@ -78,10 +78,7 @@ void setup() noexcept
     mpool_table[31] = gen_mpool<32, 128>();  // 1024
 }
 
-size_t size2index(size_t v) noexcept
-{
-    return (((v + (min_unit - 1)) & ~(min_unit - 1)) / min_unit) - 1;
-}
+size_t size2index(size_t v) noexcept { return (((v + (min_unit - 1)) & ~(min_unit - 1)) / min_unit) - 1; }
 }  // namespace
 // @@@ sample end
 // @@@ sample begin 2:0
@@ -135,10 +132,7 @@ void operator delete(void* mem, std::size_t size) noexcept
 // @@@ sample begin 5:0
 
 MPool const* const* GlobalNewDeleteMonitor::begin() const noexcept { return &mpool_table[0]; }
-MPool const* const* GlobalNewDeleteMonitor::end() const noexcept
-{
-    return &mpool_table[ArrayLength(mpool_table)];
-}
+MPool const* const* GlobalNewDeleteMonitor::end() const noexcept { return &mpool_table[ArrayLength(mpool_table)]; }
 
 MPool const* const* GlobalNewDeleteMonitor::cbegin() const noexcept { return begin(); }
 MPool const* const* GlobalNewDeleteMonitor::cend() const noexcept { return end(); }

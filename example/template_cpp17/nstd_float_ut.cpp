@@ -27,10 +27,7 @@ TEST(ProgrammingConvention, float_comp_0)
 namespace Nstd {
 
 /// @brief float比較用関数
-bool is_equal_f(float lhs, float rhs) noexcept
-{
-    return std::abs(lhs - rhs) <= std::numeric_limits<float>::epsilon();
-}
+bool is_equal_f(float lhs, float rhs) noexcept { return std::abs(lhs - rhs) <= std::numeric_limits<float>::epsilon(); }
 
 /// @brief double比較用関数
 bool is_equal_d(double lhs, double rhs) noexcept
@@ -109,8 +106,7 @@ namespace Nstd {
 /// 相対誤差を考慮して、lhs と rhs の絶対値に基づくトレランスの範囲内での比較を行う。
 /// これにより、数値の大小に関わらず、適切な誤差で比較できる。
 template <typename FLOAT_0, typename FLOAT_1>
-bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs,
-              FLOAT_0 tolerance = std::numeric_limits<FLOAT_0>::epsilon()) noexcept
+bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs, FLOAT_0 tolerance = std::numeric_limits<FLOAT_0>::epsilon()) noexcept
 {
     static_assert(std::is_floating_point_v<FLOAT_0>);
     static_assert(std::is_same_v<FLOAT_0, FLOAT_1>);

@@ -75,8 +75,7 @@ enum class ExpressionType { Lvalue, Rvalue };
 template <typename T>
 constexpr ExpressionType universal_ref2(T&& t)
 {
-    return std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue
-                                                   : ExpressionType::Rvalue;
+    return std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue : ExpressionType::Rvalue;
 }
 
 // std::pair<>::first  : universal_refの中のtのExpressionType
@@ -84,9 +83,8 @@ constexpr ExpressionType universal_ref2(T&& t)
 template <typename T>
 constexpr std::pair<ExpressionType, ExpressionType> universal_ref(T&& t)
 {
-    return std::make_pair(
-        std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue : ExpressionType::Rvalue,
-        universal_ref2(t));
+    return std::make_pair(std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue : ExpressionType::Rvalue,
+                          universal_ref2(t));
 }
 // @@@ sample end
 

@@ -204,10 +204,7 @@ private:
         // @@@ ignore end
     }
 
-    bool do_is_equal(const memory_resource& other) const noexcept override
-    {
-        return this == &other;
-    }
+    bool do_is_equal(const memory_resource& other) const noexcept override { return this == &other; }
 };
 // @@@ sample end
 
@@ -229,8 +226,7 @@ TEST(NewDelete, pmr_memory_resource)
         ASSERT_GE(max, remaings1);
 
         // std::basic_stringにカスタムアロケータを適用
-        using pmr_string = std::basic_string<char, std::char_traits<char>,
-                                             std::pmr::polymorphic_allocator<char>>;
+        using pmr_string = std::basic_string<char, std::char_traits<char>, std::pmr::polymorphic_allocator<char>>;
         std::pmr::polymorphic_allocator<char> allocator(&mrv);
 
         // カスタムアロケータを使って文字列を作成

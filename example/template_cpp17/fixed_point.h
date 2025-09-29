@@ -13,8 +13,7 @@ namespace Nstd {
 template <typename BASIC_TYPE, uint32_t FRACTION_BIT_NUM>
 class FixedPoint {
 public:
-    constexpr FixedPoint(BASIC_TYPE                                integer  = 0,
-                         typename std::make_unsigned_t<BASIC_TYPE> fraction = 0) noexcept
+    constexpr FixedPoint(BASIC_TYPE integer = 0, typename std::make_unsigned_t<BASIC_TYPE> fraction = 0) noexcept
         : value_{get_init_value(integer, fraction)}
     {
         // signedに対する右ビットシフトの仕様が、算術右ビットシフトでないと
@@ -44,16 +43,10 @@ public:
     }
 
     /// @brief 小数部のビット長を返す
-    constexpr typename std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept
-    {
-        return fraction_bit_mask_;
-    }
+    constexpr typename std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept { return fraction_bit_mask_; }
 
     /// @brief 整数部のビット長を返す
-    constexpr typename std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept
-    {
-        return integer_bit_mask_;
-    }
+    constexpr typename std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept { return integer_bit_mask_; }
 
     static constexpr bool IsSigned() noexcept { return std::is_signed_v<BASIC_TYPE>; }
 
@@ -118,29 +111,17 @@ private:
     friend auto operator<=>(FixedPoint lhs, FixedPoint rhs) noexcept = default;
 
 #else  // c++17
-    friend bool operator==(FixedPoint lhs, FixedPoint rhs) noexcept
-    {
-        return lhs.value_ == rhs.value_;
-    }
+    friend bool operator==(FixedPoint lhs, FixedPoint rhs) noexcept { return lhs.value_ == rhs.value_; }
 
     friend bool operator!=(FixedPoint lhs, FixedPoint rhs) noexcept { return !(lhs == rhs); }
 
-    friend bool operator>(FixedPoint lhs, FixedPoint rhs) noexcept
-    {
-        return lhs.value_ > rhs.value_;
-    }
+    friend bool operator>(FixedPoint lhs, FixedPoint rhs) noexcept { return lhs.value_ > rhs.value_; }
 
-    friend bool operator>=(FixedPoint lhs, FixedPoint rhs) noexcept
-    {
-        return (lhs > rhs) || (lhs == rhs);
-    }
+    friend bool operator>=(FixedPoint lhs, FixedPoint rhs) noexcept { return (lhs > rhs) || (lhs == rhs); }
 
     friend bool operator<(FixedPoint lhs, FixedPoint rhs) noexcept { return (rhs > lhs); }
 
-    friend bool operator<=(FixedPoint lhs, FixedPoint rhs) noexcept
-    {
-        return (lhs < rhs) || (lhs == rhs);
-    }
+    friend bool operator<=(FixedPoint lhs, FixedPoint rhs) noexcept { return (lhs < rhs) || (lhs == rhs); }
 #endif
 
     /// @brief FixedPoint() + intのようなオーバーロードを作るためにあえてfriend

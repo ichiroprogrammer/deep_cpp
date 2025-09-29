@@ -45,8 +45,7 @@ TEST(BitmaskType, use)
     ASSERT_TRUE(IsTrue(Animal::PhisicalAbility::Run & human.GetPhisicalAbility()));
     // @@@ sample end
 
-    auto swan = Animal{Animal::PhisicalAbility::Run | Animal::PhisicalAbility::Fly
-                       | Animal::PhisicalAbility::Swim};
+    auto swan = Animal{Animal::PhisicalAbility::Run | Animal::PhisicalAbility::Fly | Animal::PhisicalAbility::Swim};
     ASSERT_TRUE(IsTrue(Animal::PhisicalAbility::Run & swan.GetPhisicalAbility()));
     ASSERT_TRUE(IsTrue(Animal::PhisicalAbility::Fly & swan.GetPhisicalAbility()));
     ASSERT_TRUE(!IsFalse(Animal::PhisicalAbility::Swim & swan.GetPhisicalAbility()));

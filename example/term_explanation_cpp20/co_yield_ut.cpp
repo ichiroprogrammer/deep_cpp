@@ -32,10 +32,7 @@ public:
 
         /// @brief コルーチンから Generator 型のオブジェクトを返す関数
         /// @return Generatorオブジェクト
-        Generator get_return_object()
-        {
-            return Generator{std::coroutine_handle<promise_type>::from_promise(*this)};
-        }
+        Generator get_return_object() { return Generator{std::coroutine_handle<promise_type>::from_promise(*this)}; }
 
         /// @brief コルーチンの最初のサスペンドポイント
         /// @return 常にサスペンドするオブジェクトを返す

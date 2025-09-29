@@ -17,8 +17,7 @@ std::vector<std::string> find_files_recursively(std::string const& path, FindCon
     auto files = std::vector<fs::path>{};
 
     // recursive_directory_iteratorはファイルシステム依存するため、その依存を排除する他の処理
-    std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{},
-              std::back_inserter(files));
+    std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{}, std::back_inserter(files));
 
     std::sort(files.begin(), files.end());
 

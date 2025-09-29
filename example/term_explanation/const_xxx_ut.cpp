@@ -19,16 +19,16 @@ TEST(TermExp, just_const)
     IGNORE_UNUSED_VAR(str, c_str);  // @@@ delete
 
     static_assert(!is_const_v<decltype(c_str)>);
-    c_str = nullptr;  // c_strは変数としてconstではない
+    c_str = nullptr;                                                  // c_strは変数としてconstではない
     static_assert(is_const_v<remove_reference_t<decltype(*c_str)>>);  // *cは_strはconst
-    static_assert(is_same_v<char const&, decltype(*c_str)>);  // *c_strはconstリファレンス
+    static_assert(is_same_v<char const&, decltype(*c_str)>);          // *c_strはconstリファレンス
 
     char const* const cc_str = c_str;
 
     static_assert(is_const_v<decltype(cc_str)>);
     // cc_str = nullptr;  // cc_strは変数としてconstであるためコンパイルエラー
     static_assert(is_const_v<remove_reference_t<decltype(*cc_str)>>);  // *cc_strはconst
-    static_assert(is_same_v<char const&, decltype(*cc_str)>);  // *cc_strはconstリファレンス
+    static_assert(is_same_v<char const&, decltype(*cc_str)>);          // *cc_strはconstリファレンス
 
     constexpr int c_int = 1;
     static_assert(is_const_v<decltype(c_int)>);  // c_intはcons
@@ -147,10 +147,7 @@ TEST(TermExp, user_defined_literal)
 
 // @@@ sample begin 5:0
 
-constexpr uint64_t bit_mask(uint32_t max)
-{
-    return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1);
-}
+constexpr uint64_t bit_mask(uint32_t max) { return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1); }
 constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
 static_assert(0b1111 == bit_mask_0);
 // @@@ sample end

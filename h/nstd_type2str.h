@@ -17,8 +17,8 @@ inline std::string demangle(char const* to_demagle)
     // @@@ sample end
     // @@@ sample begin 0:1
 
-    auto demangled = std::unique_ptr<char, decltype(&std::free)>{
-        abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
+    auto demangled
+        = std::unique_ptr<char, decltype(&std::free)>{abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
     // @@@ sample end
     // @@@ sample begin 0:2
 
@@ -40,8 +40,8 @@ std::string Type2Str()
     // T   == const int ならば、
     // str == Nstd::Inner_::type_capture<int const>
     //        <----------- 27 ----------><-- x --> 下記ではxを切り出す
-    constexpr auto beg = 27U;                           // 先頭の不要な文字列数
-    auto name = str.substr(beg, str.size() - beg - 1);  // 最後の文字は>なので不要
+    constexpr auto beg  = 27U;                                    // 先頭の不要な文字列数
+    auto           name = str.substr(beg, str.size() - beg - 1);  // 最後の文字は>なので不要
 
     while (name.back() == ' ') {  // 無駄なスペースを消す
         auto last = --name.end();

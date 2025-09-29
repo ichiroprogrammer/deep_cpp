@@ -39,10 +39,7 @@ private:
 /// @brief DIを使う例。そのため、DIは、Dependedの型に依存している。
 class DI {
 public:
-    explicit DI(std::unique_ptr<Depended>&& di_depended) noexcept
-        : di_depended_{std::move(di_depended)}
-    {
-    }
+    explicit DI(std::unique_ptr<Depended>&& di_depended) noexcept : di_depended_{std::move(di_depended)} {}
 
     void DoSomething() { di_depended_->DoSomething(); }
 

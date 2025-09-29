@@ -46,9 +46,8 @@ TEST(Template, static_string_num_make_static_string)
 {
     // @@@ sample begin 0:0
 
-    constexpr auto ns
-        = make_static_string<__LINE__>(std::make_index_sequence<Inner_::num_of_digits(__LINE__)>());
-    auto line_num = __LINE__ - 1;
+    constexpr auto ns       = make_static_string<__LINE__>(std::make_index_sequence<Inner_::num_of_digits(__LINE__)>());
+    auto           line_num = __LINE__ - 1;
 
     ASSERT_EQ(std::to_string(line_num), ns.String());
     // @@@ sample end

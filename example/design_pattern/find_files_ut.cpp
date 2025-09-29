@@ -75,8 +75,8 @@ TEST(Strategy, strategy_lamda)
     assure_test_files_exist();  // test用のファイルがあることの確認
 
     // ラムダ式で実装
-    auto const files_actual = find_files_recursively(
-        test_dir, [](fs::path const& p) noexcept { return fs::is_regular_file(p); });
+    auto const files_actual
+        = find_files_recursively(test_dir, [](fs::path const& p) noexcept { return fs::is_regular_file(p); });
 
     auto const files_expect = sort(std::vector{
         // clang-format off
@@ -89,8 +89,8 @@ TEST(Strategy, strategy_lamda)
     });
     ASSERT_EQ(files_expect, files_actual);
 
-    auto const dirs_actual = find_files_recursively(
-        test_dir, [](fs::path const& p) noexcept { return fs::is_directory(p); });
+    auto const dirs_actual
+        = find_files_recursively(test_dir, [](fs::path const& p) noexcept { return fs::is_directory(p); });
     auto const dirs_expect = sort(std::vector{
         // clang-format off
         test_dir + "dir0",
@@ -100,9 +100,8 @@ TEST(Strategy, strategy_lamda)
     });
     ASSERT_EQ(dirs_expect, dirs_actual);
 
-    auto const f_actual = find_files_recursively(test_dir, [](fs::path const& p) noexcept {
-        return p.filename().generic_string()[0] == 'f';
-    });
+    auto const f_actual = find_files_recursively(
+        test_dir, [](fs::path const& p) noexcept { return p.filename().generic_string()[0] == 'f'; });
 
     auto const f_expect = sort(std::vector{
         // clang-format off
@@ -115,10 +114,7 @@ TEST(Strategy, strategy_lamda)
 }
 
 /// @brief find_files_recursivelyの第2仮引数に渡すためのファイル属性を決める関数
-bool condition_func(std::filesystem::path const& path)
-{
-    return path.filename().generic_string().at(0) == 'f';
-}
+bool condition_func(std::filesystem::path const& path) { return path.filename().generic_string().at(0) == 'f'; }
 
 TEST(Strategy, strategy_func_pointer)
 {

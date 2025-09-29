@@ -15,10 +15,7 @@ Pipe::Pipe() noexcept
     read_fd_  = pipe_fds[0];
 }
 
-int Pipe::Write(void const* buffer, int length) noexcept
-{
-    return write(write_fd_, buffer, length);
-}
+int Pipe::Write(void const* buffer, int length) noexcept { return write(write_fd_, buffer, length); }
 
 int Pipe::Read(void* buffer, int length) noexcept { return read(read_fd_, buffer, length); }
 

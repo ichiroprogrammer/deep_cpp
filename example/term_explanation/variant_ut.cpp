@@ -12,8 +12,8 @@ TEST(ExpTerm, variant_normal)
 {
     // @@@ sample begin 0:0
 
-    std::variant<int, std::string, double> var = 10;
-    auto var2 = var;  // コピーコンストラクタの呼び出し
+    std::variant<int, std::string, double> var  = 10;
+    auto                                   var2 = var;  // コピーコンストラクタの呼び出し
 
     ASSERT_EQ(std::get<int>(var), 10);  // 型intの値を取り出す
 

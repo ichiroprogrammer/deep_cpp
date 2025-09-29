@@ -95,9 +95,9 @@ struct ValueType {
 
 template <typename T, size_t N>
 struct ConditionalValueTypeN {
-    using type = typename std::conditional_t<
-        ValueType<T>::Nest != 0,
-        typename ValueType<typename ValueType<T>::type>::template type_n<N - 1>, T>;
+    using type =
+        typename std::conditional_t<ValueType<T>::Nest != 0,
+                                    typename ValueType<typename ValueType<T>::type>::template type_n<N - 1>, T>;
 };
 
 template <typename T>
@@ -197,9 +197,9 @@ namespace Inner_ {
 
 template <typename T, size_t N>
 struct conditional_value_type_n {
-    using type = typename std::conditional_t<
-        ValueType<T>::Nest != 0,
-        typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
+    using type =
+        typename std::conditional_t<ValueType<T>::Nest != 0,
+                                    typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
 };
 
 template <typename T>

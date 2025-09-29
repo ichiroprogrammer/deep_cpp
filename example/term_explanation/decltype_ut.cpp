@@ -87,7 +87,7 @@ auto add(T a, U b) -> decltype(a + b)
     return a + b;
 }
 
-static_assert(std::is_same_v<decltype(add(1, 2)), int>);  // addの戻り値型はintに型推論
+static_assert(std::is_same_v<decltype(add(1, 2)), int>);         // addの戻り値型はintに型推論
 static_assert(std::is_same_v<decltype(add(1u, 2u)), uint32_t>);  // addの戻り値型はintに型推論
 static_assert(std::is_same_v<decltype(add(std::string{"str"}, "2")),
                              std::string>);  // addの戻り値型はstd::stringに型推論
@@ -102,7 +102,7 @@ decltype(std::declval<T>() + std::declval<T>()) add(T a, U b)
     return a + b;
 }
 
-static_assert(std::is_same_v<decltype(add(1, 2)), int>);  // addの戻り値型はintに型推論
+static_assert(std::is_same_v<decltype(add(1, 2)), int>);         // addの戻り値型はintに型推論
 static_assert(std::is_same_v<decltype(add(1u, 2u)), uint32_t>);  // addの戻り値型はintに型推論
 static_assert(std::is_same_v<decltype(add(std::string{"str"}, "2")),
                              std::string>);  // addの戻り値型はstd::stringに型推論

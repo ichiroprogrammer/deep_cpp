@@ -77,8 +77,7 @@ namespace {
 
 template <typename T>
 constexpr bool is_kind_of_safe_string_v{
-    Nstd::IsSameSomeOfV<typename std::remove_const_t<T>, Nstd::SafeString, Nstd::SafeStringU16,
-                        Nstd::SafeStringU32>};
+    Nstd::IsSameSomeOfV<typename std::remove_const_t<T>, Nstd::SafeString, Nstd::SafeStringU16, Nstd::SafeStringU32>};
 
 TEST(Template, is_kind_of_safe_string)
 {

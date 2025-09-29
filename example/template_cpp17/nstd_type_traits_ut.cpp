@@ -146,10 +146,7 @@ SUPPRESS_WARN_CLANG_UNUSED_INTERNAL_DECL;
 
 struct T {};
 
-std::ostream& operator<<(std::ostream& os, std::vector<T> const& x)
-{
-    return os << "T:" << x.size();
-}
+std::ostream& operator<<(std::ostream& os, std::vector<T> const& x) { return os << "T:" << x.size(); }
 
 std::ostream& operator<<(std::ostream&, T const&) = delete;
 

@@ -46,30 +46,24 @@ private:
 };
 
 // &, | &=, |=, IsTrue, IsFalseの定義
-constexpr Animal::PhisicalAbility operator&(Animal::PhisicalAbility x,
-                                            Animal::PhisicalAbility y) noexcept
+constexpr Animal::PhisicalAbility operator&(Animal::PhisicalAbility x, Animal::PhisicalAbility y) noexcept
 {
-    return static_cast<Animal::PhisicalAbility>(static_cast<uint32_t>(x)
-                                                & static_cast<uint32_t>(y));
+    return static_cast<Animal::PhisicalAbility>(static_cast<uint32_t>(x) & static_cast<uint32_t>(y));
 }
 
-constexpr Animal::PhisicalAbility operator|(Animal::PhisicalAbility x,
-                                            Animal::PhisicalAbility y) noexcept
+constexpr Animal::PhisicalAbility operator|(Animal::PhisicalAbility x, Animal::PhisicalAbility y) noexcept
 {
-    return static_cast<Animal::PhisicalAbility>(static_cast<uint32_t>(x)
-                                                | static_cast<uint32_t>(y));
+    return static_cast<Animal::PhisicalAbility>(static_cast<uint32_t>(x) | static_cast<uint32_t>(y));
 }
 
-inline Animal::PhisicalAbility& operator&=(Animal::PhisicalAbility& x,
-                                           Animal::PhisicalAbility  y) noexcept
+inline Animal::PhisicalAbility& operator&=(Animal::PhisicalAbility& x, Animal::PhisicalAbility y) noexcept
 {
     return x = x & y;
 }
 
 // @@@ ignore begin
 
-inline Animal::PhisicalAbility& operator|=(Animal::PhisicalAbility& x,
-                                           Animal::PhisicalAbility  y) noexcept
+inline Animal::PhisicalAbility& operator|=(Animal::PhisicalAbility& x, Animal::PhisicalAbility y) noexcept
 {
     return x = x | y;
 }

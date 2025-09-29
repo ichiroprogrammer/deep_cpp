@@ -16,8 +16,7 @@ namespace Nstd {
 namespace Inner_ {
 template <typename T, typename U, typename... Us>
 struct is_same_as_some_of_impl {  // 型特性の補助クラス: 複数の型と比較する再帰的な実装
-    static constexpr bool value
-        = std::is_same<T, U>::value || is_same_as_some_of_impl<T, Us...>::value;
+    static constexpr bool value = std::is_same<T, U>::value || is_same_as_some_of_impl<T, Us...>::value;
 };
 
 // 再帰の終端条件: 比較する型が1つの場合
@@ -58,8 +57,7 @@ namespace Inner_ {
 
 template <typename TO, typename FROM, typename... FROMs>
 struct are_convertible {
-    static constexpr bool value{
-        std::is_convertible_v<FROM, TO> && are_convertible<TO, FROMs...>::value};
+    static constexpr bool value{std::is_convertible_v<FROM, TO> && are_convertible<TO, FROMs...>::value};
 };
 
 template <typename TO, typename FROM>
@@ -72,8 +70,7 @@ constexpr bool are_convertible_v{are_convertible<TO, FROMs...>::value};
 }  // namespace Inner_
 
 template <typename TO, typename... FROMs>
-struct AreConvertible
-    : std::conditional_t<Inner_::are_convertible_v<TO, FROMs...>, std::true_type, std::false_type> {
+struct AreConvertible : std::conditional_t<Inner_::are_convertible_v<TO, FROMs...>, std::true_type, std::false_type> {
 };
 
 template <typename TO, typename... FROMs>
@@ -108,13 +105,12 @@ class is_convertible_without_narrow_conv {
     static constexpr bool detector(...) noexcept { return false; }
 
 public:
-    static constexpr bool value{is_convertible_without_narrow_conv::detector(
-        static_cast<TO*>(nullptr), static_cast<FROM*>(nullptr))};
+    static constexpr bool value{
+        is_convertible_without_narrow_conv::detector(static_cast<TO*>(nullptr), static_cast<FROM*>(nullptr))};
 };
 
 template <typename TO, typename FROM>
-constexpr bool is_convertible_without_narrow_conv_v{
-    is_convertible_without_narrow_conv<TO, FROM>::value};
+constexpr bool is_convertible_without_narrow_conv_v{is_convertible_without_narrow_conv<TO, FROM>::value};
 }  // namespace Inner_
 }  // namespace Nstd
 // @@@ sample end
@@ -138,19 +134,17 @@ struct are_convertible_without_narrow_conv<TO, FROM> {
 };
 
 template <typename TO, typename FROM, typename... FROMs>
-constexpr bool are_convertible_without_narrow_conv_v{
-    are_convertible_without_narrow_conv<TO, FROM, FROMs...>::value};
+constexpr bool are_convertible_without_narrow_conv_v{are_convertible_without_narrow_conv<TO, FROM, FROMs...>::value};
 }  // namespace Inner_
 
 template <typename TO, typename FROM, typename... FROMs>
 struct AreConvertibleWithoutNarrowConv
-    : std::conditional_t<Inner_::are_convertible_without_narrow_conv_v<TO, FROM, FROMs...>,
-                         std::true_type, std::false_type> {
+    : std::conditional_t<Inner_::are_convertible_without_narrow_conv_v<TO, FROM, FROMs...>, std::true_type,
+                         std::false_type> {
 };
 
 template <typename TO, typename FROM, typename... FROMs>
-constexpr bool AreConvertibleWithoutNarrowConvV{
-    AreConvertibleWithoutNarrowConv<TO, FROM, FROMs...>::value};
+constexpr bool AreConvertibleWithoutNarrowConvV{AreConvertibleWithoutNarrowConv<TO, FROM, FROMs...>::value};
 }  // namespace Nstd
 // @@@ sample end
 // AreConvertibleWithoutNarrowConv -> ConvertibleWithoutNarrowing
@@ -191,8 +185,8 @@ constexpr bool exists_end_v{exists_end<T>::value};
 // @@@ sample begin 3:2
 
 template <typename T>
-struct IsRange : std::conditional_t<Inner_::exists_begin_v<T> && Inner_::exists_end_v<T>,
-                                    std::true_type, std::false_type> {
+struct IsRange
+    : std::conditional_t<Inner_::exists_begin_v<T> && Inner_::exists_end_v<T>, std::true_type, std::false_type> {
 };
 
 template <typename T>
@@ -212,8 +206,7 @@ struct ExistsPutTo : std::false_type {
 };
 
 template <typename T>
-struct ExistsPutTo<T, decltype(std::declval<std::ostream&>() << std::declval<T>())>
-    : std::true_type {
+struct ExistsPutTo<T, decltype(std::declval<std::ostream&>() << std::declval<T>())> : std::true_type {
 };
 
 template <typename T>
@@ -245,9 +238,9 @@ namespace Inner_ {
 
 template <typename T, size_t N>
 struct conditional_value_type_n {
-    using type = typename std::conditional_t<
-        ValueType<T>::Nest != 0,
-        typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
+    using type =
+        typename std::conditional_t<ValueType<T>::Nest != 0,
+                                    typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
 };
 
 template <typename T>

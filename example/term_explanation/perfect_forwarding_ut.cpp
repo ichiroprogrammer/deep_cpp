@@ -8,7 +8,7 @@ namespace {
 
 class Widget {
 public:
-    explicit Widget(std::string const& name) : name_{name} {}  // lvalueによるコンストラクタ
+    explicit Widget(std::string const& name) : name_{name} {}        // lvalueによるコンストラクタ
     explicit Widget(std::string&& name) : name_{std::move(name)} {}  // rvalueによるコンストラクタ
     std::string const& GetName() const { return name_; }
 

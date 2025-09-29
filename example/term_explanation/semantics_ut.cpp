@@ -123,10 +123,7 @@ private:
     int b_;
 };
 
-inline bool operator==(Base const& lhs, Base const& rhs) noexcept
-{
-    return lhs.GetB() == rhs.GetB();
-}
+inline bool operator==(Base const& lhs, Base const& rhs) noexcept { return lhs.GetB() == rhs.GetB(); }
 // @@@ sample end
 
 TEST(Semantics, bad_equality_B)
@@ -396,10 +393,7 @@ private:
     std::string name_;
 };
 
-bool operator==(NotRecommended const& lhs, NotRecommended const& rhs) noexcept
-{
-    return lhs.Name() == rhs.Name();
-}
+bool operator==(NotRecommended const& lhs, NotRecommended const& rhs) noexcept { return lhs.Name() == rhs.Name(); }
 
 TEST(Semantics, move1)
 {
@@ -434,10 +428,7 @@ private:
     std::string name_;
 };
 
-bool operator==(Recommended const& lhs, Recommended const& rhs) noexcept
-{
-    return lhs.Name() == rhs.Name();
-}
+bool operator==(Recommended const& lhs, Recommended const& rhs) noexcept { return lhs.Name() == rhs.Name(); }
 
 TEST(Semantics, move2)
 {

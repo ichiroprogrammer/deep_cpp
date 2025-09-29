@@ -12,10 +12,7 @@ namespace Nstd {
 template <size_t N>
 class StaticString {
 public:
-    constexpr StaticString(char const (&str)[N]) noexcept
-        : StaticString{0, str, std::make_index_sequence<N - 1>{}}
-    {
-    }
+    constexpr StaticString(char const (&str)[N]) noexcept : StaticString{0, str, std::make_index_sequence<N - 1>{}} {}
 
     template <size_t M>
     constexpr StaticString(size_t offset, StaticString<M> ss) noexcept
@@ -121,8 +118,8 @@ constexpr auto operator<=>(StaticString<N1> const& lhs, StaticString<N2> const& 
         return N1 <=> N2;  // サイズが異なる場合は直接サイズを比較
     }
     else {
-        return std::lexicographical_compare_three_way(lhs.String(), lhs.String() + N1 - 1,
-                                                      rhs.String(), rhs.String() + N2 - 1);
+        return std::lexicographical_compare_three_way(lhs.String(), lhs.String() + N1 - 1, rhs.String(),
+                                                      rhs.String() + N2 - 1);
     }
 }
 
@@ -162,8 +159,7 @@ constexpr bool operator==(char const (&lhs)[N1], StaticString<N2> const& rhs) no
 
 namespace Inner_ {
 template <size_t N1, size_t... I1, size_t N2, size_t... I2>
-constexpr StaticString<N1 + N2 - 1> concat(char const (&str1)[N1], std::index_sequence<I1...>,
-                                           char const (&str2)[N2],
+constexpr StaticString<N1 + N2 - 1> concat(char const (&str1)[N1], std::index_sequence<I1...>, char const (&str2)[N2],
                                            std::index_sequence<I2...>) noexcept
 {
     return {str1[I1]..., str2[I2]...};

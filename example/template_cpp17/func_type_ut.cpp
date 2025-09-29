@@ -65,7 +65,7 @@ TEST(Template, function)
         auto is_called = false;
         {
             auto delete_obj = std::function<void(A*)>{[](A* a) noexcept { delete a; }};
-            auto ua = std::unique_ptr<A, std::function<void(A*)>&>{new A{is_called}, delete_obj};
+            auto ua         = std::unique_ptr<A, std::function<void(A*)>&>{new A{is_called}, delete_obj};
             ASSERT_FALSE(is_called);  // uaのデストラクタは呼ばれていない
         }
         ASSERT_TRUE(is_called);  // uaのデストラクタは呼ばれた
@@ -138,7 +138,7 @@ TEST(Template, scoped_guard_2)
         auto tf        = TestFunctor{is_called};
         {
             auto sg = ScopedGuard{std::move(tf)};  // C++17以降の記法
-            ASSERT_FALSE(is_called);  // sgのデストラクタは呼ばれていない
+            ASSERT_FALSE(is_called);               // sgのデストラクタは呼ばれていない
         }
         ASSERT_TRUE(is_called);  // sgのデストラクタは呼ばれた
     }
@@ -149,7 +149,7 @@ TEST(Template, scoped_guard_2)
         auto tf        = TestFunctor{is_called};
         {
             auto sg = ScopedGuard<TestFunctor>{std::move(tf)};  // C++14以前の記法
-            ASSERT_FALSE(is_called);  // sgのデストラクタは呼ばれていない
+            ASSERT_FALSE(is_called);                            // sgのデストラクタは呼ばれていない
         }
         ASSERT_TRUE(is_called);  // sgのデストラクタは呼ばれた
     }
@@ -190,7 +190,7 @@ TEST(Template, scoped_guard2)
         auto tf        = TestFunctor{is_called};
         {
             auto sg = MakeScopedGuard(std::ref(tf));  // std::refが必要
-            ASSERT_FALSE(is_called);  // sgのデストラクタは呼ばれていない
+            ASSERT_FALSE(is_called);                  // sgのデストラクタは呼ばれていない
         }
         ASSERT_TRUE(is_called);  // sgのデストラクタは呼ばれた
     }

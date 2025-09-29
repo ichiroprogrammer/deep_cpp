@@ -189,10 +189,7 @@ private:
 
 class TransactorOCP {
 public:
-    explicit TransactorOCP(std::unique_ptr<TransactorIF>&& transactor) noexcept
-        : transactor_{std::move(transactor)}
-    {
-    }
+    explicit TransactorOCP(std::unique_ptr<TransactorIF>&& transactor) noexcept : transactor_{std::move(transactor)} {}
 
     bool Charge(Yen price) noexcept { return transactor_->Charge(price); }
 

@@ -90,10 +90,7 @@ private:
 // SRPに従うために、
 //    SentenceHolderNotSRP::Save(), SentenceHolderNotSRP::Display()
 // をクラスの外に出し、さらに仮引数に出力先(std::ostream&)を追加してこの2関数を統一。
-void Output(SentenceHolderSRP const& sentence_holder, std::ostream& o)
-{
-    o << sentence_holder.Get();
-}
+void Output(SentenceHolderSRP const& sentence_holder, std::ostream& o) { o << sentence_holder.Get(); }
 // @@@ sample end
 
 TEST_F(SRP, srp_no_violation)

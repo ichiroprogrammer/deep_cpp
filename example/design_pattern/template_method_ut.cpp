@@ -126,10 +126,7 @@ template <typename T>  // Tは下記のXxxDataFormatterXmlのようなクラス
 // clang-format on
 class XxxDataFormatter : private T {
 public:
-    std::string ToString(XxxData const& xxx_data) const
-    {
-        return T::Header() + T::Body(xxx_data) + T::Footer();
-    }
+    std::string ToString(XxxData const& xxx_data) const { return T::Header() + T::Body(xxx_data) + T::Footer(); }
 
     std::string ToString(std::vector<XxxData> const& xxx_datas) const
     {
@@ -159,8 +156,7 @@ public:
     }
 
 private:
-    inline static std::string const header_{
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<XxxDataFormatterXml>\n"};
+    inline static std::string const header_{"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<XxxDataFormatterXml>\n"};
     inline static std::string const footer_{"</XxxDataFormatterXml>\n"};
 };
 

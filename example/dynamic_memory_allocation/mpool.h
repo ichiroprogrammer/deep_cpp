@@ -33,8 +33,8 @@ public:
     void* AllocNoExcept(size_t size) noexcept { return alloc(size); }
 
     void   Free(void* area) noexcept { free(area); }
-    size_t GetSize() const noexcept { return get_size(); }  // メモリ最小単位
-    size_t GetCount() const noexcept { return get_count(); }  // メモリ最小単位が何個取れるか
+    size_t GetSize() const noexcept { return get_size(); }           // メモリ最小単位
+    size_t GetCount() const noexcept { return get_count(); }         // メモリ最小単位が何個取れるか
     size_t GetCountMin() const noexcept { return get_count_min(); }  // GetCount()の最小値
     bool   IsValid(void const* area) const noexcept { return is_valid(area); }
 

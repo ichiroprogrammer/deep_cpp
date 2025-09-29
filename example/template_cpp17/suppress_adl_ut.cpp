@@ -22,8 +22,7 @@ struct XY {
 // このような関数テンプレートは適用範囲が広すぎるので定義すべきではないが、
 // 危険な例を示すためあえて定義している
 template <typename T, typename U>
-inline auto is_equal(T const& lhs, U const& rhs) noexcept
-    -> decltype(lhs.x == rhs.x, lhs.y == rhs.y)
+inline auto is_equal(T const& lhs, U const& rhs) noexcept -> decltype(lhs.x == rhs.x, lhs.y == rhs.y)
 {
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }
@@ -132,10 +131,7 @@ struct XY {
     int y;
 };
 
-inline bool is_equal(XY const& lhs, XY const& rhs) noexcept
-{
-    return lhs.x == rhs.x && lhs.y == rhs.y;
-}
+inline bool is_equal(XY const& lhs, XY const& rhs) noexcept { return lhs.x == rhs.x && lhs.y == rhs.y; }
 }  // namespace App
 // @@@ sample end
 
@@ -154,9 +150,7 @@ TEST(Template, suppress_adl_2)
 
     // 下記のpointのようなクラスが他にもいくつかあった場合、
     // このジェネリックラムダでコードの被りは回避できる
-    auto is_equal = [](auto const& lhs, auto const& rhs) noexcept {
-        return lhs.x == rhs.x && lhs.y == rhs.y;
-    };
+    auto is_equal = [](auto const& lhs, auto const& rhs) noexcept { return lhs.x == rhs.x && lhs.y == rhs.y; };
 
     struct point {
         int x;

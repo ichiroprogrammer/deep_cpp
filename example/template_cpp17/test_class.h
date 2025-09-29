@@ -11,10 +11,7 @@ private:
     int i_;
 };
 
-inline std::ostream& operator<<(std::ostream& os, test_class_exits_put_to const& p)
-{
-    return os << p.get();
-}
+inline std::ostream& operator<<(std::ostream& os, test_class_exits_put_to const& p) { return os << p.get(); }
 
 class test_class_not_exits_put_to {};
 // @@@ sample end

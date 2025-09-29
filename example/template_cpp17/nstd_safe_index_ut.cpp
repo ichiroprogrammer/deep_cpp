@@ -156,8 +156,7 @@ TEST(Template, std_array_like)
 
     // @@@ sample begin 2:1
 
-    using T2   = Nstd::SafeIndex<Nstd::Inner_::std_array_like, std::string,
-                               std::integral_constant<size_t, 4>>;
+    using T2   = Nstd::SafeIndex<Nstd::Inner_::std_array_like, std::string, std::integral_constant<size_t, 4>>;
     auto sal_s = T2{"1", "2", "3"};
 
     static_assert(!std::is_nothrow_constructible_v<T2, char const*>);  // エクセプション有り生成

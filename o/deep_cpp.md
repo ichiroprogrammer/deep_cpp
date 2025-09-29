@@ -155,16 +155,13 @@ Output()に分離したコード実装例を下記する。
     // SRPに従うために、
     //    SentenceHolderNotSRP::Save(), SentenceHolderNotSRP::Display()
     // をクラスの外に出し、さらに仮引数に出力先(std::ostream&)を追加してこの2関数を統一。
-    void Output(SentenceHolderSRP const& sentence_holder, std::ostream& o)
-    {
-        o << sentence_holder.Get();
-    }
+    void Output(SentenceHolderSRP const& sentence_holder, std::ostream& o) { o << sentence_holder.Get(); }
 ```
 
 下記のコードで示したように、この分離の効果で単体テストの実施が容易になった。
 
 ```cpp
-    //  example/solid/srp_ut.cpp 101
+    //  example/solid/srp_ut.cpp 98
 
     auto srp = SentenceHolderSRP{};
 
@@ -303,10 +300,7 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
 
     class TransactorOCP {
     public:
-        explicit TransactorOCP(std::unique_ptr<TransactorIF>&& transactor) noexcept
-            : transactor_{std::move(transactor)}
-        {
-        }
+        explicit TransactorOCP(std::unique_ptr<TransactorIF>&& transactor) noexcept : transactor_{std::move(transactor)} {}
 
         bool Charge(Yen price) noexcept { return transactor_->Charge(price); }
 
@@ -1048,22 +1042,17 @@ enumによるビットマスク表現を使用して型チェックを強化し�
     };
 
     // &, | &=, |=, IsTrue, IsFalseの定義
-    constexpr Animal::PhisicalAbility operator&(Animal::PhisicalAbility x,
-                                                Animal::PhisicalAbility y) noexcept
+    constexpr Animal::PhisicalAbility operator&(Animal::PhisicalAbility x, Animal::PhisicalAbility y) noexcept
     {
-        return static_cast<Animal::PhisicalAbility>(static_cast<uint32_t>(x)
-                                                    & static_cast<uint32_t>(y));
+        return static_cast<Animal::PhisicalAbility>(static_cast<uint32_t>(x) & static_cast<uint32_t>(y));
     }
 
-    constexpr Animal::PhisicalAbility operator|(Animal::PhisicalAbility x,
-                                                Animal::PhisicalAbility y) noexcept
+    constexpr Animal::PhisicalAbility operator|(Animal::PhisicalAbility x, Animal::PhisicalAbility y) noexcept
     {
-        return static_cast<Animal::PhisicalAbility>(static_cast<uint32_t>(x)
-                                                    | static_cast<uint32_t>(y));
+        return static_cast<Animal::PhisicalAbility>(static_cast<uint32_t>(x) | static_cast<uint32_t>(y));
     }
 
-    inline Animal::PhisicalAbility& operator&=(Animal::PhisicalAbility& x,
-                                               Animal::PhisicalAbility  y) noexcept
+    inline Animal::PhisicalAbility& operator&=(Animal::PhisicalAbility& x, Animal::PhisicalAbility y) noexcept
     {
         return x = x & y;
     }
@@ -1627,8 +1616,7 @@ setterを使用する場合、上記のように処理の隠蔽化には特に�
 
         CopyAndSwap(CopyAndSwap const& rhs) : name0_{rhs.name0_}, name1_{rhs.name1_} {}
 
-        CopyAndSwap(CopyAndSwap&& rhs) noexcept
-            : name0_{std::exchange(rhs.name0_, nullptr)}, name1_{std::move(rhs.name1_)}
+        CopyAndSwap(CopyAndSwap&& rhs) noexcept : name0_{std::exchange(rhs.name0_, nullptr)}, name1_{std::move(rhs.name1_)}
         {
             // move後には、
             //  * name0_はnullptr
@@ -1796,7 +1784,7 @@ immutableとして扱うことができる。
     #if 0
         *b_ptr = *b_ptr_d;                // コピー演算子をdeleteしたのでコンパイルエラー
     #else
-        auto b_uptr = b_ptr_d->Clone();  // コピー演算子の代わりにClone()を使う。
+        auto b_uptr = b_ptr_d->Clone();              // コピー演算子の代わりにClone()を使う。
     #endif
 
         ASSERT_STREQ("DerivedNoSlicing", b_uptr->Name());  // 意図通り"DerivedNoSlicing"が返る。
@@ -1889,10 +1877,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 
     class NotNviBase {
     public:
-        virtual std::string Name(bool mangled = false) const
-        {
-            return mangled ? typeid(*this).name() : "NotNviBase";
-        }
+        virtual std::string Name(bool mangled = false) const { return mangled ? typeid(*this).name() : "NotNviBase"; }
 
         virtual ~NotNviBase() = default;
     };
@@ -1910,7 +1895,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 メンバ関数の振る舞いがその表層型に依存してしまう問題を持つことになる。
 
 ```cpp
-    //  example/design_pattern/nvi_ut.cpp 129
+    //  example/design_pattern/nvi_ut.cpp 126
 
     NotNviDerived const d;
     NotNviBase const&   d_ref = d;
@@ -1934,17 +1919,14 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 下記のようにNVIに従わせることでこのような問題に対処できる。
 
 ```cpp
-    //  example/design_pattern/nvi_ut.cpp 148
+    //  example/design_pattern/nvi_ut.cpp 145
     class NviBase {
     public:
         std::string Name(bool mangled = false) const { return name(mangled); }
         virtual ~NviBase() = default;
 
     private:
-        virtual std::string name(bool mangled) const
-        {
-            return mangled ? typeid(*this).name() : "NviBase";
-        }
+        virtual std::string name(bool mangled) const { return mangled ? typeid(*this).name() : "NviBase"; }
     };
 
     class NviDerived : public NviBase {
@@ -1959,7 +1941,7 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 下記の単体テストにより、この問題の解消が確認できる。
 
 ```cpp
-    //  example/design_pattern/nvi_ut.cpp 173
+    //  example/design_pattern/nvi_ut.cpp 167
 
     NviBase const    b;
     NviDerived const d;
@@ -2306,10 +2288,7 @@ C++11では、std::future, std::promise, std::asyncによって実現できる�
     /// @brief DIを使う例。そのため、DIは、Dependedの型に依存している。
     class DI {
     public:
-        explicit DI(std::unique_ptr<Depended>&& di_depended) noexcept
-            : di_depended_{std::move(di_depended)}
-        {
-        }
+        explicit DI(std::unique_ptr<Depended>&& di_depended) noexcept : di_depended_{std::move(di_depended)} {}
 
         void DoSomething() { di_depended_->DoSomething(); }
 
@@ -3110,16 +3089,10 @@ Templateメソッドは、雛形の形式(書式等)を定めるメンバ関数(
     ///        データフォーマットを行うクラスのインターフェースクラス
     class XxxDataFormatterIF {
     public:
-        explicit XxxDataFormatterIF(std::string_view formatter_name) noexcept
-            : formatter_name_{formatter_name}
-        {
-        }
+        explicit XxxDataFormatterIF(std::string_view formatter_name) noexcept : formatter_name_{formatter_name} {}
         virtual ~XxxDataFormatterIF() = default;
 
-        std::string ToString(XxxData const& xxx_data) const
-        {
-            return header() + body(xxx_data) + footer();
-        }
+        std::string ToString(XxxData const& xxx_data) const { return header() + body(xxx_data) + footer(); }
 
         std::string ToString(std::vector<XxxData> const& xxx_datas) const
         {
@@ -3179,8 +3152,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
             return content + "</Itemp>\n";
         }
 
-        static inline std::string const header_{
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<XxxDataFormatterXml>\n"};
+        static inline std::string const header_{"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<XxxDataFormatterXml>\n"};
         static inline std::string const footer_{"</XxxDataFormatterXml>\n"};
     };
 
@@ -3331,10 +3303,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
     #endif
     class XxxDataFormatter : private T {
     public:
-        std::string ToString(XxxData const& xxx_data) const
-        {
-            return T::Header() + T::Body(xxx_data) + T::Footer();
-        }
+        std::string ToString(XxxData const& xxx_data) const { return T::Header() + T::Body(xxx_data) + T::Footer(); }
 
         std::string ToString(std::vector<XxxData> const& xxx_datas) const
         {
@@ -3364,8 +3333,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
         }
 
     private:
-        inline static std::string const header_{
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<XxxDataFormatterXml>\n"};
+        inline static std::string const header_{"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<XxxDataFormatterXml>\n"};
         inline static std::string const footer_{"</XxxDataFormatterXml>\n"};
     };
 
@@ -3375,7 +3343,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 上記の単体テストは下記のようになる。
 
 ```cpp
-    //  example/design_pattern/template_method_ut.cpp 172
+    //  example/design_pattern/template_method_ut.cpp 168
 
         auto xml = XxxDataFormatterXml{};
 
@@ -3434,7 +3402,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 といった効果がある。
 
 ```cpp
-    //  example/design_pattern/template_method.h 71
+    //  example/design_pattern/template_method.h 65
 
     enum class XxxDataFormatterMethod {
         Xml,
@@ -3450,7 +3418,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 ```
 
 ```cpp
-    //  example/design_pattern/template_method.cpp 109
+    //  example/design_pattern/template_method.cpp 108
 
     std::unique_ptr<XxxDataFormatterIF const> XxxDataFormatterFactory(XxxDataFormatterMethod method)
     {
@@ -3526,7 +3494,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 この例ではその必要はないため、ヒープを使用しないFactory関数の例を下記する。
 
 ```cpp
-    //  example/design_pattern/template_method.cpp 126
+    //  example/design_pattern/template_method.cpp 125
 
     XxxDataFormatterIF const& XxxDataFormatterFactory2(XxxDataFormatterMethod method) noexcept
     {
@@ -3703,7 +3671,7 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
 Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを複数、生成するためのパターンである。
 
 ```cpp
-    //  example/design_pattern/enum_operator.h 82
+    //  example/design_pattern/enum_operator.h 76
 
     class Mammals : public Animal {  // 哺乳類
     public:
@@ -3743,10 +3711,7 @@ Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを�
     ///        データフォーマットを行うクラスのインターフェースクラス
     class XxxDataFormatterIF {
     public:
-        explicit XxxDataFormatterIF(std::string_view formatter_name) noexcept
-            : formatter_name_{formatter_name}
-        {
-        }
+        explicit XxxDataFormatterIF(std::string_view formatter_name) noexcept : formatter_name_{formatter_name} {}
         virtual ~XxxDataFormatterIF() = default;
 
         static XxxDataFormatterIF const& Xml() noexcept;
@@ -3758,7 +3723,7 @@ Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを�
 ```
 
 ```cpp
-    //  example/design_pattern/template_method.cpp 147
+    //  example/design_pattern/template_method.cpp 146
 
     XxxDataFormatterIF const& XxxDataFormatterIF::Xml() noexcept
     {
@@ -4213,8 +4178,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         auto files = std::vector<fs::path>{};
 
         // recursive_directory_iteratorはファイルシステム依存するため、その依存を排除する他の処理
-        std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{},
-                  std::back_inserter(files));
+        std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{}, std::back_inserter(files));
 
         std::sort(files.begin(), files.end());
 
@@ -4301,8 +4265,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     /// @param path      リカーシブにディレクトリを辿るための起点となるパス
     /// @param condition 探索するファイルの条件
     /// @return 条件にマッチしたファイルをstd::vector<std::string>で返す
-    extern std::vector<std::string> find_files_recursively(std::string const& path,
-                                                           find_condition     condition);
+    extern std::vector<std::string> find_files_recursively(std::string const& path, find_condition condition);
 ```
 
 ```cpp
@@ -4315,8 +4278,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         auto files = std::vector<fs::path>{};
 
         // recursive_directory_iteratorはファイルシステム依存するため、その依存を排除する他の処理
-        std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{},
-                  std::back_inserter(files));
+        std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{}, std::back_inserter(files));
 
         std::sort(files.begin(), files.end());
 
@@ -4342,8 +4304,8 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         assure_test_files_exist();  // test用のファイルがあることの確認
 
         // ラムダ式で実装
-        auto const files_actual = find_files_recursively(
-            test_dir, [](fs::path const& p) noexcept { return fs::is_regular_file(p); });
+        auto const files_actual
+            = find_files_recursively(test_dir, [](fs::path const& p) noexcept { return fs::is_regular_file(p); });
 
         auto const files_expect = sort(std::vector{
             test_dir + "dir0/file2",
@@ -4354,8 +4316,8 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         });
         ASSERT_EQ(files_expect, files_actual);
 
-        auto const dirs_actual = find_files_recursively(
-            test_dir, [](fs::path const& p) noexcept { return fs::is_directory(p); });
+        auto const dirs_actual
+            = find_files_recursively(test_dir, [](fs::path const& p) noexcept { return fs::is_directory(p); });
         auto const dirs_expect = sort(std::vector{
             test_dir + "dir0",
             test_dir + "dir1",
@@ -4363,9 +4325,8 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         });
         ASSERT_EQ(dirs_expect, dirs_actual);
 
-        auto const f_actual = find_files_recursively(test_dir, [](fs::path const& p) noexcept {
-            return p.filename().generic_string()[0] == 'f';
-        });
+        auto const f_actual = find_files_recursively(
+            test_dir, [](fs::path const& p) noexcept { return p.filename().generic_string()[0] == 'f'; });
 
         auto const f_expect = sort(std::vector{
             test_dir + "dir0/file2",
@@ -4376,10 +4337,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
     }
 
     /// @brief find_files_recursivelyの第2仮引数に渡すためのファイル属性を決める関数
-    bool condition_func(std::filesystem::path const& path)
-    {
-        return path.filename().generic_string().at(0) == 'f';
-    }
+    bool condition_func(std::filesystem::path const& path) { return path.filename().generic_string().at(0) == 'f'; }
 
     TEST(Strategy, strategy_func_pointer)
     {
@@ -4436,7 +4394,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 なお、上記find_files_recursivelyの第2パラメータをテンプレートパラメータとすることで、
 
 ```cpp
-    //  example/design_pattern/find_files_strategy.h 23
+    //  example/design_pattern/find_files_strategy.h 22
 
     #if __cplusplus >= 202002L  // c++20
     // ファンクタがboolを返し、std::filesystem::path const&を引数に取るかを確認するコンセプト
@@ -4450,8 +4408,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 
     template <Inner_::find_condition F>
     auto find_files_recursively2(std::string const& path, F condition)
-        -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>,
-                            std::vector<std::string>>
+        -> std::enable_if_t<std::is_invocable_r_v<bool, F, std::filesystem::path const&>, std::vector<std::string>>
 
     #else  // c++17
     template <typename F>  // Fはファンクタ
@@ -4463,8 +4420,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         auto files = std::vector<fs::path>{};
 
         // recursive_directory_iteratorでディレクトリ内のファイルを再帰的に取得
-        std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{},
-                  std::back_inserter(files));
+        std::copy(fs::recursive_directory_iterator{path}, fs::recursive_directory_iterator{}, std::back_inserter(files));
 
         std::sort(files.begin(), files.end());  // ファイルリストをソート
 
@@ -4913,19 +4869,13 @@ FileEntityVisitorから派生するクラスを下記クラス図が示すよう
 
     void TestablePathnamePrinter1::Visit(File const& file) { ostream_ << file.Pathname(); }
     void TestablePathnamePrinter1::Visit(Dir const& dir) { ostream_ << dir.Pathname() + "/"; }
-    void TestablePathnamePrinter1::Visit(OtherEntity const& other)
-    {
-        ostream_ << other.Pathname() + "(o1)";
-    }
+    void TestablePathnamePrinter1::Visit(OtherEntity const& other) { ostream_ << other.Pathname() + "(o1)"; }
 
     void TestablePathnamePrinter2::Visit(File const& file) { ostream_ << file.Pathname(); }
 
     void TestablePathnamePrinter2::Visit(Dir const& dir) { ostream_ << find_files(dir.Pathname()); }
 
-    void TestablePathnamePrinter2::Visit(OtherEntity const& other)
-    {
-        ostream_ << other.Pathname() + "(o2)";
-    }
+    void TestablePathnamePrinter2::Visit(OtherEntity const& other) { ostream_ << other.Pathname() + "(o2)"; }
 ```
 
 ```cpp
@@ -5012,10 +4962,7 @@ CRTPとは、
     template <typename T>
     class AcceptableFileEntity : public FileEntity {  // CRTP
     public:
-        virtual void Accept(FileEntityVisitor& visitor) const override
-        {
-            visitor.Visit(*static_cast<T const*>(this));
-        }
+        virtual void Accept(FileEntityVisitor& visitor) const override { visitor.Visit(*static_cast<T const*>(this)); }
 
     private:
         // T : public AcceptableFileEntity<T> { ... };
@@ -5278,8 +5225,7 @@ ViewがObserverNである。
 
     void SubjectOK::Detach(Observer& observer_to_detach) noexcept
     {
-        observers_.remove_if(
-            [&observer_to_detach](Observer* observer) { return &observer_to_detach == observer; });
+        observers_.remove_if([&observer_to_detach](Observer* observer) { return &observer_to_detach == observer; });
     }
 
     void SubjectOK::notify() const
@@ -8324,8 +8270,7 @@ IsSameSomeOfはこれまでの例とは少々異なり、
     namespace Inner_ {
     template <typename T, typename U, typename... Us>
     struct is_same_as_some_of_impl {  // 型特性の補助クラス: 複数の型と比較する再帰的な実装
-        static constexpr bool value
-            = std::is_same<T, U>::value || is_same_as_some_of_impl<T, Us...>::value;
+        static constexpr bool value = std::is_same<T, U>::value || is_same_as_some_of_impl<T, Us...>::value;
     };
 
     // 再帰の終端条件: 比較する型が1つの場合
@@ -8426,15 +8371,14 @@ std::is_convertible\<FROM, TO>は、
 AreConvertibleの実装は以下のようになる。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 54
+    //  example/h/nstd_type_traits.h 53
 
     namespace Nstd {
     namespace Inner_ {
 
     template <typename TO, typename FROM, typename... FROMs>
     struct are_convertible {
-        static constexpr bool value{
-            std::is_convertible_v<FROM, TO> && are_convertible<TO, FROMs...>::value};
+        static constexpr bool value{std::is_convertible_v<FROM, TO> && are_convertible<TO, FROMs...>::value};
     };
 
     template <typename TO, typename FROM>
@@ -8447,8 +8391,7 @@ AreConvertibleの実装は以下のようになる。
     }  // namespace Inner_
 
     template <typename TO, typename... FROMs>
-    struct AreConvertible
-        : std::conditional_t<Inner_::are_convertible_v<TO, FROMs...>, std::true_type, std::false_type> {
+    struct AreConvertible : std::conditional_t<Inner_::are_convertible_v<TO, FROMs...>, std::true_type, std::false_type> {
     };
 
     template <typename TO, typename... FROMs>
@@ -8488,7 +8431,7 @@ AreConvertibleWithoutNarrowConvに対しis_convertible_without_narrow_convが必
 SFINAEと関数テンプレート/関数のオーバーライドを使用し以下のように実装できる。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 88
+    //  example/h/nstd_type_traits.h 85
 
     namespace Nstd {
     namespace Inner_ {
@@ -8507,13 +8450,12 @@ SFINAEと関数テンプレート/関数のオーバーライドを使用し以�
         static constexpr bool detector(...) noexcept { return false; }
 
     public:
-        static constexpr bool value{is_convertible_without_narrow_conv::detector(
-            static_cast<TO*>(nullptr), static_cast<FROM*>(nullptr))};
+        static constexpr bool value{
+            is_convertible_without_narrow_conv::detector(static_cast<TO*>(nullptr), static_cast<FROM*>(nullptr))};
     };
 
     template <typename TO, typename FROM>
-    constexpr bool is_convertible_without_narrow_conv_v{
-        is_convertible_without_narrow_conv<TO, FROM>::value};
+    constexpr bool is_convertible_without_narrow_conv_v{is_convertible_without_narrow_conv<TO, FROM>::value};
     }  // namespace Inner_
     }  // namespace Nstd
 ```
@@ -8525,7 +8467,7 @@ is_convertible_without_narrow_convはNstd::Inner\_で定義している。
 ことをSFINAEに利用している。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 98
+    //  example/h/nstd_type_traits.h 95
 
     // 縮小無しでFROMからTOへ変換可能な場合、*t = T{*u}はwell-formed
     // 上記ではない場合、*t = T{*u}はill-formed
@@ -8548,7 +8490,7 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
 の実装は以下のようになる。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 121
+    //  example/h/nstd_type_traits.h 117
 
     namespace Nstd {
     namespace Inner_ {
@@ -8566,19 +8508,17 @@ is_convertible_without_narrow_convを利用したAreConvertibleWithoutNarrowConv
     };
 
     template <typename TO, typename FROM, typename... FROMs>
-    constexpr bool are_convertible_without_narrow_conv_v{
-        are_convertible_without_narrow_conv<TO, FROM, FROMs...>::value};
+    constexpr bool are_convertible_without_narrow_conv_v{are_convertible_without_narrow_conv<TO, FROM, FROMs...>::value};
     }  // namespace Inner_
 
     template <typename TO, typename FROM, typename... FROMs>
     struct AreConvertibleWithoutNarrowConv
-        : std::conditional_t<Inner_::are_convertible_without_narrow_conv_v<TO, FROM, FROMs...>,
-                             std::true_type, std::false_type> {
+        : std::conditional_t<Inner_::are_convertible_without_narrow_conv_v<TO, FROM, FROMs...>, std::true_type,
+                             std::false_type> {
     };
 
     template <typename TO, typename FROM, typename... FROMs>
-    constexpr bool AreConvertibleWithoutNarrowConvV{
-        AreConvertibleWithoutNarrowConv<TO, FROM, FROMs...>::value};
+    constexpr bool AreConvertibleWithoutNarrowConvV{AreConvertibleWithoutNarrowConv<TO, FROM, FROMs...>::value};
     }  // namespace Nstd
 ```
 
@@ -8908,10 +8848,9 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
     };
 
     template <typename T>  // C++17スタイル。SFINAEでの実装
-    struct exists_void_func_impl<
-        T,
-        std::void_t<decltype(std::declval<T&>().func())>>  // func()が呼び出し可能か確認
-        : std::is_same<void, decltype(std::declval<T&>().func())>  // 戻り値がvoidか確認
+    struct exists_void_func_impl<T,
+                                 std::void_t<decltype(std::declval<T&>().func())>>  // func()が呼び出し可能か確認
+        : std::is_same<void, decltype(std::declval<T&>().func())>                   // 戻り値がvoidか確認
     {
     };
     }  // namespace Inner_
@@ -8921,7 +8860,7 @@ exists_void_func_sfinae_fと同じテスト用クラスを用いた単体テス�
     #endif
 ```
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 171
+    //  example/template_cpp17/exists_func_ut.cpp 170
     static_assert(!exists_void_func_concept<decltype(int{})>);
     static_assert(exists_void_func_concept<decltype(X{})>);
     static_assert(!exists_void_func_concept<decltype(Y{})>);  // Y::funcの戻りはint
@@ -8935,7 +8874,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 で用いたパターンのメンバ関数を非メンバ関数に置き換えて使えば以下のようになる。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 181
+    //  example/template_cpp17/exists_func_ut.cpp 180
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8959,7 +8898,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記単体テストでは問題ないように見えるが、
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 197
+    //  example/template_cpp17/exists_func_ut.cpp 196
 
     static_assert(exists_begin_v<std::string>);
     static_assert(!exists_begin_v<int>);
@@ -8969,7 +8908,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記の単体テストはstatic_assertがフェールするためコンパイルできない。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 207
+    //  example/template_cpp17/exists_func_ut.cpp 206
 
     // 以下が問題
     static_assert(exists_begin_v<int[3]>);
@@ -8990,7 +8929,7 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 下記のように実装できることにも気付けるだろう。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 224
+    //  example/template_cpp17/exists_func_ut.cpp 223
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -8998,9 +8937,8 @@ std::begin(T)が存在するか否かの診断」をするexists_beginの実装�
 
     // Tが非配列の場合の特殊化
     template <typename T>
-    struct exists_begin<T,
-                        typename std::enable_if_t<!std::is_array_v<T>,
-                                                  std::void_t<decltype(std::begin(std::declval<T>()))>>>
+    struct exists_begin<
+        T, typename std::enable_if_t<!std::is_array_v<T>, std::void_t<decltype(std::begin(std::declval<T>()))>>>
         : std::true_type {
     };
 
@@ -9024,7 +8962,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 と考えれば下記のような実装を思いつくだろう。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 164
+    //  example/h/nstd_type_traits.h 158
 
     template <typename, typename = void>
     struct exists_begin : std::false_type {
@@ -9041,7 +8979,7 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 十分にシンプルなのでこれを採用し、exists_endも同様に実装する。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 177
+    //  example/h/nstd_type_traits.h 171
 
     template <typename, typename = void>
     struct exists_end : std::false_type {
@@ -9084,11 +9022,11 @@ decltype内で使用できるlvalueのT型オブジェクトを生成できれ�
 IsRangeの実装は以下のようになる。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 191
+    //  example/h/nstd_type_traits.h 185
 
     template <typename T>
-    struct IsRange : std::conditional_t<Inner_::exists_begin_v<T> && Inner_::exists_end_v<T>,
-                                        std::true_type, std::false_type> {
+    struct IsRange
+        : std::conditional_t<Inner_::exists_begin_v<T> && Inner_::exists_end_v<T>, std::true_type, std::false_type> {
     };
 
     template <typename T>
@@ -9225,15 +9163,15 @@ std::ostreamのメンバ関数operator<<の戻り型はstd::ostream&であるた
 exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put to"と発音する)。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 260
+    //  example/template_cpp17/exists_func_ut.cpp 258
 
     template <typename, typename = std::ostream&>
     struct exists_put_to_as_member : std::false_type {
     };
 
     template <typename T>
-    struct exists_put_to_as_member<T, decltype(std::declval<std::ostream&>().operator<<(
-                                          std::declval<T>()))> : std::true_type {
+    struct exists_put_to_as_member<T, decltype(std::declval<std::ostream&>().operator<<(std::declval<T>()))>
+        : std::true_type {
     };
 
     template <typename T>
@@ -9256,16 +9194,13 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
         int i_;
     };
 
-    inline std::ostream& operator<<(std::ostream& os, test_class_exits_put_to const& p)
-    {
-        return os << p.get();
-    }
+    inline std::ostream& operator<<(std::ostream& os, test_class_exits_put_to const& p) { return os << p.get(); }
 
     class test_class_not_exits_put_to {};
 ```
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 277
+    //  example/template_cpp17/exists_func_ut.cpp 275
 
     static_assert(exists_put_to_as_member_v<bool>);
     static_assert(!exists_put_to_as_member_v<std::string>);
@@ -9279,7 +9214,7 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 やや驚きなのは、上記の抜粋である下記コードがコンパイルできることである。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 286
+    //  example/template_cpp17/exists_func_ut.cpp 284
 
     static_assert(exists_put_to_as_member_v<test_class_not_exits_put_to[3]>);  // 驚き!
 ```
@@ -9297,15 +9232,15 @@ exists_put_to_as_memberの実装は以下のようになる("<<"は英語で"put
 exists_put_to_as_non_memberの実装は以下のようになる。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 295
+    //  example/template_cpp17/exists_func_ut.cpp 293
 
     template <typename, typename = std::ostream&>
     struct exists_put_to_as_non_member : std::false_type {
     };
 
     template <typename T>
-    struct exists_put_to_as_non_member<T, decltype(operator<<(std::declval<std::ostream&>(),
-                                                              std::declval<T>()))> : std::true_type {
+    struct exists_put_to_as_non_member<T, decltype(operator<<(std::declval<std::ostream&>(), std::declval<T>()))>
+        : std::true_type {
     };
 
     template <typename T>
@@ -9321,13 +9256,12 @@ exists_put_to_as_non_memberの実装は以下のようになる。
 std::ostream << tができるかどうかを判断するExistsPutToの実装は以下のようになる。
 
 ```cpp
-    //  example/template_cpp17/exists_func_ut.cpp 324
+    //  example/template_cpp17/exists_func_ut.cpp 322
 
     template <typename T>
     struct ExistsPutTo
-        : std::conditional_t<
-              Inner_::exists_put_to_as_member_v<T> || Inner_::exists_put_to_as_non_member_v<T>,
-              std::true_type, std::false_type> {
+        : std::conditional_t<Inner_::exists_put_to_as_member_v<T> || Inner_::exists_put_to_as_non_member_v<T>,
+                             std::true_type, std::false_type> {
     };
 
     template <typename T>
@@ -9339,7 +9273,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 下記のように、もっとシンプルに実装できることに気づくだろう。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 206
+    //  example/h/nstd_type_traits.h 200
 
     namespace Nstd {
 
@@ -9348,8 +9282,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
     };
 
     template <typename T>
-    struct ExistsPutTo<T, decltype(std::declval<std::ostream&>() << std::declval<T>())>
-        : std::true_type {
+    struct ExistsPutTo<T, decltype(std::declval<std::ostream&>() << std::declval<T>())> : std::true_type {
     };
 
     template <typename T>
@@ -9417,10 +9350,7 @@ std::ostream << tができるかどうかを判断するExistsPutToの実装は�
 
     struct T {};
 
-    std::ostream& operator<<(std::ostream& os, std::vector<T> const& x)
-    {
-        return os << "T:" << x.size();
-    }
+    std::ostream& operator<<(std::ostream& os, std::vector<T> const& x) { return os << "T:" << x.size(); }
 
     std::ostream& operator<<(std::ostream&, T const&) = delete;
 
@@ -9555,7 +9485,7 @@ Nが非0の場合、Value::type_n\<N>はvoidになる仕様にした。
     //  example/template/value_type_ut.cpp 104
 
     template <typename T, size_t N>  // Array Tを使わずに配列の一般的な表現を使用してNを取り出す
-    struct ValueType<T[N]> {  // 配列型の特殊化
+    struct ValueType<T[N]> {         // 配列型の特殊化
         using type                     = typename ValueType<T>::type;
         using type_direct              = T;
         static constexpr size_t extent = N;
@@ -9726,7 +9656,7 @@ ValueTypeの最終的な単体テストのために上記を統合したテス�
 多少のメンバの追加や調整をした最終のコードを以下に示す。
 
 ```cpp
-    //  example/h/nstd_type_traits.h 227
+    //  example/h/nstd_type_traits.h 220
 
     namespace Nstd {
     template <typename T, typename = void>  // ValueTypeのプライマリ
@@ -9747,9 +9677,9 @@ ValueTypeの最終的な単体テストのために上記を統合したテス�
 
     template <typename T, size_t N>
     struct conditional_value_type_n {
-        using type = typename std::conditional_t<
-            ValueType<T>::Nest != 0,
-            typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
+        using type =
+            typename std::conditional_t<ValueType<T>::Nest != 0,
+                                        typename ValueType<typename ValueType<T>::type_direct>::template type_n<N - 1>, T>;
     };
 
     template <typename T>
@@ -10181,8 +10111,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ```cpp
     //  example/template_cpp17/nstd_safe_index_ut.cpp 157
 
-    using T2   = Nstd::SafeIndex<Nstd::Inner_::std_array_like, std::string,
-                               std::integral_constant<size_t, 4>>;
+    using T2   = Nstd::SafeIndex<Nstd::Inner_::std_array_like, std::string, std::integral_constant<size_t, 4>>;
     auto sal_s = T2{"1", "2", "3"};
 
     static_assert(!std::is_nothrow_constructible_v<T2, char const*>);  // エクセプション有り生成
@@ -10204,8 +10133,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
     namespace Nstd {
 
     template <typename T, size_t N>
-    using SafeArray
-        = Nstd::SafeIndex<Nstd::Inner_::std_array_like, T, std::integral_constant<size_t, N>>;
+    using SafeArray = Nstd::SafeIndex<Nstd::Inner_::std_array_like, T, std::integral_constant<size_t, N>>;
     }  // namespace Nstd
 ```
 
@@ -10229,7 +10157,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 この効果により、下記に示したような拡張もコードクローンせずに簡単に行えるようになった。
 
 ```cpp
-    //  example/template/nstd_safe_index.h 62
+    //  example/template/nstd_safe_index.h 61
 
     namespace Nstd {
 
@@ -10327,7 +10255,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ここでも、すでにみてきた[コンセプト](#SS_6_11_2)による制約によりこの問題に対処する。
 
 ```cpp
-    //  example/template_cpp17/safe_index_put_to_ut.cpp 99
+    //  example/template_cpp17/safe_index_put_to_ut.cpp 98
 
 
     #if __cplusplus >= 202002L  // c++20
@@ -10361,7 +10289,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 これにより先ほど問題が発生した単体テストも下記のようにパスする。
 
 ```cpp
-    //  example/template_cpp17/safe_index_put_to_ut.cpp 146
+    //  example/template_cpp17/safe_index_put_to_ut.cpp 145
 
     auto str = Nstd::SafeString{"hello"};
     auto oss = std::ostringstream{};
@@ -10456,10 +10384,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
         int i_;
     };
 
-    inline std::ostream& operator<<(std::ostream& os, test_class_exits_put_to const& p)
-    {
-        return os << p.get();
-    }
+    inline std::ostream& operator<<(std::ostream& os, test_class_exits_put_to const& p) { return os << p.get(); }
 
     class test_class_not_exits_put_to {};
 ```
@@ -10475,14 +10400,12 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
     static_assert(!enable_range_put_to_v<std::string>);                   // std::operator<<
     static_assert(enable_range_put_to_v<std::vector<std::string>>);       // Nstd::operator<<
 
-    static_assert(!enable_range_put_to_v<test_class_not_exits_put_to>);  // operator<<無し
-    static_assert(!enable_range_put_to_v<test_class_exits_put_to>);  // ユーザ定義operator<<
-    static_assert(
-        !enable_range_put_to_v<std::vector<test_class_not_exits_put_to>>);       // operator<<無し
-    static_assert(enable_range_put_to_v<std::vector<test_class_exits_put_to>>);  // Nstd::operator<<
-    static_assert(
-        !enable_range_put_to_v<std::list<test_class_not_exits_put_to>>);       // operator<<無し
-    static_assert(enable_range_put_to_v<std::list<test_class_exits_put_to>>);  // Nstd::operator<<
+    static_assert(!enable_range_put_to_v<test_class_not_exits_put_to>);               // operator<<無し
+    static_assert(!enable_range_put_to_v<test_class_exits_put_to>);                   // ユーザ定義operator<<
+    static_assert(!enable_range_put_to_v<std::vector<test_class_not_exits_put_to>>);  // operator<<無し
+    static_assert(enable_range_put_to_v<std::vector<test_class_exits_put_to>>);       // Nstd::operator<<
+    static_assert(!enable_range_put_to_v<std::list<test_class_not_exits_put_to>>);    // operator<<無し
+    static_assert(enable_range_put_to_v<std::list<test_class_exits_put_to>>);         // Nstd::operator<<
 ```
 
 以上によりstd::enable_ifの第1引数に渡す値(enable_range_put_to_vはconstexpr)が用意できたので、
@@ -10539,7 +10462,7 @@ range_put_to_sep<>()を用意した。
 まずは、配列の単体テストを示す。
 
 ```cpp
-    //  example/template/nstd_put_to_ut.cpp 113
+    //  example/template/nstd_put_to_ut.cpp 111
 
     using namespace Nstd;
     {
@@ -10582,7 +10505,7 @@ range_put_to_sep<>()を用意した。
 次に、コンテナの単体テストを示す。
 
 ```cpp
-    //  example/template/nstd_put_to_ut.cpp 170
+    //  example/template/nstd_put_to_ut.cpp 168
 
     using namespace Nstd;
     {
@@ -10611,7 +10534,7 @@ range_put_to_sep<>()を用意した。
 最後に、Nstd::SafeIndexの単体テストを示す。
 
 ```cpp
-    //  example/template/nstd_put_to_ut.cpp 220
+    //  example/template/nstd_put_to_ut.cpp 218
 
     {
         auto sal_s = Nstd::SafeArray<std::string, 4>{"1", "2", "3"};
@@ -10621,8 +10544,7 @@ range_put_to_sep<>()を用意した。
         ASSERT_EQ("1 | 2 | 3 | ", oss.str());
     }
     {
-        auto sv
-            = Nstd::SafeVector<Nstd::SafeArray<Nstd::SafeString, 2>>{{"ab", "cd"}, {"ef", "gh"}};
+        auto sv  = Nstd::SafeVector<Nstd::SafeArray<Nstd::SafeString, 2>>{{"ab", "cd"}, {"ef", "gh"}};
         auto oss = std::ostringstream{};
 
         oss << sv;
@@ -10674,10 +10596,7 @@ range_put_to_sep<>()を用意した。
     namespace Nstd {
 
     /// @brief float比較用関数
-    bool is_equal_f(float lhs, float rhs) noexcept
-    {
-        return std::abs(lhs - rhs) <= std::numeric_limits<float>::epsilon();
-    }
+    bool is_equal_f(float lhs, float rhs) noexcept { return std::abs(lhs - rhs) <= std::numeric_limits<float>::epsilon(); }
 
     /// @brief double比較用関数
     bool is_equal_d(double lhs, double rhs) noexcept
@@ -10688,7 +10607,7 @@ range_put_to_sep<>()を用意した。
 実際に使う場面を以下に示す。
 
 ```cpp
-    //  example/template_cpp17/nstd_float_ut.cpp 44
+    //  example/template_cpp17/nstd_float_ut.cpp 41
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -10702,7 +10621,7 @@ range_put_to_sep<>()を用意した。
 一見これで万事うまくいくように見えるが、そうは行かないことを以下の例で示す。
 
 ```cpp
-    //  example/template_cpp17/nstd_float_ut.cpp 59
+    //  example/template_cpp17/nstd_float_ut.cpp 56
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -10719,7 +10638,7 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 これに対処する方法を以下に示す。
 
 ```cpp
-    //  example/template_cpp17/nstd_float_ut.cpp 74
+    //  example/template_cpp17/nstd_float_ut.cpp 71
 
     namespace Nstd {
     // is_equal_dを改良して、引数の型が統一されていない呼び出しをコンパイルエラーにできるようにした。
@@ -10738,7 +10657,7 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 この関数のテストは以下の通りである。
 
 ```cpp
-    //  example/template_cpp17/nstd_float_ut.cpp 91
+    //  example/template_cpp17/nstd_float_ut.cpp 88
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -10753,14 +10672,13 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 さらに下記のように拡張変更した。
 
 ```cpp
-    //  example/template_cpp17/nstd_float_ut.cpp 106
+    //  example/template_cpp17/nstd_float_ut.cpp 103
 
     /// @brief 浮動小数点比較用関数
     /// 相対誤差を考慮して、lhs と rhs の絶対値に基づくトレランスの範囲内での比較を行う。
     /// これにより、数値の大小に関わらず、適切な誤差で比較できる。
     template <typename FLOAT_0, typename FLOAT_1>
-    bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs,
-                  FLOAT_0 tolerance = std::numeric_limits<FLOAT_0>::epsilon()) noexcept
+    bool is_equal(FLOAT_0 lhs, FLOAT_1 rhs, FLOAT_0 tolerance = std::numeric_limits<FLOAT_0>::epsilon()) noexcept
     {
         static_assert(std::is_floating_point_v<FLOAT_0>);
         static_assert(std::is_same_v<FLOAT_0, FLOAT_1>);
@@ -10772,7 +10690,7 @@ dobuleとfloatを1つの式に混載するとfloatがdoubleに昇格されるた
 この関数のテストは以下の通りである。
 
 ```cpp
-    //  example/template_cpp17/nstd_float_ut.cpp 125
+    //  example/template_cpp17/nstd_float_ut.cpp 121
 
     float a = 1000000.0F;
     float b = 1000000.1F;
@@ -10806,8 +10724,7 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
     template <typename BASIC_TYPE, uint32_t FRACTION_BIT_NUM>
     class FixedPoint {
     public:
-        constexpr FixedPoint(BASIC_TYPE                                integer  = 0,
-                             typename std::make_unsigned_t<BASIC_TYPE> fraction = 0) noexcept
+        constexpr FixedPoint(BASIC_TYPE integer = 0, typename std::make_unsigned_t<BASIC_TYPE> fraction = 0) noexcept
             : value_{get_init_value(integer, fraction)}
         {
             // signedに対する右ビットシフトの仕様が、算術右ビットシフトでないと
@@ -10837,16 +10754,10 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
         }
 
         /// @brief 小数部のビット長を返す
-        constexpr typename std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept
-        {
-            return fraction_bit_mask_;
-        }
+        constexpr typename std::make_unsigned_t<BASIC_TYPE> GetFractionMask() const noexcept { return fraction_bit_mask_; }
 
         /// @brief 整数部のビット長を返す
-        constexpr typename std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept
-        {
-            return integer_bit_mask_;
-        }
+        constexpr typename std::make_unsigned_t<BASIC_TYPE> GetIntegerMask() const noexcept { return integer_bit_mask_; }
 
         static constexpr bool IsSigned() noexcept { return std::is_signed_v<BASIC_TYPE>; }
 
@@ -10911,29 +10822,17 @@ intやlongの値を100倍などのスケーリングして使うのが、浮動�
         friend auto operator<=>(FixedPoint lhs, FixedPoint rhs) noexcept = default;
 
     #else  // c++17
-        friend bool operator==(FixedPoint lhs, FixedPoint rhs) noexcept
-        {
-            return lhs.value_ == rhs.value_;
-        }
+        friend bool operator==(FixedPoint lhs, FixedPoint rhs) noexcept { return lhs.value_ == rhs.value_; }
 
         friend bool operator!=(FixedPoint lhs, FixedPoint rhs) noexcept { return !(lhs == rhs); }
 
-        friend bool operator>(FixedPoint lhs, FixedPoint rhs) noexcept
-        {
-            return lhs.value_ > rhs.value_;
-        }
+        friend bool operator>(FixedPoint lhs, FixedPoint rhs) noexcept { return lhs.value_ > rhs.value_; }
 
-        friend bool operator>=(FixedPoint lhs, FixedPoint rhs) noexcept
-        {
-            return (lhs > rhs) || (lhs == rhs);
-        }
+        friend bool operator>=(FixedPoint lhs, FixedPoint rhs) noexcept { return (lhs > rhs) || (lhs == rhs); }
 
         friend bool operator<(FixedPoint lhs, FixedPoint rhs) noexcept { return (rhs > lhs); }
 
-        friend bool operator<=(FixedPoint lhs, FixedPoint rhs) noexcept
-        {
-            return (lhs < rhs) || (lhs == rhs);
-        }
+        friend bool operator<=(FixedPoint lhs, FixedPoint rhs) noexcept { return (lhs < rhs) || (lhs == rhs); }
     #endif
 
         /// @brief FixedPoint() + intのようなオーバーロードを作るためにあえてfriend
@@ -10992,7 +10891,7 @@ FixedPointの単体テストコードを以下に示す。
 使い勝手のよい環境をユーザに提供するべきである。
 
 ```cpp
-    //  example/template_cpp17/fixed_point.h 175
+    //  example/template_cpp17/fixed_point.h 156
 
     namespace Nstd {
     namespace fixed_point_literals {
@@ -11114,29 +11013,19 @@ FixedPointの単体テストコードを以下に示す。
         {
             return (lhs.value_.num * rhs.value_.deno) == (rhs.value_.num * lhs.value_.deno);
         }
-        friend bool operator!=(Rational const& lhs, Rational const& rhs) noexcept
-        {
-            return !(lhs == rhs);
-        }
+        friend bool operator!=(Rational const& lhs, Rational const& rhs) noexcept { return !(lhs == rhs); }
         friend bool operator<(Rational const& lhs, Rational const& rhs) noexcept
         {
             return (lhs.value_.num * rhs.value_.deno) < (rhs.value_.num * lhs.value_.deno);
         }
-        friend bool operator<=(Rational const& lhs, Rational const& rhs) noexcept
-        {
-            return !(rhs < lhs);
-        }
+        friend bool operator<=(Rational const& lhs, Rational const& rhs) noexcept { return !(rhs < lhs); }
         friend bool operator>(Rational const& lhs, Rational const& rhs) noexcept { return rhs < lhs; }
-        friend bool operator>=(Rational const& lhs, Rational const& rhs) noexcept
-        {
-            return !(lhs < rhs);
-        }
+        friend bool operator>=(Rational const& lhs, Rational const& rhs) noexcept { return !(lhs < rhs); }
     #endif
         /// @brief put-to演算子の定義
         friend std::ostream& operator<<(std::ostream& os, const Rational& rhs)
         {
-            return (rhs.value_.deno == 1) ? os << rhs.value_.num
-                                          : os << rhs.value_.num << "/" << rhs.value_.deno;
+            return (rhs.value_.deno == 1) ? os << rhs.value_.num : os << rhs.value_.num << "/" << rhs.value_.deno;
         }
 
         /// @brief doubleへの変換演算子
@@ -11212,7 +11101,7 @@ FixedPointの単体テストコードを以下に示す。
 [有理数クラス](#SS_4_5_4)に対して、有理数リテラルを定義するべきである。
 
 ```cpp
-    //  example/template_cpp17/rational.h 157
+    //  example/template_cpp17/rational.h 147
 
     namespace Nstd {
     /// @brief Rational<int32_t>をユーザ定義リテラルとして扱うためのオペレータ
@@ -11375,8 +11264,7 @@ FixedPointの単体テストコードを以下に示す。
 
     auto s = Logging::Logger::InstConst().Get();
 
-    auto const exp
-        = log_str_exp(__FILE__, line_num - 1, ":1:name/3:x0/0, x1/1, x2/2:lx3/3, lx4/1\n");
+    auto const exp = log_str_exp(__FILE__, line_num - 1, ":1:name/3:x0/0, x1/1, x2/2:lx3/3, lx4/1\n");
     ASSERT_EQ(exp, s);
 ```
 
@@ -11466,8 +11354,7 @@ FixedPointの単体テストコードを以下に示す。
     template <typename T>
     constexpr ExpressionType universal_ref2(T&& t)
     {
-        return std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue
-                                                       : ExpressionType::Rvalue;
+        return std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue : ExpressionType::Rvalue;
     }
 
     // std::pair<>::first  : universal_refの中のtのExpressionType
@@ -11475,16 +11362,15 @@ FixedPointの単体テストコードを以下に示す。
     template <typename T>
     constexpr std::pair<ExpressionType, ExpressionType> universal_ref(T&& t)
     {
-        return std::make_pair(
-            std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue : ExpressionType::Rvalue,
-            universal_ref2(t));
+        return std::make_pair(std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue : ExpressionType::Rvalue,
+                              universal_ref2(t));
     }
 ```
 
 下記に示した通り、universal_refとuniversal_ref2のパラメータが同じ型であるとは限らない。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 96
+    //  example/template_cpp17/universal_ref_ut.cpp 94
 
     auto i = 0;
 
@@ -11507,7 +11393,7 @@ FixedPointの単体テストコードを以下に示す。
 この問題はstd::forwardにより対処できる。これによって改良されたコードを下記に示す。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 124
+    //  example/template_cpp17/universal_ref_ut.cpp 122
 
     template <typename STR0, typename STR1>
     std::vector<std::string> gen_vector(STR0&& s0, STR1&& s1)
@@ -11524,7 +11410,7 @@ FixedPointの単体テストコードを以下に示す。
 下記単体テストが示す通り、rvalueリファレンスはmove代入され、lvalueリファレンスはcopy代入されている。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 142
+    //  example/template_cpp17/universal_ref_ut.cpp 140
 
     auto a = std::string{"a"};
     auto b = std::string{"b"};
@@ -11539,7 +11425,7 @@ FixedPointの単体テストコードを以下に示す。
 しかし残念ながら、このコードにも改良すべき点がある。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 155
+    //  example/template_cpp17/universal_ref_ut.cpp 153
 
     auto a = std::string{"a"};
 
@@ -11558,7 +11444,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 下記は、この対策を施すとともに任意の数の引数を受け取れるように改良したコードである。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 171
+    //  example/template_cpp17/universal_ref_ut.cpp 169
 
     void emplace_back(std::vector<std::string>&) {}
 
@@ -11606,7 +11492,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 (が、残念ならがテンポラリオブジェクトが生成されていないことを単体テストで証明することはできない)。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 197
+    //  example/template_cpp17/universal_ref_ut.cpp 195
 
     auto a = std::string{"a"};
     auto b = std::string{"b"};
@@ -11622,7 +11508,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 [畳み込み式](#SS_6_11_3)を使用した下記の実装の方がより明確である。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 211
+    //  example/template_cpp17/universal_ref_ut.cpp 209
 
     template <typename... STR>
     std::vector<std::string> gen_vector(STR&&... ss)
@@ -11643,7 +11529,7 @@ constなlvalueリファレンスとして扱うべきである。
 従って、下記のようなコードは書くべきではない。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 240
+    //  example/template_cpp17/universal_ref_ut.cpp 238
 
     template <typename STR0, typename STR1>
     std::vector<std::string> gen_vector(STR0&& s0, STR1&& s1)
@@ -11661,7 +11547,7 @@ constなlvalueリファレンスとして扱うべきである。
 下記単体テストが示すように非constな実引数はmoveされてしまうことになる。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 257
+    //  example/template_cpp17/universal_ref_ut.cpp 255
 
     auto       a = std::string{"a"};
     auto const b = std::string{"b"};
@@ -11677,7 +11563,7 @@ constなlvalueリファレンスとして扱うべきである。
 すでに述べたように引数はforwardingリファレンスとなってしまうため、lvalueにもバインドしてしまう。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 273
+    //  example/template_cpp17/universal_ref_ut.cpp 271
 
     template <typename T>
     void f(T&& t) noexcept
@@ -11689,7 +11575,7 @@ constなlvalueリファレンスとして扱うべきである。
 このような場合、下記の記述が必要になる。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 292
+    //  example/template_cpp17/universal_ref_ut.cpp 290
 
     template <typename T>
     void f(T&) = delete;
@@ -11699,7 +11585,7 @@ constなlvalueリファレンスとして扱うべきである。
 当初の目的通り、rvalueのみを引数に取る関数テンプレートが定義できたことになる。
 
 ```cpp
-    //  example/template_cpp17/universal_ref_ut.cpp 300
+    //  example/template_cpp17/universal_ref_ut.cpp 298
 
     auto s = std::string{};
 
@@ -11867,7 +11753,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
 
     ASSERT_EQ(v.index(), 1);                                // std::stringを保持
     ASSERT_THROW(std::get<0>(v), std::bad_variant_access);  // intではないのでエクセプション
-    ASSERT_EQ(std::get<1>(v), std::string{"str"});  // std::stringなので問題なくアクセス
+    ASSERT_EQ(std::get<1>(v), std::string{"str"});          // std::stringなので問題なくアクセス
     ASSERT_THROW(std::get<2>(v), std::bad_variant_access);  // doubleではないのでエクセプション
 ```
 
@@ -12080,8 +11966,7 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
     // このような関数テンプレートは適用範囲が広すぎるので定義すべきではないが、
     // 危険な例を示すためあえて定義している
     template <typename T, typename U>
-    inline auto is_equal(T const& lhs, U const& rhs) noexcept
-        -> decltype(lhs.x == rhs.x, lhs.y == rhs.y)
+    inline auto is_equal(T const& lhs, U const& rhs) noexcept -> decltype(lhs.x == rhs.x, lhs.y == rhs.y)
     {
         return lhs.x == rhs.x && lhs.y == rhs.y;
     }
@@ -12091,7 +11976,7 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 これに対しての単体テストは下記のようになる。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 37
+    //  example/template_cpp17/suppress_adl_ut.cpp 36
 
     auto xy0 = App::XY{0, 1};
     auto xy1 = App::XY{0, 2};
@@ -12114,7 +11999,7 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 上記の抜粋である
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 43
+    //  example/template_cpp17/suppress_adl_ut.cpp 42
 
     ASSERT_FALSE(is_equal(xy0, xy1));
     ASSERT_TRUE(is_equal(xy0, xy2));
@@ -12128,7 +12013,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 上記の名前空間での定義が可視である状態で、下記のようなコードを書いた場合を考える。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 63
+    //  example/template_cpp17/suppress_adl_ut.cpp 62
 
     namespace App2 {
     struct XYZ {
@@ -12147,7 +12032,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 この単体テストは、やはりADLを使い下記のように書ける。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 84
+    //  example/template_cpp17/suppress_adl_ut.cpp 83
     auto xyz0 = App2::XYZ{0, 2, 2};
     auto xyz1 = App2::XYZ{0, 1, 2};
 
@@ -12158,7 +12043,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 これに問題はないが、下記のテストもコンパイルでき、且つテストもパスしてしまうことには問題がある。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 93
+    //  example/template_cpp17/suppress_adl_ut.cpp 92
 
     auto xyz0 = App2::XYZ{0, 2, 2};
     auto xyz1 = App2::XYZ{0, 1, 2};
@@ -12190,7 +12075,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 従って下記のような関数テンプレートを指す概念ではない。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 108
+    //  example/template_cpp17/suppress_adl_ut.cpp 107
 
     template <typename T, size_t N>
     constexpr auto array_length(T const (&)[N]) noexcept
@@ -12207,8 +12092,7 @@ lookupによるバグの混入を起こしてしまうことがある。
     // このような関数テンプレートは適用範囲が広すぎるので定義すべきではないが、
     // 危険な例を示すためあえて定義している
     template <typename T, typename U>
-    inline auto is_equal(T const& lhs, U const& rhs) noexcept
-        -> decltype(lhs.x == rhs.x, lhs.y == rhs.y)
+    inline auto is_equal(T const& lhs, U const& rhs) noexcept -> decltype(lhs.x == rhs.x, lhs.y == rhs.y)
     {
         return lhs.x == rhs.x && lhs.y == rhs.y;
     }
@@ -12219,7 +12103,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 これに対する最も安全な対処は下記コードで示す通りテンプレートを使わないことである。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 126
+    //  example/template_cpp17/suppress_adl_ut.cpp 125
 
     namespace App {
 
@@ -12228,10 +12112,7 @@ lookupによるバグの混入を起こしてしまうことがある。
         int y;
     };
 
-    inline bool is_equal(XY const& lhs, XY const& rhs) noexcept
-    {
-        return lhs.x == rhs.x && lhs.y == rhs.y;
-    }
+    inline bool is_equal(XY const& lhs, XY const& rhs) noexcept { return lhs.x == rhs.x && lhs.y == rhs.y; }
     }  // namespace App
 ```
 
@@ -12240,13 +12121,11 @@ lookupによるバグの混入を起こしてしまうことがある。
 こうすることでその適用範囲はそれを定義した関数内に留まる。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 153
+    //  example/template_cpp17/suppress_adl_ut.cpp 149
 
     // 下記のpointのようなクラスが他にもいくつかあった場合、
     // このジェネリックラムダでコードの被りは回避できる
-    auto is_equal = [](auto const& lhs, auto const& rhs) noexcept {
-        return lhs.x == rhs.x && lhs.y == rhs.y;
-    };
+    auto is_equal = [](auto const& lhs, auto const& rhs) noexcept { return lhs.x == rhs.x && lhs.y == rhs.y; };
 
     struct point {
         int x;
@@ -12276,7 +12155,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 下記のコードについて考える。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 176
+    //  example/template_cpp17/suppress_adl_ut.cpp 170
 
     struct A {
         int f(int i) noexcept { return i * 3; }
@@ -12305,7 +12184,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 ([two phase name lookup](#SS_6_10_3)の一回目のname lookupでfがバインドされるため)。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 203
+    //  example/template_cpp17/suppress_adl_ut.cpp 197
 
     auto ef = App::ExecF<A>{};
 
@@ -12317,7 +12196,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
 下記のようにリファクタリングしたとしよう。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 213
+    //  example/template_cpp17/suppress_adl_ut.cpp 207
 
     struct A {
         int f(int i) noexcept { return i * 3; }
@@ -12340,7 +12219,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
 すると、fのname lookupの対象が変わってしまい、元の単体テストはパスしなくなる。
 
 ```cpp
-    //  example/template_cpp17/suppress_adl_ut.cpp 236
+    //  example/template_cpp17/suppress_adl_ut.cpp 230
 
     auto ef = App::ExecF{};
 
@@ -12502,8 +12381,8 @@ App内でusing XYを宣言したことで、これまで通りApp::XYが使え�
     {
         int status;
 
-        auto demangled = std::unique_ptr<char, decltype(&std::free)>{
-            abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
+        auto demangled
+            = std::unique_ptr<char, decltype(&std::free)>{abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
 
         return demangled.get();
     }
@@ -12523,8 +12402,8 @@ App内でusing XYを宣言したことで、これまで通りApp::XYが使え�
         // T   == const int ならば、
         // str == Nstd::Inner_::type_capture<int const>
         //        <----------- 27 ----------><-- x --> 下記ではxを切り出す
-        constexpr auto beg = 27U;                           // 先頭の不要な文字列数
-        auto name = str.substr(beg, str.size() - beg - 1);  // 最後の文字は>なので不要
+        constexpr auto beg  = 27U;                                    // 先頭の不要な文字列数
+        auto           name = str.substr(beg, str.size() - beg - 1);  // 最後の文字は>なので不要
 
         while (name.back() == ' ') {  // 無駄なスペースを消す
             auto last = --name.end();
@@ -12722,10 +12601,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
     template <size_t N>
     class StaticString {
     public:
-        constexpr StaticString(char const (&str)[N]) noexcept
-            : StaticString{0, str, std::make_index_sequence<N - 1>{}}
-        {
-        }
+        constexpr StaticString(char const (&str)[N]) noexcept : StaticString{0, str, std::make_index_sequence<N - 1>{}} {}
 
         template <size_t M>
         constexpr StaticString(size_t offset, StaticString<M> ss) noexcept
@@ -12791,7 +12667,7 @@ StaticStringはすでに示したテクニックを使い、下記のように�
 次にこのクラスにc++17用に`operator==`とc++20用に`operator<=>`を追加する。
 
 ```cpp
-    //  example/h/nstd_static_string.h 52
+    //  example/h/nstd_static_string.h 49
 
     namespace Inner_ {
     template <size_t N>
@@ -12863,8 +12739,8 @@ StaticStringはすでに示したテクニックを使い、下記のように�
             return N1 <=> N2;  // サイズが異なる場合は直接サイズを比較
         }
         else {
-            return std::lexicographical_compare_three_way(lhs.String(), lhs.String() + N1 - 1,
-                                                          rhs.String(), rhs.String() + N2 - 1);
+            return std::lexicographical_compare_three_way(lhs.String(), lhs.String() + N1 - 1, rhs.String(),
+                                                          rhs.String() + N2 - 1);
         }
     }
 
@@ -12920,12 +12796,11 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 同様にoperator + を追加する。
 
 ```cpp
-    //  example/h/nstd_static_string.h 161
+    //  example/h/nstd_static_string.h 158
 
     namespace Inner_ {
     template <size_t N1, size_t... I1, size_t N2, size_t... I2>
-    constexpr StaticString<N1 + N2 - 1> concat(char const (&str1)[N1], std::index_sequence<I1...>,
-                                               char const (&str2)[N2],
+    constexpr StaticString<N1 + N2 - 1> concat(char const (&str1)[N1], std::index_sequence<I1...>, char const (&str2)[N2],
                                                std::index_sequence<I2...>) noexcept
     {
         return {str1[I1]..., str2[I2]...};
@@ -12977,7 +12852,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 任意のサイズの文字列を切り出せるようにすることでStaticStringはより便利に使用できるようになる。
 
 ```cpp
-    //  example/h/nstd_static_string.h 192
+    //  example/h/nstd_static_string.h 188
 
     template <size_t SIZE, size_t N>  // StaticString<SiZE>の部分文字列生成
     constexpr auto TopStr(StaticString<N> ss) noexcept
@@ -13000,7 +12875,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
     static_assert(3 == ss2.Size());      // 先頭2文字 + 終端文字
     ASSERT_STREQ("01", ss2.String());
 
-    auto ss8 = BottomStr<2>(ss);  // 先頭からオフセット2文字～終端文字まで
+    auto ss8 = BottomStr<2>(ss);     // 先頭からオフセット2文字～終端文字まで
     static_assert(9 == ss8.Size());  // 先頭からオフセット2文字～終端文字までは結果的に9文字
     ASSERT_STREQ("23456789", ss8.String());
 
@@ -13023,16 +12898,12 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
     constexpr size_t num_of_digits(size_t n) noexcept { return n > 0 ? 1 + num_of_digits(n / 10) : 0; }
 
     // 10のn乗を返す
-    constexpr uint32_t ten_to_nth_power(uint32_t n) noexcept
-    {
-        return n == 0 ? 1 : 10 * ten_to_nth_power(n - 1);
-    }
+    constexpr uint32_t ten_to_nth_power(uint32_t n) noexcept { return n == 0 ? 1 : 10 * ten_to_nth_power(n - 1); }
 
     // 10進数の桁の若い順番に左から並べなおす(12345 -> 54321)
     constexpr uint32_t reverse_num(uint32_t num) noexcept
     {
-        return num != 0 ? (num % 10) * ten_to_nth_power(num_of_digits(num) - 1) + reverse_num(num / 10)
-                        : 0;
+        return num != 0 ? (num % 10) * ten_to_nth_power(num_of_digits(num) - 1) + reverse_num(num / 10) : 0;
     }
 
     // 10進数一桁をacsii文字に変換
@@ -13055,9 +12926,8 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 ```cpp
     //  example/template/nstd_static_string_num_ut.cpp 47
 
-    constexpr auto ns
-        = make_static_string<__LINE__>(std::make_index_sequence<Inner_::num_of_digits(__LINE__)>());
-    auto line_num = __LINE__ - 1;
+    constexpr auto ns       = make_static_string<__LINE__>(std::make_index_sequence<Inner_::num_of_digits(__LINE__)>());
+    auto           line_num = __LINE__ - 1;
 
     ASSERT_EQ(std::to_string(line_num), ns.String());
 ```
@@ -13066,7 +12936,7 @@ StaticStringがテンプレートであるため機能せず、上記のよう�
 Int2StaticString\<>()が得られる。
 
 ```cpp
-    //  example/h/nstd_static_string_num.h 42
+    //  example/h/nstd_static_string_num.h 38
 
     template <size_t N>
     constexpr StaticString<Inner_::num_of_digits(N) + 1> Int2StaticString() noexcept
@@ -13078,7 +12948,7 @@ Int2StaticString\<>()が得られる。
 単体テストは下記のようになる。
 
 ```cpp
-    //  example/template/nstd_static_string_num_ut.cpp 66
+    //  example/template/nstd_static_string_num_ut.cpp 65
 
     constexpr auto ns       = Int2StaticString<__LINE__>();
     auto           line_num = __LINE__ - 1;
@@ -13134,8 +13004,7 @@ StaticStringと同様に、このままでは不便であるため、下記の�
     #endif
     auto MakeException(char const (&filename)[F_N], char const (&msg)[M_N]) noexcept
     {
-        return Inner_::make_exception<E>(StaticString{filename} + ":" + Int2StaticString<LINE_NUM>()
-                                         + ":" + msg);
+        return Inner_::make_exception<E>(StaticString{filename} + ":" + Int2StaticString<LINE_NUM>() + ":" + msg);
     }
 ```
 
@@ -13163,7 +13032,7 @@ StaticStringと同様に、このままでは不便であるため、下記の�
 Exceptionクラスの利便性をさらに高めるため、下記の定義を行う。
 
 ```cpp
-    //  example/h/nstd_exception.h 55
+    //  example/h/nstd_exception.h 54
 
     #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
 ```
@@ -13234,8 +13103,8 @@ std::unique_ptrは、
 ```cpp
     //  h/nstd_type2str.h 18
 
-    auto demangled = std::unique_ptr<char, decltype(&std::free)>{
-        abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
+    auto demangled
+        = std::unique_ptr<char, decltype(&std::free)>{abi::__cxa_demangle(to_demagle, 0, 0, &status), &std::free};
 ```
 
 std::unique_ptrの第2パラメータには、上記のような関数へのポインタのみではなく、
@@ -13324,7 +13193,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
         auto is_called = false;
         {
             auto delete_obj = std::function<void(A*)>{[](A* a) noexcept { delete a; }};
-            auto ua = std::unique_ptr<A, std::function<void(A*)>&>{new A{is_called}, delete_obj};
+            auto ua         = std::unique_ptr<A, std::function<void(A*)>&>{new A{is_called}, delete_obj};
             ASSERT_FALSE(is_called);  // uaのデストラクタは呼ばれていない
         }
         ASSERT_TRUE(is_called);  // uaのデストラクタは呼ばれた
@@ -13456,7 +13325,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
         auto tf        = TestFunctor{is_called};
         {
             auto sg = ScopedGuard{std::move(tf)};  // C++17以降の記法
-            ASSERT_FALSE(is_called);  // sgのデストラクタは呼ばれていない
+            ASSERT_FALSE(is_called);               // sgのデストラクタは呼ばれていない
         }
         ASSERT_TRUE(is_called);  // sgのデストラクタは呼ばれた
     }
@@ -13472,7 +13341,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
         auto tf        = TestFunctor{is_called};
         {
             auto sg = ScopedGuard<TestFunctor>{std::move(tf)};  // C++14以前の記法
-            ASSERT_FALSE(is_called);  // sgのデストラクタは呼ばれていない
+            ASSERT_FALSE(is_called);                            // sgのデストラクタは呼ばれていない
         }
         ASSERT_TRUE(is_called);  // sgのデストラクタは呼ばれた
     }
@@ -13526,7 +13395,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
         auto tf        = TestFunctor{is_called};
         {
             auto sg = MakeScopedGuard(std::ref(tf));  // std::refが必要
-            ASSERT_FALSE(is_called);  // sgのデストラクタは呼ばれていない
+            ASSERT_FALSE(is_called);                  // sgのデストラクタは呼ばれていない
         }
         ASSERT_TRUE(is_called);  // sgのデストラクタは呼ばれた
     }
@@ -13938,8 +13807,8 @@ malloc/freeにリアルタイム性がない原因は、
         void* AllocNoExcept(size_t size) noexcept { return alloc(size); }
 
         void   Free(void* area) noexcept { free(area); }
-        size_t GetSize() const noexcept { return get_size(); }  // メモリ最小単位
-        size_t GetCount() const noexcept { return get_count(); }  // メモリ最小単位が何個取れるか
+        size_t GetSize() const noexcept { return get_size(); }           // メモリ最小単位
+        size_t GetCount() const noexcept { return get_count(); }         // メモリ最小単位が何個取れるか
         size_t GetCountMin() const noexcept { return get_count_min(); }  // GetCount()の最小値
         bool   IsValid(void const* area) const noexcept { return is_valid(area); }
 
@@ -14204,10 +14073,7 @@ MPoolから派生したクラスが、
         mpool_table[31] = gen_mpool<32, 128>();  // 1024
     }
 
-    size_t size2index(size_t v) noexcept
-    {
-        return (((v + (min_unit - 1)) & ~(min_unit - 1)) / min_unit) - 1;
-    }
+    size_t size2index(size_t v) noexcept { return (((v + (min_unit - 1)) & ~(min_unit - 1)) / min_unit) - 1; }
     }  // namespace
 
     [[nodiscard]] void* operator new(std::size_t size)
@@ -14266,7 +14132,7 @@ MEM_COUNTの値を見直した方が、
 operator deleteについては、下記の2種類が必要となる。
 
 ```cpp
-    //  example/dynamic_memory_allocation/global_new_delete.cpp 109
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 106
 
     void operator delete(void* mem) noexcept
     {
@@ -14368,13 +14234,10 @@ MPoolFixedの生成にプレースメントnewを用いている。
     };
 ```
 ```cpp
-    //  example/dynamic_memory_allocation/global_new_delete.cpp 135
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 132
 
     MPool const* const* GlobalNewDeleteMonitor::begin() const noexcept { return &mpool_table[0]; }
-    MPool const* const* GlobalNewDeleteMonitor::end() const noexcept
-    {
-        return &mpool_table[ArrayLength(mpool_table)];
-    }
+    MPool const* const* GlobalNewDeleteMonitor::end() const noexcept { return &mpool_table[ArrayLength(mpool_table)]; }
 
     MPool const* const* GlobalNewDeleteMonitor::cbegin() const noexcept { return begin(); }
     MPool const* const* GlobalNewDeleteMonitor::cend() const noexcept { return end(); }
@@ -14383,7 +14246,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
 このインターフェースを下記のように使用することで、
 
 ```cpp
-    //  example/dynamic_memory_allocation/global_new_delete_ut.cpp 124
+    //  example/dynamic_memory_allocation/global_new_delete_ut.cpp 119
 
     auto gm = GlobalNewDeleteMonitor{};
 
@@ -14523,7 +14386,7 @@ MPoolFixedの生成にプレースメントnewを用いている。
     public:
         [[nodiscard]] static void* operator new(size_t size) { return mpool_.Alloc(size); }
         static void                operator delete(void* mem) noexcept { mpool_.Free(mem); }
-        static void operator delete(void* mem, std::size_t) noexcept { mpool_.Free(mem); }
+        static void                operator delete(void* mem, std::size_t) noexcept { mpool_.Free(mem); }
 
         [[nodiscard]] static void* operator new[](size_t size)                             = delete;
         static void                operator delete[](void* mem) noexcept                   = delete;
@@ -14724,10 +14587,7 @@ STLコンテナはこういった状況に備えて、ユーザ定義のアロ�
 
         virtual size_t get_size() const noexcept override { return 1; }
         virtual size_t get_count() const noexcept override { return unit_count_ * Inner_::unit_size; }
-        virtual size_t get_count_min() const noexcept override
-        {
-            return unit_count_min_ * Inner_::unit_size;
-        }
+        virtual size_t get_count_min() const noexcept override { return unit_count_min_ * Inner_::unit_size; }
 
         virtual bool is_valid(void const* mem) const noexcept override
         {
@@ -14760,7 +14620,7 @@ MPoolBasedAllocatorを使うことでnew char[]に対応するアロケータが
     auto str  = std::basic_string<char, std::char_traits<char>, MPoolBasedAllocator<char>>{"hehe"};
 
     ASSERT_TRUE(mpv_allocator.IsValid(str.c_str()));  // mpv_allocatorを使用してメモリ確保
-    ASSERT_GT(rest, mpv_allocator.GetCount());  // mpv_allocatorのメモリが減っていることの確認
+    ASSERT_GT(rest, mpv_allocator.GetCount());        // mpv_allocatorのメモリが減っていることの確認
 ```
 
 この長い宣言は、下記のようにすることで簡潔に記述できるようになる。
@@ -14791,7 +14651,7 @@ MPoolBasedAllocatorを使うことでnew char[]に対応するアロケータが
     auto ints = mpv_vector_int{1, 2, 3};
 
     ASSERT_TRUE(mpv_allocator.IsValid(&ints[0]));  // mpv_allocatorのメモリであることの確認
-    ASSERT_GT(rest, mpv_allocator.GetCount());  // mpv_allocatorのメモリが減っていることの確認
+    ASSERT_GT(rest, mpv_allocator.GetCount());     // mpv_allocatorのメモリが減っていることの確認
 ```
 
 これまでの手法を組み合わせ下記のようにすることで、
@@ -14813,7 +14673,7 @@ std::stringと同等のオブジェクトを保持するstd::vectorを宣言す�
     ASSERT_GT(rest, mpv_allocator.GetCount());
 
     for (auto const& s : strs) {
-        ASSERT_TRUE(mpv_allocator.IsValid(&s));  // mpv_allocatorのメモリであることの確認
+        ASSERT_TRUE(mpv_allocator.IsValid(&s));         // mpv_allocatorのメモリであることの確認
         ASSERT_TRUE(mpv_allocator.IsValid(s.c_str()));  // mpv_allocatorのメモリであることの確認
     }
 ```
@@ -15135,10 +14995,7 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
             ...
         }
 
-        bool do_is_equal(const memory_resource& other) const noexcept override
-        {
-            return this == &other;
-        }
+        bool do_is_equal(const memory_resource& other) const noexcept override { return this == &other; }
     };
 ```
 
@@ -15154,7 +15011,7 @@ std::allocatorと異なり、型に依存せず、
 polymorphic_allocatorの使用例とする。
 
 ```cpp
-    //  example/dynamic_memory_allocation/pmr_memory_resource_ut.cpp 217
+    //  example/dynamic_memory_allocation/pmr_memory_resource_ut.cpp 214
 
     constexpr uint32_t            max = 1024;
     memory_resource_variable<max> mrv;
@@ -15169,8 +15026,7 @@ polymorphic_allocatorの使用例とする。
         ASSERT_GE(max, remaings1);
 
         // std::basic_stringにカスタムアロケータを適用
-        using pmr_string = std::basic_string<char, std::char_traits<char>,
-                                             std::pmr::polymorphic_allocator<char>>;
+        using pmr_string = std::basic_string<char, std::char_traits<char>, std::pmr::polymorphic_allocator<char>>;
         std::pmr::polymorphic_allocator<char> allocator(&mrv);
 
         // カスタムアロケータを使って文字列を作成
@@ -17025,8 +16881,8 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
         int status;
 
         // objに基づく型情報を取得
-        auto demangled = std::unique_ptr<char, decltype(&std::free)>{
-            abi::__cxa_demangle(typeid(obj).name(), 0, 0, &status), &std::free};
+        auto demangled = std::unique_ptr<char, decltype(&std::free)>{abi::__cxa_demangle(typeid(obj).name(), 0, 0, &status),
+                                                                     &std::free};
 
         return demangled ? demangled.get() : "unknown";
     }
@@ -17051,7 +16907,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
     Polymorphic_Base& b_ref_b = b;
 
     ASSERT_EQ(type2str(b_ref_d), "Polymorphic_Derived");  // b_ref_dの実際の型はPolymorphic_Derived
-    ASSERT_EQ(type2str(b_ref_b), "Polymorphic_Base");  // b_ref_bの実際の型はPolymorphic_Base
+    ASSERT_EQ(type2str(b_ref_b), "Polymorphic_Base");     // b_ref_bの実際の型はPolymorphic_Base
 ```
 
 ### Run-time Type Information <a id="SS_6_3_12"></a>
@@ -17105,16 +16961,16 @@ C++03までのコンパイラに、
     char const* c_str = str.c_str();
 
     static_assert(!is_const_v<decltype(c_str)>);
-    c_str = nullptr;  // c_strは変数としてconstではない
+    c_str = nullptr;                                                  // c_strは変数としてconstではない
     static_assert(is_const_v<remove_reference_t<decltype(*c_str)>>);  // *cは_strはconst
-    static_assert(is_same_v<char const&, decltype(*c_str)>);  // *c_strはconstリファレンス
+    static_assert(is_same_v<char const&, decltype(*c_str)>);          // *c_strはconstリファレンス
 
     char const* const cc_str = c_str;
 
     static_assert(is_const_v<decltype(cc_str)>);
     // cc_str = nullptr;  // cc_strは変数としてconstであるためコンパイルエラー
     static_assert(is_const_v<remove_reference_t<decltype(*cc_str)>>);  // *cc_strはconst
-    static_assert(is_same_v<char const&, decltype(*cc_str)>);  // *cc_strはconstリファレンス
+    static_assert(is_same_v<char const&, decltype(*cc_str)>);          // *cc_strはconstリファレンス
 
     constexpr int c_int = 1;
     static_assert(is_const_v<decltype(c_int)>);  // c_intはcons
@@ -17201,10 +17057,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 ```cpp
     //  example/term_explanation/const_xxx_ut.cpp 148
 
-    constexpr uint64_t bit_mask(uint32_t max)
-    {
-        return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1);
-    }
+    constexpr uint64_t bit_mask(uint32_t max) { return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1); }
     constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
     static_assert(0b1111 == bit_mask_0);
 ```
@@ -17212,7 +17065,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 157
+    //  example/term_explanation/const_xxx_ut.cpp 154
 
     constexpr uint64_t bit_mask_for(uint32_t max)
     {
@@ -17330,7 +17183,7 @@ constevalはC++20 から導入されたキーワードであり、
 パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 187
+    //  example/term_explanation/const_xxx_ut.cpp 184
 
     #if __cplusplus >= 202002L  // c++20
     consteval uint64_t bit_mask(uint32_t max)  // コンパイル時、評価ができなければエラー
@@ -17348,7 +17201,7 @@ constevalはC++20 から導入されたキーワードであり、
     }
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 209
+    //  example/term_explanation/const_xxx_ut.cpp 206
 
     static_assert(0b1111'1111 == bit_mask(8));
 
@@ -17381,7 +17234,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 226
+    //  example/term_explanation/const_xxx_ut.cpp 223
 
     constexpr auto factorial = [](int n) {  // constexpr ラムダの定義
         int result = 1;
@@ -17395,7 +17248,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
     static_assert(fact_5 == 120);
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 243
+    //  example/term_explanation/const_xxx_ut.cpp 240
 
     constexpr auto factorial = [](auto self, int n) -> int {  // リカーシブconstexprラムダ
         return (n <= 1) ? 1 : n * self(self, n - 1);
@@ -18314,8 +18167,8 @@ X::Register`、`Y::Register`を用いて、循環を作ってしまう例(メモ
 
             ASSERT_FALSE(y0->DoSomething());  // Y::DoSomethingの処理をX::DoSomethingに委譲
 
-            x0->Register(y0);  // これによりx0とy0が互いに所有し合う(循環参照)
-            y0->Register(x0);  // これによりx0とy0が互いに所有し合う(循環参照)
+            x0->Register(y0);                      // これによりx0とy0が互いに所有し合う(循環参照)
+            y0->Register(x0);                      // これによりx0とy0が互いに所有し合う(循環参照)
             ASSERT_EQ(X::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
             ASSERT_EQ(Y::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
 
@@ -18475,9 +18328,9 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 
         ASSERT_EQ(x0.use_count(), 1);  // Xオブジェクトはx0に所有されるが、y0には所有されない
         ASSERT_EQ(y0->ref_x().use_count(), 1);  // weak_ptr<X>::use_count
-        ASSERT_EQ(y0.use_count(), 2);  // Yオブジェクトはy0とx0から共有所有されるため
+        ASSERT_EQ(y0.use_count(), 2);           // Yオブジェクトはy0とx0から共有所有されるため
         ASSERT_EQ(x0->ref_y().use_count(), 2);  // Yオブジェクトはy0とx0から共有所有されるため
-    }  // この次の行で、x0、y0はスコープアウトする。
+    }                                           // この次の行で、x0、y0はスコープアウトする。
 
     ASSERT_EQ(X::constructed_counter, 0);  // Xオブジェクトは開放済み
     ASSERT_EQ(Y::constructed_counter, 0);  // Yオブジェクトは開放済み
@@ -18758,7 +18611,7 @@ C++11から導入された導入されたリテラル。
 ```cpp
     //  example/term_explanation/literal_ut.cpp 15
 
-        std::regex raw_re{R"(\d+)"};  // 生文字リテラルで正規表現パターン。\のエスケープが不要
+        std::regex raw_re{R"(\d+)"};     // 生文字リテラルで正規表現パターン。\のエスケープが不要
         std::regex normal_re{"(\\d+)"};  // 生文字リテラルで正規表現パターン。\のエスケープが必要
 
         std::string test_str = "The year is 2024";  // テスト対象の文字列
@@ -18991,7 +18844,7 @@ std::complexリテラル以下のコードのように使用できる。
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 232
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 217
 
     class Integer {
     public:
@@ -19022,15 +18875,9 @@ C++20以降より、`=default`により==演算子を自動生成させること
         int get() const noexcept { return x_; }
 
         // メンバ関数の比較演算子に見えるが、非メンバ関数
-        friend bool operator==(const Integer& lhs, const Integer& rhs) noexcept
-        {
-            return lhs.x_ == rhs.x_;
-        }
+        friend bool operator==(const Integer& lhs, const Integer& rhs) noexcept { return lhs.x_ == rhs.x_; }
 
-        friend bool operator<(const Integer& lhs, const Integer& rhs) noexcept
-        {
-            return lhs.x_ < rhs.x_;
-        }
+        friend bool operator<(const Integer& lhs, const Integer& rhs) noexcept { return lhs.x_ < rhs.x_; }
 
     private:
         int x_;
@@ -19040,7 +18887,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 * [暗黙の型変換](#SS_6_13_1)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 84
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 78
 
     auto a = Integer{5};
 
@@ -19051,7 +18898,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 256
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 241
 
     class Integer {
     public:
@@ -19107,25 +18954,19 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 116
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 110
 
     struct Point {
         int x;
         int y;
 
-        bool operator==(const Point& other) const noexcept
-        {
-            return std::tie(x, y) == std::tie(other.x, other.y);
-        }
+        bool operator==(const Point& other) const noexcept { return std::tie(x, y) == std::tie(other.x, other.y); }
 
-        bool operator<(const Point& other) const noexcept
-        {
-            return std::tie(x, y) < std::tie(other.x, other.y);
-        }
+        bool operator<(const Point& other) const noexcept { return std::tie(x, y) < std::tie(other.x, other.y); }
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 136
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 124
 
         auto a = Point{1, 2};
         auto b = Point{1, 3};
@@ -19146,7 +18987,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 153
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 141
 
     struct Point {
         int x;
@@ -19157,7 +18998,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 166
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 154
 
     auto p1 = Point{1, 2};
     auto p2 = Point{1, 2};
@@ -19189,7 +19030,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 197
+    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 185
 
     struct Point {
         int x;
@@ -19200,10 +19041,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
             return std::tie(x, y) <=> std::tie(other.x, other.y);
         }
 
-        bool operator==(const Point& other) const noexcept
-        {
-            return std::tie(x, y) == std::tie(other.x, other.y);
-        }
+        bool operator==(const Point& other) const noexcept { return std::tie(x, y) == std::tie(other.x, other.y); }
     };
 ```
 
@@ -19498,7 +19336,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 ```
 ```cpp
-    //  example/term_explanation/if_switch_init_ut.cpp 36
+    //  example/term_explanation/if_switch_init_ut.cpp 33
 
     for (auto result = DoOperation(); result.IsError(); result = DoOperation()) {
         RecoverOperation(result.Get());  // エラー処理
@@ -19521,7 +19359,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 以下のコード例のように従来の記法は広く知られているため、念とため紹介する。
 
 ```cpp
-    //  example/term_explanation/if_switch_init_ut.cpp 48
+    //  example/term_explanation/if_switch_init_ut.cpp 45
 
     while (auto result = DoOperation()) {  // resultはboolへの暗黙の型変換が行われる
         // エラー処理
@@ -19558,7 +19396,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 ```
 ```cpp
-    //  example/term_explanation/if_switch_init_ut.cpp 59
+    //  example/term_explanation/if_switch_init_ut.cpp 56
 
     if (auto result = DoOperation(); !result.IsError()) {
         // 成功処理
@@ -19572,7 +19410,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 クラスの独自の[<=>演算子](#SS_6_6_8_3)を定義する場合、下記のように使用することができる。
 
 ```cpp
-    //  example/term_explanation/if_switch_init_ut.cpp 72
+    //  example/term_explanation/if_switch_init_ut.cpp 69
 
     struct DoubleName {
         std::string name0;
@@ -19626,7 +19464,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 ```
 ```cpp
-    //  example/term_explanation/if_switch_init_ut.cpp 103
+    //  example/term_explanation/if_switch_init_ut.cpp 100
 
     switch (auto result = DoOperation(); result.Get()) {
     case OperationResult::ErrorCode::ErrorPattern1:
@@ -19663,10 +19501,7 @@ co_waitとco_returnを使用したコードを以下に示す。
         struct promise_type {
             /// @brief コルーチンから Task 型のオブジェクトを返す関数
             /// @return Taskオブジェクト
-            Task get_return_object()
-            {
-                return Task{std::coroutine_handle<promise_type>::from_promise(*this)};
-            }
+            Task get_return_object() { return Task{std::coroutine_handle<promise_type>::from_promise(*this)}; }
 
             /// @brief コルーチンの最初のサスペンドポイント
             /// @return 常にサスペンドするオブジェクトを返す
@@ -19730,7 +19565,7 @@ co_waitとco_returnを使用したコードを以下に示す。
 以下単体テストコードによりに上記コルーチンの動作を示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/co_await_ut.cpp 88
+    //  example/term_explanation_cpp20/co_await_ut.cpp 85
 
     Task    task  = gen_coroutine();  // gen_coroutine から Task オブジェクトを生成
     int32_t calls = 0;
@@ -19761,7 +19596,7 @@ co_waitとco_returnを使用したコードを以下に示す。
 上記のコルーチンと同じ機能を持つクラスのco_await/co_returnを使わない実装を以下に示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/co_await_ut.cpp 118
+    //  example/term_explanation_cpp20/co_await_ut.cpp 115
 
     /// @enum CoroutineState
     /// @brief ManualCoroutine の状態を表す enum 型
@@ -19814,7 +19649,7 @@ co_waitとco_returnを使用したコードを以下に示す。
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    //  example/term_explanation_cpp20/co_await_ut.cpp 170
+    //  example/term_explanation_cpp20/co_await_ut.cpp 167
 
     auto    manual_coroutine = ManualCoroutine{};
     int32_t calls            = 0;
@@ -19876,10 +19711,7 @@ co_yieldはコルーチンから値を返しつつ、
 
             /// @brief コルーチンから Generator 型のオブジェクトを返す関数
             /// @return Generatorオブジェクト
-            Generator get_return_object()
-            {
-                return Generator{std::coroutine_handle<promise_type>::from_promise(*this)};
-            }
+            Generator get_return_object() { return Generator{std::coroutine_handle<promise_type>::from_promise(*this)}; }
 
             /// @brief コルーチンの最初のサスペンドポイント
             /// @return 常にサスペンドするオブジェクトを返す
@@ -19971,7 +19803,7 @@ co_yieldはコルーチンから値を返しつつ、
 このテストを以下に示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/co_yield_ut.cpp 130
+    //  example/term_explanation_cpp20/co_yield_ut.cpp 127
 
     // 数値を生成し、それをパイプライン処理に通す
     auto numbers         = generate_numbers(1, 10);
@@ -19997,7 +19829,7 @@ co_yieldはコルーチンから値を返しつつ、
 co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yieldを使わない実装を以下に示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/co_yield_ut.cpp 155
+    //  example/term_explanation_cpp20/co_yield_ut.cpp 152
 
     /// @brief コルーチンを使わずにデータを逐次的に提供するジェネレータークラス
     template <typename T>
@@ -20080,7 +19912,7 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    //  example/term_explanation_cpp20/co_yield_ut.cpp 237
+    //  example/term_explanation_cpp20/co_yield_ut.cpp 234
 
     // 数値を生成し、それをパイプライン処理に通す
     auto numbers         = generate_numbers(1, 10);
@@ -20314,7 +20146,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 
     std::pmr::unsynchronized_pool_resource pool_resource(
         std::pmr::pool_options{
-            .max_blocks_per_chunk        = 10,  // チャンクあたりの最大ブロック数
+            .max_blocks_per_chunk        = 10,   // チャンクあたりの最大ブロック数
             .largest_required_pool_block = 1024  // 最大ブロックサイズ
         },
         std::pmr::new_delete_resource()  // フォールバックリソース
@@ -20604,8 +20436,8 @@ std::variant自身では、オブジェクトのダイナミックな生成が�
 ```cpp
     //  example/term_explanation/variant_ut.cpp 13
 
-    std::variant<int, std::string, double> var = 10;
-    auto var2 = var;  // コピーコンストラクタの呼び出し
+    std::variant<int, std::string, double> var  = 10;
+    auto                                   var2 = var;  // コピーコンストラクタの呼び出し
 
     ASSERT_EQ(std::get<int>(var), 10);  // 型intの値を取り出す
 
@@ -21622,7 +21454,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     ASSERT_EQ(1, dn.get());
 
     auto ddv = DerivedDerivedVirtual{1};  // 仮想継承クラスを継承したクラス Base::Base()が呼ばれる
-    auto ddn = DerivedDerivedNormal{1};  // 通常継承クラスを継承したクラス Base::Base(1)が呼ばれる
+    auto ddn = DerivedDerivedNormal{1};   // 通常継承クラスを継承したクラス Base::Base(1)が呼ばれる
 
     ASSERT_EQ(0, ddv.get());  // ddvのBaseインスタンスはのデフォルトコンストラクタで初期化されている
     ASSERT_EQ(1, ddn.get());
@@ -21653,9 +21485,9 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 ```cpp
     //  example/term_explanation/virtual_inheritance_ut.cpp 73
 
-    DerivedDerivedVirtual ddv{1};  // 仮想継承クラスを継承したクラス
+    DerivedDerivedVirtual      ddv{1};   // 仮想継承クラスを継承したクラス
     DerivedDerivedVirtualFixed ddvf{1};  // 上記クラスのコンストラクタを修正したクラス
-    DerivedDerivedNormal ddn{1};         // 通常の継承クラスを継承したクラス
+    DerivedDerivedNormal       ddn{1};   // 通常の継承クラスを継承したクラス
 
     ASSERT_EQ(0, ddv.get());  // 仮想継承独特の動作
     ASSERT_EQ(1, ddvf.get());
@@ -21709,7 +21541,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
     auto dd = DerivedDerived{2, 3};  // Base::Baseが最初に呼ばれないとassertion failする
 
     ASSERT_EQ(1, base_called);  // 「仮想継承のコンストラクタ呼び出し」仕様のため
-    ASSERT_EQ(0, dd.get());  // Baseのデフォルトコンストラクタは、x_を0にする
+    ASSERT_EQ(0, dd.get());     // Baseのデフォルトコンストラクタは、x_を0にする
 ```
 
 基底クラスのコンストラクタ呼び出しは、下記のコードのようにした場合でも、
@@ -21731,7 +21563,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
     auto dd = DerivedDerived{2, 3};  // Base::Baseが最初に呼ばれないとassertion failする
 
     ASSERT_EQ(1, base_called);  // 「仮想継承のコンストラクタ呼び出し」仕様のため
-    ASSERT_EQ(1, dd.get());  // Base{1}呼び出しの効果
+    ASSERT_EQ(1, dd.get());     // Base{1}呼び出しの効果
 ```
 
 このため、基底クラスのコンストラクタ呼び出しは下記のような順番で行うべきである。
@@ -22728,7 +22560,7 @@ AAAスタイルとは、「可能な場合、型を左辺に明示して変数�
 型を明示しないAAAスタイルは使うべきではない。
 
 ```cpp
-    //  example/term_explanation/aaa.cpp 121
+    //  example/term_explanation/aaa.cpp 118
 
     extern std::map<std::string, int> gen_map();
 
@@ -22753,7 +22585,7 @@ AAAスタイルとは、「可能な場合、型を左辺に明示して変数�
 インライン関数や関数テンプレートの宣言は、下記のように書く。
 
 ```cpp
-    //  example/term_explanation/aaa.cpp 148
+    //  example/term_explanation/aaa.cpp 145
 
     template <typename F, typename T>
     auto apply_0(F&& f, T value)
@@ -22766,7 +22598,7 @@ AAAスタイルとは、「可能な場合、型を左辺に明示して変数�
 AAAスタイルは出来る限り避けるべきである。
 
 ```cpp
-    //  example/term_explanation/aaa.cpp 156
+    //  example/term_explanation/aaa.cpp 153
 
     template <typename F, typename T>
     auto apply_1(F&& f, T value) -> decltype(f(std::declval<T>()))  // autoを使用しているが、AAAではない
@@ -22792,7 +22624,7 @@ AAAスタイルは出来る限り避けるべきである。
   また、下記のように縮小型変換(下記では、unsignedからsignedの変換)を防ぐこともできる。
 
 ```cpp
-    //  example/term_explanation/aaa.cpp 183
+    //  example/term_explanation/aaa.cpp 180
 
     auto v = std::vector<int>{0, 1, 2};
 
@@ -22820,7 +22652,7 @@ AAAスタイルでは、以下のような場合に注意が必要である。
   下記のような型推論は、直感に反する場合があるため、autoの使い方に対する習熟が必要である。
 
 ```cpp
-    //  example/term_explanation/aaa.cpp 197
+    //  example/term_explanation/aaa.cpp 194
 
     auto str0 = "str";
     static_assert(std::is_same_v<char const*, decltype(str0)>);  // str0はchar[4]ではない
@@ -22983,7 +22815,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
         return a + b;
     }
 
-    static_assert(std::is_same_v<decltype(add(1, 2)), int>);  // addの戻り値型はintに型推論
+    static_assert(std::is_same_v<decltype(add(1, 2)), int>);         // addの戻り値型はintに型推論
     static_assert(std::is_same_v<decltype(add(1u, 2u)), uint32_t>);  // addの戻り値型はintに型推論
     static_assert(std::is_same_v<decltype(add(std::string{"str"}, "2")),
                                  std::string>);  // addの戻り値型はstd::stringに型推論
@@ -23000,7 +22832,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
         return a + b;
     }
 
-    static_assert(std::is_same_v<decltype(add(1, 2)), int>);  // addの戻り値型はintに型推論
+    static_assert(std::is_same_v<decltype(add(1, 2)), int>);         // addの戻り値型はintに型推論
     static_assert(std::is_same_v<decltype(add(1u, 2u)), uint32_t>);  // addの戻り値型はintに型推論
     static_assert(std::is_same_v<decltype(add(std::string{"str"}, "2")),
                                  std::string>);  // addの戻り値型はstd::stringに型推論
@@ -23556,7 +23388,7 @@ prvalueとは、オブジェクトやビットフィールドを初期化する�
 
     // 下記のようにすればアドレスを取得できるが、このようなことはすべきではない。
     auto&& rvalue_ref = std::string{};
-    auto   sp = &rvalue_ref;  // spはrvalue_refのアドレスを指しているが、、、
+    auto   sp         = &rvalue_ref;  // spはrvalue_refのアドレスを指しているが、、、
 ```
 
 正確にはprvalueと呼ぶべき場面で、単にrvalueと呼ばれることがある。
@@ -23687,7 +23519,7 @@ rvalueリファレンスは、
     int        a      = 0;
     int const& a_ref0 = a;        // const lvalueリファレンス
     int const& a_ref1 = int(99);  // const lvalueリファレンスはrvalueをバインドできる
-    int&&      a_ref2 = int(99);  // rvalueリファレンスはテンポラリオブジェクトをバインドできる
+    int&& a_ref2 = int(99);  // rvalueリファレンスはテンポラリオブジェクトをバインドできる
 
     ASSERT_EQ(a_ref1, 99);
     ASSERT_EQ(a_ref2, 99);
@@ -23883,7 +23715,7 @@ perfect forwardingの使用例を以下に示す。
 
     class Widget {
     public:
-        explicit Widget(std::string const& name) : name_{name} {}  // lvalueによるコンストラクタ
+        explicit Widget(std::string const& name) : name_{name} {}        // lvalueによるコンストラクタ
         explicit Widget(std::string&& name) : name_{std::move(name)} {}  // rvalueによるコンストラクタ
         std::string const& GetName() const { return name_; }
 
@@ -24433,16 +24265,13 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
         int b_;
     };
 
-    inline bool operator==(Base const& lhs, Base const& rhs) noexcept
-    {
-        return lhs.GetB() == rhs.GetB();
-    }
+    inline bool operator==(Base const& lhs, Base const& rhs) noexcept { return lhs.GetB() == rhs.GetB(); }
 ```
 
 次の単体テストが示す通り、これ自体には問題がないように見える。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 134
+    //  example/term_explanation/semantics_ut.cpp 131
 
     auto b0 = Base{0};
     auto b1 = Base{0};
@@ -24456,7 +24285,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 しかし、Baseから派生したクラスDerivedを
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 146
+    //  example/term_explanation/semantics_ut.cpp 143
 
     class Derived : public Base {
     public:
@@ -24471,7 +24300,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 のように定義すると、下記の単体テストで示す通り、等価性のセマンティクスが破壊される。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 160
+    //  example/term_explanation/semantics_ut.cpp 157
 
     {
         auto b = Base{0};
@@ -24490,7 +24319,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 Derived用のoperator==を
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 177
+    //  example/term_explanation/semantics_ut.cpp 174
 
     bool operator==(Derived const& lhs, Derived const& rhs) noexcept
     {
@@ -24501,7 +24330,7 @@ Derived用のoperator==を
 と定義しても、下記に示す通り部分的な効果しかない。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 187
+    //  example/term_explanation/semantics_ut.cpp 184
 
     auto d0 = Derived{0};
     auto d1 = Derived{1};
@@ -24516,7 +24345,7 @@ Derived用のoperator==を
 この問題は、「[RTTI](#SS_6_3_11)」使った下記のようなコードで対処できる。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 203
+    //  example/term_explanation/semantics_ut.cpp 200
 
     class Base {
     public:
@@ -24563,7 +24392,7 @@ Derived用のoperator==を
 [オープン・クローズドの原則(OCP)](#SS_2_2)にも対応した柔軟な構造を実現している。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 270
+    //  example/term_explanation/semantics_ut.cpp 267
 
     class DerivedDerived : public Derived {
     public:
@@ -24591,7 +24420,7 @@ Derived用のoperator==を
 等価性のセマンティクスを満たしている例である。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 320
+    //  example/term_explanation/semantics_ut.cpp 317
 
     auto abc = std::string{"abc"};
 
@@ -24620,7 +24449,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 下記に示す通り、std::stringはcopyセマンティクスを満たしている。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 334
+    //  example/term_explanation/semantics_ut.cpp 331
 
     auto c_str = "string";
     auto str   = std::string{};
@@ -24633,7 +24462,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 一方で、std::auto_ptrはcopyセマンティクスを満たしていない。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 347
+    //  example/term_explanation/semantics_ut.cpp 344
 
     std::auto_ptr<std::string> str0{new std::string{"string"}};
     std::auto_ptr<std::string> str0_pre{new std::string{"string"}};
@@ -24657,7 +24486,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 「[等価性のセマンティクス](#SS_6_18_1)」で示した最後の例も、copyセマンティクスを満たしていない。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 367
+    //  example/term_explanation/semantics_ut.cpp 364
 
     auto b = Base{1};
     auto d = Derived{1};
@@ -24688,7 +24517,7 @@ moveセマンティクスはcopy代入後に使用されなくなるオブジェ
 下記のようなコードは推奨されない。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 382
+    //  example/term_explanation/semantics_ut.cpp 379
 
     class NotRecommended {
     public:
@@ -24705,10 +24534,7 @@ moveセマンティクスはcopy代入後に使用されなくなるオブジェ
         std::string name_;
     };
 
-    bool operator==(NotRecommended const& lhs, NotRecommended const& rhs) noexcept
-    {
-        return lhs.Name() == rhs.Name();
-    }
+    bool operator==(NotRecommended const& lhs, NotRecommended const& rhs) noexcept { return lhs.Name() == rhs.Name(); }
 
     TEST(Semantics, move1)
     {
@@ -24731,7 +24557,7 @@ moveセマンティクスはcopy代入後に使用されなくなるオブジェ
 パフォーマンスの良い代入ができる。
 
 ```cpp
-    //  example/term_explanation/semantics_ut.cpp 420
+    //  example/term_explanation/semantics_ut.cpp 414
 
     class Recommended {
     public:
@@ -24748,10 +24574,7 @@ moveセマンティクスはcopy代入後に使用されなくなるオブジェ
         std::string name_;
     };
 
-    bool operator==(Recommended const& lhs, Recommended const& rhs) noexcept
-    {
-        return lhs.Name() == rhs.Name();
-    }
+    bool operator==(Recommended const& lhs, Recommended const& rhs) noexcept { return lhs.Name() == rhs.Name(); }
 
     TEST(Semantics, move2)
     {
@@ -24869,7 +24692,7 @@ operator& がオーバーロードされている場合には、
         explicit X(int v) : v_{v} {}
 
         X* operator&()
-        {  // `operator&` をオーバーロードしてアドレス取得の挙動を変更
+        {                    // `operator&` をオーバーロードしてアドレス取得の挙動を変更
             return nullptr;  // 意図的に nullptr を返す
         }
         operator int() const noexcept { return v_; }
@@ -26189,19 +26012,16 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
         194 
         195     virtual size_t get_size() const noexcept override { return 1; }
         196     virtual size_t get_count() const noexcept override { return unit_count_ * Inner_::unit_size; }
-        197     virtual size_t get_count_min() const noexcept override
-        198     {
-        199         return unit_count_min_ * Inner_::unit_size;
-        200     }
-        201 
-        202     virtual bool is_valid(void const* mem) const noexcept override
-        203     {
-        204         return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
-        205     }
-        206     // @@@ sample end
-        207     // @@@ sample begin 0:4
-        208 };
-        209 // @@@ sample end
+        197     virtual size_t get_count_min() const noexcept override { return unit_count_min_ * Inner_::unit_size; }
+        198 
+        199     virtual bool is_valid(void const* mem) const noexcept override
+        200     {
+        201         return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
+        202     }
+        203     // @@@ sample end
+        204     // @@@ sample begin 0:4
+        205 };
+        206 // @@@ sample end
 ```
 
 

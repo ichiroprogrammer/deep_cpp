@@ -65,17 +65,11 @@ public:
 
 void TestablePathnamePrinter1::Visit(File const& file) { ostream_ << file.Pathname(); }
 void TestablePathnamePrinter1::Visit(Dir const& dir) { ostream_ << dir.Pathname() + "/"; }
-void TestablePathnamePrinter1::Visit(OtherEntity const& other)
-{
-    ostream_ << other.Pathname() + "(o1)";
-}
+void TestablePathnamePrinter1::Visit(OtherEntity const& other) { ostream_ << other.Pathname() + "(o1)"; }
 
 void TestablePathnamePrinter2::Visit(File const& file) { ostream_ << file.Pathname(); }
 
 void TestablePathnamePrinter2::Visit(Dir const& dir) { ostream_ << find_files(dir.Pathname()); }
 
-void TestablePathnamePrinter2::Visit(OtherEntity const& other)
-{
-    ostream_ << other.Pathname() + "(o2)";
-}
+void TestablePathnamePrinter2::Visit(OtherEntity const& other) { ostream_ << other.Pathname() + "(o2)"; }
 }  // namespace CRTP

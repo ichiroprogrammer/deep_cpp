@@ -153,10 +153,9 @@ struct exists_void_func_impl : std::false_type {
 };
 
 template <typename T>  // C++17スタイル。SFINAEでの実装
-struct exists_void_func_impl<
-    T,
-    std::void_t<decltype(std::declval<T&>().func())>>  // func()が呼び出し可能か確認
-    : std::is_same<void, decltype(std::declval<T&>().func())>  // 戻り値がvoidか確認
+struct exists_void_func_impl<T,
+                             std::void_t<decltype(std::declval<T&>().func())>>  // func()が呼び出し可能か確認
+    : std::is_same<void, decltype(std::declval<T&>().func())>                   // 戻り値がvoidか確認
 {
 };
 }  // namespace Inner_
@@ -229,9 +228,8 @@ struct exists_begin : std::false_type {
 
 // Tが非配列の場合の特殊化
 template <typename T>
-struct exists_begin<T,
-                    typename std::enable_if_t<!std::is_array_v<T>,
-                                              std::void_t<decltype(std::begin(std::declval<T>()))>>>
+struct exists_begin<
+    T, typename std::enable_if_t<!std::is_array_v<T>, std::void_t<decltype(std::begin(std::declval<T>()))>>>
     : std::true_type {
 };
 
@@ -264,8 +262,8 @@ struct exists_put_to_as_member : std::false_type {
 };
 
 template <typename T>
-struct exists_put_to_as_member<T, decltype(std::declval<std::ostream&>().operator<<(
-                                      std::declval<T>()))> : std::true_type {
+struct exists_put_to_as_member<T, decltype(std::declval<std::ostream&>().operator<<(std::declval<T>()))>
+    : std::true_type {
 };
 
 template <typename T>
@@ -299,8 +297,8 @@ struct exists_put_to_as_non_member : std::false_type {
 };
 
 template <typename T>
-struct exists_put_to_as_non_member<T, decltype(operator<<(std::declval<std::ostream&>(),
-                                                          std::declval<T>()))> : std::true_type {
+struct exists_put_to_as_non_member<T, decltype(operator<<(std::declval<std::ostream&>(), std::declval<T>()))>
+    : std::true_type {
 };
 
 template <typename T>
@@ -325,9 +323,8 @@ TEST(Template, exists_put_to_as_non_member)
 
 template <typename T>
 struct ExistsPutTo
-    : std::conditional_t<
-          Inner_::exists_put_to_as_member_v<T> || Inner_::exists_put_to_as_non_member_v<T>,
-          std::true_type, std::false_type> {
+    : std::conditional_t<Inner_::exists_put_to_as_member_v<T> || Inner_::exists_put_to_as_non_member_v<T>,
+                         std::true_type, std::false_type> {
 };
 
 template <typename T>

@@ -155,8 +155,8 @@ TEST(WeakPtr, leak)
 
             ASSERT_FALSE(y0->DoSomething());  // Y::DoSomethingの処理をX::DoSomethingに委譲
 
-            x0->Register(y0);  // これによりx0とy0が互いに所有し合う(循環参照)
-            y0->Register(x0);  // これによりx0とy0が互いに所有し合う(循環参照)
+            x0->Register(y0);                      // これによりx0とy0が互いに所有し合う(循環参照)
+            y0->Register(x0);                      // これによりx0とy0が互いに所有し合う(循環参照)
             ASSERT_EQ(X::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
             ASSERT_EQ(Y::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
 
@@ -270,9 +270,9 @@ TEST(WeakPtr, not_leak_by_weak)
 
         ASSERT_EQ(x0.use_count(), 1);  // Xオブジェクトはx0に所有されるが、y0には所有されない
         ASSERT_EQ(y0->ref_x().use_count(), 1);  // weak_ptr<X>::use_count
-        ASSERT_EQ(y0.use_count(), 2);  // Yオブジェクトはy0とx0から共有所有されるため
+        ASSERT_EQ(y0.use_count(), 2);           // Yオブジェクトはy0とx0から共有所有されるため
         ASSERT_EQ(x0->ref_y().use_count(), 2);  // Yオブジェクトはy0とx0から共有所有されるため
-    }  // この次の行で、x0、y0はスコープアウトする。
+    }                                           // この次の行で、x0、y0はスコープアウトする。
 
     ASSERT_EQ(X::constructed_counter, 0);  // Xオブジェクトは開放済み
     ASSERT_EQ(Y::constructed_counter, 0);  // Yオブジェクトは開放済み

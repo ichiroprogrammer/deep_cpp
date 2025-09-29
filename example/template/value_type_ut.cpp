@@ -104,7 +104,7 @@ struct ValueType {
 // @@@ sample begin 2:1
 
 template <typename T, size_t N>  // Array Tを使わずに配列の一般的な表現を使用してNを取り出す
-struct ValueType<T[N]> {  // 配列型の特殊化
+struct ValueType<T[N]> {         // 配列型の特殊化
     using type                     = typename ValueType<T>::type;
     using type_direct              = T;
     static constexpr size_t extent = N;

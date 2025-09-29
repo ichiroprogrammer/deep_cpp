@@ -63,15 +63,9 @@ public:
     int get() const noexcept { return x_; }
 
     // メンバ関数の比較演算子に見えるが、非メンバ関数
-    friend bool operator==(const Integer& lhs, const Integer& rhs) noexcept
-    {
-        return lhs.x_ == rhs.x_;
-    }
+    friend bool operator==(const Integer& lhs, const Integer& rhs) noexcept { return lhs.x_ == rhs.x_; }
 
-    friend bool operator<(const Integer& lhs, const Integer& rhs) noexcept
-    {
-        return lhs.x_ < rhs.x_;
-    }
+    friend bool operator<(const Integer& lhs, const Integer& rhs) noexcept { return lhs.x_ < rhs.x_; }
 
 private:
     int x_;
@@ -119,15 +113,9 @@ struct Point {
     int x;
     int y;
 
-    bool operator==(const Point& other) const noexcept
-    {
-        return std::tie(x, y) == std::tie(other.x, other.y);
-    }
+    bool operator==(const Point& other) const noexcept { return std::tie(x, y) == std::tie(other.x, other.y); }
 
-    bool operator<(const Point& other) const noexcept
-    {
-        return std::tie(x, y) < std::tie(other.x, other.y);
-    }
+    bool operator<(const Point& other) const noexcept { return std::tie(x, y) < std::tie(other.x, other.y); }
 };
 // @@@ sample end
 
@@ -205,10 +193,7 @@ struct Point {
         return std::tie(x, y) <=> std::tie(other.x, other.y);
     }
 
-    bool operator==(const Point& other) const noexcept
-    {
-        return std::tie(x, y) == std::tie(other.x, other.y);
-    }
+    bool operator==(const Point& other) const noexcept { return std::tie(x, y) == std::tie(other.x, other.y); }
 };
 // @@@ sample end
 

@@ -111,10 +111,7 @@ TEST(AAA, func_simple)
     IGNORE_UNUSED_VAR(t0, t1, itr0, itr1, p0, p1);
 }
 
-std::map<std::string, int> gen_map()
-{
-    return std::map<std::string, int>{std::make_pair(std::string{"123"}, 123)};
-}
+std::map<std::string, int> gen_map() { return std::map<std::string, int>{std::make_pair(std::string{"123"}, 123)}; }
 
 TEST(AAA, func_complex)
 {

@@ -55,8 +55,7 @@ struct std_array_like : std::array<T, U::value> {
 namespace Nstd {
 
 template <typename T, size_t N>
-using SafeArray
-    = Nstd::SafeIndex<Nstd::Inner_::std_array_like, T, std::integral_constant<size_t, N>>;
+using SafeArray = Nstd::SafeIndex<Nstd::Inner_::std_array_like, T, std::integral_constant<size_t, N>>;
 }  // namespace Nstd
 // @@@ sample end
 // @@@ sample begin 4:0

@@ -12,5 +12,4 @@ enum class FindCondition {
 };
 // @@@ sample end
 
-extern std::vector<std::string> find_files_recursively(std::string const& path,
-                                                       FindCondition      condition);
+extern std::vector<std::string> find_files_recursively(std::string const& path, FindCondition condition);

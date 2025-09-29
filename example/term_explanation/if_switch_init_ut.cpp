@@ -23,10 +23,7 @@ void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ�
 // @@@ sample end
 
 bool                       OperationResult::IsError() const noexcept { return false; }
-OperationResult::ErrorCode OperationResult::Get() const noexcept
-{
-    return OperationResult::ErrorCode::ErrorPattern1;
-}
+OperationResult::ErrorCode OperationResult::Get() const noexcept { return OperationResult::ErrorCode::ErrorPattern1; }
 
 void            RecoverOperation(OperationResult::ErrorCode) {}
 OperationResult DoOperation() { return OperationResult{}; }

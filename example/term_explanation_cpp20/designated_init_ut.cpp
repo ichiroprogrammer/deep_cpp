@@ -69,7 +69,7 @@ TEST(ExpTerm, unsynchronized_pool_resource)
 
         std::pmr::unsynchronized_pool_resource pool_resource(
             std::pmr::pool_options{
-                .max_blocks_per_chunk        = 10,  // チャンクあたりの最大ブロック数
+                .max_blocks_per_chunk        = 10,   // チャンクあたりの最大ブロック数
                 .largest_required_pool_block = 1024  // 最大ブロックサイズ
             },
             std::pmr::new_delete_resource()  // フォールバックリソース

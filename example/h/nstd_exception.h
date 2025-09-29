@@ -46,8 +46,7 @@ requires std::derived_from<E, std::exception>
 #endif
 auto MakeException(char const (&filename)[F_N], char const (&msg)[M_N]) noexcept
 {
-    return Inner_::make_exception<E>(StaticString{filename} + ":" + Int2StaticString<LINE_NUM>()
-                                     + ":" + msg);
+    return Inner_::make_exception<E>(StaticString{filename} + ":" + Int2StaticString<LINE_NUM>() + ":" + msg);
 }
 // @@@ sample end
 }  // namespace Nstd

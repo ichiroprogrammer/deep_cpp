@@ -38,14 +38,12 @@ TEST(Template, enable_put_to_if_v)
     static_assert(!enable_range_put_to_v<std::string>);                   // std::operator<<
     static_assert(enable_range_put_to_v<std::vector<std::string>>);       // Nstd::operator<<
 
-    static_assert(!enable_range_put_to_v<test_class_not_exits_put_to>);  // operator<<無し
-    static_assert(!enable_range_put_to_v<test_class_exits_put_to>);  // ユーザ定義operator<<
-    static_assert(
-        !enable_range_put_to_v<std::vector<test_class_not_exits_put_to>>);       // operator<<無し
-    static_assert(enable_range_put_to_v<std::vector<test_class_exits_put_to>>);  // Nstd::operator<<
-    static_assert(
-        !enable_range_put_to_v<std::list<test_class_not_exits_put_to>>);       // operator<<無し
-    static_assert(enable_range_put_to_v<std::list<test_class_exits_put_to>>);  // Nstd::operator<<
+    static_assert(!enable_range_put_to_v<test_class_not_exits_put_to>);               // operator<<無し
+    static_assert(!enable_range_put_to_v<test_class_exits_put_to>);                   // ユーザ定義operator<<
+    static_assert(!enable_range_put_to_v<std::vector<test_class_not_exits_put_to>>);  // operator<<無し
+    static_assert(enable_range_put_to_v<std::vector<test_class_exits_put_to>>);       // Nstd::operator<<
+    static_assert(!enable_range_put_to_v<std::list<test_class_not_exits_put_to>>);    // operator<<無し
+    static_assert(enable_range_put_to_v<std::list<test_class_exits_put_to>>);         // Nstd::operator<<
     // @@@ sample end
 
     static_assert(enable_range_put_to_v<std::list<TestNS::X2>>);
@@ -175,8 +173,7 @@ TEST(Template, nstd_container_put_to)
         ASSERT_EQ("1 | 2 | 3 | ", oss.str());
     }
     {
-        auto sv
-            = Nstd::SafeVector<Nstd::SafeArray<Nstd::SafeString, 2>>{{"ab", "cd"}, {"ef", "gh"}};
+        auto sv  = Nstd::SafeVector<Nstd::SafeArray<Nstd::SafeString, 2>>{{"ab", "cd"}, {"ef", "gh"}};
         auto oss = std::ostringstream{};
 
         oss << sv;

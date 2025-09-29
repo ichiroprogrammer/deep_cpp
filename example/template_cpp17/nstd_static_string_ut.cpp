@@ -57,7 +57,7 @@ TEST(Template, TopStr_BottomStr)
     static_assert(3 == ss2.Size());      // 先頭2文字 + 終端文字
     ASSERT_STREQ("01", ss2.String());
 
-    auto ss8 = BottomStr<2>(ss);  // 先頭からオフセット2文字～終端文字まで
+    auto ss8 = BottomStr<2>(ss);     // 先頭からオフセット2文字～終端文字まで
     static_assert(9 == ss8.Size());  // 先頭からオフセット2文字～終端文字までは結果的に9文字
     ASSERT_STREQ("23456789", ss8.String());
 

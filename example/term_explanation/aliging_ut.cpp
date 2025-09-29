@@ -42,7 +42,7 @@ TEST(ExpTerm, addressof)
         explicit X(int v) : v_{v} {}
 
         X* operator&()
-        {  // `operator&` をオーバーロードしてアドレス取得の挙動を変更
+        {                    // `operator&` をオーバーロードしてアドレス取得の挙動を変更
             return nullptr;  // 意図的に nullptr を返す
         }
         operator int() const noexcept { return v_; }

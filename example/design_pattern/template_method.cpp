@@ -30,8 +30,7 @@ private:
         return content + "</Itemp>\n";
     }
 
-    static inline std::string const header_{
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<XxxDataFormatterXml>\n"};
+    static inline std::string const header_{"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<XxxDataFormatterXml>\n"};
     static inline std::string const footer_{"</XxxDataFormatterXml>\n"};
 };
 

@@ -27,7 +27,7 @@ TEST(NewDelete_Opt, string_with_allocator)
     auto str  = std::basic_string<char, std::char_traits<char>, MPoolBasedAllocator<char>>{"hehe"};
 
     ASSERT_TRUE(mpv_allocator.IsValid(str.c_str()));  // mpv_allocatorを使用してメモリ確保
-    ASSERT_GT(rest, mpv_allocator.GetCount());  // mpv_allocatorのメモリが減っていることの確認
+    ASSERT_GT(rest, mpv_allocator.GetCount());        // mpv_allocatorのメモリが減っていることの確認
     // @@@ sample end
 }
 }  // namespace
@@ -43,7 +43,7 @@ TEST(NewDelete_Opt, string_with_allocator2)
     auto str  = std::basic_string<char, std::char_traits<char>, MPoolBasedAllocator<char>>{"hehe"};
 
     ASSERT_TRUE(mpv_allocator.IsValid(str.c_str()));  // mpv_allocatorのメモリであることの確認
-    ASSERT_GT(rest, mpv_allocator.GetCount());  // mpv_allocatorのメモリが減っていることの確認
+    ASSERT_GT(rest, mpv_allocator.GetCount());        // mpv_allocatorのメモリが減っていることの確認
 }
 }  // namespace
 
@@ -64,7 +64,7 @@ TEST(NewDelete_Opt, vector_int_with_allocator)
     auto ints = mpv_vector_int{1, 2, 3};
 
     ASSERT_TRUE(mpv_allocator.IsValid(&ints[0]));  // mpv_allocatorのメモリであることの確認
-    ASSERT_GT(rest, mpv_allocator.GetCount());  // mpv_allocatorのメモリが減っていることの確認
+    ASSERT_GT(rest, mpv_allocator.GetCount());     // mpv_allocatorのメモリが減っていることの確認
     // @@@ sample end
 }
 }  // namespace
@@ -98,7 +98,7 @@ TEST(NewDelete_Opt, allocator)
     ASSERT_GT(rest, mpv_allocator.GetCount());
 
     for (auto const& s : strs) {
-        ASSERT_TRUE(mpv_allocator.IsValid(&s));  // mpv_allocatorのメモリであることの確認
+        ASSERT_TRUE(mpv_allocator.IsValid(&s));         // mpv_allocatorのメモリであることの確認
         ASSERT_TRUE(mpv_allocator.IsValid(s.c_str()));  // mpv_allocatorのメモリであることの確認
     }
     // @@@ sample end

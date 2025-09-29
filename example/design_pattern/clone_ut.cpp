@@ -94,7 +94,7 @@ TEST(Clone, object_slicing_avoidance)
 #if 0
     *b_ptr = *b_ptr_d;                // コピー演算子をdeleteしたのでコンパイルエラー
 #else
-    auto b_uptr = b_ptr_d->Clone();  // コピー演算子の代わりにClone()を使う。
+    auto b_uptr = b_ptr_d->Clone();              // コピー演算子の代わりにClone()を使う。
 #endif
 
     ASSERT_STREQ("DerivedNoSlicing", b_uptr->Name());  // 意図通り"DerivedNoSlicing"が返る。
