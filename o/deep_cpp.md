@@ -194,22 +194,22 @@ Output()に分離したコード実装例を下記する。
     public:
         static bool Pay(Yen price) noexcept
         {
-            ...
+            // ...
         }
 
         static bool Charge(Yen price) noexcept
         {
-            ...
+            // ...
         }
     };
 
     class TransactorSuica {
-        ...
+        // ...
     };
 
     class TransactorEdy {
     public:
-        ...
+        // ...
     };
 
     class TransactorNotOCP {
@@ -218,7 +218,7 @@ Output()に分離したコード実装例を下記する。
 
         explicit TransactorNotOCP(TransactionMethod pay_method) noexcept : pay_method_{pay_method} {}
 
-        ...
+        // ...
         bool Charge(Yen price) noexcept
         {
             switch (pay_method_) {
@@ -226,7 +226,7 @@ Output()に分離したコード実装例を下記する。
                 return TransactorGoogle::Charge(price);
             case TransactionMethod::Suica:
                 return TransactorSuica::Charge(price);
-                ...
+                // ...
             }
         }
 
@@ -237,10 +237,10 @@ Output()に分離したコード実装例を下記する。
                 return TransactorGoogle::Pay(price);
             case TransactionMethod::Suica:
                 return TransactorSuica::Pay(price);
-                ...
+                // ...
             }
         }
-        ...
+        // ...
     };
 ```
 
@@ -277,7 +277,7 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
 
     class TransactorIF {
     public:
-        ...
+        // ...
         bool Charge(Yen price) noexcept { return charge(price); }
         bool Pay(Yen price) noexcept { return pay(price); }
 
@@ -287,15 +287,15 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
     };
 
     class TransactorGoogle : public TransactorIF {
-        ...
+        // ...
     };
 
     class TransactorSuica : public TransactorIF {
-        ...
+        // ...
     };
 
     class TransactorEdy : public TransactorIF {
-        ...
+        // ...
     };
 
     class TransactorOCP {
@@ -341,19 +341,19 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
     class Rectangle {
     public:
         explicit Rectangle(int x, int y) noexcept : x_{x}, y_{y} {}
-        ...
+        // ...
         void SetX(int x) noexcept
         {
             auto temp = y_;
             set_x(x);
             assert(temp == y_);  // 「set_xはy_に影響を与えない」が事後条件
         }
-        ...
+        // ...
 
     protected:
         virtual void set_x(int x) noexcept { x_ = x; }
 
-        ...
+        // ...
 
     private:
         int x_;
@@ -364,7 +364,7 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
     class Square : public Rectangle {
     public:
         explicit Square(int x) noexcept : Rectangle{x, x} {}
-        ...
+        // ...
     protected:
         virtual void set_x(int x) noexcept override
         {
@@ -529,7 +529,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
     public:
         Server();
         void RequireStringAsync(ClientNG ::Client& client) noexcept;
-        ...
+        // ...
     };
     }  // namespace ServerNG
 ```
@@ -548,7 +548,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
         case 2:
             client.Done(new std::string{"good bye"});
             break;
-            ...
+            // ...
         }
     }
 
@@ -567,7 +567,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
         }
     }
     }  // namespace
-    ...
+    // ...
 
     void Server::RequireStringAsync(ClientNG::Client& client) noexcept
     {
@@ -576,7 +576,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
         auto ret = pipe_.Write(&buff, sizeof(buff));
         assert(ret == sizeof(&client));
     }
-    ...
+    // ...
     }  // namespace ServerNG
 ```
 
@@ -596,7 +596,7 @@ ServerNG::ServerがClientNG::Client::Done()を呼び出すことにより通知�
             assert(ret == sizeof(str));
         }
 
-        ...
+        // ...
     };
     }  // namespace ClientNG
 ```
@@ -662,17 +662,17 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
     public:
         ClientIF() noexcept : num_{0} {}
         void Done(std::string* str) { done(str); }  // サーバーからクライアントへのコマンド終了通知
-        ...
+        // ...
     private:
         virtual void done(std::string* str) = 0;
-        ...
+        // ...
     };
 
     class Server {
     public:
         Server();
         void RequireStringAsync(ClientIF& client) noexcept;
-        ...
+        // ...
     };
     }  // namespace ServerOK
 ```
@@ -691,7 +691,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
         case 2:
             client.Done(new std::string{"good bye"});
             break;
-            ...
+            // ...
         }
     }
 
@@ -710,7 +710,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
         }
     }
     }  // namespace
-    ...
+    // ...
 
     void Server::RequireStringAsync(ClientIF& client) noexcept
     {
@@ -719,7 +719,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
         auto ret = pipe_.Write(&buff, sizeof(buff));
         assert(ret == sizeof(&client));
     }
-    ...
+    // ...
     }  // namespace ServerOK
 ```
 
@@ -733,7 +733,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
 
         std::string GetString(uint32_t num);
 
-        ...
+        // ...
     };
     }  // namespace ClientOK
 ```
@@ -771,7 +771,7 @@ ServerNG::Serverのコード修正は非常に困難になることが予想さ�
         auto client = ClientOK::Client{server};
 
         // 以下、ng_paternと同じ
-        ...
+        // ...
     }
 ```
 
@@ -1005,7 +1005,7 @@ ___
         explicit Animal(uint32_t pa) noexcept : phisical_ability_{pa} {}
 
         uint32_t GetPhisicalAbility() const noexcept { return phisical_ability_; }
-        ...
+        // ...
     };
 ```
 
@@ -1057,7 +1057,7 @@ enumによるビットマスク表現を使用して型チェックを強化し�
         return x = x & y;
     }
 
-    ...
+    // ...
 ```
 
 ```cpp
@@ -1365,7 +1365,7 @@ publicメンバ変数とそれにアクセスするソースコードは典型�
         a.a_ = 3;
 
         // Do something
-        ...
+        // ...
     }
 ```
 
@@ -1391,7 +1391,7 @@ publicメンバ変数とそれにアクセスするソースコードは典型�
 
     private:
         int32_t a_{0};
-        ...
+        // ...
     };
 
     void f(A& a) noexcept
@@ -1399,7 +1399,7 @@ publicメンバ変数とそれにアクセスするソースコードは典型�
         a.SetA(3);
 
         // Do something
-        ...
+        // ...
     }
 ```
 
@@ -1442,9 +1442,9 @@ publicメンバ変数とそれにアクセスするソースコードは典型�
         void DoSomething() noexcept  // is_changed_がtrueの時に、呼び出してほしい
         {
             // Do something
-            ...
+            // ...
         }
-        ...
+        // ...
     };
 
     void f(A& a) noexcept
@@ -1454,7 +1454,7 @@ publicメンバ変数とそれにアクセスするソースコードは典型�
             a.Change(true);
         }
 
-        ...
+        // ...
     }
 
     void g(A& a) noexcept
@@ -1466,7 +1466,7 @@ publicメンバ変数とそれにアクセスするソースコードは典型�
         a.Change(false);
         a.DoSomething();  // a.IsChanged()がtrueの時に実行する。
 
-        ...
+        // ...
     }
 ```
 
@@ -1498,25 +1498,25 @@ a.DoSomething()の実行においても、それが必要かどうかはオブ�
             }
 
             // Do something
-            ...
+            // ...
 
             is_changed_ = false;  // 状態変更の取り消し
         }
-        ...
+        // ...
     };
 
     void f(A& a) noexcept
     {
         a.SetA(3);
 
-        ...
+        // ...
     }
 
     void g(A& a) noexcept
     {
         a.DoSomething();  // DoSomethingは無条件で呼び出す。
                           // 実際に何かをするかどうかは、オブジェクトaが決める。
-        ...
+        // ...
     }
 ```
 
@@ -1707,13 +1707,13 @@ immutableとして扱うことができる。
 
     class BaseSlicing {
     public:
-        ...
+        // ...
         virtual char const* Name() const noexcept { return "BaseSlicing"; }
     };
 
     class DerivedSlicing final : public BaseSlicing {
     public:
-        ...
+        // ...
         virtual char const* Name() const noexcept override { return "DerivedSlicing"; }
     };
 
@@ -1748,7 +1748,7 @@ immutableとして扱うことができる。
     // スライシングを起こさないようにコピー演算子の代わりにClone()を実装。
     class BaseNoSlicing {
     public:
-        ...
+        // ...
         virtual char const* Name() const noexcept { return "BaseNoSlicing"; }
 
         virtual std::unique_ptr<BaseNoSlicing> Clone() { return std::make_unique<BaseNoSlicing>(); }
@@ -1759,7 +1759,7 @@ immutableとして扱うことができる。
 
     class DerivedNoSlicing final : public BaseNoSlicing {
     public:
-        ...
+        // ...
         virtual char const* Name() const noexcept override { return "DerivedNoSlicing"; }
 
         std::unique_ptr<DerivedNoSlicing> CloneOwn() { return std::make_unique<DerivedNoSlicing>(); }
@@ -1807,13 +1807,13 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
     public:
         virtual bool DoSomething(int something) const noexcept
         {
-            ...
+            // ...
         }
 
         virtual ~Base() = default;
 
     private:
-        ...
+        // ...
     };
 ```
 
@@ -1827,11 +1827,11 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
     public:
         virtual bool DoSomething(int something) const noexcept override
         {
-            ...
+            // ...
         }
 
     private:
-        ...
+        // ...
     };
 ```
 
@@ -1851,20 +1851,20 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
     private:
         virtual bool do_something(int something) const noexcept
         {
-            ...
+            // ...
         }
 
-        ...
+        // ...
     };
 
     class Derived : public Base {
     private:
         virtual bool do_something(int something) const noexcept override
         {
-            ...
+            // ...
         }
 
-        ...
+        // ...
     };
 ```
 
@@ -2067,16 +2067,16 @@ RAIIのテクニックはメモリ管理のみでなく、ファイルディス�
 
         try {
             // Do something
-            ...
+            // ...
         }
         catch (std::exception const& e) {  // エクセプションはconstリファレンスで受ける。
             close(fd);                     // NG RAII未使用
             // Do something to recover
-            ...
+            // ...
 
             return;
         }
-        ...
+        // ...
         close(fd);  // NG RAII未使用
     }
 ```
@@ -2157,7 +2157,7 @@ C++11では、std::future, std::promise, std::asyncによって実現できる�
 
     int do_something(std::string_view str0, std::string_view str1) noexcept
     {
-        ...
+        // ...
 
         return ret0 + ret1;
     }
@@ -2264,7 +2264,7 @@ C++11では、std::future, std::promise, std::asyncによって実現できる�
 
     /// @brief NotDIや、DIから依存されるクラス
     class Depended {
-        ...
+        // ...
     };
 
     /// @brief NotDIを使わない例。そのため、NotDIは、Dependedのインスタンスに依存している。
@@ -2548,12 +2548,12 @@ UNIT_TESTを定義しない実際のコードの評価にはならない。
         {
             return Inst();
         }
-        ...
+        // ...
 
     private:
         Singleton() noexcept {}  // コンストラクタをprivateにすることで、
                                  // Inst()以外ではこのオブジェクトを生成できない。
-        ...
+        // ...
     };
 
     Singleton& Singleton::Inst()
@@ -2645,7 +2645,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
     };
 
     ThreadOldStyleState thread_old_style_state;
-    ...
+    // ...
     }  // namespace
 
     std::string_view ThreadOldStyleStateStr() noexcept
@@ -2683,12 +2683,12 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 
     void ThreadOldStyleAbort()
     {
-        ...
+        // ...
     }
 
     void ThreadOldStyleSuspend()
     {
-        ...
+        // ...
     }
 ```
 
@@ -2718,7 +2718,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
         ThreadOldStyleRun();
         ASSERT_EQ("Suspending", ThreadOldStyleStateStr());  // suspend_count_ == 1
 
-        ...
+        // ...
     }
 ```
 
@@ -2806,21 +2806,21 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
     //  example/design_pattern/state_machine_new.cpp 10
 
     class ThreadNewStyleState_Idle final : public ThreadNewStyleState {
-        ...
+        // ...
     };
 
     class ThreadNewStyleState_Running final : public ThreadNewStyleState {
-        ...
+        // ...
     };
 
     class ThreadNewStyleState_Suspending final : public ThreadNewStyleState {
     public:
-        ...
+        // ...
     private:
         virtual std::unique_ptr<ThreadNewStyleState> abort_thread() override
         {
             // do something to abort
-            ...
+            // ...
 
             return std::make_unique<ThreadNewStyleState_Idle>();
         }
@@ -2831,7 +2831,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 
             if (suspend_count_ == 0) {
                 // do something to resume
-                ...
+                // ...
                 return std::make_unique<ThreadNewStyleState_Running>();
             }
             else {
@@ -2845,7 +2845,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 
             return {};
         }
-        ...
+        // ...
     };
 ```
 
@@ -2876,7 +2876,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
         tns.Run();
         ASSERT_EQ("Suspending", tns.GetStateStr());  // suspend_count_ == 1
 
-        ...
+        // ...
     }
 ```
 
@@ -2933,7 +2933,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
     void ThreadNewStyle2::run_idle()
     {
         // スレッドの始動処理
-        ...
+        // ...
 
         // ステートの切り替え
         run_       = &ThreadNewStyle2::run_running;
@@ -2944,7 +2944,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
     void ThreadNewStyle2::abort_running()
     {
         // スレッドのアボート処理
-        ...
+        // ...
 
         // ステートの切り替え
         run_       = &ThreadNewStyle2::run_idle;
@@ -2955,7 +2955,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
     void ThreadNewStyle2::suspend_running()
     {
         // スレッドのサスペンド処理
-        ...
+        // ...
 
         // ステートの切り替え
         run_       = &ThreadNewStyle2::run_suspending;
@@ -2966,7 +2966,7 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
     void ThreadNewStyle2::run_suspending()
     {
         // スレッドのレジューム処理
-        ...
+        // ...
 
         // ステートの切り替え
         run_       = &ThreadNewStyle2::run_running;
@@ -3006,14 +3006,14 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 
     class A {
     public:
-        ...
+        // ...
         bool Action() noexcept
         {
             // do something
-            ...
+            // ...
             return result;
         }
-        ...
+        // ...
     };
 
     bool ActionOldStyle(A* a) noexcept
@@ -3034,21 +3034,21 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 
     class A {
     public:
-        ...
+        // ...
         bool Action() noexcept { return action(); }
 
     private:
         virtual bool action() noexcept
         {
             // do something
-            ...
+            // ...
             return result;
         }
-        ...
+        // ...
     };
 
     class ANull final : public A {
-        ...
+        // ...
     private:
         virtual bool action() noexcept override { return false; }
     };
@@ -3104,13 +3104,13 @@ Templateメソッドは、雛形の形式(書式等)を定めるメンバ関数(
 
             return ret + footer();
         }
-        ...
+        // ...
     private:
         virtual std::string const& header() const                      = 0;
         virtual std::string const& footer() const                      = 0;
         virtual std::string        body(XxxData const& xxx_data) const = 0;
 
-        ...
+        // ...
     };
 ```
 
@@ -3137,7 +3137,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
     /// @class XxxDataFormatterXml
     /// @brief XxxDataをXmlに変換
     class XxxDataFormatterXml final : public XxxDataFormatterIF {
-        ...
+        // ...
     private:
         virtual std::string const& header() const noexcept final { return header_; }
         virtual std::string const& footer() const noexcept final { return footer_; }
@@ -3159,7 +3159,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
     /// @class XxxDataFormatterCsv
     /// @brief XxxDataをCsvに変換
     class XxxDataFormatterCsv final : public XxxDataFormatterIF {
-        ...
+        // ...
     private:
         virtual std::string const& header() const noexcept final { return header_; }
         virtual std::string const& footer() const noexcept final { return footer_; }
@@ -3176,7 +3176,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
     /// @class XxxDataFormatterTable
     /// @brief XxxDataをTableに変換
     class XxxDataFormatterTable final : public XxxDataFormatterIF {
-        ...
+        // ...
     private:
         virtual std::string const& header() const noexcept final { return header_; }
         virtual std::string const& footer() const noexcept final { return footer_; }
@@ -3192,7 +3192,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
 
             return a + b + c + "|\n" + border_;
         }
-        ...
+        // ...
     };
 ```
 
@@ -3271,7 +3271,7 @@ header()、body()、footer()をオーバーライドすることで、それぞ�
     {
         auto table = XxxDataFormatterTable{};
 
-        ...
+        // ...
     }
 ```
 
@@ -3445,14 +3445,14 @@ DI(「[DI(dependency injection)](#SS_3_11)」参照)と組み合わせて使わ�
     {
         auto xml = XxxDataFormatterFactory(XxxDataFormatterMethod::Xml);
 
-        ...
+        // ...
     }
 
     TEST(Factory, csv)
     {
         auto csv = XxxDataFormatterFactory(XxxDataFormatterMethod::Csv);
 
-        ...
+        // ...
     }
 
     TEST(Factory, table)
@@ -3718,7 +3718,7 @@ Named Connstructorは、[Singleton](#SS_3_12)のようなオブジェクトを�
         static XxxDataFormatterIF const& Csv() noexcept;
         static XxxDataFormatterIF const& Table() noexcept;
 
-        ...
+        // ...
     };
 ```
 
@@ -4044,7 +4044,7 @@ Packet{}やpipe等の通信の詳細がwrapped_server.cppの無名名前空間�
 
     namespace {
     enum class Cmd {
-        ...
+        // ...
     };
 
     struct Packet {
@@ -4054,7 +4054,7 @@ Packet{}やpipe等の通信の詳細がwrapped_server.cppの無名名前空間�
 
     // 以下、bare_server_wrapper.cppのコードとほぼ同じであるため省略。
 
-    ...
+    // ...
 ```
 
 WrappedServerの使用例を下記する。当然ながらbare_wrapper_client()とほぼ同様になる。
@@ -4198,7 +4198,7 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
                     is_match = true;
                 }
                 break;
-                ...
+                // ...
             }
 
             if (is_match) {
@@ -4598,22 +4598,22 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
         virtual ~FileEntity() {}
         std::string const& Pathname() const { return pathname_; }
 
-        ...
+        // ...
 
     private:
         std::string const pathname_;
     };
 
     class File final : public FileEntity {
-        ...
+        // ...
     };
 
     class Dir final : public FileEntity {
-        ...
+        // ...
     };
 
     class OtherEntity final : public FileEntity {
-        ...
+        // ...
     };
 
     class Printer {
@@ -4668,7 +4668,7 @@ Printerのアルゴリズム関数が増えれば、この繰り返しはそれ�
     class FileEntity {
     public:
         explicit FileEntity(std::string pathname) : pathname_{std::move(pathname)} {}
-        ...
+        // ...
         virtual void PrintPathname1() const = 0;
         virtual void PrintPathname2() const = 0;
 
@@ -4678,21 +4678,21 @@ Printerのアルゴリズム関数が増えれば、この繰り返しはそれ�
 
     class File final : public FileEntity {
     public:
-        ...
+        // ...
         virtual void PrintPathname1() const override { std::cout << Pathname(); }
         virtual void PrintPathname2() const override { std::cout << Pathname(); }
     };
 
     class Dir final : public FileEntity {
     public:
-        ...
+        // ...
         virtual void PrintPathname1() const override { std::cout << Pathname() + "/"; }
         virtual void PrintPathname2() const override { std::cout << find_files(Pathname()); }
     };
 
     class OtherEntity final : public FileEntity {
     public:
-        ...
+        // ...
         virtual void PrintPathname1() const override { std::cout << Pathname() + "(o1)"; }
         virtual void PrintPathname2() const override { std::cout << Pathname() + "(o2)"; }
     };
@@ -4726,13 +4726,13 @@ PrintPathname2のようなFileEntityのインターフェースが増えてし�
         virtual void Visit(File const&)        = 0;
         virtual void Visit(Dir const&)         = 0;
         virtual void Visit(OtherEntity const&) = 0;
-        ...
+        // ...
     };
 
     class FileEntity {
     public:
         explicit FileEntity(std::string pathname) : pathname_{std::move(pathname)} {}
-        ...
+        // ...
         std::string const& Pathname() const { return pathname_; }
 
         virtual void Accept(FileEntityVisitor&) const = 0;  // Acceptの仕様は安定しているので
@@ -4924,11 +4924,11 @@ CRTPとは、
 
     template <typename T>
     class Base {
-        ...
+        // ...
     };
 
     class Derived : public Base<Derived> {
-        ...
+        // ...
     };
 ```
 
@@ -5019,12 +5019,12 @@ ViewがObserverNである。
 
     class ObserverNG_1 {
     public:
-        ...
+        // ...
     };
 
     class ObserverNG_2 {
     public:
-        ...
+        // ...
     };
 ```
 
@@ -5033,12 +5033,12 @@ ViewがObserverNである。
 
     void ObserverNG_1::Update(SubjectNG const& subject)
     {
-        ...
+        // ...
     }
 
     void ObserverNG_2::Update(SubjectNG const& subject)
     {
-        ...
+        // ...
     }
 ```
 
@@ -5056,7 +5056,7 @@ ViewがObserverNである。
         }
 
         void SetNum(uint32_t num);
-        ...
+        // ...
     };
 ```
 
@@ -5137,19 +5137,19 @@ ViewがObserverNである。
     /// @brief SubjectOKからの変更通知をUpdate()で受け取る。
     ///        Observerパターンの使用例。
     class ObserverOK_0 : public Observer {
-        ...
+        // ...
     private:
         virtual void update(SubjectOK const& subject) override;
     };
 
     class ObserverOK_1 : public Observer {
-        ...
+        // ...
     private:
         virtual void update(SubjectOK const& subject) override;
     };
 
     class ObserverOK_2 : public Observer {
-        ...
+        // ...
     private:
         virtual void update(SubjectOK const& subject) override;
     };
@@ -5160,17 +5160,17 @@ ViewがObserverNである。
 
     void ObserverOK_0::update(SubjectOK const& subject)
     {
-        ...
+        // ...
     }
 
     void ObserverOK_1::update(SubjectOK const& subject)
     {
-        ...
+        // ...
     }
 
     void ObserverOK_2::update(SubjectOK const& subject)
     {
-        ...
+        // ...
     }
 ```
 
@@ -5202,7 +5202,7 @@ ViewがObserverNである。
         void notify() const;
 
         std::list<Observer*> observers_;
-        ...
+        // ...
     };
 
     /// @brief SubjectOKを監視するクラスの基底クラス
@@ -5211,10 +5211,10 @@ ViewがObserverNである。
         Observer() = default;
         void Update(SubjectOK const& subject) { update(subject); }
 
-        ...
+        // ...
     private:
         virtual void update(SubjectOK const& subject) = 0;
-        ...
+        // ...
     };
 ```
 
@@ -5819,11 +5819,11 @@ C++11で導入されたパラメータパックはやや複雑なシンタック
     ASSERT_FLOAT_EQ(6.0, sum(1, 2.0, 3.0));
     ASSERT_EQ(10, sum(1, 2, 3, 4));
 
-    ...
+    // ...
 
     ASSERT_EQ(55, sum(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 
-    ...
+    // ...
 ```
 
 sumの要件は、
@@ -6238,7 +6238,7 @@ Loggerクラスの実装は、下記のようになる。
     public:
         X(std::string str, int num) : str_{std::move(str)}, num_{num} {}
         std::string ToString() const { return str_ + "/" + std::to_string(num_); }
-        ...
+        // ...
     };
     }  // namespace App
 ```
@@ -6319,7 +6319,7 @@ name lookupの原則に従い、App::Xの宣言は、App::operator<<より前に
     public:
         explicit X(std::string str, int num) : str_{std::move(str)}, num_{num} {}
         std::string ToString() const { return str_ + "/" + std::to_string(num_); }
-        ...
+        // ...
     };
     }  // namespace App2
 
@@ -11231,7 +11231,7 @@ FixedPointの単体テストコードを以下に示す。
     public:
         X(std::string str, int num) : str_{std::move(str)}, num_{num} {}
         std::string ToString() const { return str_ + "/" + std::to_string(num_); }
-        ...
+        // ...
     };
     }  // namespace App
 ```
@@ -11568,7 +11568,7 @@ constなlvalueリファレンスとして扱うべきである。
     template <typename T>
     void f(T&& t) noexcept
     {
-        ...
+        // ...
     }
 ```
 
@@ -11862,7 +11862,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
         ASSERT_EQ("int : 3", oss.str());
         oss = std::ostringstream{};  // ossのリセット
 
-        ...
+        // ...
     }
     {
         auto v = std::variant<char, int, std::string, double>{};  // 4つの型を切り替える
@@ -11877,7 +11877,7 @@ unionは、オブジェクトを全く無関係な複数の型に切り替える
         ASSERT_EQ("char : c", oss.str());
         oss = std::ostringstream{};  // ossのリセット
 
-        ...
+        // ...
     }
 ```
 
@@ -12174,7 +12174,7 @@ lookupによるバグの混入を起こしてしまうことがある。
         }
 
         // Tを使ったコード
-        ...
+        // ...
     };
     }  // namespace App
 ```
@@ -12211,7 +12211,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
         int operator()(int i) noexcept { return f(i); }
 
         // Tを使ったコード
-        ...
+        // ...
     };
     }  // namespace App
 ```
@@ -12258,7 +12258,7 @@ ExecFのテンプレートパラメータにはクラスAしか使われない�
     }
     }  // namespace App
 
-    ...
+    // ...
 
     namespace App {
     struct XY {
@@ -13571,12 +13571,12 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 
     inline bool sprit(header_t* header, size_t n_nuits, header_t*& next) noexcept
     {
-        ...
+        // ...
     }
 
     inline void concat(header_t* front, header_t* rear) noexcept
     {
-        ...
+        // ...
     }
 
     header_t* set_back(void* mem) noexcept { return static_cast<header_t*>(mem) - 1; }
@@ -13585,7 +13585,7 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 
     void* malloc_inner(size_t size) noexcept
     {
-        ...
+        // ...
     }
     }  // namespace
 ```
@@ -13697,7 +13697,7 @@ mallocで使用することになる。
     }
 
     // memを使用した何らかの処理
-    ...
+    // ...
 
     for (auto i = 0U; i < ArrayLength(mem); i += 2) {  // 512個のメモリを解放
         free(mem[i]);
@@ -14066,7 +14066,7 @@ MPoolから派生したクラスが、
         mpool_table[1] = gen_mpool<2, 128>();  //   64
         mpool_table[2] = gen_mpool<3, 128>();  //   96
 
-        ...
+        // ...
 
         mpool_table[29] = gen_mpool<30, 128>();  //  960
         mpool_table[30] = gen_mpool<31, 128>();  //  992
@@ -14577,12 +14577,12 @@ STLコンテナはこういった状況に備えて、ユーザ定義のアロ�
 
         virtual void* alloc(size_t size) noexcept override
         {
-            ...
+            // ...
         }
 
         virtual void free(void* mem) noexcept override
         {
-            ...
+            // ...
         }
 
         virtual size_t get_size() const noexcept override { return 1; }
@@ -14862,7 +14862,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
     // の抜粋
     namespace __cxxabiv1 {
     struct __cxa_exception {
-        ...
+        // ...
     };
     SUPPRESS_WARN_END;
     }  // namespace __cxxabiv1
@@ -14972,7 +14972,7 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
             return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
         }
 
-        ...
+        // ...
 
     private:
         using header_t = Inner_::header_t;
@@ -14986,13 +14986,13 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
         void* do_allocate(size_t size, size_t) override
         {
             // MPoolVariable::allocとほぼ同じ
-            ...
+            // ...
         }
 
         void do_deallocate(void* mem, size_t, size_t) noexcept override
         {
             // MPoolVariable::freeとほぼ同じ
-            ...
+            // ...
         }
 
         bool do_is_equal(const memory_resource& other) const noexcept override { return this == &other; }
@@ -17385,7 +17385,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
     public:
         explicit Base(int32_t b) noexcept : b_{b} {}
         virtual ~Base() = default;
-        ...
+        // ...
     };
 
     class Derived : public Base {
@@ -17399,7 +17399,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
     void f() noexcept
     {
         Derived d{1};  // Derived::Derived(int32_t)が使える
-        ...
+        // ...
     }
 ```
 
@@ -17415,7 +17415,7 @@ A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
     public:
         explicit A(std::string str) : str_{std::move(str)}
         {
-            ...
+            // ...
         }
 
         explicit A(uint32_t num) : A{std::to_string(num)}  // 委譲コンストラクタ
@@ -18507,7 +18507,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
         explicit Base(char const* name) noexcept : name0_{name} {}
         char const* Name0() const noexcept { return name0_; }
 
-        ...
+        // ...
     private:
         char const* name0_;
     };
@@ -18517,7 +18517,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
         Derived(char const* name0, char const* name1) noexcept : Base{name0}, name1_{name1} {}
         char const* Name1() const noexcept { return name1_; }
 
-        ...
+        // ...
     private:
         char const* name1_;
     };
@@ -19117,13 +19117,13 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
     void function_try_block()
     try {  // 関数tryブロック
         // 何らかの処理
-        ...
+        // ...
     }
     catch (std::length_error const& e) {  // 関数tryブロックのエクセプションハンドラ
-        ...
+        // ...
     }
     catch (std::logic_error const& e) {  // 関数tryブロックのエクセプションハンドラ
-        ...
+        // ...
     }
 ```
 
@@ -22769,9 +22769,9 @@ decltypeは、テンプレートプログラミングに多用されるが、
         a_ptr->len  = len;
         a_ptr->data = new uint8_t[10];
 
-        ...
+        // ...
         // do something for a_ptr
-        ...
+        // ...
 
         // a_ptrによるメモリの自動解放
     }
@@ -22971,7 +22971,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 
     void f(Person const& person) noexcept
     {
-        ...
+        // ...
     }
 
     void using_implicit_coversion()
@@ -22998,10 +22998,10 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 
     auto otani = std::string{"Ohtani"};
 
-    ...
+    // ...
 
     if (otani == "Ohtani") {  // 暗黙の型変換によりコンパイルできる
-        ...
+        // ...
     }
 ```
 
@@ -23012,14 +23012,14 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 
     auto otani = Person{"Ohtani", 26};
 
-    ...
+    // ...
 
     if (otani == "Otani") {  // このコードがコンパイルされる。
-        ...
+        // ...
     }
 
     if (otani == Person{"Otani"}) {  // 暗黙の型変換を使わない記法
-        ...
+        // ...
     }
 ```
 
@@ -23034,7 +23034,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
         Person(Person const&)            = default;
         Person& operator=(Person const&) = default;
 
-        ...
+        // ...
     };
 
     void prohibit_implicit_coversion()
@@ -23047,15 +23047,15 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 
         auto otani = Person{"Ohtani", 26};
 
-        ...
+        // ...
 
     #if 0
         if (otani == "Otani") {  // このコードもコンパイルできない。
-            ...
+            // ...
         }
     #else
         if (otani == Person{"Otani", 26}) {  // この記述を強制できる。
-            ...
+            // ...
         }
     #endif
     }
@@ -23644,13 +23644,13 @@ forwardingリファレンスは一見rvalueリファレンスのように見え�
     template <typename T>
     void f(T&& t) noexcept  // tはforwardingリファレンス
     {
-        ...
+        // ...
     }
 
     template <typename T>
     void g(std::vector<T>&& t) noexcept  // tはrvalueリファレンス
     {
-        ...
+        // ...
     }
 ```
 ```cpp
@@ -24783,12 +24783,12 @@ conditionの評価結果に基づき、expr1または expr2 のどちらかが�
 
     int f0(int a, int& b) noexcept  // a, bは仮引数
     {
-        ...
+        // ...
     }
 
     void f1() noexcept
     {
-        ...
+        // ...
 
         f0(x, y);  // x, yは実引数
     }
