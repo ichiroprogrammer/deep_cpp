@@ -40,8 +40,10 @@ function help(){
     echo "    -d    : dry run"
     echo "    -e    : find files which encoding is not utf-8"
     echo "    -g    : build by g++ only"
+    echo "    -S    : not exec make san-ut"
     echo "    -i    : execute IT"
     echo "    -j N  : make -j N for sample build [default:0]"
+    echo "    -x    : set -x"
     echo "    -h    : show this message"
 
     exit $1
@@ -55,14 +57,16 @@ IT=false
 DRY_RUN=false
 CHECK_ENCODING=false
 
-while getopts ":aCcdeghij:" flag; do
+while getopts ":aCScdxeghij:" flag; do
     case $flag in 
     a) CLEAN=true; CHECK_ENCODING=true ;;
     c) CLEAN=true ;; 
     C) CLEAN_GTEST=true ;; 
     d) DRY_RUN=true ;; 
+    x) set -x ;; 
     e) CHECK_ENCODING=true ;; 
     g) CLANG_BUILD=false; SCAN_BUILD=false; SAN_BUILD=false ;;
+    S) SAN_BUILD=false ;;
     i) IT=true ;; 
     j) PARALLEL="$OPTARG" ;; 
     h) help 0 ;; 

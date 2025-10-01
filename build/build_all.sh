@@ -17,8 +17,10 @@ function help(){
     echo "    -d    : dry run"
     echo "    -e    : find files which encoding is not utf-8"
     echo "    -g    : build by g++ only"
+    echo "    -S    : not exec make san-ut"
     echo "    -f    : build md/html/pdf/"
     echo "    -j N  : make -j N for example build [default:0]"
+    echo "    -x    : set -x"
     echo "    -h    : show this message"
 
     exit $1
@@ -28,16 +30,19 @@ CLEAN=false
 DRY_RUN=false
 CHECK_ENCODING=false
 GCC_ONLY=false
+NOT_SAN=false
 FULL=false
 
-while getopts ":acdefgj:h" flag; do
+while getopts ":aScdxefgj:h" flag; do
     case $flag in 
     a) CLEAN=true; CHECK_ENCODING=true; FULL=true ;; 
     c) CLEAN=true ;; 
     d) DRY_RUN=true ;; 
+    x) set -x ;; 
     e) CHECK_ENCODING=true ;; 
     f) FULL=true ;; 
     g) GCC_ONLY=true ;;
+    S) NOT_SAN=true ;;
     j) PARALLEL="$OPTARG" ;; 
     h) help 0 ;; 
     \?) help 1 ;; 
@@ -73,6 +78,7 @@ function build_code() {
     $CLEAN && build_opt="$build_opt -c"
     $DRY_RUN && build_opt="$build_opt -d"
     $GCC_ONLY && build_opt="$build_opt -g"
+    $NOT_SAN && build_opt="$build_opt -S"
 
     $dir/build.sh $build_opt
 }
