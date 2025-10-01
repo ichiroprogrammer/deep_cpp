@@ -1,7 +1,7 @@
 SRCS:=\
     guard_ut.cpp enum_operator_ut.cpp copy_and_swap_ut.cpp no_copy_and_swap_ut.cpp \
     string_holder_ut.cpp string_holder_new.cpp string_holder_old.cpp \
-	widget_ng.cpp widget_ng_ut.cpp widget_ok.cpp widget_ok_ut.cpp \
+	widget_ng.cpp widget_ng_ut.cpp widget_ok.cpp widget_ok_ut.cpp light_pimpl_ut.cpp \
     accessor_ut.cpp clone_ut.cpp nvi_ut.cpp raii_ut.cpp future_ut.cpp \
     di_ut.cpp singleton_ut.cpp state_machine_ut.cpp state_machine_new.cpp state_machine_old.cpp \
     null_object_ut.cpp template_method_factory_ut.cpp template_method_ut.cpp template_method.cpp \

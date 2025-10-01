@@ -225,6 +225,48 @@ std::stringに依存していないこと、
 
 ![ファイルの依存関係](plant_uml/widget_ok.png)
 
+---
+
+以上に示したように依存関係をシンプルに保つには極めて有効なパターンではあるが、
+このパターンで実装されたクラスのインスタンス毎に一回以上のヒープからのアロケーションが必要になるため、
+このオーバーヘッドが気になるような場合に備えて、アロケーションを少なくするテクニックを以下に示す。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl.h #0:0 begin
+```
+
+このクラスの実装を以下に示す。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:0 begin
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:1 begin
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:2 begin
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:3 begin
+```
+
+ヒープ以外のメモリからnewするための[プレースメントnew](---)を使用しているため、
+上記の抜粋である以下のコードはやや見慣れないかもしれない。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:1 begin
+```
+
+プレースメントnewで構築したオブジェクトの解放にはdeleteは使えない。
+オブジェクトがその上で構築されているメモリはヒープのものではないため、deleteすると未定義動作につながる。
+
+deleteを使わずにプレースメントnewで構築したオブジェクトの各メンバのデストラクタを呼び出さなければ、
+リソースリークにつながる。この問題を解決するためのコードは、上記の抜粋である以下のようなものになる。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:2 begin
+```
+
+上記のクラスの動作を以下の単体テストにより示す。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #1:0 begin -1
+```
+
 [演習-Pimpl](~~~)  
 
 ## Accessor

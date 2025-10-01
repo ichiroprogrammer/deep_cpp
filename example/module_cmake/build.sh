@@ -55,7 +55,7 @@ IT=false
 DRY_RUN=false
 CHECK_ENCODING=false
 
-while getopts ":aCcdeghij:" flag; do
+while getopts ":aSCcdeghij:" flag; do
     case $flag in 
     a) CLEAN=true; CHECK_ENCODING=true ;;
     c) CLEAN=true ;; 
