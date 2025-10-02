@@ -15,6 +15,7 @@ function help(){
     echo "    -g    : build by g++ only"
     echo "    -i    : execute IT"
     echo "    -j N  : make -j N for sample build [default:0]"
+    echo "    -x    : set -x"
     echo "    -h    : show this message"
 
     exit $1
@@ -35,7 +36,7 @@ function find_not_utf8() {
 
 function build(){
     local dir="$1"
-    mkdir $dir
+    mkdir -p $dir
     cmake -B $dir
     make -C $dir
 }
@@ -55,12 +56,13 @@ IT=false
 DRY_RUN=false
 CHECK_ENCODING=false
 
-while getopts ":aSCcdeghij:" flag; do
+while getopts ":aSCcdxeghij:" flag; do
     case $flag in 
     a) CLEAN=true; CHECK_ENCODING=true ;;
     c) CLEAN=true ;; 
     C) CLEAN_GTEST=true ;; 
     d) DRY_RUN=true ; set -x ;; 
+    x) set -x ;; 
     e) CHECK_ENCODING=true ;; 
     g) CLANG_BUILD=true; SCAN_BUILD=false; SAN_BUILD=false ;;
     i) IT=true ;; 

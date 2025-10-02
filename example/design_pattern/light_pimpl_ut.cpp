@@ -22,7 +22,8 @@ struct LightPimpl::Impl_t {
 
 LightPimpl::LightPimpl(std::string const& name) : pimpl_(new (memory_) Impl_t{name})  // プレースメントnew
 {
-    static_assert(sizeof(Impl_t) == sizeof(memory_), "Buffer size mismatch");
+    static_assert(sizeof(Impl_t) <= sizeof(memory_), "Buffer size mismatch");
+    static_assert(sizeof(memory_) - sizeof(Impl_t) < 16, "Buffer has excessive padding");
     static_assert(alignof(Impl_t) <= alignof(std::max_align_t), "Buffer alignment mismatch");
 }
 // @@@ sample end

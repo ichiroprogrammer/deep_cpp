@@ -91,11 +91,10 @@ $CHECK_ENCODING && cmd_launcher $MD_GEN/sh/find_not_utf8.sh -e ".*\\.png$" -e ".
 
 [ -d exercise ] && build_code exercise
 
-$CLEAN && cmd_launcher make clean
+cmd_launcher make clean # ドキュメントは常にクリーンビルド
 
 cmd_launcher make $PARA 
-
-$FULL && cmd_launcher make $PARA html
-$FULL && cmd_launcher make $PARA md_pu
+cmd_launcher make $PARA html
+cmd_launcher make $PARA md_pu
 
 exit 0

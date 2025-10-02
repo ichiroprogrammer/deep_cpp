@@ -23,7 +23,7 @@ public:
 
 private:
     // Impl_tをプレースメントnewでインスタンス化する時に使用するメモリ
-    alignas(std::max_align_t) uint8_t memory_[48];  // 配列長はsizeof(Impl_t)から適切に調節する
+    alignas(std::max_align_t) uint8_t memory_[48];  // 配列長はsizeof(Impl_t)以上になるよう調整
     struct Impl_t;
     struct Impl_t* pimpl_;
 };
