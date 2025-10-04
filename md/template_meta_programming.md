@@ -2701,7 +2701,7 @@ FixedPointの単体テストコードを以下に示す。
     // @@@ example/template_cpp17/universal_ref_ut.cpp #1:2 begin
 ```
 
-下記に示した通り、universal_refとuniversal_ref2のパラメータが同じ型であるとは限らない。
+下記に示した通り、forwarding_refとforwarding_ref2のパラメータが同じ型であるとは限らない。
 
 ```cpp
     // @@@ example/template_cpp17/universal_ref_ut.cpp #1:3 begin -1

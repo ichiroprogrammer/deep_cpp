@@ -81,6 +81,7 @@ TEST(UniqueOwnership, move)
     ASSERT_EQ(1, a1->GetNum());                 // a1はA{1}を所有
     x.Move(std::move(a1));                      // xによるA{0}の解放
                                                 // a1からxへA{1}の所有権の移動
+                                                // Moveの処理は ptr_ = std::move(a1)
     ASSERT_EQ(0, A::LastDestructedNum());       // A{0}は解放された
     ASSERT_FALSE(a1);                           // a1は何も所有していない
     ASSERT_EQ(1, x.GetA()->GetNum());           // xはA{1}を所有

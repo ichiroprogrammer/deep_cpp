@@ -4,7 +4,7 @@
 
 #include "suppress_warning.h"
 
-namespace UniversalRef {
+namespace ForwardingRef {
 // @@@ sample begin 0:0
 
 template <typename T>
@@ -42,7 +42,7 @@ void call_template_func()
 }
 
 namespace {
-TEST(UniversalRef, universal_ref)
+TEST(ForwardingRef, forwarding_ref)
 {
     // @@@ sample begin 0:2
 
@@ -69,4 +69,4 @@ TEST(UniversalRef, universal_ref)
     // @@@ sample end
 }
 }  // namespace
-}  // namespace UniversalRef
+}  // namespace ForwardingRef

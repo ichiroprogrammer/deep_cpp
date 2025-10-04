@@ -64,8 +64,7 @@ TEST(ClassRelation, is_a)
 {
     // @@@ sample begin 0:2
 
-    // ...
-
+    // 単体テストを行うためのラムダ
     auto let_it_fly = [](bird& b, int altitude) {
         try {
             b.fly(altitude);
@@ -80,10 +79,10 @@ TEST(ClassRelation, is_a)
     bird    b;
     penguin p;
     ASSERT_EQ(let_it_fly(p, 0), 1);  // パスする
-    // birdからpenguinへの派生がリスコフ置換の原則を満たすのであれば、
-    // 上記のテストのpをbで置き換えたテストがパスしなければならないが、
+    // リスコフ置換原則が満たされていれば、派生クラス(penguin)
+    // を基底クラス(bird)で置き換えても同じ結果になるはずだが、
     // 実際には逆に下記テストがパスしてしまう
-    ASSERT_NE(let_it_fly(b, 0), 1);
+    ASSERT_NE(let_it_fly(b, 0), 1);  // let_it_fly(b, 0) != 1　であることに注意
     // このことからpenguinへの派生はリスコフ置換の原則を満たさない
 
     // @@@ sample end

@@ -37,7 +37,7 @@ TEST(Template, gen_vector)
 }  // namespace
 }  // namespace GenVector
 
-namespace GenVectorUniversalRef {
+namespace GenVectorForwardingRef {
 // @@@ sample begin 1:0
 
 template <typename STR0, typename STR1>
@@ -53,7 +53,7 @@ std::vector<std::string> gen_vector(STR0&& s0, STR1&& s1)
 // @@@ sample end
 
 namespace {
-TEST(Template, gen_vector_universal_ref)
+TEST(Template, gen_vector_forwarding_ref)
 {
     // @@@ sample begin 1:1
 
@@ -73,52 +73,52 @@ TEST(Template, gen_vector_universal_ref)
 enum class ExpressionType { Lvalue, Rvalue };
 
 template <typename T>
-constexpr ExpressionType universal_ref2(T&& t)
+constexpr ExpressionType forwarding_ref2(T&& t)
 {
     return std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue : ExpressionType::Rvalue;
 }
 
-// std::pair<>::first  : universal_refの中のtのExpressionType
-// std::pair<>::second : universal_ref2の中でtのExpressionType
+// std::pair<>::first  : forwarding_refの中のtのExpressionType
+// std::pair<>::second : forwarding_ref2の中でtのExpressionType
 template <typename T>
-constexpr std::pair<ExpressionType, ExpressionType> universal_ref(T&& t)
+constexpr std::pair<ExpressionType, ExpressionType> forwarding_ref(T&& t)
 {
     return std::make_pair(std::is_lvalue_reference_v<decltype(t)> ? ExpressionType::Lvalue : ExpressionType::Rvalue,
-                          universal_ref2(t));
+                          forwarding_ref2(t));
 }
 // @@@ sample end
 
-TEST(Template, universal_ref)
+TEST(Template, forwarding_ref)
 {
     // clang-format off
     // @@@ sample begin 1:3
 
     auto i = 0;
 
-    constexpr auto p = universal_ref(i);
-    static_assert(universal_ref2(i) == ExpressionType::Lvalue);            // iはlvalue
-    static_assert(p.first == ExpressionType::Lvalue);                      // universal_refの引数はlvalue
-    static_assert(p.second == ExpressionType::Lvalue);                     // universal_ref中のuniversal_ref2の引数はlvalue
+    constexpr auto p = forwarding_ref(i);
+    static_assert(forwarding_ref2(i) == ExpressionType::Lvalue);  // iはlvalue
+    static_assert(p.first == ExpressionType::Lvalue);             // forwarding_refの引数はlvalue
+    static_assert(p.second == ExpressionType::Lvalue);            // forwarding_ref中のforwarding_ref2の引数はlvalue
 
-    constexpr auto pm = universal_ref(std::move(i));                       // universal_refの引数はrvalue
-    static_assert(universal_ref2(std::move(i)) == ExpressionType::Rvalue); // universal_ref2の引数はrvalue
-    static_assert(pm.first == ExpressionType::Rvalue);                     // universal_refの引数はrvalue
-    static_assert(pm.second == ExpressionType::Lvalue);                    // universal_ref中のuniversal_ref2の引数はrvalue
+    constexpr auto pm = forwarding_ref(std::move(i));                        // forwarding_refの引数はrvalue
+    static_assert(forwarding_ref2(std::move(i)) == ExpressionType::Rvalue);  // forwarding_ref2の引数はrvalue
+    static_assert(pm.first == ExpressionType::Rvalue);                       // forwarding_refの引数はrvalue
+    static_assert(pm.second == ExpressionType::Lvalue);                      // forwarding_ref中のforwarding_ref2の引数はrvalue
 
-    constexpr auto pm2 = universal_ref(int{});
-    static_assert(universal_ref2(int{}) == ExpressionType::Rvalue);        // universal_ref2の引数はrvalue
-    static_assert(pm2.first == ExpressionType::Rvalue);                    // universal_refの引数はrvalue
-    static_assert(pm2.second == ExpressionType::Lvalue);                   // universal_ref中のuniversal_ref2の引数はrvalue
+    constexpr auto pm2 = forwarding_ref(int{});
+    static_assert(forwarding_ref2(int{}) == ExpressionType::Rvalue);  // forwarding_ref2の引数はrvalue
+    static_assert(pm2.first == ExpressionType::Rvalue);               // forwarding_refの引数はrvalue
+    static_assert(pm2.second == ExpressionType::Lvalue);              // forwarding_ref中のforwarding_ref2の引数はrvalue
     // @@@ sample end
+    // clang-format on
 
-    // clang-format off
     IGNORE_UNUSED_VAR(i);
 }
 
 }  // namespace
-}  // namespace GenVectorUniversalRef
+}  // namespace GenVectorForwardingRef
 
-namespace GenVectorUniversalRefWithForward {
+namespace GenVectorForwardingRefWithForward {
 // @@@ sample begin 2:0
 
 template <typename STR0, typename STR1>
@@ -134,7 +134,7 @@ std::vector<std::string> gen_vector(STR0&& s0, STR1&& s1)
 // @@@ sample end
 
 namespace {
-TEST(Template, gen_vector_universal_ref_with_forwad)
+TEST(Template, gen_vector_forwarding_ref_with_forwad)
 {
     {
         // @@@ sample begin 2:1
@@ -162,9 +162,9 @@ TEST(Template, gen_vector_universal_ref_with_forwad)
     }
 }
 }  // namespace
-}  // namespace GenVectorUniversalRefWithForward
+}  // namespace GenVectorForwardingRefWithForward
 
-namespace GenVectorUniversalRefParameterPackWithForward {
+namespace GenVectorForwardingRefParameterPackWithForward {
 namespace not_folding {
 // @@@ sample begin 3:0
 
@@ -190,7 +190,7 @@ std::vector<std::string> gen_vector(STR&&... ss)
     return ret;
 }
 // @@@ sample end
-TEST(Template, gen_vector_universal_ref_with_forwad_old)
+TEST(Template, gen_vector_forwarding_ref_with_forwad_old)
 {
     // @@@ sample begin 3:1
 
@@ -204,7 +204,7 @@ TEST(Template, gen_vector_universal_ref_with_forwad_old)
     ASSERT_EQ("", b);  // bはmoveされた
     // @@@ sample end
 }
-}
+}  // namespace not_folding
 namespace folding {
 // @@@ sample begin 3:2
 
@@ -219,7 +219,7 @@ std::vector<std::string> gen_vector(STR&&... ss)
 }
 // @@@ sample end
 
-TEST(Template, gen_vector_universal_ref_with_forwad_folding)
+TEST(Template, gen_vector_forwarding_ref_with_forwad_folding)
 {
     auto a = std::string{"a"};
     auto b = std::string{"b"};
@@ -230,10 +230,10 @@ TEST(Template, gen_vector_universal_ref_with_forwad_folding)
     ASSERT_EQ("a", a);
     ASSERT_EQ("", b);  // bはmoveされた
 }
-}
-}  // namespace GenVectorUniversalRefParameterPackWithForward
+}  // namespace folding
+}  // namespace GenVectorForwardingRefParameterPackWithForward
 
-namespace GenVectorUniversalRef_Worst {
+namespace GenVectorForwardingRef_Worst {
 
 // @@@ sample begin 4:0
 
@@ -250,7 +250,7 @@ std::vector<std::string> gen_vector(STR0&& s0, STR1&& s1)
 // @@@ sample end
 
 namespace {
-TEST(Template, gen_vector_universal_ref_worst)
+TEST(Template, gen_vector_forwarding_ref_worst)
 {
     // @@@ sample begin 4:1
 
@@ -265,7 +265,7 @@ TEST(Template, gen_vector_universal_ref_worst)
     // @@@ sample end
 }
 }  // namespace
-}  // namespace GenVectorUniversalRef_Worst
+}  // namespace GenVectorForwardingRef_Worst
 
 namespace {
 // @@@ sample begin 5:0

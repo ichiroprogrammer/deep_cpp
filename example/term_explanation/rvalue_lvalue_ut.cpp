@@ -8,24 +8,28 @@ void f()
 
 {
     // @@@ sample begin 0:0
-    // sを初期化するためにstd::string{}により生成されるオブジェクトはprvalue、 sはlvalue
+    // str0を初期化するためにstd::string{}により生成されるオブジェクトはprvalue、 str0はlvalue
     //   ↓lvalue
-    auto s = std::string{};  // この式の左辺はテンポラリオブジェクト(つまりprvalue)
+    auto str0 = std::string{};  // この式の左辺はテンポラリオブジェクト(つまりprvalue)
 
     /*
-    auto* sp = &std::string{};
-    ↑は、コンパイルエラー
-    ↓は、その時のg++のエラーメッセージ
-    error: taking address of rvalue
-    */
+    auto* str0_ptr = &std::string{};  // prvalueのアドレスの取得はできない
+    ↑は、メッセージは error: taking address of rvalue でコンパイルエラー */
 
-    // 下記のようにすればアドレスを取得できるが、このようなことはすべきではない。
-    auto&& rvalue_ref = std::string{};
-    auto   sp         = &rvalue_ref;  // spはrvalue_refのアドレスを指しているが、、、
+    /*
+    std::string& str1_ref = std::string{};  // prvalueを非constなlvalueリファレンスではバインドできない
+    ↑は、コンパイルエラーで、エラーメッセージは error: taking address of rvalue */
+
+    std::string const& str2_ref = std::string{};  // prvalueはconstなlvalueリファレンスでバインドできる
+    // ↓のようにすればアドレスを取得できるが、このようなことはすべきではない。
+    std::string const* str2_ptr = &str2_ref;  // str_ptrはprvalueのアドレスを指しているが、、、
+
+    auto&& str3_ref = std::string{};  // prvalueはprvalueリファレンスでバインドできる
+    // ↓のようにすればアドレスを取得できるが、このようなことはすべきではない。
+    std::string* str3_ptr = &str3_ref;  // str_ptrはprvalueのアドレスを指しているが、、、
     // @@@ sample end
 
-    static_assert(std::is_same_v<std::string*, decltype(sp)>);
-    IGNORE_UNUSED_VAR(s, sp);
+    IGNORE_UNUSED_VAR(str0, str2_ptr, str3_ref, str3_ptr);
 }
 }  // namespace Rvalue
 
@@ -46,8 +50,8 @@ TEST(Expression, lvalue_ref0)
     ASSERT_EQ(a, b);  // リファレンスは別名に過ぎないため、このテストが成立
 
     /*
-    int& t_ref = int(99);  非const lvalueリファレンスはrvalueをバインドできない */
-    int const& t_ref = int(99);  // 上記とは異なり、const lvalueリファレンスはrvalueをバインドできる
+    int& t_ref = int{99};  非const lvalueリファレンスはrvalueをバインドできない */
+    int const& t_ref = int{99};  // 上記とは異なり、const lvalueリファレンスはrvalueをバインドできる
     ASSERT_EQ(t_ref, 99);
     // @@@ sample end
 }
@@ -55,8 +59,8 @@ TEST(Expression, lvalue_ref0)
 // clang-format off
 // @@@ sample begin 1:1
 
-int f(int& )        { return 0; }
-int f(int const & ) { return 1; }
+int f(int& )        { return 1; }   // f-1
+int f(int const & ) { return 2; }   // f-2
 // @@@ sample end
 // clang-format on
 
@@ -67,9 +71,10 @@ TEST(Expression, lvalue_ref1)
     int       a = 0;
     int const b = 0;
 
-    ASSERT_EQ(0, f(a));
-    ASSERT_EQ(1, f(b));      // constオブジェクトのバインド
-    ASSERT_EQ(1, f(int()));  // rvalueのバインド
+    ASSERT_EQ(1, f(a));  // f(a)は、f-2も呼び出せるが、デフォルトでは、f-1が呼ばれる
+    ASSERT_EQ(2, f(static_cast<int const&>(a)));  // aをconstにキャストして、強制的にf-2の呼び出し
+    ASSERT_EQ(2, f(b));                           // constオブジェクトのバインド
+    ASSERT_EQ(2, f(int{}));                       // rvalueのバインド
     // @@@ sample end
 }
 }  // namespace ref_pattern1
@@ -92,10 +97,12 @@ TEST(Expression, rvalue_ref1)
 }
 // clang-format off
 // @@@ sample begin 2:1
+}  // namespace ref_pattern2
 
-int f(std::string&)       { return 0; } // f-0
-int f(std::string const&) { return 1; } // f-1
-int f(std::string&&)      { return 2; } // f-2
+namespace ref_pattern3 {
+int f(int&)       { return 1; } // f-1
+int f(int const&) { return 2; } // f-2
+int f(int&&)      { return 3; } // f-3
 // @@@ sample end
 // clang-format on
 
@@ -104,14 +111,16 @@ TEST(Expression, rvalue_ref2)
     // clang-format off
     // @@@ sample begin 2:2
 
-    std::string       str;
-    std::string const cstr;
+    int       a = 0;
+    int const b = 0;
 
-    ASSERT_EQ(0, f(str));            // f-0の呼び出し
-    ASSERT_EQ(1, f(cstr));           // f-1の呼び出し、const lvalueリファレンスのバインド
-    ASSERT_EQ(2, f(std::string{}));  // f-2の呼び出し、f-2が無ければ、f-1を呼び出すが
-    ASSERT_EQ(2, f(std::move(str))); // f-2の呼び出し
+    ASSERT_EQ(1, f(a));      // f-1の呼び出し
+    ASSERT_EQ(2, f(b));      // f-2の呼び出し、constなlvalueリファレンスのバインド
+    ASSERT_EQ(3, f(int{}));  // f-3の呼び出し、f-3が無ければ、f-2を呼び出すが
+    ASSERT_EQ(2, f(static_cast<int const&>(a)));  // strをconstリファレンスにキャストして、強制的にf-2の呼び出し
+    ASSERT_EQ(3, f(static_cast<int&&>(a)));       // strをrvalueリファレンスにキャストして、 強制的にf-3の呼び出し
+    ASSERT_EQ(3, f(std::move(a)));                // f-3の呼び出し
     // @@@ sample end
     // clang-format on
 }
-}  // namespace ref_pattern2
+}  // namespace ref_pattern3
