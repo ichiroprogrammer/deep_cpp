@@ -1,5 +1,5 @@
 #import TARGET
-MD_SC:=sample_code.md
+MD_SC ?= sample_code.md
 
 MDS_DEPS:=$(addprefix o/c/,$(MDS:.md=.d))
 
