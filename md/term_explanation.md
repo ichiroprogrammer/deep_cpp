@@ -333,7 +333,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
   すべてのメンバが[<=>演算子](---)での比較可能である場合、`= default`とすることで自動生成される。 
 
 ユーザがこれらを一切定義しない場合、または一部のみを定義する場合、
-コンパイラは、下記のテーブル等で示すルールに従い、特殊関数メンバの宣言、定義の状態をを定める。
+コンパイラは、下記のテーブル等で示すルールに従い、特殊関数メンバの宣言、定義の状態を定める。
 
 左1列目がユーザによる各関数の宣言を表し、2列目以降はユーザ宣言の影響による各関数の宣言の状態を表す。  
 下記表において、
@@ -1180,7 +1180,7 @@ x0、x1、...、xNがaを共有所有する場合、x0、x1、...、xN全体で�
 #### オブジェクトの排他所有
 オブジェクトの排他所有や、それを容易に実現するための
 [std::unique_ptr](https://cpprefjp.github.io/reference/memory/unique_ptr.html)
-の仕様をを説明するために、下記のようにクラスA、Xを定義する。
+の仕様を説明するために、下記のようにクラスA、Xを定義する。
 
 ```cpp
     // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:0 begin
@@ -1254,7 +1254,7 @@ std::unique_ptr、std::move()、[expressionと値カテゴリ|expression|rvalue]
 #### オブジェクトの共有所有
 オブジェクトの共有所有や、それを容易に実現するための
 [std::shared_ptr](https://cpprefjp.github.io/reference/memory/shared_ptr.html)
-の仕様をを説明するために、下記のようにクラスA、Xを定義する。
+の仕様を説明するために、下記のようにクラスA、Xを定義する。
 
 ```cpp
     // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:0 begin
@@ -1332,23 +1332,25 @@ std::shared_ptr、std::move()、[expressionと値カテゴリ|expression|rvalue]
 
 
 #### オブジェクトの循環所有
-[std::unique_ptr](https://cpprefjp.github.io/reference/memory/unique_ptr.html)の使い方を誤ると、
+[std::shared_ptr](https://cpprefjp.github.io/reference/memory/shared_ptr.html)の使い方を誤ると、
 以下のコード例が示すようにメモリーリークが発生する。
 
 なお、この節の題名である「オブジェクトの循環所有」という用語は、
 この前後の節がダイナミックに確保されたオブジェクトの所有の概念についての解説しているため、
 この用語を選択したが、文脈によっては、「オブジェクトの循環参照」といった方がふさわしい場合もある。
 
-まずは、リークが発生しないstd::unique_ptrの正しい使用例を示す。
+---
+
+まずは、**メモリリークが発生しない**`std::shared_ptr`の正しい使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #0:0 begin
 ```
 
 上記のクラスの使用例を示す。下記をステップ1とする。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #1:0 begin -1
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #1:0 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_each_1.png)
@@ -1357,7 +1359,7 @@ std::shared_ptr、std::move()、[expressionと値カテゴリ|expression|rvalue]
 上記の続きを以下に示し、ステップ2とする。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #1:1 begin -1
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #1:1 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_each_2.png)
@@ -1366,7 +1368,7 @@ std::shared_ptr、std::move()、[expressionと値カテゴリ|expression|rvalue]
 上記の続きを以下に示し、ステップ3とする。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #1:2 begin -1
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #1:2 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_each_3.png)
@@ -1375,7 +1377,7 @@ std::shared_ptr、std::move()、[expressionと値カテゴリ|expression|rvalue]
 上記の続きを以下に示し、ステップ4とする。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #1:3 begin -1
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #1:3 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_each_4.png)
@@ -1383,24 +1385,25 @@ std::shared_ptr、std::move()、[expressionと値カテゴリ|expression|rvalue]
 
 このような動作により、`std::make_shared<>`で生成されたX、Yオブジェクトは解放される。
 
-次にshare_ptrを使用し、循環する参照を作ったためにオブジェクトが解放されないコード例を示す。
-まずはクラスの定義から。
+---
+
+次は**メモリリークが発生する**`std::shared_ptr`の誤用を示す。まずはクラスの定義から。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:0 begin
 ```
 
 上記のクラスの動作を以下に示したコードで示す。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:1 begin -1
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:1 begin -1
 ```
 
 x0のライフタイムに差を作るために新しいスコープを導入し、そのスコープ内で、y0を生成し、
-X::Register`、`Y::Register`を用いて、循環を作ってしまう例(メモリーリークを起こすバグ)を示す。
+`X::Register`、`Y::Register`を用いて、循環を作ってしまう例(メモリーリークを起こすバグ)を示す。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:2 begin -1
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:2 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_cyclic.png)
@@ -1409,23 +1412,30 @@ X::Register`、`Y::Register`を用いて、循環を作ってしまう例(メモ
 Yオブジェクトの参照カウントは1になる(x0::y_が存在するため0にならない)。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:3 begin -1
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:3 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_cyclic_2.png)
 
-次に、x0がスコープアウトし、そのタイミングではY::x_が健在であるため、
+ここでの状態をまとめると、
+
+- y0がもともと持っていたXオブジェクトは健在(このオブジェクトはx0が持っているものでもあるため、use_countは2のまま)
+- x0が宣言されたスコープが残っているため、当然ながらx0は健在
+- x0はYオブジェクトを持ったままではあるが、y0がスコープアウトしたため、Yオブジェクトのuse_countは1に減った
+
+  
+次のコードでは、x0がスコープアウトし、y0がもともと持っていたXオブジェクトは健在であるため、
 Xオブジェクトの参照カウントも1になる。このため、x0、y0がスコープアウトした状態でも、
 X、Yオブジェクトの参照カウントは0にならず、従ってこれらのオブジェクトは解放されない
-(shared_ptrは参照カウントが0->1に変化するタイミングで保持するオブジェクトを解放する)。
+(shared_ptrは参照カウントが1->0に変化するタイミングで保持するオブジェクトを解放する)。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #2:4 begin -1
+    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:4 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_cyclic_3.png)
 
-X、Yオブジェクトへのハンドルを完全に失った状態であり、X、Yオブジェクトを解放する手段はない。
+X、Yオブジェクトへの[ハンドル](---)を完全に失った状態であり、X、Yオブジェクトを解放する手段はない。
 
 #### std::weak_ptr
 std::weak_ptrは、[スマートポインタ](---)の一種である。
@@ -1437,9 +1447,9 @@ std::weak_ptrは参照カウントに影響を与えず、共有所有ではな�
 (以下の例では、Xは前のままで、Yのみ修正した)。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:0 begin
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:1 begin
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:2 begin
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:1 begin
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:2 begin
 ```
 
 このコードからわかるように修正版YはXオブジェクトを参照するために、
@@ -1453,13 +1463,13 @@ std::weak_ptrは参照カウントに影響を与えず、共有所有ではな�
 生成した`std::shared_ptr<X>`オブジェクトのスコープを最小に留めている。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:1 begin
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:1 begin
 ```
 
 Xと修正版Yの単体テストによりメモリーリークが修正されたことを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #3:3 begin -1
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:3 begin -1
 ```
 
 
@@ -2705,7 +2715,7 @@ hidden-friend関数(隠れたフレンド関数)の目的は、
 ### name-hiding
 name-hidingとは
 「前方の識別子が、その後方に同一の名前をもつ識別子があるために、
-[name lookup](---)の対象外になる」現象一般をを指す通称である
+[name lookup](---)の対象外になる」現象一般を指す通称である
 ([namespace](https://en.cppreference.com/w/cpp/language/namespace)参照)。
 
 まずは、クラスとその派生クラスでのname-hidingの例を示す。
@@ -3646,7 +3656,7 @@ prvalueとは、オブジェクトやビットフィールドを初期化する�
 つまり、prvalueとはいわゆるテンポラリオブジェクトのことである(下記の`std::string{}`で作られるようなオブジェクト)。
 多くの場合、prvalueはテンポラリオブジェクトを生成するが、
 C++17以降は[RVO(Return Value Optimization)](---)により、
-テンポラリオブジェクトをを生成せず、直接、初期化に使われる場合もある。  
+テンポラリオブジェクトを生成せず、直接、初期化に使われる場合もある。  
 また、正確にはprvalueと呼ぶべき場面でも単にrvalueと呼ばれることがある。
 このドキュメントでも、そうなっていることもある。
 
@@ -3955,7 +3965,7 @@ danglingポインタとは、[danglingリファレンス](---)と同じような
 [rvalue修飾](---)と[lvalue修飾](---)とを併せて、リファレンス修飾と呼ぶ。
 
 ### rvalue修飾
-下記GetString0()のような関数が返すオブジェクトの内部メンバに対するハンドルは、
+下記GetString0()のような関数が返すオブジェクトの内部メンバに対する[ハンドル](---)は、
 オブジェクトのライフタイム終了後にもアクセスすることができるため、
 そのハンドルを通じて、
 ライフタイム終了後のオブジェクトのメンバオブジェクトにもアクセスできてしまう。
@@ -4566,6 +4576,9 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 ```
 
 ## ソフトウェア一般
+### ハンドル
+CやC++の文脈でのハンドルとは、ポインタかリファレンスを指す。
+
 ### フリースタンディング環境
 [フリースタンディング環境](https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%AA%E3%83%BC%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E7%92%B0%E5%A2%83)
 とは、組み込みソフトウェアやOSのように、その実行にOSの補助を受けられないソフトウエアを指す。
@@ -4767,7 +4780,7 @@ is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 
 * S(サーバー): 実装を提供するクラス
 * C(クライアント): Sの実装を利用するクラス
-* CC(クライアントのクライアント): Cのメンバをを使用するクラス
+* CC(クライアントのクライアント): Cのメンバを使用するクラス
 
 コード量の観点から考えた場合、手段1が最も優れていることが多い。
 依存関係の複雑さから考えた場合、CはSに強く依存する。
