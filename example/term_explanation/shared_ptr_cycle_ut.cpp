@@ -100,16 +100,17 @@ public:
 
     std::shared_ptr<Y> const& ref_y() const noexcept { return y_; }
 
-    // y_がYオブジェクトを保持していないのであれば、本名の"X"を返すが、
-    // そうでなければYオブジェクトを持っていることを示す
+    // 自身の状態を返す ("X alone" または "X with Y")
     std::string WhoYouAre() const;
+
+    // y_が保持するオブジェクトの状態を返す ("None" またはY::WhoYouAre()に委譲)
+    std::string WhoIsWith() const;
 
     static uint32_t constructed_counter;
 
 private:
     std::shared_ptr<Y> y_{};  // 初期化状態では、y_はオブジェクトを所有しない(use_count()==0)
 };
-uint32_t X::constructed_counter;
 
 class Y final {
 public:
@@ -120,17 +121,27 @@ public:
 
     std::shared_ptr<X> const& ref_x() const noexcept { return x_; }
 
-    // x_がXオブジェクトを保持していないのであれば、本名の"Y"を返すが、
-    // そうでなければXオブジェクトを持っていることを示す
-    std::string     WhoYouAre() const { return x_ ? "Y with X" : "Y alone"; }
+    // 自身の状態を返す ("Y alone" または "Y with X")
+    std::string WhoYouAre() const;
+
+    // x_が保持するオブジェクトの状態を返す ("None" またはY::WhoYouAre()に委譲)
+    std::string WhoIsWith() const;
+
     static uint32_t constructed_counter;
 
 private:
     std::shared_ptr<X> x_{};  // 初期化状態では、x_はオブジェクトを所有しない(use_count()==0)
 };
-uint32_t Y::constructed_counter;
 
+// Xのメンバ定義
 std::string X::WhoYouAre() const { return y_ ? "X with Y" : "X alone"; }
+std::string X::WhoIsWith() const { return y_ ? y_->WhoYouAre() : std::string{"None"}; }
+uint32_t    X::constructed_counter;
+
+// Yのメンバ定義
+std::string Y::WhoYouAre() const { return x_ ? "Y with X" : "Y alone"; }
+std::string Y::WhoIsWith() const { return x_ ? x_->WhoYouAre() : std::string{"None"}; }
+uint32_t    Y::constructed_counter;
 // @@@ sample end
 #ifndef SANITIZER
 
@@ -147,7 +158,7 @@ TEST(WeakPtr, leak)
         ASSERT_EQ(X::constructed_counter, 1);  // Xオブジェクトは1つ生成された
 
         ASSERT_EQ(x0.use_count(), 1);
-        ASSERT_EQ(x0->WhoYouAre(), "X alone");     // x0.y_は何も保持していないので、"X alone"
+        ASSERT_EQ(x0->WhoIsWith(), "None");     // x0.y_は何も保持していないので、"None"
         ASSERT_EQ(x0->ref_y().use_count(), 0);  // X::y_は何も持っていない
 
         // @@@ sample end
@@ -156,22 +167,26 @@ TEST(WeakPtr, leak)
         {
             auto y0 = std::make_shared<Y>();
 
-            ASSERT_EQ(Y::constructed_counter, 1);  // Yオブジェクトは1つ生成された
+            ASSERT_EQ(Y::constructed_counter, 1);   // Yオブジェクトは1つ生成された
             ASSERT_EQ(y0.use_count(), 1);
             ASSERT_EQ(y0->ref_x().use_count(), 0);  // y0.x_は何も持っていない
             ASSERT_EQ(y0->WhoYouAre(), "Y alone");  // y0.x_は何も持っていないので、"Y alone"
 
-            x0->Register(y0);  // これによりx0.y_はy0と同じオブジェクトを持つ
-            ASSERT_EQ(x0->WhoYouAre(), "X with Y");  // x0.y_はYオブジェクトを持っている
+            x0->Register(y0);                       // これによりx0.y_はy0と同じYオブジェクトを持つ
+            ASSERT_EQ(x0->WhoIsWith(), "Y alone");  // x0が持つYオブジェクトはまだXを持っていない状態
 
-            y0->Register(x0);                      // これによりy0.y_はx0と同じオブジェクトを持つ
+            y0->Register(x0);                       // これによりy0.y_はx0と同じオブジェクトを持つ
             // 上記で生成されたXオブジェクト、Yオブジェクトは、x0->Register(y0), y0->Register(x0)により
             // 相互に参照しあう状態になる
-            ASSERT_EQ(X::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
-            ASSERT_EQ(Y::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
+            ASSERT_EQ(X::constructed_counter, 1);   // 新しいオブジェクトが生成されるわけではない
+            ASSERT_EQ(Y::constructed_counter, 1);   // 新しいオブジェクトが生成されるわけではない
 
-            ASSERT_EQ(y0->WhoYouAre(), "Y with X");  // y0.x_はXオブジェクトを持っている
-            ASSERT_EQ(x0->WhoYouAre(), "X with Y");  // x0.y_はYオブジェクトを持っている
+            ASSERT_EQ(y0->WhoYouAre(), "Y with X"); // y0.x_はXオブジェクトを持っている
+            ASSERT_EQ(x0->WhoYouAre(), "X with Y"); // x0.y_はYオブジェクトを持っている
+
+            ASSERT_EQ(y0->WhoIsWith(), "X with Y"); // y0.x_はXオブジェクトを持っている
+            ASSERT_EQ(x0->WhoIsWith(), "Y with X"); // x0.y_はYオブジェクトを持っている
+
             // 現時点で、x0とy0がお互いを持ち合う状態であることが確認できた
             // @@@ sample end
             // @@@ sample begin 2:3

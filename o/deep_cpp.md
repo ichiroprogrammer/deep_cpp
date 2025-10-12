@@ -10,12 +10,17 @@
 
 
 ## 改訂履歴 <a id="SS_1_1"></a>
+* V20.09
+    * 「オブジェクトの循環所有」の説明強化
+    * 「std::weak_ptr」の説明強化
+    * 細かなバグやタイポの修正
+
 * V20.08
-    * rvalueリファレンスの改定
+    * 「rvalueリファレンス」の改定
     * 細かなバグやタイポの修正
 
 * V20.07
-    * プレースメントnewを使い、メモリアロケーションの数を少なくするPimplパターン追加
+    * プレースメントnewを使い、メモリアロケーションの数を少なくするPimpl(lightweight Pimpl)パターン追加
     * .clang-formatの修正し、一カラム120文字まで許容
 
 * V20.06
@@ -18248,16 +18253,17 @@ std::shared_ptr、std::move()、[rvalue](#SS_6_14_1_2)の関係を解説する�
 
         std::shared_ptr<Y> const& ref_y() const noexcept { return y_; }
 
-        // y_がYオブジェクトを保持していないのであれば、本名の"X"を返すが、
-        // そうでなければYオブジェクトを持っていることを示す
+        // 自身の状態を返す ("X alone" または "X with Y")
         std::string WhoYouAre() const;
+
+        // y_が保持するオブジェクトの状態を返す ("None" またはY::WhoYouAre()に委譲)
+        std::string WhoIsWith() const;
 
         static uint32_t constructed_counter;
 
     private:
         std::shared_ptr<Y> y_{};  // 初期化状態では、y_はオブジェクトを所有しない(use_count()==0)
     };
-    uint32_t X::constructed_counter;
 
     class Y final {
     public:
@@ -18268,23 +18274,33 @@ std::shared_ptr、std::move()、[rvalue](#SS_6_14_1_2)の関係を解説する�
 
         std::shared_ptr<X> const& ref_x() const noexcept { return x_; }
 
-        // x_がXオブジェクトを保持していないのであれば、本名の"Y"を返すが、
-        // そうでなければXオブジェクトを持っていることを示す
-        std::string     WhoYouAre() const { return x_ ? "Y with X" : "Y alone"; }
+        // 自身の状態を返す ("Y alone" または "Y with X")
+        std::string WhoYouAre() const;
+
+        // x_が保持するオブジェクトの状態を返す ("None" またはY::WhoYouAre()に委譲)
+        std::string WhoIsWith() const;
+
         static uint32_t constructed_counter;
 
     private:
         std::shared_ptr<X> x_{};  // 初期化状態では、x_はオブジェクトを所有しない(use_count()==0)
     };
-    uint32_t Y::constructed_counter;
 
+    // Xのメンバ定義
     std::string X::WhoYouAre() const { return y_ ? "X with Y" : "X alone"; }
+    std::string X::WhoIsWith() const { return y_ ? y_->WhoYouAre() : std::string{"None"}; }
+    uint32_t    X::constructed_counter;
+
+    // Yのメンバ定義
+    std::string Y::WhoYouAre() const { return x_ ? "Y with X" : "Y alone"; }
+    std::string Y::WhoIsWith() const { return x_ ? x_->WhoYouAre() : std::string{"None"}; }
+    uint32_t    Y::constructed_counter;
 ```
 
 上記のクラスの動作を以下に示したコードで示す。
 
 ```cpp
-    //  example/term_explanation/shared_ptr_cycle_ut.cpp 140
+    //  example/term_explanation/shared_ptr_cycle_ut.cpp 151
 
     {
         ASSERT_EQ(X::constructed_counter, 0);
@@ -18294,7 +18310,7 @@ std::shared_ptr、std::move()、[rvalue](#SS_6_14_1_2)の関係を解説する�
         ASSERT_EQ(X::constructed_counter, 1);  // Xオブジェクトは1つ生成された
 
         ASSERT_EQ(x0.use_count(), 1);
-        ASSERT_EQ(x0->WhoYouAre(), "X alone");     // x0.y_は何も保持していないので、"X alone"
+        ASSERT_EQ(x0->WhoIsWith(), "None");     // x0.y_は何も保持していないので、"None"
         ASSERT_EQ(x0->ref_y().use_count(), 0);  // X::y_は何も持っていない
 
 ```
@@ -18303,27 +18319,31 @@ x0のライフタイムに差を作るために新しいスコープを導入し
 `X::Register`、`Y::Register`を用いて、循環を作ってしまう例(メモリーリークを起こすバグ)を示す。
 
 ```cpp
-    //  example/term_explanation/shared_ptr_cycle_ut.cpp 154
+    //  example/term_explanation/shared_ptr_cycle_ut.cpp 165
 
         {
             auto y0 = std::make_shared<Y>();
 
-            ASSERT_EQ(Y::constructed_counter, 1);  // Yオブジェクトは1つ生成された
+            ASSERT_EQ(Y::constructed_counter, 1);   // Yオブジェクトは1つ生成された
             ASSERT_EQ(y0.use_count(), 1);
             ASSERT_EQ(y0->ref_x().use_count(), 0);  // y0.x_は何も持っていない
             ASSERT_EQ(y0->WhoYouAre(), "Y alone");  // y0.x_は何も持っていないので、"Y alone"
 
-            x0->Register(y0);  // これによりx0.y_はy0と同じオブジェクトを持つ
-            ASSERT_EQ(x0->WhoYouAre(), "X with Y");  // x0.y_はYオブジェクトを持っている
+            x0->Register(y0);                       // これによりx0.y_はy0と同じYオブジェクトを持つ
+            ASSERT_EQ(x0->WhoIsWith(), "Y alone");  // x0が持つYオブジェクトはまだXを持っていない状態
 
-            y0->Register(x0);                      // これによりy0.y_はx0と同じオブジェクトを持つ
+            y0->Register(x0);                       // これによりy0.y_はx0と同じオブジェクトを持つ
             // 上記で生成されたXオブジェクト、Yオブジェクトは、x0->Register(y0), y0->Register(x0)により
             // 相互に参照しあう状態になる
-            ASSERT_EQ(X::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
-            ASSERT_EQ(Y::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
+            ASSERT_EQ(X::constructed_counter, 1);   // 新しいオブジェクトが生成されるわけではない
+            ASSERT_EQ(Y::constructed_counter, 1);   // 新しいオブジェクトが生成されるわけではない
 
-            ASSERT_EQ(y0->WhoYouAre(), "Y with X");  // y0.x_はXオブジェクトを持っている
-            ASSERT_EQ(x0->WhoYouAre(), "X with Y");  // x0.y_はYオブジェクトを持っている
+            ASSERT_EQ(y0->WhoYouAre(), "Y with X"); // y0.x_はXオブジェクトを持っている
+            ASSERT_EQ(x0->WhoYouAre(), "X with Y"); // x0.y_はYオブジェクトを持っている
+
+            ASSERT_EQ(y0->WhoIsWith(), "X with Y"); // y0.x_はXオブジェクトを持っている
+            ASSERT_EQ(x0->WhoIsWith(), "Y with X"); // x0.y_はYオブジェクトを持っている
+
             // 現時点で、x0とy0がお互いを持ち合う状態であることが確認できた
 ```
 
@@ -18333,7 +18353,7 @@ x0のライフタイムに差を作るために新しいスコープを導入し
 Yオブジェクトの参照カウントは1になる(x0::y_が存在するため0にならない)。
 
 ```cpp
-    //  example/term_explanation/shared_ptr_cycle_ut.cpp 177
+    //  example/term_explanation/shared_ptr_cycle_ut.cpp 192
 
             ASSERT_EQ(x0.use_count(), 2);           // x0、y0が相互に参照するので参照カウントが2に
             ASSERT_EQ(y0.use_count(), 2);           // x0、y0が相互に参照するので参照カウントが2に
@@ -18361,7 +18381,7 @@ X、Yオブジェクトの参照カウントは0にならず、従ってこれ�
 (shared_ptrは参照カウントが1->0に変化するタイミングで保持するオブジェクトを解放する)。
 
 ```cpp
-    //  example/term_explanation/shared_ptr_cycle_ut.cpp 189
+    //  example/term_explanation/shared_ptr_cycle_ut.cpp 204
     }  // この次の行で、x0はスコープアウトするため、x0にはアクセスできず、すでにy0にもアクセスできない
     // ここではx0、y0がもともと持っていたXオブジェクト、Yオブジェクトへのポインタを完全に失ってしまった状態
 
@@ -18376,8 +18396,8 @@ X、Yオブジェクトへの[ハンドル](#SS_6_21_1)を完全に失った状�
 #### std::weak_ptr <a id="SS_6_5_7_4"></a>
 std::weak_ptrは、[スマートポインタ](#SS_6_9_1)の一種である。
 
-std::weak_ptrは参照カウントに影響を与えず、共有所有ではなく参照のみを保持するのため、
-[オブジェクトの循環所有](#SS_6_5_7_3)の問題を解決できる。
+std::weak_ptrは参照カウントに影響を与えず、`shared_ptr`とオブジェクトを共有所有するのではなく、
+その`shared_ptr`インスタンスとの関連のみを保持するのため、[オブジェクトの循環所有](#SS_6_5_7_3)の問題を解決できる。
 
 [オブジェクトの循環所有](#SS_6_5_7_3)で示した問題のあるクラスの修正版を以下に示す
 (以下の例では、Xは前のままで、Yのみ修正した)。
@@ -18395,14 +18415,17 @@ std::weak_ptrは参照カウントに影響を与えず、共有所有ではな�
 
         std::shared_ptr<Y> const& ref_y() const noexcept { return y_; }
 
-        bool DoSomething() { return true; }
+        // 自身の状態を返す ("X alone" または "X with Y")
+        std::string WhoYouAre() const;
+
+        // y_が保持するオブジェクトの状態を返す ("None" またはY::WhoYouAre()に委譲)
+        std::string WhoIsWith() const;
 
         static uint32_t constructed_counter;
 
     private:
-        std::shared_ptr<Y> y_{};
+        std::shared_ptr<Y> y_{};  // 初期化状態では、y_はオブジェクトを所有しない(use_count()==0)
     };
-    uint32_t X::constructed_counter;
 
     class Y final {
     public:
@@ -18413,90 +18436,125 @@ std::weak_ptrは参照カウントに影響を与えず、共有所有ではな�
 
         std::weak_ptr<X> const& ref_x() const noexcept { return x_; }
 
-        bool DoSomething()
-        {
-            if (auto x = x_.lock(); x) {  // weak_ptrからshared_ptrの生成
-                static_assert(std::is_same_v<std::shared_ptr<X>, decltype(x)>);
-                return x->DoSomething();
-            }
-            else {
-                return false;
-            }
-        }
+        // 自身の状態を返す ("Y alone" または "Y with X")
+        std::string WhoYouAre() const;
+
+        // x_が保持するオブジェクトの状態を返す ("None" またはY::WhoYouAre()に委譲)
+        std::string WhoIsWith() const;
 
         static uint32_t constructed_counter;
 
     private:
         std::weak_ptr<X> x_{};
     };
+
+    // Xのメンバ定義
+    std::string X::WhoYouAre() const { return y_ ? "X with Y" : "X alone"; }
+    std::string X::WhoIsWith() const { return y_ ? y_->WhoYouAre() : std::string{"None"}; }
+    uint32_t    X::constructed_counter;
+
+    // Yのメンバ定義
+    std::string Y::WhoYouAre() const { return x_.use_count() != 0 ? "Y with X" : "Y alone"; }
+    // 注: weak_ptrはbool変換をサポートしないため、use_count() != 0 で有効性を判定
+    std::string Y::WhoIsWith() const  // 修正版Y::WhoIsWithの定義
+    {
+        if (auto x = x_.lock(); x) {  // Xオブジェクトが解放されていた場合、xはstd::shared_ptr<X>{}となり、falseと評価される
+            return x->WhoYouAre();
+        }
+        else {
+            return "None";
+        }
+    }
     uint32_t Y::constructed_counter;
 ```
 
 このコードからわかるように修正版YはXオブジェクトを参照するために、
-`std::weak_ptr<X>`を使用する。
-`std::weak_ptr<X>`にアクセスする必要があるときに、
-下記のY::DoSomething()関数の内部処理のようにすることで、
-`std::weak_ptr<X>`オブジェクトから、
+`std::shared_ptr<X>`の代わりに`std::weak_ptr<X>`を使用する。
+Xオブジェクトにアクセスする必要があるときに、
+下記のY::WhoIsWith()関数の内部処理のようにすることで、`std::weak_ptr<X>`オブジェクトから、
 それと紐づいた`std::shared_ptr<X>`オブジェクトを生成できる。
 
 なお、上記コードは[初期化付きif文](#SS_6_7_5_3)を使うことで、
 生成した`std::shared_ptr<X>`オブジェクトのスコープを最小に留めている。
 
 ```cpp
-    //  example/term_explanation/weak_ptr_ut.cpp 39
-
-        bool DoSomething()
-        {
-            if (auto x = x_.lock(); x) {  // weak_ptrからshared_ptrの生成
-                static_assert(std::is_same_v<std::shared_ptr<X>, decltype(x)>);
-                return x->DoSomething();
-            }
-            else {
-                return false;
-            }
+    //  example/term_explanation/weak_ptr_ut.cpp 63
+    std::string Y::WhoIsWith() const  // 修正版Y::WhoIsWithの定義
+    {
+        if (auto x = x_.lock(); x) {  // Xオブジェクトが解放されていた場合、xはstd::shared_ptr<X>{}となり、falseと評価される
+            return x->WhoYouAre();
         }
+        else {
+            return "None";
+        }
+    }
 ```
 
 Xと修正版Yの単体テストによりメモリーリークが修正されたことを以下に示す。
 
 ```cpp
-    //  example/term_explanation/weak_ptr_ut.cpp 65
+    //  example/term_explanation/weak_ptr_ut.cpp 82
 
     {
         ASSERT_EQ(X::constructed_counter, 0);
         ASSERT_EQ(Y::constructed_counter, 0);
 
-        auto x0 = std::make_shared<X>();
-        auto y0 = std::make_shared<Y>();
+        auto x0 = std::make_shared<X>();       // Xオブジェクトを持つshared_ptrの生成
+        ASSERT_EQ(X::constructed_counter, 1);  // Xオブジェクトは1つ生成された
 
         ASSERT_EQ(x0.use_count(), 1);
-        ASSERT_EQ(x0->ref_y().use_count(), 0);  // X::y_は何も管理していない
+        ASSERT_EQ(x0->WhoYouAre(), "X alone");  // x0.y_は何も保持していないので、"X alone"
+        ASSERT_EQ(x0->ref_y().use_count(), 0);  // X::y_は何も持っていない
 
-        ASSERT_EQ(X::constructed_counter, 1);  // Xオブジェクトは1つ生成された
-        ASSERT_EQ(Y::constructed_counter, 1);  // Yオブジェクトは1つ生成された
+        {
+            auto y0 = std::make_shared<Y>();
 
-        ASSERT_EQ(y0.use_count(), 1);
-        ASSERT_EQ(y0->ref_x().use_count(), 0);  // Y::x_は何も管理していない
+            ASSERT_EQ(Y::constructed_counter, 1);       // Yオブジェクトは1つ生成された
+            ASSERT_EQ(y0.use_count(), 1);
+            ASSERT_EQ(y0->ref_x().use_count(), 0);      // y0.x_は何も持っていない
+            ASSERT_EQ(y0->WhoYouAre(), "Y alone");      // y0.x_は何も持っていないので、"Y alone"
 
-        ASSERT_FALSE(y0->DoSomething());  // Y::DoSomethingの処理をX::DoSomethingに委譲
+            x0->Register(y0);                           // これによりx0.y_はy0と同じオブジェクトを持つ
+            ASSERT_EQ(x0->WhoYouAre(), "X with Y");     // x0.y_はYオブジェクトを持っている
 
-        x0->Register(y0);  // これによりy0にy0を渡す。y0 -> x0の参照はshared_ptrによって行う
-        y0->Register(x0);  // これによりx0にy0を渡すが、y0 -> x0の参照はweak_ptrによって行う
-        ASSERT_EQ(X::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
-        ASSERT_EQ(Y::constructed_counter, 1);  // 新しいオブジェクトが生成されるわけではない
+            y0->Register(x0);  // これによりy0.x_はx0と同じXオブジェクトを持つことができる
+            ASSERT_EQ(y0->WhoIsWith(), "X with Y");     // y0.x_が持っているXオブジェクトはYを持っている
+            
+            // x0->Register(y0), y0->Register(x0)により Xオブジェクト、Yオブジェクトは相互参照できる状態となった
+            ASSERT_EQ(X::constructed_counter, 1);       // 新しいオブジェクトが生成されるわけではない
+            ASSERT_EQ(Y::constructed_counter, 1);       // 新しいオブジェクトが生成されるわけではない
 
-        ASSERT_TRUE(y0->DoSomething());  // Y::DoSomethingの処理をX::DoSomethingに委譲
+            ASSERT_EQ(y0->WhoYouAre(), "Y with X");     // y0.x_はXオブジェクトを持っている
+            ASSERT_EQ(x0->WhoYouAre(), "X with Y");     // x0.y_はYオブジェクトを持っている(再確認)
+            ASSERT_EQ(y0->WhoIsWith(), "X with Y");     // y0が参照するXオブジェクトはYを持っている
+            // 現時点で、x0とy0がお互いを相互参照できることが確認できた
 
-        ASSERT_EQ(x0.use_count(), 1);  // Xオブジェクトはx0に所有されるが、y0には所有されない
-        ASSERT_EQ(y0->ref_x().use_count(), 1);  // weak_ptr<X>::use_count
-        ASSERT_EQ(y0.use_count(), 2);           // Yオブジェクトはy0とx0から共有所有されるため
-        ASSERT_EQ(x0->ref_y().use_count(), 2);  // Yオブジェクトはy0とx0から共有所有されるため
-    }                                           // この次の行で、x0、y0はスコープアウトする。
+            // weak_ptrを使用した効果によりXオブジェクトの参照カウントは増加しない
+            ASSERT_EQ(x0.use_count(), 1);               // y0.x_はweak_ptrなので参照カウントに影響しない
+            ASSERT_EQ(y0.use_count(), 2);               // x0.y_はshared_ptrなので参照カウントが2
+            ASSERT_EQ(y0->ref_x().use_count(), 1);      // y0.x_の参照カウントは1
+            ASSERT_EQ(x0->ref_y().use_count(), 2);      // x0.y_の参照カウントは2
+        }  //ここでy0がスコープアウトするため、y0にはアクセスできないが、
+           // x0を介して、y0が持っていたYオブジェクトにはアクセスできる
 
-    ASSERT_EQ(X::constructed_counter, 0);  // Xオブジェクトは開放済み
-    ASSERT_EQ(Y::constructed_counter, 0);  // Yオブジェクトは開放済み
+        ASSERT_EQ(x0->ref_y().use_count(), 1);  // y0がスコープアウトしたため、Yオブジェクトの参照カウントが減った
+        ASSERT_EQ(x0->ref_y()->WhoYouAre(), "Y with X");  // x0.y_はXオブジェクトを持っている
+    }  // この次の行で、x0はスコープアウトし、以下の処理が実行される:
+       //   1. x0のデストラクタが呼ばれ、x0.y_の参照カウントがデクリメント
+       //   2. x0.y_の参照カウントが1→0になり、保持していたYオブジェクトを解放する
+       //   3. Yオブジェクトのデストラクタ内でy_.x_(weak_ptr)が破棄されるが、weak_ptrなのでXオブジェクトの参照カウントには影響しない
+       //   4. x0本体のデストラクタが完了し、Xオブジェクトの参照カウントが1→0になり、Xオブジェクトも解放される
+
+    // 上記1-4によりダイナミックに生成されたオブジェクトは解放されたため、下記のテストが成立する
+    ASSERT_EQ(X::constructed_counter, 0);
+    ASSERT_EQ(Y::constructed_counter, 0);
 ```
 
+上記コード例で見てきたように`std::weak_ptr`を使用することで:
+
+- 循環参照によるメモリリークを防ぐことができる
+- 必要に応じて`lock()`でオブジェクトにアクセスできる
+- オブジェクトが既に解放されている場合は`lock()`が空の`shared_ptr`を返すため、安全に処理できる
 
 ### オブジェクトのライフタイム <a id="SS_6_5_8"></a>
 オブジェクトは、以下のような種類のライフタイムを持つ。
