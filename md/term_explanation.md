@@ -2180,6 +2180,117 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 ```
 
 ## プログラミング概念と標準ライブラリ
+### 並列処理
+
+#### std::thread
+クラスthread は、新しい実行のスレッドの作成/待機/その他を行う機構を提供する。
+
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #0:1 begin -1
+```
+
+#### std::mutex
+mutex は、スレッド間で使用する共有リソースを排他制御するためのクラスである。 
+
+<pre>
+- lock()    :メンバ関数によってリソースのロックを取得
+- unlock()  :メンバ関数でリソースのロックを解放
+</pre>
+
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/thread_ut.cpp #1:1 begin
+    // @@@ example/term_explanation/thread_ut.cpp #1:2 begin
+```
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #1:3 begin -1
+```
+
+lock()を呼び出した状態で、unlock()を呼び出さなかった場合、デッドロックを引き起こしてしまうため、
+永久に処理が完了しないバグの元となり得るため、このような問題を避けるために、
+mutexは通常、[std::lock_guard](---)と組み合わせて使われる。
+
+```cpp
+
+    // @@@ example/term_explanation/thread_ut.cpp #1:1 begin -1
+```
+
+#### std::atomic
+atomicクラステンプレートは、型Tをアトミック操作するためのものである。
+[組み込み型](---)に対する特殊化が提供されており、それぞれに特化した演算が用意されている。
+[std::mutex](---)で示したような単純なコードではstd::atomicを使用して下記のように書く方が一般的である。
+
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #2:1 begin -1
+```
+
+### ロック所有ラッパー
+ロック所有ラッパーとはミューテックスのロックおよびアンロックを管理するための以下のクラスを指す。
+
+- [std::lock_guard](---)
+- [std::unique_lock](---)
+- [std::scoped_lock](---)
+
+
+#### std::lock_guard
+
+std::lock_guardを使わない問題のあるコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:1 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:2 begin
+```
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:1 begin -1
+```
+
+上記で示したConflict::increment()には以下のようなリスクが存在する。
+
+1. 関数が複雑化してエクセプションを投げる可能性がある場合、
+    - エクセプションをこの関数内で捕捉し、ロック解除 (mtx_.unlock()) を行った上で再スローしなければならない。
+    - ロック解除を忘れるとデッドロックにつながる。
+
+2. 複数の return 文を持つように関数が拡張された場合、
+    - すべての return の前で mtx_.unlock() を呼び出さなければならない。
+
+これらを正しく管理するためには、重複コードが増え、関数の保守性が著しく低下する。
+
+std::lock_guardを使用して、このような問題に対処したコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:1 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:2 begin
+```
+
+単体テストに変更は無いため、省略する。
+
+オリジナルの単純な以下のincrement()と改善版を比較すると、大差ないように見えるが、
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:1 begin -1
+```
+
+オリジナルのコードで指摘したすべてのリスクが、わずか一行の変更で解決されている。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:1 begin -1
+```
+
+#### std::unique_lock
+後で書くので指摘は不要
+
+#### std::scoped_lock
+後で書くので指摘は不要
+
+
 ### スマートポインタ
 スマートポインタは、C++標準ライブラリが提供するメモリ管理クラス群を指す。
 生のポインタの代わりに使用され、リソース管理を容易にし、
@@ -2225,7 +2336,7 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
 ##### std::forward_list
 
 ```cpp
-    // @@@ example/term_explanation/cotainer_ut.cpp #0:0 begin -1
+    // @@@ example/term_explanation/container_ut.cpp #0:0 begin -1
 ```
 
 #### 連想コンテナ(Associative Containers)
@@ -2252,13 +2363,13 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
 ##### std::unordered_set
 
 ```cpp
-    // @@@ example/term_explanation/cotainer_ut.cpp #1:0 begin -1
+    // @@@ example/term_explanation/container_ut.cpp #1:0 begin -1
 ```
 
 ##### std::unordered_map
 
 ```cpp
-    // @@@ example/term_explanation/cotainer_ut.cpp #2:0 begin -1
+    // @@@ example/term_explanation/container_ut.cpp #2:0 begin -1
 ```
 
 ##### std::type_index
@@ -2266,7 +2377,7 @@ std::type_indexはコンテナではないが、
 型情報型を連想コンテナのキーとして使用するためのクラスであるため、この場所に掲載する。
 
 ```cpp
-    // @@@ example/term_explanation/cotainer_ut.cpp #3:0 begin -1
+    // @@@ example/term_explanation/container_ut.cpp #3:0 begin -1
 ```
 
 

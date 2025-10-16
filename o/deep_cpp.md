@@ -15390,19 +15390,29 @@ __この章の構成__
 &emsp;&emsp;&emsp; [指示付き初期化](#SS_6_8_4)  
 
 &emsp;&emsp; [プログラミング概念と標準ライブラリ](#SS_6_9)  
-&emsp;&emsp;&emsp; [スマートポインタ](#SS_6_9_1)  
-&emsp;&emsp;&emsp; [コンテナ](#SS_6_9_2)  
-&emsp;&emsp;&emsp;&emsp; [シーケンスコンテナ(Sequence Containers)](#SS_6_9_2_1)  
-&emsp;&emsp;&emsp;&emsp; [連想コンテナ(Associative Containers)](#SS_6_9_2_2)  
-&emsp;&emsp;&emsp;&emsp; [無順序連想コンテナ(Unordered Associative Containers)](#SS_6_9_2_3)  
-&emsp;&emsp;&emsp;&emsp; [コンテナアダプタ(Container Adapters)](#SS_6_9_2_4)  
-&emsp;&emsp;&emsp;&emsp; [特殊なコンテナ](#SS_6_9_2_5)  
+&emsp;&emsp;&emsp; [並列処理](#SS_6_9_1)  
+&emsp;&emsp;&emsp;&emsp; [std::thread](#SS_6_9_1_1)  
+&emsp;&emsp;&emsp;&emsp; [std::mutex](#SS_6_9_1_2)  
+&emsp;&emsp;&emsp;&emsp; [std::atomic](#SS_6_9_1_3)  
 
-&emsp;&emsp;&emsp; [std::optional](#SS_6_9_3)  
-&emsp;&emsp;&emsp;&emsp; [戻り値の無効表現](#SS_6_9_3_1)  
-&emsp;&emsp;&emsp;&emsp; [オブジェクトの遅延初期化](#SS_6_9_3_2)  
+&emsp;&emsp;&emsp; [ロック所有ラッパー](#SS_6_9_2)  
+&emsp;&emsp;&emsp;&emsp; [std::lock_guard](#SS_6_9_2_1)  
+&emsp;&emsp;&emsp;&emsp; [std::unique_lock](#SS_6_9_2_2)  
+&emsp;&emsp;&emsp;&emsp; [std::scoped_lock](#SS_6_9_2_3)  
 
-&emsp;&emsp;&emsp; [std::variant](#SS_6_9_4)  
+&emsp;&emsp;&emsp; [スマートポインタ](#SS_6_9_3)  
+&emsp;&emsp;&emsp; [コンテナ](#SS_6_9_4)  
+&emsp;&emsp;&emsp;&emsp; [シーケンスコンテナ(Sequence Containers)](#SS_6_9_4_1)  
+&emsp;&emsp;&emsp;&emsp; [連想コンテナ(Associative Containers)](#SS_6_9_4_2)  
+&emsp;&emsp;&emsp;&emsp; [無順序連想コンテナ(Unordered Associative Containers)](#SS_6_9_4_3)  
+&emsp;&emsp;&emsp;&emsp; [コンテナアダプタ(Container Adapters)](#SS_6_9_4_4)  
+&emsp;&emsp;&emsp;&emsp; [特殊なコンテナ](#SS_6_9_4_5)  
+
+&emsp;&emsp;&emsp; [std::optional](#SS_6_9_5)  
+&emsp;&emsp;&emsp;&emsp; [戻り値の無効表現](#SS_6_9_5_1)  
+&emsp;&emsp;&emsp;&emsp; [オブジェクトの遅延初期化](#SS_6_9_5_2)  
+
+&emsp;&emsp;&emsp; [std::variant](#SS_6_9_6)  
 
 &emsp;&emsp; [name lookupと名前空間](#SS_6_10)  
 &emsp;&emsp;&emsp; [ルックアップ](#SS_6_10_1)  
@@ -18394,7 +18404,7 @@ X、Yオブジェクトの参照カウントは0にならず、従ってこれ�
 X、Yオブジェクトへの[ハンドル](#SS_6_21_1)を完全に失った状態であり、X、Yオブジェクトを解放する手段はない。
 
 #### std::weak_ptr <a id="SS_6_5_7_4"></a>
-std::weak_ptrは、[スマートポインタ](#SS_6_9_1)の一種である。
+std::weak_ptrは、[スマートポインタ](#SS_6_9_3)の一種である。
 
 std::weak_ptrは参照カウントに影響を与えず、`shared_ptr`とオブジェクトを共有所有するのではなく、
 その`shared_ptr`インスタンスとの関連のみを保持するのため、[オブジェクトの循環所有](#SS_6_5_7_3)の問題を解決できる。
@@ -20392,7 +20402,277 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 ```
 
 ## プログラミング概念と標準ライブラリ <a id="SS_6_9"></a>
-### スマートポインタ <a id="SS_6_9_1"></a>
+### 並列処理 <a id="SS_6_9_1"></a>
+
+#### std::thread <a id="SS_6_9_1_1"></a>
+クラスthread は、新しい実行のスレッドの作成/待機/その他を行う機構を提供する。
+
+```cpp
+    //  example/term_explanation/thread_ut.cpp 9
+
+    struct Conflict {
+        void     increment() { ++count_; }  // 非アトミック（データレースの原因）
+        uint32_t count_ = 0;
+    };
+
+    void worker(Conflict& c, int n)
+    {
+        for (int i = 0; i < n; ++i) {
+            c.increment();
+        }
+    }
+```
+```cpp
+    //  example/term_explanation/thread_ut.cpp 26
+
+    Conflict c;
+
+    constexpr uint32_t inc_per_thread = 5'000'000;
+    constexpr uint32_t expected       = 2 * inc_per_thread;
+
+    std::thread t1(worker, std::ref(c), inc_per_thread);  // worker関数を使用したスレッドの起動
+                                                          // workerにcのリファレンス渡すため、std::refを使用
+
+    std::thread t2([&c] {  // ラムダを使用したによるスレッドの起動
+        for (uint32_t i = 0; i < inc_per_thread; ++i) {
+            c.increment();
+        }
+    });
+
+    t1.join();  // スレッドの終了待ち
+    t2.join();  // スレッドの終了待ち
+                // 注意: join()もdetach()も呼ばずにスレッドオブジェクトが
+                // デストラクトされると、std::terminateが呼ばれる
+
+    // ASSERT_EQ(c.count_, expected);  t1とt2が++count_が競合するためこのテストは成立しないため、
+    //                                 一例では次のようになる  c.count_: 6825610 expected: 10000000
+    ASSERT_NE(c.count_, expected);
+```
+
+#### std::mutex <a id="SS_6_9_1_2"></a>
+mutex は、スレッド間で使用する共有リソースを排他制御するためのクラスである。 
+
+<pre>
+- lock()    :メンバ関数によってリソースのロックを取得
+- unlock()  :メンバ関数でリソースのロックを解放
+</pre>
+
+```cpp
+    //  example/term_explanation/thread_ut.cpp 55
+
+    struct Conflict {
+        void increment()
+        {
+            std::lock_guard<std::mutex> lock{mtx_};  // lockオブジェクトのコンストラクタでmtx_.lock()が呼ばれる
+                                                     // ++count_の排他
+            ++count_;
+
+        }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
+        uint32_t   count_ = 0;
+        std::mutex mtx_{};
+    };
+
+    void worker(Conflict& c, int n)
+    {
+        for (int i = 0; i < n; ++i) {
+            c.increment();
+        }
+    }
+```
+```cpp
+    //  example/term_explanation/thread_ut.cpp 83
+
+    Conflict c;
+
+    constexpr uint32_t inc_per_thread = 5'000'000;
+    constexpr uint32_t expected       = 2 * inc_per_thread;
+
+    std::thread t1(worker, std::ref(c), inc_per_thread);  // worker関数を使用したスレッドの起動
+                                                          // workerにcのリファレンス渡すため、std::refを使用
+
+    std::thread t2([&c] {  // ラムダを使用したによるスレッドの起動
+        for (uint32_t i = 0; i < inc_per_thread; ++i) {
+            c.increment();
+        }
+    });
+
+    t1.join();  // スレッドの終了待ち
+    t2.join();  // スレッドの終了待ち
+                // 注意: join()もdetach()も呼ばずにスレッドオブジェクトが
+                // デストラクトされると、std::terminateが呼ばれる
+
+    ASSERT_EQ(c.count_, expected);
+```
+
+lock()を呼び出した状態で、unlock()を呼び出さなかった場合、デッドロックを引き起こしてしまうため、
+永久に処理が完了しないバグの元となり得るため、このような問題を避けるために、
+mutexは通常、[std::lock_guard](#SS_6_9_2_1)と組み合わせて使われる。
+
+```cpp
+
+    //  example/term_explanation/thread_ut.cpp 60
+    {
+        std::lock_guard<std::mutex> lock{mtx_};  // lockオブジェクトのコンストラクタでmtx_.lock()が呼ばれる
+                                                 // ++count_の排他
+        ++count_;
+
+    }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
+```
+
+#### std::atomic <a id="SS_6_9_1_3"></a>
+atomicクラステンプレートは、型Tをアトミック操作するためのものである。
+[組み込み型](#SS_6_1_2)に対する特殊化が提供されており、それぞれに特化した演算が用意されている。
+[std::mutex](#SS_6_9_1_2)で示したような単純なコードではstd::atomicを使用して下記のように書く方が一般的である。
+
+```cpp
+    //  example/term_explanation/thread_ut.cpp 109
+
+    struct Conflict {
+        void increment()
+        {
+            ++count_;  // ++count_は「count_の値の呼び出し -> その値のインクリメント、その値のcount_への書き戻し」である
+                      // この一連の操作は排他的(アトミック)に行われる
+
+        }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
+        std::atomic<uint32_t> count_ = 0;
+    };
+
+    void worker(Conflict& c, int n)
+    {
+        for (int i = 0; i < n; ++i) {
+            c.increment();
+        }
+    }
+```
+```cpp
+    //  example/term_explanation/thread_ut.cpp 131
+
+    Conflict c;
+
+    constexpr uint32_t inc_per_thread = 5'000'000;
+    constexpr uint32_t expected       = 2 * inc_per_thread;
+
+    std::thread t1(worker, std::ref(c), inc_per_thread);  // worker関数を使用したスレッドの起動
+                                                          // workerにcのリファレンス渡すため、std::refを使用
+
+    std::thread t2([&c] {  // ラムダを使用したスレッドの起動
+        for (uint32_t i = 0; i < inc_per_thread; ++i) {
+            c.increment();
+        }
+    });
+
+    t1.join();  // スレッドの終了待ち
+    t2.join();  // スレッドの終了待ち
+                // 注意: join()もdetach()も呼ばずにスレッドオブジェクトが
+                // デストラクトされると、std::terminateが呼ばれる
+
+    ASSERT_EQ(c.count_, expected);
+```
+
+### ロック所有ラッパー <a id="SS_6_9_2"></a>
+ロック所有ラッパーとはミューテックスのロックおよびアンロックを管理するための以下のクラスを指す。
+
+- [std::lock_guard](#SS_6_9_2_1)
+- [std::unique_lock](#SS_6_9_2_2)
+- [std::scoped_lock](#SS_6_9_2_3)
+
+
+#### std::lock_guard <a id="SS_6_9_2_1"></a>
+
+std::lock_guardを使わない問題のあるコードを以下に示す。
+
+```cpp
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 9
+
+    struct Conflict {
+        void increment()
+        {
+            mtx_.lock();  // ++count_の排他のためのロック
+
+            ++count_;
+
+            mtx_.unlock();  // 上記のアンロック
+        }
+
+        uint32_t   count_ = 0;
+        std::mutex mtx_{};
+    };
+```
+```cpp
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 14
+    {
+        mtx_.lock();  // ++count_の排他のためのロック
+
+        ++count_;
+
+        mtx_.unlock();  // 上記のアンロック
+    }
+```
+
+上記で示したConflict::increment()には以下のようなリスクが存在する。
+
+1. 関数が複雑化してエクセプションを投げる可能性がある場合、
+    - エクセプションをこの関数内で捕捉し、ロック解除 (mtx_.unlock()) を行った上で再スローしなければならない。
+    - ロック解除を忘れるとデッドロックにつながる。
+
+2. 複数の return 文を持つように関数が拡張された場合、
+    - すべての return の前で mtx_.unlock() を呼び出さなければならない。
+
+これらを正しく管理するためには、重複コードが増え、関数の保守性が著しく低下する。
+
+std::lock_guardを使用して、このような問題に対処したコードを以下に示す。
+
+```cpp
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 58
+
+    struct Conflict {
+        void increment()
+        {
+            std::lock_guard<std::mutex> lock{mtx_};  // lockオブジェクトのコンストラクタでmtx_.lock()が呼ばれる
+                                                     // ++count_の排他
+            ++count_;
+
+        }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
+        uint32_t   count_ = 0;
+        std::mutex mtx_{};
+    };
+```
+
+単体テストに変更は無いため、省略する。
+
+オリジナルの単純な以下のincrement()と改善版を比較すると、大差ないように見えるが、
+
+```cpp
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 14
+    {
+        mtx_.lock();  // ++count_の排他のためのロック
+
+        ++count_;
+
+        mtx_.unlock();  // 上記のアンロック
+    }
+```
+
+オリジナルのコードで指摘したすべてのリスクが、わずか一行の変更で解決されている。
+
+```cpp
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 63
+    {
+        std::lock_guard<std::mutex> lock{mtx_};  // lockオブジェクトのコンストラクタでmtx_.lock()が呼ばれる
+                                                 // ++count_の排他
+        ++count_;
+
+    }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
+```
+
+#### std::unique_lock <a id="SS_6_9_2_2"></a>
+後で書くので指摘は不要
+
+#### std::scoped_lock <a id="SS_6_9_2_3"></a>
+後で書くので指摘は不要
+
+
+### スマートポインタ <a id="SS_6_9_3"></a>
 スマートポインタは、C++標準ライブラリが提供するメモリ管理クラス群を指す。
 生のポインタの代わりに使用され、リソース管理を容易にし、
 メモリリークや二重解放といった問題を防ぐことを目的としている。
@@ -20412,17 +20692,17 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
    異常な[copyセマンティクス](#SS_6_18_2)を持つため、多くの誤用を生み出し、
    C++11から非推奨とされ、C++17から規格から排除された。
 
-### コンテナ <a id="SS_6_9_2"></a>
+### コンテナ <a id="SS_6_9_4"></a>
 データを格納し、
 効率的に操作するための汎用的なデータ構造を提供するC++標準ライブラリの下記のようなクラス群である。
 
-* [シーケンスコンテナ(Sequence Containers)](#SS_6_9_2_1)
+* [シーケンスコンテナ(Sequence Containers)](#SS_6_9_4_1)
 * [連想コンテナ(Associative Containers)(---)
-* [無順序連想コンテナ(Unordered Associative Containers)](#SS_6_9_2_3)
-* [コンテナアダプタ(Container Adapters)](#SS_6_9_2_4)
-* [特殊なコンテナ](#SS_6_9_2_5)
+* [無順序連想コンテナ(Unordered Associative Containers)](#SS_6_9_4_3)
+* [コンテナアダプタ(Container Adapters)](#SS_6_9_4_4)
+* [特殊なコンテナ](#SS_6_9_4_5)
 
-#### シーケンスコンテナ(Sequence Containers) <a id="SS_6_9_2_1"></a>
+#### シーケンスコンテナ(Sequence Containers) <a id="SS_6_9_4_1"></a>
 データが挿入順に保持され、順序が重要な場合に使用する。
 
 | コンテナ                 | 説明                                                                |
@@ -20430,14 +20710,14 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
 | `std::vector`            | 動的な配列で、ランダムアクセスが高速。末尾への挿入/削除が効率的     |
 | `std::deque`             | 両端に効率的な挿入/削除が可能な動的配列                             |
 | `std::list`              | 双方向リスト。要素の順序を維持し、中間の挿入/削除が効率的           |
-| [std::forward_list](#SS_6_9_2_1_1) | 単方向リスト。軽量だが、双方向の操作はできない                      |
+| [std::forward_list](#SS_6_9_4_1_1) | 単方向リスト。軽量だが、双方向の操作はできない                      |
 | `std::array`             | 固定長配列で、サイズがコンパイル時に決まる                          |
 | `std::string`            | 可変長の文字列を管理するクラス(厳密には`std::basic_string`の特殊化) |
 
-##### std::forward_list <a id="SS_6_9_2_1_1"></a>
+##### std::forward_list <a id="SS_6_9_4_1_1"></a>
 
 ```cpp
-    //  example/term_explanation/cotainer_ut.cpp 14
+    //  example/term_explanation/container_ut.cpp 14
 
     std::forward_list<int> fl{1, 2, 3};
 
@@ -20452,7 +20732,7 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
     EXPECT_EQ(*++it, 3);
 ```
 
-#### 連想コンテナ(Associative Containers) <a id="SS_6_9_2_2"></a>
+#### 連想コンテナ(Associative Containers) <a id="SS_6_9_4_2"></a>
 データがキーに基づいて自動的にソートされ、検索が高速である。
 
 | コンテナ           | 説明                                             |
@@ -20462,21 +20742,21 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
 | `std::map`         | ソートされたキーと値のペアを保持。キーは一意     |
 | `std::multimap`    | ソートされたキーと値のペアを保持。キーは重複可能 |
 
-#### 無順序連想コンテナ(Unordered Associative Containers) <a id="SS_6_9_2_3"></a>
+#### 無順序連想コンテナ(Unordered Associative Containers) <a id="SS_6_9_4_3"></a>
 ハッシュテーブルを基盤としたコンテナで、順序を保証しないが高速な検索を提供する。
 
 | コンテナ                  | 説明                                                   |
 |---------------------------|--------------------------------------------------------|
-| [std::unordered_set](#SS_6_9_2_3_1) | ハッシュテーブルベースの集合。重複は許されない         |
+| [std::unordered_set](#SS_6_9_4_3_1) | ハッシュテーブルベースの集合。重複は許されない         |
 | `std::unordered_multiset` | ハッシュテーブルベースの集合。重複が許される           |
-| [std::unordered_map](#SS_6_9_2_3_2) | ハッシュテーブルベースのキーと値のペア。キーは一意     |
+| [std::unordered_map](#SS_6_9_4_3_2) | ハッシュテーブルベースのキーと値のペア。キーは一意     |
 | `std::unordered_multimap` | ハッシュテーブルベースのキーと値のペア。キーは重複可能 |
-| [std::type_index](#SS_6_9_2_3_3)    | 型情報型を連想コンテナのキーとして使用するためのクラス |
+| [std::type_index](#SS_6_9_4_3_3)    | 型情報型を連想コンテナのキーとして使用するためのクラス |
 
-##### std::unordered_set <a id="SS_6_9_2_3_1"></a>
+##### std::unordered_set <a id="SS_6_9_4_3_1"></a>
 
 ```cpp
-    //  example/term_explanation/cotainer_ut.cpp 32
+    //  example/term_explanation/container_ut.cpp 32
 
     std::unordered_set<int> uset{1, 2, 3};
 
@@ -20493,10 +20773,10 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
     EXPECT_EQ(uset.size(), 5);
 ```
 
-##### std::unordered_map <a id="SS_6_9_2_3_2"></a>
+##### std::unordered_map <a id="SS_6_9_4_3_2"></a>
 
 ```cpp
-    //  example/term_explanation/cotainer_ut.cpp 52
+    //  example/term_explanation/container_ut.cpp 52
 
     std::unordered_map<int, std::string> umap;
 
@@ -20515,12 +20795,12 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
     EXPECT_EQ(umap.find(4), umap.end());
 ```
 
-##### std::type_index <a id="SS_6_9_2_3_3"></a>
+##### std::type_index <a id="SS_6_9_4_3_3"></a>
 std::type_indexはコンテナではないが、
 型情報型を連想コンテナのキーとして使用するためのクラスであるため、この場所に掲載する。
 
 ```cpp
-    //  example/term_explanation/cotainer_ut.cpp 74
+    //  example/term_explanation/container_ut.cpp 74
 
     std::unordered_map<std::type_index, std::string> type_map;
 
@@ -20539,7 +20819,7 @@ std::type_indexはコンテナではないが、
 ```
 
 
-#### コンテナアダプタ(Container Adapters) <a id="SS_6_9_2_4"></a>
+#### コンテナアダプタ(Container Adapters) <a id="SS_6_9_4_4"></a>
 特定の操作のみを公開するためのラッパーコンテナ。
 
 | コンテナ              | 説明                                     |
@@ -20548,7 +20828,7 @@ std::type_indexはコンテナではないが、
 | `std::queue`          | FIFO(先入れ先出し)操作を提供するアダプタ |
 | `std::priority_queue` | 優先度に基づく操作を提供するアダプタ     |
 
-#### 特殊なコンテナ <a id="SS_6_9_2_5"></a>
+#### 特殊なコンテナ <a id="SS_6_9_4_5"></a>
 上記したようなコンテナとは一線を画すが、特定の用途や目的のために設計された一種のコンテナ。
 
 | コンテナ             | 説明                                                       |
@@ -20557,7 +20837,7 @@ std::type_indexはコンテナではないが、
 | `std::bitset`        | 固定長のビット集合を管理するクラス                         |
 | `std::basic_string`  | カスタム文字型をサポートする文字列コンテナ                 |
 
-### std::optional <a id="SS_6_9_3"></a>
+### std::optional <a id="SS_6_9_5"></a>
 C++17から導入されたstd::optionalには、以下のような2つの用途がある。
 以下の用途2から、
 このクラスがオブジェクトのダイナミックなメモリアロケーションを行うような印象を受けるが、
@@ -20565,11 +20845,11 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
 このクラスがオブジェクトのダイナミックな生成が必要になった場合、プレースメントnewを実行する。
 ただし、std::optionalが保持する型自身がnewを実行する場合は、この限りではない。
 
-1. 関数の任意の型の[戻り値の無効表現](#SS_6_9_3_1)を持たせる
-2. [オブジェクトの遅延初期化](#SS_6_9_3_2)する(初期化処理が重く、
+1. 関数の任意の型の[戻り値の無効表現](#SS_6_9_5_1)を持たせる
+2. [オブジェクトの遅延初期化](#SS_6_9_5_2)する(初期化処理が重く、
    条件によってはそれが無駄になる場合にこの機能を使う)
 
-#### 戻り値の無効表現 <a id="SS_6_9_3_1"></a>
+#### 戻り値の無効表現 <a id="SS_6_9_5_1"></a>
 ```cpp
     //  example/term_explanation/optional_ut.cpp 11
 
@@ -20600,7 +20880,7 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
     ASSERT_THROW(ret1.value(), std::bad_optional_access);  // 値非保持の場合、エクセプション発生
 ```
 
-#### オブジェクトの遅延初期化 <a id="SS_6_9_3_2"></a>
+#### オブジェクトの遅延初期化 <a id="SS_6_9_5_2"></a>
 ```cpp
     //  example/term_explanation/optional_ut.cpp 43
 
@@ -20641,7 +20921,7 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
     ASSERT_EQ(0xdeadbeaf, (*resource)[0]);
 ```
 
-### std::variant <a id="SS_6_9_4"></a>
+### std::variant <a id="SS_6_9_6"></a>
 std::variantは、C++17で導入された型安全なunionである。
 このクラスは複数の型のうち1つの値を保持することができ、
 従来のunionに伴う低レベルな操作の安全性の問題を解消するために設計された。
