@@ -20531,7 +20531,7 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
         void increment()
         {
             ++count_;  // ++count_は「count_の値の呼び出し -> その値のインクリメント、その値のcount_への書き戻し」である
-                      // この一連の操作は排他的(アトミック)に行われる
+                       // この一連の操作は排他的(アトミック)に行われる
 
         }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
         std::atomic<uint32_t> count_ = 0;
@@ -20582,7 +20582,7 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
 std::lock_guardを使わない問題のあるコードを以下に示す。
 
 ```cpp
-    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 9
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 14
 
     struct Conflict {
         void increment()
@@ -20599,7 +20599,7 @@ std::lock_guardを使わない問題のあるコードを以下に示す。
     };
 ```
 ```cpp
-    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 14
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 19
     {
         mtx_.lock();  // ++count_の排他のためのロック
 
@@ -20623,7 +20623,7 @@ std::lock_guardを使わない問題のあるコードを以下に示す。
 std::lock_guardを使用して、このような問題に対処したコードを以下に示す。
 
 ```cpp
-    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 58
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 63
 
     struct Conflict {
         void increment()
@@ -20643,7 +20643,7 @@ std::lock_guardを使用して、このような問題に対処したコード�
 オリジナルの単純な以下のincrement()と改善版を比較すると、大差ないように見えるが、
 
 ```cpp
-    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 14
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 19
     {
         mtx_.lock();  // ++count_の排他のためのロック
 
@@ -20656,7 +20656,7 @@ std::lock_guardを使用して、このような問題に対処したコード�
 オリジナルのコードで指摘したすべてのリスクが、わずか一行の変更で解決されている。
 
 ```cpp
-    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 63
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 68
     {
         std::lock_guard<std::mutex> lock{mtx_};  // lockオブジェクトのコンストラクタでmtx_.lock()が呼ばれる
                                                  // ++count_の排他
@@ -20666,7 +20666,139 @@ std::lock_guardを使用して、このような問題に対処したコード�
 ```
 
 #### std::unique_lock <a id="SS_6_9_2_2"></a>
-後で書くので指摘は不要
+std::unique_lockとは、ミューテックスのロック管理を柔軟に行えるロックオブジェクトである。
+std::lock_guardと異なり、ロックの手動解放や再取得が可能であり、特にcondition_variable::wait()と組み合わせて使用される。
+wait()は内部でロックを一時的に解放し、通知受信後に再取得する。
+
+下記の例では、IntQueue::push()、 IntQueue::pop_ng()、
+IntQueue::pop_ok()の中で行われるIntQueue::q_へのアクセスで発生する競合を回避するためにIntQueue::mtx_を使用する。
+
+下記のコード例では、[std::lock_guard](#SS_6_9_2_1)の説明で述べたようにmutex::lock()、mutex::unlock()を直接呼び出すのではなく、
+std::unique_lockやstd::lock_guardによりmutexを使用する。
+
+```cpp
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 112
+
+    class IntQueue {
+    public:
+        void push(int v)
+        {
+            {
+                std::lock_guard<std::mutex> lg{mtx_};  // ロック取得
+                q_.push(v);
+            }  // ロック解放
+
+            cv_.notify_one();  // 待機中のスレッドを1つ起床
+                               // 注: ロック解放後に呼び出すことで、起床したスレッドがすぐにロックを取得できる
+        }
+
+        int pop_ng()
+        {
+            std::unique_lock<std::mutex> lock{mtx_};
+            cv_.wait(lock);  // NG: Spurious Wakeup対策なし
+                             // 起床時に条件を再確認しないため、
+                             // q_.empty() が true のまま起床する可能性がある
+            int v = q_.front();
+            q_.pop();  // 条件未確認アクセス（危険）
+
+            return v;
+        }
+
+        int pop_ok()
+        {
+            std::unique_lock<std::mutex> lock{mtx_};
+            cv_.wait(lock, [&q_ = q_] { return !q_.empty(); });  // waitの述語が true になるまで待機(Spurious Wakeup対策)
+            // wait()の動作:
+            // 1. 述語を評価してtrueならすぐreturn
+            // 2. falseなら: unlock() → 通知待機 → 通知受信 → lock() → 述語再評価
+            // 3. 述語がtrueになるまで2を繰り返す
+
+            int v = q_.front();
+            q_.pop();  // ここでは、q_.empty()は必ずfalse
+            return v;
+        }
+    private:
+        std::mutex              mtx_{};
+        std::condition_variable cv_{};
+        std::queue<int>         q_{};
+    };
+```
+```cpp
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 168
+
+    IntQueue           iq;
+    constexpr int      end_data       = -1;
+    constexpr uint32_t push_count_max = 10;
+
+    // Producer
+    std::thread t1([&iq] {
+        for (uint32_t i = 0; i < push_count_max; ++i) {
+            iq.push(100 + i);
+        }
+
+        iq.push(end_data);  // t2が-1を受信したらt2のループ終了
+    });
+
+    uint32_t pop_count = 0;
+
+    std::thread t2([&iq, &pop_count] {
+        for (;;) {
+            if (int v = iq.pop_ok(); v == -1) {
+                break;
+            }
+            else {
+                ++pop_count;
+            }
+        }
+    });
+
+    t1.join();  // スレッドの終了待ち
+    t2.join();  // スレッドの終了待ち
+
+    ASSERT_EQ(push_count_max, pop_count);
+```
+
+一般に条件変数には、[Spurious Wakeup](#SS_6_21_5)という問題があり、std::condition_variableも同様である。
+
+上記の抜粋である下記のコード例では[Spurious Wakeup](#SS_6_21_5)の対策が行われていないため、
+意図通り動作しない可能性がある。
+
+```cpp
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 127
+
+    int pop_ng()
+    {
+        std::unique_lock<std::mutex> lock{mtx_};
+        cv_.wait(lock);  // NG: Spurious Wakeup対策なし
+                         // 起床時に条件を再確認しないため、
+                         // q_.empty() が true のまま起床する可能性がある
+        int v = q_.front();
+        q_.pop();  // 条件未確認アクセス（危険）
+
+        return v;
+    }
+```
+
+下記のIntQueue::pop_ok()は、pop_ng()にSpurious Wakeupの対策を施したものである。
+
+```cpp
+    //  example/term_explanation/lock_ownership_wrapper_ut.cpp 141
+
+    int pop_ok()
+    {
+        std::unique_lock<std::mutex> lock{mtx_};
+        cv_.wait(lock, [&q_ = q_] { return !q_.empty(); });  // waitの述語が true になるまで待機(Spurious Wakeup対策)
+        // wait()の動作:
+        // 1. 述語を評価してtrueならすぐreturn
+        // 2. falseなら: unlock() → 通知待機 → 通知受信 → lock() → 述語再評価
+        // 3. 述語がtrueになるまで2を繰り返す
+
+        int v = q_.front();
+        q_.pop();  // ここでは、q_.empty()は必ずfalse
+        return v;
+    }
+```
+
 
 #### std::scoped_lock <a id="SS_6_9_2_3"></a>
 後で書くので指摘は不要

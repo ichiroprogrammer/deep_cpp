@@ -2285,7 +2285,41 @@ std::lock_guardを使用して、このような問題に対処したコード�
 ```
 
 #### std::unique_lock
-後で書くので指摘は不要
+std::unique_lockとは、ミューテックスのロック管理を柔軟に行えるロックオブジェクトである。
+std::lock_guardと異なり、ロックの手動解放や再取得が可能であり、特にcondition_variable::wait()と組み合わせて使用される。
+wait()は内部でロックを一時的に解放し、通知受信後に再取得する。
+
+下記の例では、IntQueue::push()、 IntQueue::pop_ng()、
+IntQueue::pop_ok()の中で行われるIntQueue::q_へのアクセスで発生する競合を回避するためにIntQueue::mtx_を使用する。
+
+下記のコード例では、[std::lock_guard](---)の説明で述べたようにmutex::lock()、mutex::unlock()を直接呼び出すのではなく、
+std::unique_lockやstd::lock_guardによりmutexを使用する。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:1 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:2 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:3 begin
+```
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:4 begin -1
+```
+
+一般に条件変数には、[Spurious Wakeup](---)という問題があり、std::condition_variableも同様である。
+
+上記の抜粋である下記のコード例では[Spurious Wakeup](---)の対策が行われていないため、
+意図通り動作しない可能性がある。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:1 begin -1
+```
+
+下記のIntQueue::pop_ok()は、pop_ng()にSpurious Wakeupの対策を施したものである。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:2 begin -1
+```
+
 
 #### std::scoped_lock
 後で書くので指摘は不要

@@ -112,7 +112,7 @@ struct Conflict {
     void increment()
     {
         ++count_;  // ++count_は「count_の値の呼び出し -> その値のインクリメント、その値のcount_への書き戻し」である
-                  // この一連の操作は排他的(アトミック)に行われる
+                   // この一連の操作は排他的(アトミック)に行われる
 
     }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
     std::atomic<uint32_t> count_ = 0;
