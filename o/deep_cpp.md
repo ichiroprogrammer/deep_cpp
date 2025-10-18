@@ -24325,7 +24325,8 @@ rvalueリファレンスは、
 * C++11で導入されたシンタックスであり、任意の型Tに対して、`T&&`で宣言される。
 * 「テンポラリオブジェクト([rvalue](#SS_6_14_1_2))」をバインドできるリファレンス。
 * C++11の[moveセマンティクス](#SS_6_18_3)と[perfect forwarding](#SS_6_15_5)を実現するために導入された。
-* **注意** rvalueリファレンス型の変数は、その型が`T&&`であっても、値カテゴリは[lvalue](#SS_6_14_1_1)である。
+* **注意1** 型が`T&&`である変数の値カテゴリは[lvalue](#SS_6_14_1_1)である。
+* **注意2** 型が`T&&`である変数は、`T&`でバインドできる。
 
 ```cpp
     //  example/term_explanation/rvalue_lvalue_ut.cpp 87
@@ -24334,16 +24335,18 @@ rvalueリファレンスは、
     int const& a_ref0 = a;        // const lvalueリファレンスはlvalueをバインドできる
     int const& a_ref1 = int{99};  // const lvalueリファレンスはrvalueもバインドできる
     int&& a_ref2 = int{99};       // rvalueリファレンスはテンポラリオブジェクトをバインドできる
-
-    ASSERT_EQ(a_ref1, 99);
-    ASSERT_EQ(a_ref2, 99);
+    int& a_ref3 = a_ref2;         // rvalueリファレンス型の変数は、lvalueリファレンスでバインドできる
+    /*
+    int&& a_ref4 = a_ref2;       以下のメッセージでコンパイルエラー
+                                 cannot bind rvalue reference of type ‘int&&’ to lvalue of type ‘int’ 
+                                 rvalueリファレンス型の変数(lvalue)は、rvalueリファレンスでバインドできない */
 ```
 
 このようなリファレンスのバインドの可否はオーバーロードにも影響を与える。
 
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 104
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 110
 
     int f(int&)       { return 1; } // f-1
     int f(int const&) { return 2; } // f-2
@@ -24351,7 +24354,7 @@ rvalueリファレンスは、
 ```
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 115
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 121
 
     int       a = 0;
     int const b = 0;
@@ -24371,7 +24374,7 @@ rvalueリファレンスは、
 上記コードの最後の部分の抜粋である以下のコードについては、少々解説が必要だろう。
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 127
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 133
 
     int&& ref_ref = int{};
 
@@ -24387,13 +24390,13 @@ rvalueリファレンス型の仮引数（`T&&`）を持つ関数は、ムーブ
 [moveセマンティクス](#SS_6_18_3)や[perfect forwarding](#SS_6_15_5)を正しく実装/使用するために極めて重要である。
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 136
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 142
 
     int g(int&& a) { return f(a); }            // g-1    仮引数aはlvalue -> f-1が呼ばれる
     int g(int& a) { return f(std::move(a)); }  // g-2    std::moveでrvalueに変換 -> f-3が呼ばれる
 ```
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 144
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 150
 
     ASSERT_EQ(1, g(int{}));  // int{}はrvalue -> g-1が呼ばれ、内部でf-1が呼ばれる
 

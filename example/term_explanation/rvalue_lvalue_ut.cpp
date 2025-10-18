@@ -90,12 +90,18 @@ TEST(Expression, rvalue_ref1)
     int const& a_ref0 = a;        // const lvalueリファレンスはlvalueをバインドできる
     int const& a_ref1 = int{99};  // const lvalueリファレンスはrvalueもバインドできる
     int&& a_ref2 = int{99};       // rvalueリファレンスはテンポラリオブジェクトをバインドできる
-
-    ASSERT_EQ(a_ref1, 99);
-    ASSERT_EQ(a_ref2, 99);
+    int& a_ref3 = a_ref2;         // rvalueリファレンス型の変数は、lvalueリファレンスでバインドできる
+    /*
+    int&& a_ref4 = a_ref2;       以下のメッセージでコンパイルエラー
+                                 cannot bind rvalue reference of type ‘int&&’ to lvalue of type ‘int’ 
+                                 rvalueリファレンス型の変数(lvalue)は、rvalueリファレンスでバインドできない */
     // @@@ sample end
     // clang-format on
     ASSERT_EQ(a_ref0, 0);
+    ASSERT_EQ(a_ref1, 99);
+    ASSERT_EQ(a_ref2, 99);
+    ASSERT_EQ(a_ref3, 99);
+    // ASSERT_EQ(a_ref4, 99);
 }
 }  // namespace ref_pattern2
 
