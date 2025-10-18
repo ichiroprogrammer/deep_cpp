@@ -2180,6 +2180,41 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 ```
 
 ## プログラミング概念と標準ライブラリ
+### ユーティリティ
+#### std::move
+std::moveは引数を[rvalueリファレンス](---)に変換する関数テンプレートである。
+
+|引数                 |std::moveの動作                                    |
+|---------------------|---------------------------------------------------|
+|非const [lvalue](---)|引数を[rvalueリファレンス](---)にキャストする      |
+|const [lvalue](---)  |引数をconst [rvalueリファレンス](---)にキャストする|
+
+この表の動作仕様を下記ののコードで示す。
+
+```cpp
+    // @@@ example/term_explanation/utility_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/utility_ut.cpp #0:1 begin -1
+```
+
+std::moveは以下の２つの概念ときわめて密接に関連しており、
+
+* [rvalueリファレンス](---)
+* [moveセマンティクス](---)
+
+これら3つが組み合わさることで、不要なコピーを避けた高効率なリソース管理が実現される。
+
+#### std::forward
+std::forwardは、下記の２つの概念を実現するための関数テンプレートである。
+
+* [forwardingリファレンス](---)
+* [perfect forwarding](---)
+
+std::forwardを適切に使用することで、引数の値カテゴリを保持したまま転送でき、
+move可能なオブジェクトの不要なコピーを避けることができる。
+
+
 ### 並列処理
 
 #### std::thread
@@ -3804,7 +3839,7 @@ lvalueとは、
 #### rvalue
 rvalueとは、
 
-* 一時的な値を表す式(代入式の右辺値として使われることが多い)
+* テンポラリな値を表す式(代入式の右辺値として使われることが多い)
 * [expression|xvalue](---)か[expression|prvalue](---)である。
 * [expression|lvalue](---)でない[expression](---)がrvalueである。
 
@@ -3923,9 +3958,10 @@ lvalueリファレンスとは、
 ### rvalueリファレンス
 rvalueリファレンスは、
 
-*  C++11で導入されたシンタックスであり、任意の型Tに対して、`T&&`で宣言される。
-* 「テンポラリオブジェクト([expression|rvalue](---))」をバインドできるリファレンス
-*  C++11の[moveセマンティクス](---)と[perfect forwarding](---)を実現するために導入された。
+* C++11で導入されたシンタックスであり、任意の型Tに対して、`T&&`で宣言される。
+* 「テンポラリオブジェクト([expression|rvalue](---))」をバインドできるリファレンス。
+* C++11の[moveセマンティクス](---)と[perfect forwarding](---)を実現するために導入された。
+* **注意** rvalueリファレンス型の変数は、その型が`T&&`であっても、値カテゴリは[lvalue](---)である。
 
 ```cpp
     // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:0 begin -1
@@ -3940,7 +3976,30 @@ rvalueリファレンスは、
 
 ```cpp
     // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:2 begin -1
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:3 begin -1
 ```
+
+上記コードの最後の部分の抜粋である以下のコードについては、少々解説が必要だろう。
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:3 begin -1
+```
+
+ref_refの型は`int &&`であるが、ref_refの値カテゴリは[expression|rvalue](---)ではなく、[lvalue](---)である。
+そのため、`f(ref_ref)`はlvalueリファレンスを引数とするf-1が選択される。
+
+rvalueリファレンス型の仮引数（`T&&`）を持つ関数は、ムーブコンストラクタやムーブ代入演算子など頻繁に使用される。
+しかし、関数内では仮引数は名前を持つため、常にlvalueとして扱われる。
+この動作を理解することは、
+[moveセマンティクス](---)や[perfect forwarding](---)を正しく実装/使用するために極めて重要である。
+
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:4 begin
+```
+```cpp
+    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:5 begin -1
+```
+---
 
 C++11でrvalueの概念の整理やrvalueリファレンス、
 std::move()の導入が行われた目的はプログラム実行速度の向上である。
@@ -4457,7 +4516,7 @@ moveセマンティクスとは以下を満たすようなセマンティクス�
 
 * リソース管理   
     必須ではないが、aがポインタ等のリソースを保有している場合、
-     move代入後にはそのリソースはcに移動していることが一般的である(「[rvalue](---)」参照)
+     move代入後にはそのリソースはcに移動していることが一般的である(「[expression|rvalue](---)」参照)
 
 * エクセプション安全性  
     [no-fail保証](---)をする(noexceptと宣言し、エクセプションをthrowしない)

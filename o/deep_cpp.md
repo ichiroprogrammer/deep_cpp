@@ -12,8 +12,9 @@
 ## 改訂履歴 <a id="SS_1_1"></a>
 * V20.10
     * moveセマンティクスの説明の改善
+    * lvalueリファレンスの説明の改善
     * プログラミング概念と標準ライブラリの強化
-        * 例列処理
+        * 並行処理
         * ロック所有ラッパー
 
 * V20.09
@@ -15396,29 +15397,33 @@ __この章の構成__
 &emsp;&emsp;&emsp; [指示付き初期化](#SS_6_8_4)  
 
 &emsp;&emsp; [プログラミング概念と標準ライブラリ](#SS_6_9)  
-&emsp;&emsp;&emsp; [並列処理](#SS_6_9_1)  
-&emsp;&emsp;&emsp;&emsp; [std::thread](#SS_6_9_1_1)  
-&emsp;&emsp;&emsp;&emsp; [std::mutex](#SS_6_9_1_2)  
-&emsp;&emsp;&emsp;&emsp; [std::atomic](#SS_6_9_1_3)  
+&emsp;&emsp;&emsp; [ユーティリティ](#SS_6_9_1)  
+&emsp;&emsp;&emsp;&emsp; [std::move](#SS_6_9_1_1)  
+&emsp;&emsp;&emsp;&emsp; [std::forward](#SS_6_9_1_2)  
 
-&emsp;&emsp;&emsp; [ロック所有ラッパー](#SS_6_9_2)  
-&emsp;&emsp;&emsp;&emsp; [std::lock_guard](#SS_6_9_2_1)  
-&emsp;&emsp;&emsp;&emsp; [std::unique_lock](#SS_6_9_2_2)  
-&emsp;&emsp;&emsp;&emsp; [std::scoped_lock](#SS_6_9_2_3)  
+&emsp;&emsp;&emsp; [並列処理](#SS_6_9_2)  
+&emsp;&emsp;&emsp;&emsp; [std::thread](#SS_6_9_2_1)  
+&emsp;&emsp;&emsp;&emsp; [std::mutex](#SS_6_9_2_2)  
+&emsp;&emsp;&emsp;&emsp; [std::atomic](#SS_6_9_2_3)  
 
-&emsp;&emsp;&emsp; [スマートポインタ](#SS_6_9_3)  
-&emsp;&emsp;&emsp; [コンテナ](#SS_6_9_4)  
-&emsp;&emsp;&emsp;&emsp; [シーケンスコンテナ(Sequence Containers)](#SS_6_9_4_1)  
-&emsp;&emsp;&emsp;&emsp; [連想コンテナ(Associative Containers)](#SS_6_9_4_2)  
-&emsp;&emsp;&emsp;&emsp; [無順序連想コンテナ(Unordered Associative Containers)](#SS_6_9_4_3)  
-&emsp;&emsp;&emsp;&emsp; [コンテナアダプタ(Container Adapters)](#SS_6_9_4_4)  
-&emsp;&emsp;&emsp;&emsp; [特殊なコンテナ](#SS_6_9_4_5)  
+&emsp;&emsp;&emsp; [ロック所有ラッパー](#SS_6_9_3)  
+&emsp;&emsp;&emsp;&emsp; [std::lock_guard](#SS_6_9_3_1)  
+&emsp;&emsp;&emsp;&emsp; [std::unique_lock](#SS_6_9_3_2)  
+&emsp;&emsp;&emsp;&emsp; [std::scoped_lock](#SS_6_9_3_3)  
 
-&emsp;&emsp;&emsp; [std::optional](#SS_6_9_5)  
-&emsp;&emsp;&emsp;&emsp; [戻り値の無効表現](#SS_6_9_5_1)  
-&emsp;&emsp;&emsp;&emsp; [オブジェクトの遅延初期化](#SS_6_9_5_2)  
+&emsp;&emsp;&emsp; [スマートポインタ](#SS_6_9_4)  
+&emsp;&emsp;&emsp; [コンテナ](#SS_6_9_5)  
+&emsp;&emsp;&emsp;&emsp; [シーケンスコンテナ(Sequence Containers)](#SS_6_9_5_1)  
+&emsp;&emsp;&emsp;&emsp; [連想コンテナ(Associative Containers)](#SS_6_9_5_2)  
+&emsp;&emsp;&emsp;&emsp; [無順序連想コンテナ(Unordered Associative Containers)](#SS_6_9_5_3)  
+&emsp;&emsp;&emsp;&emsp; [コンテナアダプタ(Container Adapters)](#SS_6_9_5_4)  
+&emsp;&emsp;&emsp;&emsp; [特殊なコンテナ](#SS_6_9_5_5)  
 
-&emsp;&emsp;&emsp; [std::variant](#SS_6_9_6)  
+&emsp;&emsp;&emsp; [std::optional](#SS_6_9_6)  
+&emsp;&emsp;&emsp;&emsp; [戻り値の無効表現](#SS_6_9_6_1)  
+&emsp;&emsp;&emsp;&emsp; [オブジェクトの遅延初期化](#SS_6_9_6_2)  
+
+&emsp;&emsp;&emsp; [std::variant](#SS_6_9_7)  
 
 &emsp;&emsp; [name lookupと名前空間](#SS_6_10)  
 &emsp;&emsp;&emsp; [ルックアップ](#SS_6_10_1)  
@@ -18410,7 +18415,7 @@ X、Yオブジェクトの参照カウントは0にならず、従ってこれ�
 X、Yオブジェクトへの[ハンドル](#SS_6_21_1)を完全に失った状態であり、X、Yオブジェクトを解放する手段はない。
 
 #### std::weak_ptr <a id="SS_6_5_7_4"></a>
-std::weak_ptrは、[スマートポインタ](#SS_6_9_3)の一種である。
+std::weak_ptrは、[スマートポインタ](#SS_6_9_4)の一種である。
 
 std::weak_ptrは参照カウントに影響を与えず、`shared_ptr`とオブジェクトを共有所有するのではなく、
 その`shared_ptr`インスタンスとの関連のみを保持するのため、[オブジェクトの循環所有](#SS_6_5_7_3)の問題を解決できる。
@@ -20408,9 +20413,58 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 ```
 
 ## プログラミング概念と標準ライブラリ <a id="SS_6_9"></a>
-### 並列処理 <a id="SS_6_9_1"></a>
+### ユーティリティ <a id="SS_6_9_1"></a>
+#### std::move <a id="SS_6_9_1_1"></a>
+std::moveは引数を[rvalueリファレンス](#SS_6_15_2)に変換する関数テンプレートである。
 
-#### std::thread <a id="SS_6_9_1_1"></a>
+|引数                 |std::moveの動作                                    |
+|---------------------|---------------------------------------------------|
+|非const [lvalue](#SS_6_14_1_1)|引数を[rvalueリファレンス](#SS_6_15_2)にキャストする      |
+|const [lvalue](#SS_6_14_1_1)  |引数をconst [rvalueリファレンス](#SS_6_15_2)にキャストする|
+
+この表の動作仕様を下記ののコードで示す。
+
+```cpp
+    //  example/term_explanation/utility_ut.cpp 10
+
+    uint32_t f(std::string&) { return 0; }         // f-0
+    uint32_t f(std::string&&) { return 1; }        // f-1
+    uint32_t f(std::string const&) { return 2; }   // f-2
+    uint32_t f(std::string const&&) { return 3; }  // f-3
+```
+```cpp
+    //  example/term_explanation/utility_ut.cpp 21
+
+    std::string       str{};
+    std::string const cstr{};
+
+    ASSERT_EQ(0, f(str));               // strはlvalue → f(std::string&)
+    ASSERT_EQ(1, f(std::string{}));     // 一時オブジェクトはrvalue → f(std::string&&)
+    ASSERT_EQ(1, f(std::move(str)));    // std::moveでrvalueに変換 → f(std::string&&)
+    ASSERT_EQ(2, f(cstr));              // cstrはconst lvalue → f(std::string const&)
+    ASSERT_EQ(3, f(std::move(cstr)));   // std::moveでconst rvalueに変換 → f(std::string const&&)
+```
+
+std::moveは以下の２つの概念ときわめて密接に関連しており、
+
+* [rvalueリファレンス](#SS_6_15_2)
+* [moveセマンティクス](#SS_6_18_3)
+
+これら3つが組み合わさることで、不要なコピーを避けた高効率なリソース管理が実現される。
+
+#### std::forward <a id="SS_6_9_1_2"></a>
+std::forwardは、下記の２つの概念を実現するための関数テンプレートである。
+
+* [forwardingリファレンス](#SS_6_15_3)
+* [perfect forwarding](#SS_6_15_5)
+
+std::forwardを適切に使用することで、引数の値カテゴリを保持したまま転送でき、
+move可能なオブジェクトの不要なコピーを避けることができる。
+
+
+### 並列処理 <a id="SS_6_9_2"></a>
+
+#### std::thread <a id="SS_6_9_2_1"></a>
 クラスthread は、新しい実行のスレッドの作成/待機/その他を行う機構を提供する。
 
 ```cpp
@@ -20455,7 +20509,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
     ASSERT_NE(c.count_, expected);
 ```
 
-#### std::mutex <a id="SS_6_9_1_2"></a>
+#### std::mutex <a id="SS_6_9_2_2"></a>
 mutex は、スレッド間で使用する共有リソースを排他制御するためのクラスである。 
 
 <pre>
@@ -20512,7 +20566,7 @@ mutex は、スレッド間で使用する共有リソースを排他制御す�
 
 lock()を呼び出した状態で、unlock()を呼び出さなかった場合、デッドロックを引き起こしてしまうため、
 永久に処理が完了しないバグの元となり得るため、このような問題を避けるために、
-mutexは通常、[std::lock_guard](#SS_6_9_2_1)と組み合わせて使われる。
+mutexは通常、[std::lock_guard](#SS_6_9_3_1)と組み合わせて使われる。
 
 ```cpp
 
@@ -20525,10 +20579,10 @@ mutexは通常、[std::lock_guard](#SS_6_9_2_1)と組み合わせて使われる
     }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
 ```
 
-#### std::atomic <a id="SS_6_9_1_3"></a>
+#### std::atomic <a id="SS_6_9_2_3"></a>
 atomicクラステンプレートは、型Tをアトミック操作するためのものである。
 [組み込み型](#SS_6_1_2)に対する特殊化が提供されており、それぞれに特化した演算が用意されている。
-[std::mutex](#SS_6_9_1_2)で示したような単純なコードではstd::atomicを使用して下記のように書く方が一般的である。
+[std::mutex](#SS_6_9_2_2)で示したような単純なコードではstd::atomicを使用して下記のように書く方が一般的である。
 
 ```cpp
     //  example/term_explanation/thread_ut.cpp 109
@@ -20575,15 +20629,15 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
     ASSERT_EQ(c.count_, expected);
 ```
 
-### ロック所有ラッパー <a id="SS_6_9_2"></a>
+### ロック所有ラッパー <a id="SS_6_9_3"></a>
 ロック所有ラッパーとはミューテックスのロックおよびアンロックを管理するための以下のクラスを指す。
 
-- [std::lock_guard](#SS_6_9_2_1)
-- [std::unique_lock](#SS_6_9_2_2)
-- [std::scoped_lock](#SS_6_9_2_3)
+- [std::lock_guard](#SS_6_9_3_1)
+- [std::unique_lock](#SS_6_9_3_2)
+- [std::scoped_lock](#SS_6_9_3_3)
 
 
-#### std::lock_guard <a id="SS_6_9_2_1"></a>
+#### std::lock_guard <a id="SS_6_9_3_1"></a>
 
 std::lock_guardを使わない問題のあるコードを以下に示す。
 
@@ -20671,7 +20725,7 @@ std::lock_guardを使用して、このような問題に対処したコード�
     }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
 ```
 
-#### std::unique_lock <a id="SS_6_9_2_2"></a>
+#### std::unique_lock <a id="SS_6_9_3_2"></a>
 std::unique_lockとは、ミューテックスのロック管理を柔軟に行えるロックオブジェクトである。
 std::lock_guardと異なり、ロックの手動解放や再取得が可能であり、特にcondition_variable::wait()と組み合わせて使用される。
 wait()は内部でロックを一時的に解放し、通知受信後に再取得する。
@@ -20679,7 +20733,7 @@ wait()は内部でロックを一時的に解放し、通知受信後に再取�
 下記の例では、IntQueue::push()、 IntQueue::pop_ng()、
 IntQueue::pop_ok()の中で行われるIntQueue::q_へのアクセスで発生する競合を回避するためにIntQueue::mtx_を使用する。
 
-下記のコード例では、[std::lock_guard](#SS_6_9_2_1)の説明で述べたようにmutex::lock()、mutex::unlock()を直接呼び出すのではなく、
+下記のコード例では、[std::lock_guard](#SS_6_9_3_1)の説明で述べたようにmutex::lock()、mutex::unlock()を直接呼び出すのではなく、
 std::unique_lockやstd::lock_guardによりmutexを使用する。
 
 ```cpp
@@ -20805,7 +20859,7 @@ std::unique_lockやstd::lock_guardによりmutexを使用する。
     }
 ```
 
-#### std::scoped_lock <a id="SS_6_9_2_3"></a>
+#### std::scoped_lock <a id="SS_6_9_3_3"></a>
 std::scoped_lockとは、複数のミューテックスを同時にロックするためのロックオブジェクトである。
 C++17で導入され、デッドロックを回避しながら複数のミューテックスを安全にロックできる。
 
@@ -20915,7 +20969,7 @@ transfer_ng()がデッドロックを引き起こすシナリオは、以下の�
     }
 ```
 
-### スマートポインタ <a id="SS_6_9_3"></a>
+### スマートポインタ <a id="SS_6_9_4"></a>
 スマートポインタは、C++標準ライブラリが提供するメモリ管理クラス群を指す。
 生のポインタの代わりに使用され、リソース管理を容易にし、
 メモリリークや二重解放といった問題を防ぐことを目的としている。
@@ -20935,17 +20989,17 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
    異常な[copyセマンティクス](#SS_6_18_2)を持つため、多くの誤用を生み出し、
    C++11から非推奨とされ、C++17から規格から排除された。
 
-### コンテナ <a id="SS_6_9_4"></a>
+### コンテナ <a id="SS_6_9_5"></a>
 データを格納し、
 効率的に操作するための汎用的なデータ構造を提供するC++標準ライブラリの下記のようなクラス群である。
 
-* [シーケンスコンテナ(Sequence Containers)](#SS_6_9_4_1)
+* [シーケンスコンテナ(Sequence Containers)](#SS_6_9_5_1)
 * [連想コンテナ(Associative Containers)(---)
-* [無順序連想コンテナ(Unordered Associative Containers)](#SS_6_9_4_3)
-* [コンテナアダプタ(Container Adapters)](#SS_6_9_4_4)
-* [特殊なコンテナ](#SS_6_9_4_5)
+* [無順序連想コンテナ(Unordered Associative Containers)](#SS_6_9_5_3)
+* [コンテナアダプタ(Container Adapters)](#SS_6_9_5_4)
+* [特殊なコンテナ](#SS_6_9_5_5)
 
-#### シーケンスコンテナ(Sequence Containers) <a id="SS_6_9_4_1"></a>
+#### シーケンスコンテナ(Sequence Containers) <a id="SS_6_9_5_1"></a>
 データが挿入順に保持され、順序が重要な場合に使用する。
 
 | コンテナ                 | 説明                                                                |
@@ -20953,11 +21007,11 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
 | `std::vector`            | 動的な配列で、ランダムアクセスが高速。末尾への挿入/削除が効率的     |
 | `std::deque`             | 両端に効率的な挿入/削除が可能な動的配列                             |
 | `std::list`              | 双方向リスト。要素の順序を維持し、中間の挿入/削除が効率的           |
-| [std::forward_list](#SS_6_9_4_1_1) | 単方向リスト。軽量だが、双方向の操作はできない                      |
+| [std::forward_list](#SS_6_9_5_1_1) | 単方向リスト。軽量だが、双方向の操作はできない                      |
 | `std::array`             | 固定長配列で、サイズがコンパイル時に決まる                          |
 | `std::string`            | 可変長の文字列を管理するクラス(厳密には`std::basic_string`の特殊化) |
 
-##### std::forward_list <a id="SS_6_9_4_1_1"></a>
+##### std::forward_list <a id="SS_6_9_5_1_1"></a>
 
 ```cpp
     //  example/term_explanation/container_ut.cpp 14
@@ -20975,7 +21029,7 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
     EXPECT_EQ(*++it, 3);
 ```
 
-#### 連想コンテナ(Associative Containers) <a id="SS_6_9_4_2"></a>
+#### 連想コンテナ(Associative Containers) <a id="SS_6_9_5_2"></a>
 データがキーに基づいて自動的にソートされ、検索が高速である。
 
 | コンテナ           | 説明                                             |
@@ -20985,18 +21039,18 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
 | `std::map`         | ソートされたキーと値のペアを保持。キーは一意     |
 | `std::multimap`    | ソートされたキーと値のペアを保持。キーは重複可能 |
 
-#### 無順序連想コンテナ(Unordered Associative Containers) <a id="SS_6_9_4_3"></a>
+#### 無順序連想コンテナ(Unordered Associative Containers) <a id="SS_6_9_5_3"></a>
 ハッシュテーブルを基盤としたコンテナで、順序を保証しないが高速な検索を提供する。
 
 | コンテナ                  | 説明                                                   |
 |---------------------------|--------------------------------------------------------|
-| [std::unordered_set](#SS_6_9_4_3_1) | ハッシュテーブルベースの集合。重複は許されない         |
+| [std::unordered_set](#SS_6_9_5_3_1) | ハッシュテーブルベースの集合。重複は許されない         |
 | `std::unordered_multiset` | ハッシュテーブルベースの集合。重複が許される           |
-| [std::unordered_map](#SS_6_9_4_3_2) | ハッシュテーブルベースのキーと値のペア。キーは一意     |
+| [std::unordered_map](#SS_6_9_5_3_2) | ハッシュテーブルベースのキーと値のペア。キーは一意     |
 | `std::unordered_multimap` | ハッシュテーブルベースのキーと値のペア。キーは重複可能 |
-| [std::type_index](#SS_6_9_4_3_3)    | 型情報型を連想コンテナのキーとして使用するためのクラス |
+| [std::type_index](#SS_6_9_5_3_3)    | 型情報型を連想コンテナのキーとして使用するためのクラス |
 
-##### std::unordered_set <a id="SS_6_9_4_3_1"></a>
+##### std::unordered_set <a id="SS_6_9_5_3_1"></a>
 
 ```cpp
     //  example/term_explanation/container_ut.cpp 32
@@ -21016,7 +21070,7 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
     EXPECT_EQ(uset.size(), 5);
 ```
 
-##### std::unordered_map <a id="SS_6_9_4_3_2"></a>
+##### std::unordered_map <a id="SS_6_9_5_3_2"></a>
 
 ```cpp
     //  example/term_explanation/container_ut.cpp 52
@@ -21038,7 +21092,7 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
     EXPECT_EQ(umap.find(4), umap.end());
 ```
 
-##### std::type_index <a id="SS_6_9_4_3_3"></a>
+##### std::type_index <a id="SS_6_9_5_3_3"></a>
 std::type_indexはコンテナではないが、
 型情報型を連想コンテナのキーとして使用するためのクラスであるため、この場所に掲載する。
 
@@ -21062,7 +21116,7 @@ std::type_indexはコンテナではないが、
 ```
 
 
-#### コンテナアダプタ(Container Adapters) <a id="SS_6_9_4_4"></a>
+#### コンテナアダプタ(Container Adapters) <a id="SS_6_9_5_4"></a>
 特定の操作のみを公開するためのラッパーコンテナ。
 
 | コンテナ              | 説明                                     |
@@ -21071,7 +21125,7 @@ std::type_indexはコンテナではないが、
 | `std::queue`          | FIFO(先入れ先出し)操作を提供するアダプタ |
 | `std::priority_queue` | 優先度に基づく操作を提供するアダプタ     |
 
-#### 特殊なコンテナ <a id="SS_6_9_4_5"></a>
+#### 特殊なコンテナ <a id="SS_6_9_5_5"></a>
 上記したようなコンテナとは一線を画すが、特定の用途や目的のために設計された一種のコンテナ。
 
 | コンテナ             | 説明                                                       |
@@ -21080,7 +21134,7 @@ std::type_indexはコンテナではないが、
 | `std::bitset`        | 固定長のビット集合を管理するクラス                         |
 | `std::basic_string`  | カスタム文字型をサポートする文字列コンテナ                 |
 
-### std::optional <a id="SS_6_9_5"></a>
+### std::optional <a id="SS_6_9_6"></a>
 C++17から導入されたstd::optionalには、以下のような2つの用途がある。
 以下の用途2から、
 このクラスがオブジェクトのダイナミックなメモリアロケーションを行うような印象を受けるが、
@@ -21088,11 +21142,11 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
 このクラスがオブジェクトのダイナミックな生成が必要になった場合、プレースメントnewを実行する。
 ただし、std::optionalが保持する型自身がnewを実行する場合は、この限りではない。
 
-1. 関数の任意の型の[戻り値の無効表現](#SS_6_9_5_1)を持たせる
-2. [オブジェクトの遅延初期化](#SS_6_9_5_2)する(初期化処理が重く、
+1. 関数の任意の型の[戻り値の無効表現](#SS_6_9_6_1)を持たせる
+2. [オブジェクトの遅延初期化](#SS_6_9_6_2)する(初期化処理が重く、
    条件によってはそれが無駄になる場合にこの機能を使う)
 
-#### 戻り値の無効表現 <a id="SS_6_9_5_1"></a>
+#### 戻り値の無効表現 <a id="SS_6_9_6_1"></a>
 ```cpp
     //  example/term_explanation/optional_ut.cpp 11
 
@@ -21123,7 +21177,7 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
     ASSERT_THROW(ret1.value(), std::bad_optional_access);  // 値非保持の場合、エクセプション発生
 ```
 
-#### オブジェクトの遅延初期化 <a id="SS_6_9_5_2"></a>
+#### オブジェクトの遅延初期化 <a id="SS_6_9_6_2"></a>
 ```cpp
     //  example/term_explanation/optional_ut.cpp 43
 
@@ -21164,7 +21218,7 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
     ASSERT_EQ(0xdeadbeaf, (*resource)[0]);
 ```
 
-### std::variant <a id="SS_6_9_6"></a>
+### std::variant <a id="SS_6_9_7"></a>
 std::variantは、C++17で導入された型安全なunionである。
 このクラスは複数の型のうち1つの値を保持することができ、
 従来のunionに伴う低レベルな操作の安全性の問題を解消するために設計された。
@@ -24087,7 +24141,7 @@ lvalueとは、
 #### rvalue <a id="SS_6_14_1_2"></a>
 rvalueとは、
 
-* 一時的な値を表す式(代入式の右辺値として使われることが多い)
+* テンポラリな値を表す式(代入式の右辺値として使われることが多い)
 * [xvalue](#SS_6_14_1_3)か[prvalue](#SS_6_14_1_4)である。
 * [lvalue](#SS_6_14_1_1)でない[expression](#SS_6_14_1)がrvalueである。
 
@@ -24268,17 +24322,18 @@ lvalueリファレンスとは、
 ### rvalueリファレンス <a id="SS_6_15_2"></a>
 rvalueリファレンスは、
 
-*  C++11で導入されたシンタックスであり、任意の型Tに対して、`T&&`で宣言される。
-* 「テンポラリオブジェクト([rvalue](#SS_6_14_1_2))」をバインドできるリファレンス
-*  C++11の[moveセマンティクス](#SS_6_18_3)と[perfect forwarding](#SS_6_15_5)を実現するために導入された。
+* C++11で導入されたシンタックスであり、任意の型Tに対して、`T&&`で宣言される。
+* 「テンポラリオブジェクト([rvalue](#SS_6_14_1_2))」をバインドできるリファレンス。
+* C++11の[moveセマンティクス](#SS_6_18_3)と[perfect forwarding](#SS_6_15_5)を実現するために導入された。
+* **注意** rvalueリファレンス型の変数は、その型が`T&&`であっても、値カテゴリは[lvalue](#SS_6_14_1_1)である。
 
 ```cpp
     //  example/term_explanation/rvalue_lvalue_ut.cpp 87
 
     int        a      = 0;
-    int const& a_ref0 = a;        // const lvalueリファレンス
-    int const& a_ref1 = int(99);  // const lvalueリファレンスはrvalueをバインドできる
-    int&& a_ref2 = int(99);       // rvalueリファレンスはテンポラリオブジェクトをバインドできる
+    int const& a_ref0 = a;        // const lvalueリファレンスはlvalueをバインドできる
+    int const& a_ref1 = int{99};  // const lvalueリファレンスはrvalueもバインドできる
+    int&& a_ref2 = int{99};       // rvalueリファレンスはテンポラリオブジェクトをバインドできる
 
     ASSERT_EQ(a_ref1, 99);
     ASSERT_EQ(a_ref2, 99);
@@ -24301,13 +24356,51 @@ rvalueリファレンスは、
     int       a = 0;
     int const b = 0;
 
-    ASSERT_EQ(1, f(a));      // f-1の呼び出し
-    ASSERT_EQ(2, f(b));      // f-2の呼び出し、constなlvalueリファレンスのバインド
-    ASSERT_EQ(3, f(int{}));  // f-3の呼び出し、f-3が無ければ、f-2を呼び出すが
-    ASSERT_EQ(2, f(static_cast<int const&>(a)));  // strをconstリファレンスにキャストして、強制的にf-2の呼び出し
-    ASSERT_EQ(3, f(static_cast<int&&>(a)));       // strをrvalueリファレンスにキャストして、 強制的にf-3の呼び出し
+    ASSERT_EQ(1, f(a));                           // f-1の呼び出し
+    ASSERT_EQ(2, f(b));                           // f-2の呼び出し、constなlvalueリファレンスのバインド
+    ASSERT_EQ(3, f(int{}));                       // f-3の呼び出し(f-3が無ければ、f-2を呼ばれる)
+    ASSERT_EQ(2, f(static_cast<int const&>(a)));  // aをconstリファレンスにキャストして、強制的にf-2の呼び出し
+    ASSERT_EQ(3, f(static_cast<int&&>(a)));       // aをrvalueリファレンスにキャストして、強制的にf-3の呼び出し
     ASSERT_EQ(3, f(std::move(a)));                // f-3の呼び出し
+
+    int&& ref_ref = int{};
+
+    ASSERT_EQ(1, f(ref_ref));                     // f-3ではなくf-1を呼び出す。従って間違いなくこのテストはパスする
 ```
+
+上記コードの最後の部分の抜粋である以下のコードについては、少々解説が必要だろう。
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 127
+
+    int&& ref_ref = int{};
+
+    ASSERT_EQ(1, f(ref_ref));                     // f-3ではなくf-1を呼び出す。従って間違いなくこのテストはパスする
+```
+
+ref_refの型は`int &&`であるが、ref_refの値カテゴリは[rvalue](#SS_6_14_1_2)ではなく、[lvalue](#SS_6_14_1_1)である。
+そのため、`f(ref_ref)`はlvalueリファレンスを引数とするf-1が選択される。
+
+rvalueリファレンス型の仮引数（`T&&`）を持つ関数は、ムーブコンストラクタやムーブ代入演算子など頻繁に使用される。
+しかし、関数内では仮引数は名前を持つため、常にlvalueとして扱われる。
+この動作を理解することは、
+[moveセマンティクス](#SS_6_18_3)や[perfect forwarding](#SS_6_15_5)を正しく実装/使用するために極めて重要である。
+
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 136
+
+    int g(int&& a) { return f(a); }            // g-1    仮引数aはlvalue -> f-1が呼ばれる
+    int g(int& a) { return f(std::move(a)); }  // g-2    std::moveでrvalueに変換 -> f-3が呼ばれる
+```
+```cpp
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 144
+
+    ASSERT_EQ(1, g(int{}));  // int{}はrvalue -> g-1が呼ばれ、内部でf-1が呼ばれる
+
+    int a{};
+    ASSERT_EQ(3, g(a));  // aはlvalue -> g-2が呼ばれ、内部でf-3が呼ばれる
+```
+---
 
 C++11でrvalueの概念の整理やrvalueリファレンス、
 std::move()の導入が行われた目的はプログラム実行速度の向上である。

@@ -87,9 +87,9 @@ TEST(Expression, rvalue_ref1)
     // @@@ sample begin 2:0
 
     int        a      = 0;
-    int const& a_ref0 = a;        // const lvalueリファレンス
-    int const& a_ref1 = int(99);  // const lvalueリファレンスはrvalueをバインドできる
-    int&& a_ref2 = int(99);       // rvalueリファレンスはテンポラリオブジェクトをバインドできる
+    int const& a_ref0 = a;        // const lvalueリファレンスはlvalueをバインドできる
+    int const& a_ref1 = int{99};  // const lvalueリファレンスはrvalueもバインドできる
+    int&& a_ref2 = int{99};       // rvalueリファレンスはテンポラリオブジェクトをバインドできる
 
     ASSERT_EQ(a_ref1, 99);
     ASSERT_EQ(a_ref2, 99);
@@ -117,13 +117,37 @@ TEST(Expression, rvalue_ref2)
     int       a = 0;
     int const b = 0;
 
-    ASSERT_EQ(1, f(a));      // f-1の呼び出し
-    ASSERT_EQ(2, f(b));      // f-2の呼び出し、constなlvalueリファレンスのバインド
-    ASSERT_EQ(3, f(int{}));  // f-3の呼び出し、f-3が無ければ、f-2を呼び出すが
-    ASSERT_EQ(2, f(static_cast<int const&>(a)));  // strをconstリファレンスにキャストして、強制的にf-2の呼び出し
-    ASSERT_EQ(3, f(static_cast<int&&>(a)));       // strをrvalueリファレンスにキャストして、 強制的にf-3の呼び出し
+    ASSERT_EQ(1, f(a));                           // f-1の呼び出し
+    ASSERT_EQ(2, f(b));                           // f-2の呼び出し、constなlvalueリファレンスのバインド
+    ASSERT_EQ(3, f(int{}));                       // f-3の呼び出し(f-3が無ければ、f-2を呼ばれる)
+    ASSERT_EQ(2, f(static_cast<int const&>(a)));  // aをconstリファレンスにキャストして、強制的にf-2の呼び出し
+    ASSERT_EQ(3, f(static_cast<int&&>(a)));       // aをrvalueリファレンスにキャストして、強制的にf-3の呼び出し
     ASSERT_EQ(3, f(std::move(a)));                // f-3の呼び出し
+    // @@@ sample end
+    // @@@ sample begin 2:3
+
+    int&& ref_ref = int{};
+
+    ASSERT_EQ(1, f(ref_ref));                     // f-3ではなくf-1を呼び出す。従って間違いなくこのテストはパスする
     // @@@ sample end
     // clang-format on
 }
+
+// @@@ sample begin 2:4
+
+int g(int&& a) { return f(a); }            // g-1    仮引数aはlvalue -> f-1が呼ばれる
+int g(int& a) { return f(std::move(a)); }  // g-2    std::moveでrvalueに変換 -> f-3が呼ばれる
+// @@@ sample end
+
+TEST(Expression, rvalue_ref2_2)
+{
+    // @@@ sample begin 2:5
+
+    ASSERT_EQ(1, g(int{}));  // int{}はrvalue -> g-1が呼ばれ、内部でf-1が呼ばれる
+
+    int a{};
+    ASSERT_EQ(3, g(a));  // aはlvalue -> g-2が呼ばれ、内部でf-3が呼ばれる
+    // @@@ sample end
+}
+
 }  // namespace ref_pattern3
