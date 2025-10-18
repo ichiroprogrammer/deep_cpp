@@ -31,7 +31,7 @@ public:
     explicit X(std::unique_ptr<A>&& ptr) : ptr_{std::move(ptr)} {}
 
     // ptrからptr_へ所有権の移動
-    void Move(std::unique_ptr<A>&& ptr) noexcept { ptr_ = std::move(ptr); }
+    void MoveFrom(std::unique_ptr<A>&& ptr) noexcept { ptr_ = std::move(ptr); }
 
     // ptr_から外部への所有権の移動
     std::unique_ptr<A> Release() noexcept { return std::move(ptr_); }
@@ -79,9 +79,9 @@ TEST(UniqueOwnership, move)
     // xは以前保持していたA{0}オブジェクトへのポインタをdeleteするため
     // (std::unique_ptrによる自動delete)、A::LastDestructedNum()の値が0になる。
     ASSERT_EQ(1, a1->GetNum());                 // a1はA{1}を所有
-    x.Move(std::move(a1));                      // xによるA{0}の解放
+    x.MoveFrom(std::move(a1));                  // xによるA{0}の解放
                                                 // a1からxへA{1}の所有権の移動
-                                                // Moveの処理は ptr_ = std::move(a1)
+                                                // MoveFromの処理は ptr_ = std::move(a1)
     ASSERT_EQ(0, A::LastDestructedNum());       // A{0}は解放された
     ASSERT_FALSE(a1);                           // a1は何も所有していない
     ASSERT_EQ(1, x.GetA()->GetNum());           // xはA{1}を所有

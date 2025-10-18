@@ -83,23 +83,26 @@ namespace ref_pattern2 {
 
 TEST(Expression, rvalue_ref1)
 {
+    // clang-format off
     // @@@ sample begin 2:0
 
     int        a      = 0;
     int const& a_ref0 = a;        // const lvalueリファレンス
     int const& a_ref1 = int(99);  // const lvalueリファレンスはrvalueをバインドできる
-    int&& a_ref2 = int(99);  // rvalueリファレンスはテンポラリオブジェクトをバインドできる
+    int&& a_ref2 = int(99);       // rvalueリファレンスはテンポラリオブジェクトをバインドできる
 
     ASSERT_EQ(a_ref1, 99);
     ASSERT_EQ(a_ref2, 99);
     // @@@ sample end
+    // clang-format on
     ASSERT_EQ(a_ref0, 0);
 }
-// clang-format off
-// @@@ sample begin 2:1
 }  // namespace ref_pattern2
 
 namespace ref_pattern3 {
+// clang-format off
+// @@@ sample begin 2:1
+
 int f(int&)       { return 1; } // f-1
 int f(int const&) { return 2; } // f-2
 int f(int&&)      { return 3; } // f-3

@@ -107,7 +107,7 @@ TEST(ExpTerm, thread)
 }
 }  // namespace lock_guard
 
-namespace {
+namespace unique_lock {
 
 // @@@ sample begin 2:0
 
@@ -199,4 +199,85 @@ TEST(ExpTerm, thread)
     ASSERT_EQ(push_count_max, pop_count);
     // @@@ sample end
 }
-}  // namespace
+}  // namespace unique_lock
+
+namespace scoped_lock {
+// @@@ sample begin 3:0
+
+class BankAccount {
+public:
+    explicit BankAccount(int balance) : balance_{balance} {}
+    // @@@ sample end
+    // @@@ sample begin 3:1
+
+    void transfer_ng(BankAccount& to, int amount)
+    {
+        std::lock_guard<std::mutex> lock1{mtx_};     // 自分のアカウントをロック
+        std::lock_guard<std::mutex> lock2{to.mtx_};  // 相手のアカウントをロック
+        // NG: 異なるスレッドが異なる順序でロックを取得するとデッドロックの可能性
+
+        if (balance_ >= amount) {
+            balance_ -= amount;
+            to.balance_ += amount;
+        }
+    }
+    // @@@ sample end
+    // @@@ sample begin 3:2
+
+    void transfer_ok(BankAccount& to, int amount)
+    {
+        std::scoped_lock lock{mtx_, to.mtx_};  // 複数のmutexを安全にロック
+        // デッドロック回避アルゴリズムにより、常に同じ順序でロックを取得
+
+        if (balance_ >= amount) {
+            balance_ -= amount;
+            to.balance_ += amount;
+        }
+    }
+    // @@@ sample end
+    // @@@ sample begin 3:3
+
+    int balance() const
+    {
+        std::lock_guard<std::mutex> lock{mtx_};
+        return balance_;
+    }
+
+private:
+    mutable std::mutex mtx_{};
+    int                balance_;
+};
+// @@@ sample end
+
+TEST(ExpTerm, scoped_lock)
+{
+    // @@@ sample begin 3:4
+
+    BankAccount acc1{1000};
+    BankAccount acc2{1000};
+
+    constexpr int transfer_amount = 100;
+    constexpr int transfer_count  = 10;
+
+    // スレッド1: acc1 → acc2 へ送金
+    std::thread t1([&acc1, &acc2] {
+        for (int i = 0; i < transfer_count; ++i) {
+            acc1.transfer_ok(acc2, transfer_amount);
+        }
+    });
+
+    // スレッド2: acc2 → acc1 へ送金
+    std::thread t2([&acc2, &acc1] {
+        for (int i = 0; i < transfer_count; ++i) {
+            acc2.transfer_ok(acc1, transfer_amount);
+        }
+    });
+
+    t1.join();
+    t2.join();
+
+    // 総額は変わらない
+    ASSERT_EQ(acc1.balance() + acc2.balance(), 2000);
+    // @@@ sample end
+}
+}  // namespace scoped_lock
