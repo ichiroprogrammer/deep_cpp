@@ -378,14 +378,15 @@ TEST(Semantics, copy_semantics)
 
 // @@@ sample begin 8:0
 
-class NotRecommended {
+class IneffcientMove {
 public:
-    NotRecommended(char const* name) : name_{name} {}
+    IneffcientMove(char const* name) : name_{name} {}
     std::string const& Name() const noexcept { return name_; }
 
-    NotRecommended& operator=(NotRecommended&& rhs)  // move代入、非no-fail保証
+    IneffcientMove& operator=(IneffcientMove&& rhs)  // move代入、noexceptなし(非推奨)
     {
-        name_ = rhs.name_;  // rhs.name_からname_へのcopy代入。パフォーマンス問題になるかも。
+        name_ = rhs.name_;  // NG: rhs.name_をcopy代入している
+                            //     std::move(rhs.name_)を使うべき
         return *this;
     }
 
@@ -393,34 +394,35 @@ private:
     std::string name_;
 };
 
-bool operator==(NotRecommended const& lhs, NotRecommended const& rhs) noexcept { return lhs.Name() == rhs.Name(); }
+bool operator==(IneffcientMove const& lhs, IneffcientMove const& rhs) noexcept { return lhs.Name() == rhs.Name(); }
 
 TEST(Semantics, move1)
 {
-    auto a = NotRecommended{"a"};
-    auto b = NotRecommended{"a"};
+    auto a = IneffcientMove{"a"};
+    auto b = IneffcientMove{"a"};
 
     ASSERT_EQ("a", a.Name());
     ASSERT_TRUE(a == b);
 
-    auto c = NotRecommended{"c"};
+    auto c = IneffcientMove{"c"};
     ASSERT_EQ("c", c.Name());
 
     c = std::move(a);
-    ASSERT_TRUE(b == c);  // 一応、moveセマンティクスは守っているが・・・
+    ASSERT_TRUE(b == c);  // 意味的には正しいが、内部でcopyが発生している(非効率)
 }
 
 // @@@ sample end
 // @@@ sample begin 8:1
 
-class Recommended {
+class EfficientMove {
 public:
-    Recommended(char const* name) : name_{name} {}
+    EfficientMove(char const* name) : name_{name} {}
     std::string const& Name() const noexcept { return name_; }
 
-    Recommended& operator=(Recommended&& rhs) noexcept  // move代入、no-fail保証
+    EfficientMove& operator=(EfficientMove&& rhs) noexcept  // move代入、no-fail保証
     {
-        name_ = std::move(rhs.name_);  // rhs.name_からname_へのmove代入
+        name_ = std::move(rhs.name_);  // OK: rhs.name_からname_へのmove代入
+                                       //     リソース(文字列バッファ)をmove
         return *this;
     }
 
@@ -428,21 +430,21 @@ private:
     std::string name_;
 };
 
-bool operator==(Recommended const& lhs, Recommended const& rhs) noexcept { return lhs.Name() == rhs.Name(); }
+bool operator==(EfficientMove const& lhs, EfficientMove const& rhs) noexcept { return lhs.Name() == rhs.Name(); }
 
 TEST(Semantics, move2)
 {
-    auto a = Recommended{"a"};
-    auto b = Recommended{"a"};
+    auto a = EfficientMove{"a"};
+    auto b = EfficientMove{"a"};
 
     ASSERT_EQ("a", a.Name());
     ASSERT_TRUE(a == b);
 
-    auto c = Recommended{"c"};
+    auto c = EfficientMove{"c"};
     ASSERT_EQ("c", c.Name());
 
-    c = std::move(a);     // これ以降aは使ってはならない
-    ASSERT_TRUE(b == c);  // moveセマンティクスを正しく守っている
+    c = std::move(a);     // これ以降aは使ってはならない（aは不定状態）
+    ASSERT_TRUE(b == c);  // moveセマンティクスを正しく守り、かつ効率的
 }
 
 // @@@ sample end
