@@ -24346,7 +24346,7 @@ rvalueリファレンスは、
 
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 110
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 120
 
     int f(int&)       { return 1; } // f-1
     int f(int const&) { return 2; } // f-2
@@ -24354,7 +24354,7 @@ rvalueリファレンスは、
 ```
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 121
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 131
 
     int       a = 0;
     int const b = 0;
@@ -24374,7 +24374,7 @@ rvalueリファレンスは、
 上記コードの最後の部分の抜粋である以下のコードについては、少々解説が必要だろう。
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 133
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 143
 
     int&& ref_ref = int{};
 
@@ -24390,13 +24390,13 @@ rvalueリファレンス型の仮引数（`T&&`）を持つ関数は、ムーブ
 [moveセマンティクス](#SS_6_18_3)や[perfect forwarding](#SS_6_15_5)を正しく実装/使用するために極めて重要である。
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 142
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 152
 
     int g(int&& a) { return f(a); }            // g-1    仮引数aはlvalue -> f-1が呼ばれる
     int g(int& a) { return f(std::move(a)); }  // g-2    std::moveでrvalueに変換 -> f-3が呼ばれる
 ```
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 150
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 160
 
     ASSERT_EQ(1, g(int{}));  // int{}はrvalue -> g-1が呼ばれ、内部でf-1が呼ばれる
 

@@ -102,6 +102,16 @@ TEST(Expression, rvalue_ref1)
     ASSERT_EQ(a_ref2, 99);
     ASSERT_EQ(a_ref3, 99);
     // ASSERT_EQ(a_ref4, 99);
+    int&& a_ref4 = a_ref2;           以下のメッセージでコンパイルエラー
+                                     cannot bind rvalue reference of type ‘int&&’ to lvalue of type ‘int’ */
+
+    ASSERT_EQ(a_ref1, 99);
+    ASSERT_EQ(a_ref2, 99);
+    ASSERT_EQ(a_ref3, 99);
+    // @@@ sample end
+    // clang-format on
+    ASSERT_EQ(a_ref0, 0);
+    //ASSERT_EQ(a_ref4, 99);
 }
 }  // namespace ref_pattern2
 
