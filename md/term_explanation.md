@@ -2214,6 +2214,180 @@ std::forwardは、下記の２つの概念を実現するための関数テン�
 std::forwardを適切に使用することで、引数の値カテゴリを保持したまま転送でき、
 move可能なオブジェクトの不要なコピーを避けることができる。
 
+### type_traits
+type_traitsは、型に関する情報をコンパイル時に取得・変換するためのメタ関数群で、
+型特性の判定や型操作を静的に行うために用いられる。
+
+以下に代表的なものをいくつか説明する。
+
+- [std::integral_constant](---)
+- [std::true_type](---)/[std::false_type](---)
+- [std::is_same](---)
+- [std::enable_if](---)
+- [std::conditional](---)
+- [std::is_void](---)
+
+
+#### std::integral_constant
+std::integral_constantは「テンプレートパラメータとして与えられた型とその定数から新たな型を定義する」
+クラステンプレートである。
+
+以下に簡単な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #0:0 begin -1
+```
+
+また、すでに示したようにstd::true_type/std::false_typeを実装するためのクラステンプレートでもある。
+
+
+#### std::true_type
+`std::true_type`(と`std::false_type`)は真/偽を返すSTL[メタ関数](---)群の戻り型となる型エイリアスであるため、
+最も使われるテンプレートの一つである。
+
+これらは、下記で確かめられる通り、後述する[std::integral_constant](---)を使い定義されている。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #1:0 begin -1
+```
+
+それぞれの型が持つvalue定数は、下記のように定義されている。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #1:1 begin -1
+```
+
+これらが何の役に立つのか直ちに理解することは難しいが、
+true/falseのメタ関数版と考えれば、追々理解できるだろう。
+
+以下に簡単な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #1:2 begin
+```
+
+上記の単体テストは下記のようになる。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #1:3 begin -1
+```
+
+IsCovertibleToIntの呼び出しをdecltypeのオペランドにすることで、
+std::true_typeかstd::false_typeを受け取ることができる。
+
+#### std::false_type
+[std::true_type](---)を参照せよ。
+
+#### std::is_same
+
+すでに上記の例でも使用したが、std::is_sameは2つのテンプレートパラメータが
+
+* 同じ型である場合、std::true_type
+* 違う型である場合、std::false_type
+
+から派生した型となる。
+
+以下に簡単な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #3:0 begin -1
+```
+
+また、 C++17で導入されたstd::is_same_vは、定数テンプレートを使用し、
+下記のように定義されている。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #3:1 begin
+```
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #3:2 begin -1
+```
+
+このような簡潔な記述の一般形式は、
+
+```
+   T::value  -> T_v
+   T::type   -> T_t
+```
+
+のように定義されている(このドキュメントのほとんど場所では、簡潔な形式を用いる)。
+
+第1テンプレートパラメータが第2テンプレートパラメータの基底クラスかどうかを判断する
+std::is_base_ofを使うことで下記のようにstd::is_sameの基底クラス確認することもできる。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #3:3 begin -1
+```
+
+#### std::enable_if
+std::enable_ifは、bool値である第1テンプレートパラメータが
+
+* trueである場合、型である第2テンプレートパラメータをメンバ型typeとして宣言する。
+* falseである場合、メンバ型typeを持たない。
+
+下記のコードはクラステンプレートの特殊化を用いたstd::enable_ifの実装例である。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #4:0 begin
+```
+
+std::enable_ifの使用例を下記に示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #4:1 begin -1
+```
+
+実装例から明らかなように
+
+* std::enable_if\<true>::typeは[well-formed](---)
+* std::enable_if\<false>::typeは[ill-formed](---)
+
+となるため、下記のコードはコンパイルできない。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #4:2 begin -1
+```
+
+std::enable_ifのこの特性と後述する[SFINAE](---)により、
+様々な静的ディスパッチを行うことができる。
+
+
+#### std::conditional
+
+std::conditionalは、bool値である第1テンプレートパラメータが
+
+* trueである場合、第2テンプレートパラメータ
+* falseである場合、第3テンプレートパラメータ
+
+をメンバ型typeとして宣言する。
+
+下記のコードはクラステンプレートの特殊化を用いたstd::conditionalの実装例である。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #5:0 begin
+```
+
+std::conditionalの使用例を下記に示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #5:1 begin -1
+```
+
+#### std::is_void
+std::is_voidはテンプレートパラメータの型が
+
+* voidである場合、std::true_type
+* voidでない場合、std::false_type
+
+から派生した型となる。
+
+以下に簡単な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #2:0 begin -1
+```
+
 
 ### 並列処理
 
@@ -3245,6 +3419,11 @@ XXXの識別子が使用できる。
 即時にコンパイルエラーとはせず、置き換えに失敗したテンプレートを
 [name lookup](---)の候補から除外する」
 という言語機能である。
+
+### メタ関数
+メタ関数とは、型を引数として型または値を返すテンプレートのことを指す。
+通常の関数が実行時に値を返すのに対し、メタ関数はコンパイル時に型情報を生成または変換する。
+主要なメタ関数は標準ライブラリの[type_traits](---)で定義されている。
 
 ### コンセプト
 C++17までのテンプレートには以下のような問題があった。

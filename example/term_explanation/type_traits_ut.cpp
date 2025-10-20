@@ -8,16 +8,35 @@
 namespace {
 namespace TypeTraits {
 
-TEST(Template, true_false_type)
+TEST(Template, type_traits_integral_constant)
 {
     // @@@ sample begin 0:0
+
+    using int3 = std::integral_constant<int, 3>;
+
+    // std::is_same_vの2パラメータが同一であれば、std::is_same_v<> == true
+    static_assert(std::is_same_v<int, int3::value_type>);
+    static_assert(std::is_same_v<std::integral_constant<int, 3>, int3::type>);
+    static_assert(int3::value == 3);
+
+    using bool_true = std::integral_constant<bool, true>;
+
+    static_assert(std::is_same_v<bool, bool_true::value_type>);
+    static_assert(std::is_same_v<std::integral_constant<bool, true>, bool_true::type>);
+    static_assert(bool_true::value == true);
+    // @@@ sample end
+}
+
+TEST(Template, true_false_type)
+{
+    // @@@ sample begin 1:0
 
     // std::is_same_vの2パラメータが同一であれば、std::is_same_v<> == true
     static_assert(std::is_same_v<std::integral_constant<bool, true>, std::true_type>);
     static_assert(std::is_same_v<std::integral_constant<bool, false>, std::false_type>);
     // @@@ sample end
 
-    // @@@ sample begin 0:1
+    // @@@ sample begin 1:1
 
     static_assert(std::true_type::value, "must be true");
     static_assert(!std::false_type::value, "must be false");
@@ -26,7 +45,7 @@ TEST(Template, true_false_type)
 
 SUPPRESS_WARN_BEGIN;
 SUPPRESS_WARN_UNUSED_FUNC;
-// @@@ sample begin 0:2
+// @@@ sample begin 1:2
 
 // 引数の型がintに変換できるかどうかを判定する関数
 // decltypeの中でのみ使用されるため、定義は不要
@@ -37,7 +56,7 @@ SUPPRESS_WARN_BEGIN;
 
 TEST(Template, true_false_type2)
 {
-    // @@@ sample begin 0:3
+    // @@@ sample begin 1:3
 
     static_assert(decltype(IsCovertibleToInt(1))::value);
     static_assert(decltype(IsCovertibleToInt(1u))::value);
@@ -54,25 +73,6 @@ TEST(Template, true_false_type2)
 
     // なお、IsCovertibleToInt()やConvertibleToInt::operator int()は実際に呼び出されるわけでは
     // ないため、定義は必要なく宣言のみがあれば良い。
-    // @@@ sample end
-}
-
-TEST(Template, type_traits_integral_constant)
-{
-    // @@@ sample begin 1:0
-
-    using int3 = std::integral_constant<int, 3>;
-
-    // std::is_same_vの2パラメータが同一であれば、std::is_same_v<> == true
-    static_assert(std::is_same_v<int, int3::value_type>);
-    static_assert(std::is_same_v<std::integral_constant<int, 3>, int3::type>);
-    static_assert(int3::value == 3);
-
-    using bool_true = std::integral_constant<bool, true>;
-
-    static_assert(std::is_same_v<bool, bool_true::value_type>);
-    static_assert(std::is_same_v<std::integral_constant<bool, true>, bool_true::type>);
-    static_assert(bool_true::value == true);
     // @@@ sample end
 }
 
@@ -194,3 +194,4 @@ TEST(Template, type_traits_conditional)
 }
 }  // namespace TypeTraits
 }  // namespace
+
