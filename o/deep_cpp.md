@@ -5826,7 +5826,7 @@ __この章の構成__
 &emsp;&emsp; [ログ取得ライブラリの開発](#SS_4_1)  
 &emsp;&emsp;&emsp; [要件](#SS_4_1_1)  
 &emsp;&emsp;&emsp; [ログ取得ライブラリのインターフェース](#SS_4_1_2)  
-&emsp;&emsp;&emsp; [パラメータパック](#SS_4_1_3)  
+&emsp;&emsp;&emsp; [パラメータパックを使用したテクニック](#SS_4_1_3)  
 &emsp;&emsp;&emsp; [Loggerの実装](#SS_4_1_4)  
 &emsp;&emsp;&emsp; [ユーザ定義型とそのoperator\<\<のname lookup](#SS_4_1_5)  
 &emsp;&emsp;&emsp; [Ints_tのログ登録](#SS_4_1_6)  
@@ -5946,11 +5946,10 @@ C言語プログラミングばかりをやりすぎて、
 「人は一昨日も行ったことを昨日も行ったという理由で、今日もそれを行う」
 という諺を思い出すと気持ちは分からなくもないが、 
 C++ではprintf(...)のような危険な可変長引数を取る関数を作ってはならない。
-パラメータパックを使って実装するべきである。
+[パラメータパック](#SS_6_11_3)を使って実装するべきである。
 
-### パラメータパック <a id="SS_4_1_3"></a>
-C++11で導入されたパラメータパックはやや複雑なシンタックスを持つため、
-まずは単純な例から説明する。
+### パラメータパックを使用したテクニック <a id="SS_4_1_3"></a>
+[パラメータパック](#SS_6_11_3)を使用するには独特なテクニックが必要となるため、まずは単純な例から説明する。
 
 次のような単体テストをパスする関数テンプレートsumをパラメータパックで実装することを考える。
 
@@ -8401,7 +8400,7 @@ is_same_sfinae_sは定数テンプレートであり、same_asはコンセプト
 IsSameSomeOfはこれまでの例とは少々異なり、
 
 * 第1パラメータが第2パラメータ以降で指定された型のどれかと一致する
-  SameAsSomeOfという名前の[コンセプト](#SS_6_11_2)を[畳み込み式](#SS_6_11_3)を使用し定義する
+  SameAsSomeOfという名前の[コンセプト](#SS_6_11_2)を[畳み込み式](#SS_6_11_4)を使用し定義する
 * SameAsSomeOfで制約したテンプレートパラメータをstd::bool_constantからIsSameSomeOfを派生させる
 
 のような特徴のを持つ。
@@ -8467,7 +8466,7 @@ Usが複数だった場合、[畳み込み式](--)を使用し上記の処理を
 
 #### OneOf <a id="SS_4_3_3_9"></a>
 OneOfは、[IsSameSomeOf](#SS_4_3_3_8)同様の機能を持つコンセプトである。
-OneOfの実装にはシンプルに記述するための[畳み込み式](#SS_6_11_3)を使用した。
+OneOfの実装にはシンプルに記述するための[畳み込み式](#SS_6_11_4)を使用した。
 
 ```cpp
     //  h/nstd_concepts.h 52
@@ -11649,7 +11648,7 @@ std::vector\<std::string>へのオブジェクトの挿入は、文字列リテ�
 ```
 
 上記のgen_vectorはリカーシブコールを使って実装したが、
-[畳み込み式](#SS_6_11_3)を使用した下記の実装の方がより明確である。
+[畳み込み式](#SS_6_11_4)を使用した下記の実装の方がより明確である。
 
 ```cpp
     //  example/template_cpp17/universal_ref_ut.cpp 209
@@ -11809,7 +11808,7 @@ C++14からは下記のコードで示した通り引数にautoが使えるよ�
     ASSERT_EQ("0/1/2, 3/2/1, 6/5/4, 9/8/7", oss.str());
 ```
 
-この記法は[ジェネリックラムダ](#SS_6_11_4)と呼ばれる。
+この記法は[ジェネリックラムダ](#SS_6_11_5)と呼ばれる。
 この機能により関数の中で関数テンプレートと同等のものが定義できるようになった。
 
 #### ジェネリックラムダの内部構造 <a id="SS_4_7_2_1"></a>
@@ -13562,7 +13561,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 * 関数型マクロはそれ以外に実装方法がない時のみに使用する
   。
 
-* 可変長引数を持つ関数の実装には[パラメータパック](#SS_4_1_3)を使う。
+* 可変長引数を持つ関数の実装には[パラメータパック](#SS_6_11_3)を使う。
 
 * 処理速度や関数のリターンの型に影響する場合があるため、
   パラメータパックの処理の順番に気を付ける(「[前から演算するパラメータパック](#SS_4_1_3_2)」参照)。
@@ -15449,15 +15448,16 @@ __この章の構成__
 &emsp;&emsp; [template強化機能](#SS_6_11)  
 &emsp;&emsp;&emsp; [SFINAE](#SS_6_11_1)  
 &emsp;&emsp;&emsp; [コンセプト](#SS_6_11_2)  
-&emsp;&emsp;&emsp; [畳み込み式](#SS_6_11_3)  
-&emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_6_11_4)  
-&emsp;&emsp;&emsp; [クラステンプレートのテンプレート引数の型推論](#SS_6_11_5)  
-&emsp;&emsp;&emsp; [テンプレートの型推論ガイド](#SS_6_11_6)  
-&emsp;&emsp;&emsp; [CTAD(Class Template Argument Deduction)](#SS_6_11_7)  
-&emsp;&emsp;&emsp; [変数テンプレート](#SS_6_11_8)  
-&emsp;&emsp;&emsp; [エイリアステンプレート](#SS_6_11_9)  
-&emsp;&emsp;&emsp; [constexpr if文](#SS_6_11_10)  
-&emsp;&emsp;&emsp; [autoパラメータによる関数テンプレートの簡易定義](#SS_6_11_11)  
+&emsp;&emsp;&emsp; [パラメータパック](#SS_6_11_3)  
+&emsp;&emsp;&emsp; [畳み込み式](#SS_6_11_4)  
+&emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_6_11_5)  
+&emsp;&emsp;&emsp; [クラステンプレートのテンプレート引数の型推論](#SS_6_11_6)  
+&emsp;&emsp;&emsp; [テンプレートの型推論ガイド](#SS_6_11_7)  
+&emsp;&emsp;&emsp; [CTAD(Class Template Argument Deduction)](#SS_6_11_8)  
+&emsp;&emsp;&emsp; [変数テンプレート](#SS_6_11_9)  
+&emsp;&emsp;&emsp; [エイリアステンプレート](#SS_6_11_10)  
+&emsp;&emsp;&emsp; [constexpr if文](#SS_6_11_11)  
+&emsp;&emsp;&emsp; [autoパラメータによる関数テンプレートの簡易定義](#SS_6_11_12)  
 
 &emsp;&emsp; [型推論](#SS_6_12)  
 &emsp;&emsp;&emsp; [AAAスタイル](#SS_6_12_1)  
@@ -17184,7 +17184,7 @@ C++11以前で定数を定義する方法は、
     static_assert(templ.value == 5);
 ```
 
-constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_11_10)することで、
+constexpr定数がif文のオカレンスになる場合、[constexpr if文](#SS_6_11_11)することで、
 [ill-formed](#SS_6_19_5)を使用した場合分けが可能になる。
 
 
@@ -20261,7 +20261,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 * キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
 * ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
 * [constexprラムダ](#SS_6_4_7)とはクロージャ型の[constexprインスタンス](#SS_6_4_5)。
-* [ジェネリックラムダ](#SS_6_11_4)とは、C++11のラムダ式を拡張して、
+* [ジェネリックラムダ](#SS_6_11_5)とは、C++11のラムダ式を拡張して、
   パラメータにautoを使用(型推測)できるようにした機能。
 
 ```cpp
@@ -22731,7 +22731,49 @@ C++20から導入された「コンセプト(concepts)」は、
 
 ```
 
-### 畳み込み式 <a id="SS_6_11_3"></a>
+### パラメータパック <a id="SS_6_11_3"></a>
+パラメータパック(parameter pack)は、可変長テンプレート引数を表現するためにC++11で導入されたシンタックスである。
+テンプレートの定義時に、任意個数のテンプレート引数または関数引数をまとめて受け取ることができる。
+
+パラメータパックのシンタックスは以下のようなものである。
+
+* `typename... Args` - テンプレートパラメータパック
+* `Args... args` - 関数パラメータパック
+* `args...` - パック展開（pack expansion）
+* `sizeof...(args)` - パック内の要素数を取得
+
+パラメータパックを使用した関数テンプレートは以下のように定義する。
+
+```cpp
+    //  example/term_explanation/template_ut.cpp 70
+
+    void print(std::ostream& os) { os << std::endl; }
+
+    template <typename HEAD, typename... TAIL>
+    int print(std::ostream& os, HEAD head, TAIL... tail)
+    {
+        os << head;
+        print(os, tail...);  // 残りの引数を再帰的に処理
+
+        return 1 + sizeof...(tail);  // headの1個 + tailの個数 = 全パラメータ数
+                                     // sizeof...(tail)はパック内の要素数
+    }
+```
+
+以下の単体テストは上記の関数の使い方を示している。
+
+```cpp
+    //  example/term_explanation/template_ut.cpp 87
+
+    std::stringstream os;
+
+    auto parameter_pack_count = print(os, 1, "-", "c_str-", std::string{"std::string"});
+
+    ASSERT_EQ("1-c_str-std::string\n", os.str());
+    ASSERT_EQ(4, parameter_pack_count);
+```
+
+### 畳み込み式 <a id="SS_6_11_4"></a>
 畳み式(fold expression)とは、C++17から導入された新機能であり、
 可変引数テンプレートのパラメータパックに対して二項演算を累積的に行うためのものである。
 
@@ -22895,7 +22937,7 @@ C++20から導入された「コンセプト(concepts)」は、
     static_assert(is_same_some_of<std::string, std::string, int>::value);
 ```
 
-### ジェネリックラムダ <a id="SS_6_11_4"></a>
+### ジェネリックラムダ <a id="SS_6_11_5"></a>
 ジェネリックラムダとは、C++11のラムダ式のパラメータの型にautoを指定できるようにした機能で、
 C++14で導入された。
 
@@ -22955,7 +22997,7 @@ C++14で導入された。
     }
 ```
 
-### クラステンプレートのテンプレート引数の型推論 <a id="SS_6_11_5"></a>
+### クラステンプレートのテンプレート引数の型推論 <a id="SS_6_11_6"></a>
 C++17から、
 「コンストラクタに渡される値によって、クラステンプレートのテンプレート引数を推論する」
 機能が導入された。
@@ -22963,7 +23005,7 @@ C++17から、
 この機能がないC++14までは以下のように記述する必要があった。
 
 ```cpp
-    //  example/term_explanation/template_ut.cpp 13
+    //  example/term_explanation/template_ut.cpp 14
 
     auto a = std::vector<int>{1, 2, 3};
 
@@ -22973,21 +23015,21 @@ C++17から、
 これに対して、この機能により、以下のようにシンプルに記述できるようになった。
 
 ```cpp
-    //  example/term_explanation/template_ut.cpp 24
+    //  example/term_explanation/template_ut.cpp 25
 
     auto a = std::vector{1, 2, 3};
 
     static_assert(std::is_same_v<decltype(a), std::vector<int>>);  // テンプレート引数がintと推論
 ```
 
-### テンプレートの型推論ガイド <a id="SS_6_11_6"></a>
-テンプレートの型推論ガイド([CTAD(Class Template Argument Deduction)](#SS_6_11_7))は、
+### テンプレートの型推論ガイド <a id="SS_6_11_7"></a>
+テンプレートの型推論ガイド([CTAD(Class Template Argument Deduction)](#SS_6_11_8))は、
 C++17で導入された機能である。この機能により、
 クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
 引数から自動的に型を推論できるようになる。型推論ガイドを使用することで、
 コードの可読性と簡潔性が向上する。
 
-型推論ガイドがない場合、[クラステンプレートのテンプレート引数の型推論](#SS_6_11_5)は限定的であり、
+型推論ガイドがない場合、[クラステンプレートのテンプレート引数の型推論](#SS_6_11_6)は限定的であり、
 明示的にテンプレート引数を指定する必要がある場合が多い。
 一方、型推論ガイドを使用することで、
 コンストラクタの引数からテンプレート引数を自動的に決定することが可能になる。
@@ -23045,14 +23087,14 @@ C++17で導入された機能である。この機能により、
     // S    s4 = 1.0;  // S<double>のコンストラクタがexplicitであるため
 ```
 
-### CTAD(Class Template Argument Deduction) <a id="SS_6_11_7"></a>
-CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論ガイド](#SS_6_11_6)のことである。
+### CTAD(Class Template Argument Deduction) <a id="SS_6_11_8"></a>
+CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論ガイド](#SS_6_11_7)のことである。
 
-### 変数テンプレート <a id="SS_6_11_8"></a>
+### 変数テンプレート <a id="SS_6_11_9"></a>
 変数テンプレートとは、下記のコード示したような機能である。
 
 ```cpp
-    //  example/term_explanation/template_ut.cpp 32
+    //  example/term_explanation/template_ut.cpp 33
 
     template <typename T>
     struct is_void {
@@ -23080,12 +23122,12 @@ CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論�
 「定数テンプレート」ではなく変数テンプレートである。
 
 
-### エイリアステンプレート <a id="SS_6_11_9"></a>
+### エイリアステンプレート <a id="SS_6_11_10"></a>
 エイリアステンプレート(alias templates)とはC++11から導入され、
 下記のコード例で示したようにテンプレートによって型の別名を定義する機能である。
 
 ```cpp
-    //  example/term_explanation/template_ut.cpp 56
+    //  example/term_explanation/template_ut.cpp 57
 
     using IntVector = std::vector<int>;  // std::vector<int> のエイリアスを定義
 
@@ -23095,7 +23137,7 @@ CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論�
     static_assert(std::is_same_v<IntVector, Vec<int>>);  // Vec<int> == std::vector<int>
 ```
 
-### constexpr if文 <a id="SS_6_11_10"></a>
+### constexpr if文 <a id="SS_6_11_11"></a>
 C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/if_constexpr.html)とは、
 文を条件付きコンパイルすることができるようにするための制御構文である。
 
@@ -23168,7 +23210,7 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
     }
 ```
 
-この構文は[パラメータパック](#SS_4_1_3)の展開においても有用な場合がある。
+この構文は[パラメータパック](#SS_6_11_3)の展開においても有用な場合がある。
 
 ```cpp
     //  example/term_explanation/constexpr_if_ut.cpp 93
@@ -23214,7 +23256,7 @@ constexpr ifを使用することで、やや単純に記述できる。
     }
 ```
 
-### autoパラメータによる関数テンプレートの簡易定義 <a id="SS_6_11_11"></a>
+### autoパラメータによる関数テンプレートの簡易定義 <a id="SS_6_11_12"></a>
 この機能は、C++20から導入された。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
@@ -23638,7 +23680,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 C++14から導入された機能で、関数の戻り値の型をautoキーワードで宣言することで、
 コンパイラがreturn文から自動的に型を推論してくれる機能である。
 これにより、複雑な型の戻り値を持つ関数でも、より簡潔に記述できるようになる
-(「[autoパラメータによる関数テンプレートの簡易定義](#SS_6_11_11)」を参照)。
+(「[autoパラメータによる関数テンプレートの簡易定義](#SS_6_11_12)」を参照)。
 
 ```cpp
     //  example/term_explanation/decltype_ut.cpp 114
@@ -24346,7 +24388,7 @@ rvalueリファレンスは、
 
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 120
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 118
 
     int f(int&)       { return 1; } // f-1
     int f(int const&) { return 2; } // f-2
@@ -24354,7 +24396,7 @@ rvalueリファレンスは、
 ```
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 131
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 129
 
     int       a = 0;
     int const b = 0;
@@ -24374,7 +24416,7 @@ rvalueリファレンスは、
 上記コードの最後の部分の抜粋である以下のコードについては、少々解説が必要だろう。
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 143
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 141
 
     int&& ref_ref = int{};
 
@@ -24390,13 +24432,13 @@ rvalueリファレンス型の仮引数（`T&&`）を持つ関数は、ムーブ
 [moveセマンティクス](#SS_6_18_3)や[perfect forwarding](#SS_6_15_5)を正しく実装/使用するために極めて重要である。
 
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 152
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 150
 
     int g(int&& a) { return f(a); }            // g-1    仮引数aはlvalue -> f-1が呼ばれる
     int g(int& a) { return f(std::move(a)); }  // g-2    std::moveでrvalueに変換 -> f-3が呼ばれる
 ```
 ```cpp
-    //  example/term_explanation/rvalue_lvalue_ut.cpp 160
+    //  example/term_explanation/rvalue_lvalue_ut.cpp 158
 
     ASSERT_EQ(1, g(int{}));  // int{}はrvalue -> g-1が呼ばれ、内部でf-1が呼ばれる
 
@@ -24532,7 +24574,7 @@ forwardingリファレンスは一見rvalueリファレンスのように見え�
     g(std::vector<std::string>{"rvalue"});  // 引数はrvalue
 ```
 
-下記のコードは[ジェネリックラムダ](#SS_6_11_4)の引数をforwardingリファレンスにした例である。
+下記のコードは[ジェネリックラムダ](#SS_6_11_5)の引数をforwardingリファレンスにした例である。
 
 ```cpp
     //  example/term_explanation/universal_ref_ut.cpp 47

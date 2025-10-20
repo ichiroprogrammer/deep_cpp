@@ -1,3 +1,4 @@
+#include <sstream>
 #include <type_traits>
 #include <vector>
 
@@ -63,3 +64,35 @@ using Vec = std::vector<T>;
 static_assert(std::is_same_v<IntVector, Vec<int>>);  // Vec<int> == std::vector<int>
 // @@@ sample end
 }  // namespace
+
+namespace parameter_pack {
+
+// @@@ sample begin 3:0
+
+void print(std::ostream& os) { os << std::endl; }
+
+template <typename HEAD, typename... TAIL>
+int print(std::ostream& os, HEAD head, TAIL... tail)
+{
+    os << head;
+    print(os, tail...);  // 残りの引数を再帰的に処理
+
+    return 1 + sizeof...(tail);  // headの1個 + tailの個数 = 全パラメータ数
+                                 // sizeof...(tail)はパック内の要素数
+}
+// @@@ sample end
+
+TEST(TermExp, parameter_pack)
+{
+    // @@@ sample begin 3:1
+
+    std::stringstream os;
+
+    auto parameter_pack_count = print(os, 1, "-", "c_str-", std::string{"std::string"});
+
+    ASSERT_EQ("1-c_str-std::string\n", os.str());
+    ASSERT_EQ(4, parameter_pack_count);
+    // @@@ sample end
+}
+
+}  // namespace parameter_pack

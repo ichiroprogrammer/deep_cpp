@@ -3306,6 +3306,29 @@ C++20から導入された「コンセプト(concepts)」は、
     // @@@ example/term_explanation/concept_ut.cpp #4:0 begin
 ```
 
+### パラメータパック
+パラメータパック(parameter pack)は、可変長テンプレート引数を表現するためにC++11で導入されたシンタックスである。
+テンプレートの定義時に、任意個数のテンプレート引数または関数引数をまとめて受け取ることができる。
+
+パラメータパックのシンタックスは以下のようなものである。
+
+* `typename... Args` - テンプレートパラメータパック
+* `Args... args` - 関数パラメータパック
+* `args...` - パック展開（pack expansion）
+* `sizeof...(args)` - パック内の要素数を取得
+
+パラメータパックを使用した関数テンプレートは以下のように定義する。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp #3:0 begin
+```
+
+以下の単体テストは上記の関数の使い方を示している。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp #3:1 begin -1
+```
+
 ### 畳み込み式
 畳み式(fold expression)とは、C++17から導入された新機能であり、
 可変引数テンプレートのパラメータパックに対して二項演算を累積的に行うためのものである。
