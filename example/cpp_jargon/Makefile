@@ -1,0 +1,23 @@
+SRCS20:=
+
+SRCS:=\
+    lack_of_cohesion_ut.cpp spurious_wakeup_ut.cpp class_relation_ut.cpp override_overload_ut.cpp \
+	most_vexing_parse_ut.cpp \
+
+
+SRCS+=$(SRCS20)
+
+CPP_VER:= c++17
+SHARED:=../../
+include $(SHARED)make/env.mk
+
+ifeq ($(CXX), g++)
+# @@@ sample begin 0:0
+
+CCFLAGS_ADD:=-fdump-lang-class
+# @@@ sample end
+CCFLAGS_ADD:=$(CCFLAGS_ADD) -fcoroutines
+endif
+
+include $(SHARED)make/example.mk
+include $(SHARED)make/gtest.mk

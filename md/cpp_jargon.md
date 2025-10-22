@@ -46,7 +46,7 @@ CやC++の文脈でのハンドルとは、ポインタかリファレンスを�
    なお、以下のクラスでは、```LCOM == 9```となっており、凝集性が欠如していることがわかる。
 
 ```cpp
-    // @@@ example/term_explanation/lack_of_cohesion_ut.cpp #0:0 begin
+    // @@@ example/cpp_jargon/lack_of_cohesion_ut.cpp #0:0 begin
 ```
 
 良く設計されたクラスは、下記のようにメンバが結合しあっているため凝集度が高い
@@ -55,7 +55,7 @@ CやC++の文脈でのハンドルとは、ポインタかリファレンスを�
 なお、上記の```LCOM == 9```なっているクラスを凝集性を高く、修正した例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/lack_of_cohesion_ut.cpp #0:1 begin
+    // @@@ example/cpp_jargon/lack_of_cohesion_ut.cpp #0:1 begin
 ```
 
 #### 凝集度の欠如
@@ -101,13 +101,13 @@ LCOMの値が大きい(1か1に近い値)場合、「クラス内のメソッド
 下記のようなstd::condition_variableの使用で起こり得る。
 
 ```cpp
-    // @@@ example/term_explanation/spurious_wakeup_ut.cpp #0:0 begin
+    // @@@ example/cpp_jargon/spurious_wakeup_ut.cpp #0:0 begin
 ```
 
 std::condition_variable::wait()の第2引数を下記のようにすることでこの現象を回避できる。
 
 ```cpp
-    // @@@ example/term_explanation/spurious_wakeup_ut.cpp #1:0 begin
+    // @@@ example/cpp_jargon/spurious_wakeup_ut.cpp #1:0 begin
 ```
 
 ### 副作用
@@ -143,14 +143,14 @@ C++でのOOPでは、DerivedはBaseのpublic継承として定義される。
 ペンギンや九官鳥 は一種の鳥であるため、この関係を使用したコード例を次に示す。
 
 ```cpp
-    // @@@ example/term_explanation/class_relation_ut.cpp #0:0 begin
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #0:0 begin
 ```
 
 bird::flyのオーバーライド関数(penguin::fly)について、[リスコフの置換原則(LSP)](---)に反した例を下記する。
 
 ```cpp
-    // @@@ example/term_explanation/class_relation_ut.cpp #0:1 begin
-    // @@@ example/term_explanation/class_relation_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #0:1 begin
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #0:2 begin -1
 ```
 
 birdからpenguinへの派生がリスコフ置換の原則に反してしまった原因は以下のように考えることができる。
@@ -169,14 +169,14 @@ penguinとbirdの関係はis-aの関係ではあるが、
 実際のコード例を以下に示す。この場合、型とインスタンスの概念の混乱が原因だと思われる。
 
 ```cpp
-    // @@@ example/term_explanation/class_relation_ut.cpp #1:0 begin
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #1:0 begin
 ```
 
 この誤用を改めた例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/class_relation_ut.cpp #2:0 begin
-    // @@@ example/term_explanation/class_relation_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #2:0 begin
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #2:1 begin -1
 ```
 
 修正されたKyukancho はstd::string インスタンスをメンバ変数として持ち、
@@ -194,7 +194,7 @@ CarはEngineを「has-a」の関係にあると言える。
 Carクラスの例ではCarクラスにはEngine型のメンバ変数が存在する。
 
 ```cpp
-    // @@@ example/term_explanation/class_relation_ut.cpp #3:0 begin
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #3:0 begin
 ```
 
 ### is-implemented-in-terms-of
@@ -226,8 +226,8 @@ is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 可読性、保守性を劣化させる可能性がある。
 
 ```cpp
-    // @@@ example/term_explanation/class_relation_ut.cpp #6:0 begin
-    // @@@ example/term_explanation/class_relation_ut.cpp #6:1 begin -1
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #6:0 begin
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #6:1 begin -1
 ```
 
 以上述べたように問題の多い手段1であるが、実践的には有用なパターンであり、
@@ -239,8 +239,8 @@ is-implemented-in-terms-ofは下記の手段1-3に示した方法がある。
 public継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/class_relation_ut.cpp #7:0 begin
-    // @@@ example/term_explanation/class_relation_ut.cpp #7:1 begin -1
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #7:0 begin
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #7:1 begin -1
 ```
 
 すでに述べたようにこの方法は、
@@ -252,8 +252,8 @@ public継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 private継承によるis-implemented-in-terms-ofの実装例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/class_relation_ut.cpp #4:0 begin
-    // @@@ example/term_explanation/class_relation_ut.cpp #4:1 begin -1
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #4:0 begin
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #4:1 begin -1
 ```
 
 この方法は、[public継承によるis-implemented-in-terms-of](---)が持つデストラクタ問題は発生せす、
@@ -264,8 +264,8 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
 コンポジションによる(has-a)is-implemented-in-terms-ofの実装例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/class_relation_ut.cpp #5:0 begin
-    // @@@ example/term_explanation/class_relation_ut.cpp #5:1 begin -1
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #5:0 begin
+    // @@@ example/cpp_jargon/class_relation_ut.cpp #5:1 begin -1
 ```
 
 この方は実装を利用するクラストの依存関係を他の2つに比べるとシンプルにできるが、
@@ -279,7 +279,7 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
 
 
 ```cpp
-    // @@@ example/term_explanation/override_overload_ut.cpp #0:0 begin
+    // @@@ example/cpp_jargon/override_overload_ut.cpp #0:0 begin
 ```
 
 下記図の通り、
@@ -300,7 +300,7 @@ Base::f()、Derived::f()の呼び出し選択は、オブジェクトの表層�
 Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層の型により決定される。
 
 ```cpp
-    // @@@ example/term_explanation/override_overload_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_jargon/override_overload_ut.cpp #0:1 begin -1
 ```
 
 上記のメンバ関数呼び出し
@@ -329,9 +329,9 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 特にオブジェクトの初期化の文脈で発生し、意図に反して、その行は関数宣言になってしまう。
 
 ```cpp
-    // @@@ example/term_explanation/most_vexing_parse_ut.cpp #0:0 begin
+    // @@@ example/cpp_jargon/most_vexing_parse_ut.cpp #0:0 begin
 
-    // @@@ example/term_explanation/most_vexing_parse_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_jargon/most_vexing_parse_ut.cpp #0:1 begin -1
 ```
 
 [特殊メンバ関数|初期化子リストコンストラクタ](---)の呼び出しでオブジェクトの初期化を行うことで、

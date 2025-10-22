@@ -194,4 +194,3 @@ TEST(Template, type_traits_conditional)
 }
 }  // namespace TypeTraits
 }  // namespace
-
