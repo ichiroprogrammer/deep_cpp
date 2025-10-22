@@ -75,20 +75,20 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 算術変換は、[汎整数型昇格](---)と通常算術変換に分けられる。
 
 ```cpp
-    // @@@ example/term_explanation/integral_promotion_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/integral_promotion_ut.cpp #0:0 begin -1
 ```
 
 [オブジェクト生成と初期化|一様初期化](---)を使用することで、
 変数定義時の算術変換による意図しない値の変換([縮小型変換](---))を防ぐことができる。
 
 ```cpp
-    // @@@ example/term_explanation/integral_promotion_ut.cpp #0:1 begin -2
+    // @@@ example/cpp_standard/integral_promotion_ut.cpp #0:1 begin -2
 ```
 
 以下に示すように、算術変換の結果は直感に反することがあるため、注意が必要である。
 
 ```cpp
-    // @@@ example/term_explanation/integral_promotion_ut.cpp #0:2 begin -2
+    // @@@ example/cpp_standard/integral_promotion_ut.cpp #0:2 begin -2
 ```
 
 ### 汎整数型昇格
@@ -105,7 +105,7 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 下記のようにintに変換される。
 
 ```cpp
-    // @@@ example/term_explanation/integral_promotion_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/integral_promotion_ut.cpp #1:0 begin -1
 ```
 
 ### 汎整数型拡張
@@ -116,7 +116,7 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 float型オブジェクトがdoulbe型に変換されることを指す。
 
 ```cpp
-    // @@@ example/term_explanation/integral_promotion_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/integral_promotion_ut.cpp #2:0 begin -1
 ```
 
 ### デフォルト引数昇格
@@ -134,7 +134,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 主に[型システムと算術の基礎|整数型](---)や[型システムと算術の基礎|浮動小数点型](---)などの値を小さな範囲の型に変換する際に起こる。
 
 ```cpp
-    // @@@ example/term_explanation/etc_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/etc_ut.cpp #0:0 begin -1
 ```
 
 [オブジェクト生成と初期化|リスト初期化](---)を使うことで、このような変換によるバグの発生を防ぐことができる。
@@ -171,7 +171,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 以下のコードにより誤差が容易に発生することを示す。
 
 ```cpp
-    // @@@ example/term_explanation/float_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/float_ut.cpp #0:0 begin -1
 ```
 
 #### イプシロン
@@ -185,7 +185,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 イプシロンを使用した浮動小数点変数の同値判定のコード例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/float_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/float_ut.cpp #1:0 begin -1
 ```
 
 #### 浮動小数点の演算エラー
@@ -204,7 +204,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 浮動小数点の演算エラーの検出コード例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/float_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/float_ut.cpp #2:0 begin -1
 ```
 
 なお、上記のコードで使用した`std::fetestexcept`は一般にスレッドセーフである。
@@ -222,21 +222,21 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 C++11から導入された導入されたリテラル。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/literal_ut.cpp #0:0 begin
 ```
 
 ### 2進数リテラル
 C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/literal_ut.cpp #1:0 begin -1
 ```
 
 ### 数値リテラル
 C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/literal_ut.cpp #2:0 begin -1
 ```
 
 ### ワイド文字列
@@ -247,7 +247,7 @@ C++14では区切り文字'を使用し、数値リテラルを記述できる�
 * char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard/literal_ut.cpp #3:0 begin
 ```
 
 ### 16進浮動小数点数リテラル
@@ -278,7 +278,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ```
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #4:0 begin -1
+    // @@@ example/cpp_standard/literal_ut.cpp #4:0 begin -1
 ```
 
 ### ユーザー定義リテラル
@@ -305,14 +305,14 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 std::chronoのリテラルは以下のコードのように使用できる。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #5:0 begin
+    // @@@ example/cpp_standard/literal_ut.cpp #5:0 begin
 ```
 
 #### std::complexリテラル
 std::complexリテラル以下のコードのように使用できる。
 
 ```cpp
-    // @@@ example/term_explanation/literal_ut.cpp #6:0 begin -1
+    // @@@ example/cpp_standard/literal_ut.cpp #6:0 begin -1
 ```
 
 ## 列挙型とバイト表現
@@ -327,18 +327,18 @@ C++03までのenumには、以下のような問題があった。
 * 名前空間の汚染: グローバルスコープに定義されたenumは、名前空間を汚染する。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/enum_ut.cpp #0:0 begin -1
 ```
 
 ### enum class
 enum classは通常の[列挙型とバイト表現|enum](---)の問題を解決するためにC++11から導入された。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/enum_ut.cpp #1:0 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/enum_ut.cpp #1:1 begin -1
 ```
 
 ### スコープドenum
@@ -351,7 +351,7 @@ C++11で導入されたシンタックスである。enumのサイズをユー�
 特定のバイナリプロトコルとの互換性が必要な場合や、特定のハードウェアと連携する際に特に有効である。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/enum_ut.cpp #2:0 begin
 ```
 
 C++17までは、型安全の観点から、初期化においては、以下のコードコメントのような仕様であったが、
@@ -359,7 +359,7 @@ C++17から導入された[std::byte](---)の利便性のため、
 underlying typeを指定したenumやenum class変数のunderlying typeインスタンスによる初期化が認められるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/enum_ut.cpp #2:1 begin -1
 ```
 
 上記コードにもあるが、underlying typeインスタンスによる初期化を行う場合は、
@@ -370,7 +370,7 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 前方宣言できないが、underlying typeを指定したenum、enum classは前方宣言することができる。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard/enum_ut.cpp #3:0 begin
 ```
 
 ### std::byte
@@ -380,7 +380,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 可読性、保守性の向上が見込める。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #4:0 begin -1
+    // @@@ example/cpp_standard/enum_ut.cpp #4:0 begin -1
 ```
 
 ### using enum
@@ -399,17 +399,17 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 とすることで、スコープによる修飾を省略するための記法である。
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #5:0 begin
+    // @@@ example/cpp_standard/enum_ut.cpp #5:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #5:1 begin
+    // @@@ example/cpp_standard/enum_ut.cpp #5:1 begin
 ```
 
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #6:0 begin
+    // @@@ example/cpp_standard/enum_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/enum_ut.cpp #6:1 begin -1
+    // @@@ example/cpp_standard/enum_ut.cpp #6:1 begin -1
 ```
 
 この記法は、簡潔に記述できるものの、一方では過度な使用は、
@@ -435,7 +435,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 下記のコードはその使用例である。
 
 ```cpp
-    // @@@ example/term_explanation/trivial_ut.cpp #0:3 begin -2
+    // @@@ example/cpp_standard/trivial_ut.cpp #0:3 begin -2
 ```
 
 ### トリビアルに破壊可能な型
@@ -446,7 +446,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 * 型に含まれるすべてのメンバ変数や基底クラスも「トリビアルに破壊可能」である。
 
 ```cpp
-    // @@@ example/term_explanation/trivial_ut.cpp #1:0 begin -2
+    // @@@ example/cpp_standard/trivial_ut.cpp #1:0 begin -2
 ```
 
 ### 標準レイアウト型
@@ -459,7 +459,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 下記のコードはその使用例である。
 
 ```cpp
-    // @@@ example/term_explanation/trivial_ut.cpp #0:2 begin -2
+    // @@@ example/cpp_standard/trivial_ut.cpp #0:2 begin -2
 ```
 
 ### 集成体
@@ -493,13 +493,13 @@ PODとは、 Plain Old Dataの略語であり、
 従って、std::is_pod_vは以下のように置き換えられるべきである。
 
 ```cpp
-    // @@@ example/term_explanation/trivial_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/trivial_ut.cpp #0:0 begin
 ```
 
 下記のコードは置き換えられたstd::is_pod_vの使用例である。
 
 ```cpp
-    // @@@ example/term_explanation/trivial_ut.cpp #0:1 begin -2
+    // @@@ example/cpp_standard/trivial_ut.cpp #0:1 begin -2
 ```
 
 上記からわかる通り、POD型とは概ね、C言語と互換性のある型を指すと思って良い。
@@ -510,13 +510,13 @@ PODとは、 Plain Old Dataの略語であり、
 以下のis_completeで示したテンプレート定数で、不完全型か否かを判定できる。
 
 ```cpp
-    // @@@ example/term_explanation/incomplete_type_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/incomplete_type_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/incomplete_type_ut.cpp #1:0 begin -2
+    // @@@ example/cpp_standard/incomplete_type_ut.cpp #1:0 begin -2
 ```
 ```cpp
-    // @@@ example/term_explanation/incomplete_type_ut.cpp #1:1 begin -2
+    // @@@ example/cpp_standard/incomplete_type_ut.cpp #1:1 begin -2
 ```
 
 ### 完全型
@@ -2998,7 +2998,7 @@ C++で関数やメンバ関数を明示的にスコープやクラス名で修�
 一方で、[ADL](---)が働かなくなるため、フレキシブルな[name lookup](---)ができなくなる。
 
 ```cpp
-    // @@@ example/term_explanation/etc_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/etc_ut.cpp #1:0 begin -1
 ```
 
 ### hidden-friend関数
@@ -4197,7 +4197,7 @@ C++17で、演算子のオペランドに対する評価順序が明確に規定
 C++11以前では、以下のコードの評価順序は未規定であったが、上記の通り定義された。
 
 ```cpp
-    // @@@ example/term_explanation/etc_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/etc_ut.cpp #2:0 begin -1
 ```
 
 関数呼び出しにおける引数の式の評価順序は、上記の例a(b1, b2, b3)での評価順序は、
@@ -4212,7 +4212,7 @@ b2, b3, b1 で評価される可能性があることを意味する。
 conditionの評価結果に基づき、expr1または expr2 のどちらかが選択され、選択された側だけが評価される。  
 
 ```cpp
-    // @@@ example/term_explanation/etc_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/etc_ut.cpp #2:1 begin -1
 ```
 
 なお、単項演算子のオペランドは1つであるため、優先順位の定義は不要である。
@@ -4246,7 +4246,7 @@ C++11までの仕様では、new式によるダイナミックメモリアロケ
 new/deleteの呼び出しをまとめたり省略したりすることができるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/heap_allocation_elision_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/heap_allocation_elision_ut.cpp #0:0 begin
 ```
 
 この最適化により、std::make_sharedのようにstd::shared_ptrの参照カウントを管理するメモリブロックと、

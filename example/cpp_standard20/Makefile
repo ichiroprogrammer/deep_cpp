@@ -1,8 +1,6 @@
-VPATH:=../term_explanation
+VPATH:=../cpp_standard
 SRCS:=\
-    decltype_ut.cpp comparison_operator_ut.cpp concept_ut.cpp \
-    co_await_ut.cpp co_yield_ut.cpp  explicit_ut.cpp const_xxx_ut.cpp \
-	designated_init_ut.cpp
+    literal_ut.cpp enum_ut.cpp 
 
 OBJDIR:= obj20/
 SHARED:=../../

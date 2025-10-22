@@ -16092,7 +16092,7 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 算術変換は、[汎整数型昇格](#SS_7_1_7)と通常算術変換に分けられる。
 
 ```cpp
-    //  example/term_explanation/integral_promotion_ut.cpp 11
+    //  example/cpp_standard/integral_promotion_ut.cpp 11
 
     bool           bval{};
     char           cval{};
@@ -16145,7 +16145,7 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 変数定義時の算術変換による意図しない値の変換([縮小型変換](#SS_7_1_11))を防ぐことができる。
 
 ```cpp
-    //  example/term_explanation/integral_promotion_ut.cpp 62
+    //  example/cpp_standard/integral_promotion_ut.cpp 62
 
     int i{-1};
     // int8_t i8 {i};  縮小型変換によりコンパイル不可
@@ -16164,7 +16164,7 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 以下に示すように、算術変換の結果は直感に反することがあるため、注意が必要である。
 
 ```cpp
-    //  example/term_explanation/integral_promotion_ut.cpp 81
+    //  example/cpp_standard/integral_promotion_ut.cpp 81
 
     int          i{-1};
     unsigned int ui{1};
@@ -16192,7 +16192,7 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 下記のようにintに変換される。
 
 ```cpp
-    //  example/term_explanation/integral_promotion_ut.cpp 100
+    //  example/cpp_standard/integral_promotion_ut.cpp 100
 
     bool bval;
     static_assert(std::is_same<int, decltype(bval + bval)>::value, "");
@@ -16223,7 +16223,7 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 float型オブジェクトがdoulbe型に変換されることを指す。
 
 ```cpp
-    //  example/term_explanation/integral_promotion_ut.cpp 126
+    //  example/cpp_standard/integral_promotion_ut.cpp 126
 
     double d = 0.05;  // 0.05は循環少数
     float  f = 0.05f;
@@ -16250,7 +16250,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 主に[整数型](#SS_7_1_5)や[浮動小数点型](#SS_7_1_12)などの値を小さな範囲の型に変換する際に起こる。
 
 ```cpp
-    //  example/term_explanation/etc_ut.cpp 43
+    //  example/cpp_standard/etc_ut.cpp 19
 
     int32_t large  = 300;
     int8_t  small  = large;  // 縮小型変換
@@ -16295,7 +16295,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 以下のコードにより誤差が容易に発生することを示す。
 
 ```cpp
-    //  example/term_explanation/float_ut.cpp 12
+    //  example/cpp_standard/float_ut.cpp 12
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -16316,7 +16316,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 イプシロンを使用した浮動小数点変数の同値判定のコード例を以下に示す。
 
 ```cpp
-    //  example/term_explanation/float_ut.cpp 24
+    //  example/cpp_standard/float_ut.cpp 24
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -16345,7 +16345,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 浮動小数点の演算エラーの検出コード例を以下に示す。
 
 ```cpp
-    //  example/term_explanation/float_ut.cpp 43
+    //  example/cpp_standard/float_ut.cpp 43
 
     std::feclearexcept(FE_ALL_EXCEPT);  // エラーをクリア
 
@@ -16390,7 +16390,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 C++11から導入された導入されたリテラル。
 
 ```cpp
-    //  example/term_explanation/literal_ut.cpp 15
+    //  example/cpp_standard/literal_ut.cpp 15
 
         std::regex raw_re{R"(\d+)"};     // 生文字リテラルで正規表現パターン。\のエスケープが不要
         std::regex normal_re{"(\\d+)"};  // 生文字リテラルで正規表現パターン。\のエスケープが必要
@@ -16413,7 +16413,7 @@ C++11から導入された導入されたリテラル。
 C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
 
 ```cpp
-    //  example/term_explanation/literal_ut.cpp 36
+    //  example/cpp_standard/literal_ut.cpp 36
 
     int bin_value = 0b1101;  // 2進数リテラル  2進数1101 は10進数で 13
     ASSERT_EQ(bin_value, 13);
@@ -16423,7 +16423,7 @@ C++14以降では、0bまたは 0B をプレフィックスとして使うこと
 C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
 
 ```cpp
-    //  example/term_explanation/literal_ut.cpp 42
+    //  example/cpp_standard/literal_ut.cpp 42
 
     // 区切り文字を使った数値リテラル
     int large_number = 1'000'000;  // 10進数は3桁で区切るとわかりやすい
@@ -16444,7 +16444,7 @@ C++14では区切り文字'を使用し、数値リテラルを記述できる�
 * char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
 
 ```cpp
-    //  example/term_explanation/literal_ut.cpp 59
+    //  example/cpp_standard/literal_ut.cpp 59
 
         // UTF-16 文字列リテラル（uプレフィックスを使用）
         char16_t       utf16_str[]  = u"こんにちは";
@@ -16494,7 +16494,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ```
 
 ```cpp
-    //  example/term_explanation/literal_ut.cpp 87
+    //  example/cpp_standard/literal_ut.cpp 87
 
     // float型
     float hex_float = 0x1.2p3;
@@ -16561,7 +16561,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 std::chronoのリテラルは以下のコードのように使用できる。
 
 ```cpp
-    //  example/term_explanation/literal_ut.cpp 109
+    //  example/cpp_standard/literal_ut.cpp 109
 
     using namespace std::chrono_literals;
 
@@ -16578,7 +16578,7 @@ std::chronoのリテラルは以下のコードのように使用できる。
 std::complexリテラル以下のコードのように使用できる。
 
 ```cpp
-    //  example/term_explanation/literal_ut.cpp 124
+    //  example/cpp_standard/literal_ut.cpp 124
 
     using namespace std::complex_literals;  // 複素数リテラルを使うための名前空間
 
@@ -16603,7 +16603,7 @@ C++03までのenumには、以下のような問題があった。
 * 名前空間の汚染: グローバルスコープに定義されたenumは、名前空間を汚染する。
 
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 14
+    //  example/cpp_standard/enum_ut.cpp 14
 
     enum DayOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
@@ -16618,7 +16618,7 @@ C++03までのenumには、以下のような問題があった。
 enum classは通常の[enum](#SS_7_3_1)の問題を解決するためにC++11から導入された。
 
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 29
+    //  example/cpp_standard/enum_ut.cpp 29
 
     enum class DayOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
@@ -16632,7 +16632,7 @@ enum classは通常の[enum](#SS_7_3_1)の問題を解決するためにC++11か
 ```
 
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 41
+    //  example/cpp_standard/enum_ut.cpp 41
 
     // DayOfWeek d0 {0}; intからの暗黙の型変換は許可されないため、コンパイルエラー
     DayOfWeek d0{static_cast<DayOfWeek>(0)};
@@ -16652,7 +16652,7 @@ C++11で導入されたシンタックスである。enumのサイズをユー�
 特定のバイナリプロトコルとの互換性が必要な場合や、特定のハードウェアと連携する際に特に有効である。
 
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 54
+    //  example/cpp_standard/enum_ut.cpp 54
 
     enum NormalEnum {  // underlying typeの指定しない従来のenum
     };
@@ -16679,7 +16679,7 @@ C++17から導入された[std::byte](#SS_7_3_5)の利便性のため、
 underlying typeを指定したenumやenum class変数のunderlying typeインスタンスによる初期化が認められるようになった。
 
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 80
+    //  example/cpp_standard/enum_ut.cpp 80
 
     enum class Color : int { Red, Green, Blue };
 
@@ -16700,7 +16700,7 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 前方宣言できないが、underlying typeを指定したenum、enum classは前方宣言することができる。
 
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 97
+    //  example/cpp_standard/enum_ut.cpp 97
 
     // in calender.h
     enum class DayOfWeek : int8_t;  // DayOfWeekの前方宣言
@@ -16718,7 +16718,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 可読性、保守性の向上が見込める。
 
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 113
+    //  example/cpp_standard/enum_ut.cpp 113
 
     uint8_t u8_0     = 0x80;
     auto    result_0 = u8_0 << 1;  // 汎整数拡張のためresult_0の型はintになる
@@ -16752,7 +16752,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 とすることで、スコープによる修飾を省略するための記法である。
 
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 158
+    //  example/cpp_standard/enum_ut.cpp 158
 
     enum class Color { Red, Green, Yellow };
 
@@ -16785,7 +16785,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
     }
 ```
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 194
+    //  example/cpp_standard/enum_ut.cpp 194
 
     #if __cplusplus >= 202002L  // c++20
         using Color::Red;  // Redに関しては名前修飾なしで使用する
@@ -16800,7 +16800,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 ```
 
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 213
+    //  example/cpp_standard/enum_ut.cpp 213
 
     class Signal {
     public:
@@ -16814,7 +16814,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
     };
 ```
 ```cpp
-    //  example/term_explanation/enum_ut.cpp 229
+    //  example/cpp_standard/enum_ut.cpp 229
 
     Signal s{};
 
@@ -16849,7 +16849,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 下記のコードはその使用例である。
 
 ```cpp
-    //  example/term_explanation/trivial_ut.cpp 63
+    //  example/cpp_standard/trivial_ut.cpp 63
 
     static_assert(std::is_trivial_v<int>);
     static_assert(std::is_trivial_v<int*>);
@@ -16876,7 +16876,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 * 型に含まれるすべてのメンバ変数や基底クラスも「トリビアルに破壊可能」である。
 
 ```cpp
-    //  example/term_explanation/trivial_ut.cpp 84
+    //  example/cpp_standard/trivial_ut.cpp 84
 
     static_assert(std::is_trivially_destructible_v<int>);
     static_assert(std::is_trivially_destructible_v<int*>);
@@ -16906,7 +16906,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 下記のコードはその使用例である。
 
 ```cpp
-    //  example/term_explanation/trivial_ut.cpp 42
+    //  example/cpp_standard/trivial_ut.cpp 42
 
     static_assert(std::is_standard_layout_v<int>);
     static_assert(std::is_standard_layout_v<int*>);
@@ -16957,7 +16957,7 @@ PODとは、 Plain Old Dataの略語であり、
 従って、std::is_pod_vは以下のように置き換えられるべきである。
 
 ```cpp
-    //  example/term_explanation/trivial_ut.cpp 9
+    //  example/cpp_standard/trivial_ut.cpp 9
 
     template <typename T>  // std::is_povはC++20から非推奨
     constexpr bool is_pod_v = std::is_trivial_v<T>&& std::is_standard_layout_v<T>;
@@ -16966,7 +16966,7 @@ PODとは、 Plain Old Dataの略語であり、
 下記のコードは置き換えられたstd::is_pod_vの使用例である。
 
 ```cpp
-    //  example/term_explanation/trivial_ut.cpp 18
+    //  example/cpp_standard/trivial_ut.cpp 18
 
     static_assert(is_pod_v<int>);
     static_assert(is_pod_v<int const>);
@@ -16997,7 +16997,7 @@ PODとは、 Plain Old Dataの略語であり、
 以下のis_completeで示したテンプレート定数で、不完全型か否かを判定できる。
 
 ```cpp
-    //  example/term_explanation/incomplete_type_ut.cpp 4
+    //  example/cpp_standard/incomplete_type_ut.cpp 4
 
     template <typename T, typename = void>
     struct is_complete : std::false_type {
@@ -17011,7 +17011,7 @@ PODとは、 Plain Old Dataの略語であり、
     constexpr bool is_complete_v = is_complete<T>::value;
 ```
 ```cpp
-    //  example/term_explanation/incomplete_type_ut.cpp 21
+    //  example/cpp_standard/incomplete_type_ut.cpp 21
 
     class A;  // Aの前方宣言
               // これ以降、Aは不完全型となる
@@ -17020,7 +17020,7 @@ PODとは、 Plain Old Dataの略語であり、
     static_assert(!is_complete_v<A>);
 ```
 ```cpp
-    //  example/term_explanation/incomplete_type_ut.cpp 31
+    //  example/cpp_standard/incomplete_type_ut.cpp 31
 
     class A {  // この宣言により、この行以降はAは完全型になる
     public:
@@ -22333,7 +22333,7 @@ C++で関数やメンバ関数を明示的にスコープやクラス名で修�
 一方で、[ADL](#SS_7_12_5)が働かなくなるため、フレキシブルな[name lookup](#SS_7_12_2)ができなくなる。
 
 ```cpp
-    //  example/term_explanation/etc_ut.cpp 64
+    //  example/cpp_standard/etc_ut.cpp 40
 
     extern void func();  // グローバル名前空間での宣言
 
@@ -24867,7 +24867,7 @@ C++17で、演算子のオペランドに対する評価順序が明確に規定
 C++11以前では、以下のコードの評価順序は未規定であったが、上記の通り定義された。
 
 ```cpp
-    //  example/term_explanation/etc_ut.cpp 22
+    //  example/cpp_standard/etc_ut.cpp 74
 
     int i = 0;
     int y = (i = 1) * x + (i = 2);
@@ -24887,7 +24887,7 @@ b2, b3, b1 で評価される可能性があることを意味する。
 conditionの評価結果に基づき、expr1または expr2 のどちらかが選択され、選択された側だけが評価される。  
 
 ```cpp
-    //  example/term_explanation/etc_ut.cpp 31
+    //  example/cpp_standard/etc_ut.cpp 83
 
     int a      = 1;
     int b      = 2;
@@ -24925,7 +24925,7 @@ C++11までの仕様では、new式によるダイナミックメモリアロケ
 new/deleteの呼び出しをまとめたり省略したりすることができるようになった。
 
 ```cpp
-    //  example/term_explanation/heap_allocation_elision_ut.cpp 4
+    //  example/cpp_standard/heap_allocation_elision_ut.cpp 4
 
     void lump()  // 実装によっては、ダイナミックメモリアロケーションをまとめらる場合がある
     {

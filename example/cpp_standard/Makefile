@@ -1,10 +1,13 @@
-VPATH:=../term_explanation
-SRCS:=\
-    decltype_ut.cpp comparison_operator_ut.cpp concept_ut.cpp \
-    co_await_ut.cpp co_yield_ut.cpp  explicit_ut.cpp const_xxx_ut.cpp \
-	designated_init_ut.cpp
+SRCS20:=literal_ut.cpp 
 
-OBJDIR:= obj20/
+SRCS:=\
+    integral_promotion_ut.cpp etc_ut.cpp heap_allocation_elision_ut.cpp float_ut.cpp trivial_ut.cpp \
+	incomplete_type_ut.cpp \
+
+
+SRCS+=$(SRCS20)
+
+CPP_VER:= c++17
 SHARED:=../../
 include $(SHARED)make/env.mk
 

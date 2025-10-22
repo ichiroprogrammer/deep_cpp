@@ -14,33 +14,9 @@ int b1, b2, b3;
 
 void a(int, int, int) {}
 
-TEST(ExpTerm, etc)
-{
-#ifndef __clang_analyzer__
-    int x = 10;
-
-    // @@@ sample begin 0:0
-
-    int i = 0;
-    int y = (i = 1) * x + (i = 2);
-
-    a(b1, b2, b3);  // b1, b2, b3の評価順序は規定外
-    // @@@ sample end
-    IGNORE_UNUSED_VAR(y, i);
-
-    // @@@ sample begin 0:1
-
-    int a      = 1;
-    int b      = 2;
-    int result = (a < b) ? func1() : func2();
-    // @@@ sample end
-    IGNORE_UNUSED_VAR(result);
-#endif
-}
-SUPPRESS_WARN_END;
 TEST(ExpTerm, narrowing)
 {
-    // @@@ sample begin 1:0
+    // @@@ sample begin 0:0
 
     int32_t large  = 300;
     int8_t  small  = large;  // 縮小型変換
@@ -61,7 +37,7 @@ void func() {}
 
 TEST(ExpTerm, qualified_call)
 {
-    // @@@ sample begin 2:0
+    // @@@ sample begin 1:0
 
     extern void func();  // グローバル名前空間での宣言
 
@@ -88,3 +64,30 @@ TEST(ExpTerm, qualified_call)
     d.func("str");         // 通常の関数呼び出し
     // @@@ sample end
 }
+namespace {
+
+TEST(ExpTerm, etc)
+{
+#ifndef __clang_analyzer__
+    int x = 10;
+
+    // @@@ sample begin 2:0
+
+    int i = 0;
+    int y = (i = 1) * x + (i = 2);
+
+    a(b1, b2, b3);  // b1, b2, b3の評価順序は規定外
+    // @@@ sample end
+    IGNORE_UNUSED_VAR(y, i);
+
+    // @@@ sample begin 2:1
+
+    int a      = 1;
+    int b      = 2;
+    int result = (a < b) ? func1() : func2();
+    // @@@ sample end
+    IGNORE_UNUSED_VAR(result);
+#endif
+}
+SUPPRESS_WARN_END;
+}  // namespace
