@@ -272,6 +272,72 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
 逆に実装例から昭なとおり、コード量が増えてしまう。
 
 
+## C++注意点
+### オーバーライドとオーバーロードの違い
+下記例では、Base::g()がオーバーロードで、Derived::f()がオーバーライドである
+(Derived::g()はオーバーロードでもオーバーライドでもない(「[name-hiding](---)」参照))。
+
+
+```cpp
+    // @@@ example/term_explanation/override_overload_ut.cpp #0:0 begin
+```
+
+下記図の通り、
+
+* BaseのインスタンスはBase用のvtblへのポインタを内部に持ち、
+  そのvtblでBase::f()のアドレスを保持する。
+* DerivedのインスタンスはDerived用のvtblへのポインタを内部に持ち、
+  そのvtblでDerived::f()のアドレスを保持する。
+* Base::g()、Base::g(int)、
+  Derived::g()のアドレスはBaseやDerivedのインスタンスから辿ることはできない。
+
+![vtbl](plant_uml/vtbl.png)
+
+vtblとは仮想関数テーブルとも呼ばれる、仮想関数ポインタを保持するための上記のようなテーブルである
+(「[ポリモーフィックなクラス](---)」参照)。
+
+Base::f()、Derived::f()の呼び出し選択は、オブジェクトの表層の型ではなく、実際の型により決定される。
+Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層の型により決定される。
+
+```cpp
+    // @@@ example/term_explanation/override_overload_ut.cpp #0:1 begin -1
+```
+
+上記のメンバ関数呼び出し
+
+```cpp
+    d_ref.f() 
+```
+
+がどのように解釈され、Derived::f()が選択されるかを以下に疑似コードで例示する。
+
+```cpp
+    vtbl = d_ref.vtbl             // d_refの実態はDerivedなのでvtblはDerivedのvtbl
+
+    member_func = vtbl->f         // vtbl->fはDerived::f()のアドレス
+
+    (d_ref.*member_func)(&d_ref)  // member_func()の呼び出し
+```
+
+このようなメカニズムにより仮想関数呼び出しが行われる。
+
+### Most Vexing Parse
+Most Vexing Parse(最も困惑させる構文解析)とは、C++の文法に関連する問題で、
+Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつけたことに由来する。
+
+この問題はC++の文法が関数の宣言と変数の定義とを曖昧に扱うことによって生じる。
+特にオブジェクトの初期化の文脈で発生し、意図に反して、その行は関数宣言になってしまう。
+
+```cpp
+    // @@@ example/term_explanation/most_vexing_parse_ut.cpp #0:0 begin
+
+    // @@@ example/term_explanation/most_vexing_parse_ut.cpp #0:1 begin -1
+```
+
+[特殊メンバ関数|初期化子リストコンストラクタ](---)の呼び出しでオブジェクトの初期化を行うことで、
+このような問題を回避できる。
+
+
 ## C++コンパイラ
 本ドキュメントで使用するg++/clang++のバージョンは以下のとおりである。
 

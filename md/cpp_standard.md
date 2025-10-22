@@ -213,6 +213,108 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 浮動小数演算を複数コンテキストで行うソフトウェアの開発する場合、
 処理系の選択に注意が必要である。
 
+## リテラル
+プログラムに具体的な値を与えるための基本的な即値を指す。
+例えば、1, 2, 1.0, true/false, nullptr, "literal string"など。
+
+### 生文字列リテラル
+下記の例にあるように正規表現をそのまま文字列リテラルとして表現するために、
+C++11から導入された導入されたリテラル。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #0:0 begin
+```
+
+### 2進数リテラル
+C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #1:0 begin -1
+```
+
+### 数値リテラル
+C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #2:0 begin -1
+```
+
+### ワイド文字列
+ワイド文字列リテラルを保持する型は下記のように定義された。
+
+* char16_t: UTF-16エンコーディングのコード単位を扱う型。 u"..." というリテラルでUTF-16文字列を表す。
+* char32_t: UTF-32エンコーディングのコード単位を扱う型。 U"..." というリテラルでUTF-32文字列を表す。
+* char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #3:0 begin
+```
+
+### 16進浮動小数点数リテラル
+16進浮動小数点数リテラルは、
+C++17から導入された浮動小数点数を16進数で表現する方法である。
+特に、ハードウェアや低レベルのプログラミングで、
+浮動小数点数の内部表現を直接扱う際に便利である
+
+```
+    一般的な形式:
+        0x[数字].[数字]p[指数]
+        0x: 16進数を表すプレフィックス
+        [数字]: 16進数の数字 (0-9, a-f, A-F)
+        .: 小数点
+        p: 指数部を表す
+        [指数]: 10進数の指数
+
+    例:
+        0x1.2p3は下記に解説する
+
+    リテラルの構成:
+        0x: 16進数の開始を示す。
+        1.2: 仮数部を表す。この部分は16進数。
+        p3: 指数部を表す。この場合、2の3乗を意味すため、つまり8。
+
+        1.2(16進数) =  1 + 2 / 16 = 1.125(10進数)
+        1.125 * 8 = 9.0
+```
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #4:0 begin -1
+```
+
+### ユーザー定義リテラル
+[ユーザ定義リテラル演算子](---)により定義されたリテラルを指す。
+
+#### ユーザ定義リテラル演算子
+ユーザ定義リテラル演算子とは以下のようなものである。
+
+```cpp
+    // @@@ example/term_explanation/user_defined_literal_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/user_defined_literal_ut.cpp #0:1 begin -1
+```
+
+#### std::string型リテラル
+"xxx"sとすることで、std::string型のリテラルを作ることができる。
+
+```cpp
+    // @@@ example/term_explanation/user_defined_literal_ut.cpp #1:0 begin -1
+```
+
+#### std::chronoのリテラル
+std::chronoのリテラルは以下のコードのように使用できる。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #5:0 begin
+```
+
+#### std::complexリテラル
+std::complexリテラル以下のコードのように使用できる。
+
+```cpp
+    // @@@ example/term_explanation/literal_ut.cpp #6:0 begin -1
+```
+
 ## 列挙型とバイト表現
 ### enum
 C++03までのenumは定数を分かりやすい名前で定義するための記法である。
@@ -318,7 +420,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 ### トリビアル型
 トリビアル型とは、
 
-* 全ての[型とインスタンス|特殊メンバ関数](---)がデフォルトである。
+* 全ての[オブジェクト生成と初期化|特殊メンバ関数](---)がデフォルトである。
 * バーチャル関数や仮想継承を持たない。
 * 基底クラスがある場合、基底クラスもトリビアルである。
 
@@ -864,6 +966,375 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 ```
 
 ## オブジェクト生成と初期化
+### 特殊メンバ関数
+特殊メンバ関数とは下記の関数を指す。
+
+* デフォルトコンストラクタ
+* copyコンストラクタ
+* copy代入演算子
+* moveコンストラクタ
+* move代入演算子
+* デストラクタ
+
+以下のメンバ関数は特殊関数ではないが、C++20から特殊関数と同様に`=default`とすることで自動生成される。
+
+* [==演算子](---)  
+  クラス内のすべてのメンバが==をサポートしている場合、`= default`とすることで自動生成される。
+* [<=>演算子](---)  
+  すべてのメンバが[<=>演算子](---)での比較可能である場合、`= default`とすることで自動生成される。 
+
+ユーザがこれらを一切定義しない場合、または一部のみを定義する場合、
+コンパイラは、下記のテーブル等で示すルールに従い、特殊関数メンバの宣言、定義の状態を定める。
+
+左1列目がユーザによる各関数の宣言を表し、2列目以降はユーザ宣言の影響による各関数の宣言の状態を表す。  
+下記表において、
+
+* 「`= default`」とは、「コンパイラによってその関数が`= default`と宣言された」状態であることを表す。
+* 「~~= default~~」とは、`= default`と同じであるが、バグが発生しやすいので推奨されない。
+* 「宣言無し」とは、「コンパイラによってその関数が`= default`と宣言された状態ではない」ことを表す。
+    * 「moveコンストラクタが`= default`と宣言された状態ではない」且つ
+      「copyコンストラクタが宣言されている」場合、
+      rvalueを使用したオブジェクトの初期化には、
+      moveコンストラクタの代わりにcopyコンストラクタが使われる。
+    * 「move代入演算子が`= default`と宣言された状態ではない」且つ
+      「copy代入演算子が宣言されている」場合、
+      rvalueを使用したオブジェクトの代入には、
+      move代入演算子の代わりにcopy代入演算子が使われる。
+* 「= delete」とは「コンパイラによってその関数が= deleteと宣言された」状態であることを表す。
+
+|  user-defined  |default ctor|   dtor  |  copy ctor  | copy assign |move ctor|move assign|   `==`   |   `<=>`  |
+|:--------------:|:----------:|:-------:|:-----------:|:-----------:|:-------:|:---------:|:--------:|:--------:|
+|   undeclared   |  = default |= default|  = default  |  = default  |= default| = default |undeclared|undeclared|
+|non-default ctor| undeclared |= default|  = default  |  = default  |= default| = default |undeclared|undeclared|
+|  default ctor  |      -     |= default|  = default  |  = default  |= default| = default |undeclared|undeclared|
+|      dtor      |  = default |    -    |~~= default~~|~~= default~~|= default| = default |undeclared|undeclared|
+|    copy ctor   |  = default |= default|      -      |~~= default~~|= default| = default |undeclared|undeclared|
+|   copy assign  |  = default |= default|~~= default~~|      -      |= default| = default |undeclared|undeclared|
+|    move ctor   |  = default |= default|   = delete  |   = delete  |    -    | = default |undeclared|undeclared|
+|   move assign  |  = default |= default|   = delete  |   = delete  |= default|     -     |undeclared|undeclared|
+|      `==`      |      -     |    -    |      -      |      -      |    -    |     -     |     -    |undeclared|
+|      `<=>`     |      -     |    -    |      -      |      -      |    -    |     -     |undeclared|     -    |
+
+
+**テーブル注**  
+
+* C++14以前と、C++17以降での仕様の差は以下のようになる。
+    * C++14以前では、コピーコンストラクタやコピー代入演算子をユーザ定義すると、
+      ムーブコンストラクタ／ムーブ代入演算子は自動生成されず` = delete`となる。
+    * C++17以降では、コピー系をユーザ定義していても、ムーブ系は自動生成される(` = default`と同等になる)ことがある。
+      コンパイラは「コピー系の存在」だけではムーブ系を削除しない。
+      ただし、ムーブ不可能なメンバや基底がある場合は、結果的に` = delete`になる。
+    * C++17以降では、` = default`された特殊メンバ関数は明示的に`noexcept`推定され、ムーブセマンティクスの活用がしやすくなる。
+    * C++20以降では、比較演算子(`==, <=>`)も`= default`によって自動生成可能だが、特殊メンバ関数とは分類が異なるが、
+      上記テーブルでは同じように扱う。
+* ctor: コンストラクタを指す。
+* dtor: デストラクタを指す。
+* assign: 代入演算子（assignment）を指す。
+* user-defined: この列の関数がユーザによって定義されていることを指す。
+  従って、non-default ctorは、デフォルトコンストラクタでないコンストラクタが定義されている行を指す。
+* undeclared: 特定の特殊メンバ関数がユーザによって宣言されていないことを指し、
+  コンパイラによる自動生成もされていないことを指す。
+* 「~~= default~~」とは、`= default`と同様に自動生成されるが、
+  場合によっては不適切な挙動を引き起こす可能性があるため、推奨されない。
+
+
+上記表より、下記のようなことがわかる。
+
+* ユーザが上記6メンバ関数を一切宣言しない場合、それらはコンパイラにより暗黙に宣言、定義される。
+* ユーザがcopyコンストラクタを宣言した場合、デフォルトコンストラクタは暗黙に宣言、定義されない。
+* moveコンストラクタ、move代入演算子は、
+  以下のいずれもが明示的に宣言されていない場合にのみ暗黙に宣言、定義される。
+    * copyコンストラクタ
+    * copy代入演算子(operator =)
+    * moveコンストラクタ
+    * move代入演算子
+    * デストラクタ
+
+* ユーザがmoveコンストラクタまたはmove代入演算子を宣言した場合、
+  copyコンストラクタ、copy代入演算子は`= delete`される。
+
+
+これらの特殊メンバ関数に対しての設計のガイドラインには、以下のようなものがある。
+
+* [ゼロの原則(Rule of Zero)](---)
+* [五の原則(Rule of Five)](---)
+
+この2つの原則(ガイドライン)の使い分けに関しては、
+
+* リソース管理を外部([RAII(scoped guard)](---)クラス)に任せられる場合: ゼロの法則を採用し、特殊メンバ関数を明示的に定義しない。
+* リソースをクラス内で直接管理する場合: 五の法則を採用し、すべての特殊メンバ関数を適切に定義する。
+
+とすることで安全で保守性性の高いコードを設計できる。
+
+#### 初期化子リストコンストラクタ
+初期化子リストコンストラクタ([オブジェクト生成と初期化|リスト初期化](---)用のコンストラクタ)とは、
+{}による[オブジェクト生成と初期化|リスト初期化](---)をサポートするためのコンストラクタである。
+下記コードでは、 E::E(std::initializer_list\<uint32_t>)が初期化子リストコンストラクタである。
+
+```cpp
+    // @@@ example/term_explanation/constructor_ut.cpp #0:0 begin
+```
+
+デフォルトコンストラクタと初期化子リストコンストラクタが、
+それぞれに定義されているクラスの初期化時に空の初期化子リストが渡された場合、
+デフォルトコンストラクタが呼び出される。
+
+初期化子リストコンストラクタと、
+「その初期化子リストの要素型と同じ型の仮引数のみを受け取るコンストラクタ
+(上記コードのE::E(uint32_t, uint32_t))」
+の両方を持つクラスの初期化時にどちらでも呼び出せる初期化子リストが渡された場合({}を使った呼び出し)、
+初期化子コンストラクタが呼び出される。
+
+#### 継承コンストラクタ
+継承コンストラクタとは、基底クラスで定義したコンストラクタ群を、
+派生クラスのインターフェースとしても使用できるようにするための機能である。
+下記コードのように、継承コンストラクタは派生クラス内でusingを用いて宣言される。
+
+```cpp
+    // @@@ example/term_explanation/constructor_ut.cpp #1:0 begin
+```
+
+#### 委譲コンストラクタ
+委譲コンストラクタとは、コンストラクタから同じクラスの他のコンストラクタに処理を委譲する機能である。
+以下のコード中では、委譲コンストラクタを使い、
+A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
+
+```cpp
+    // @@@ example/term_explanation/constructor_ut.cpp #2:0 begin
+```
+
+### explicit コンストラクタと型変換制御
+
+#### explicit
+explicitは、コンストラクタに対して付与することで、
+コンストラクタによる暗黙の型変換を禁止するためのキーワードである。
+暗黙の型変換とは、ある型の値を別の型の値に自動的に変換する言語機能を指す。
+explicitキーワードを付けることで、意図しない型変換を防ぎ、コードの堅牢性を高めることがでできる。
+
+この節で説明するexplicitの機能は下記のような項目に渡って説明を行う。
+
+- [暗黙の型変換](---)
+- [暗黙の型変換抑止](---)
+- [explicit(COND)](---)
+- [explicit type operator()](---)
+
+#### 暗黙の型変換
+この節で扱う暗黙の型変換とは、
+以下に示したような「非explicitなコンストラクタを持つクラス」による暗黙の型変換を指し、
+[汎整数型昇格](---)や[算術変換](---)等を指さない。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:0 begin
+```
+
+上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:1 begin
+```
+
+この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:2 begin
+```
+
+この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:3 begin -2
+```
+
+以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:4 begin -2
+```
+
+下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
+
+```cpp
+    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:5 begin
+```
+
+std::stringは暗黙の型変換を許して良く、(多くの場合)Personには暗黙の型変換をしない方が良い理由は、
+
+* std::stringの役割は文字列の管理と演算のみであるため、
+  std::stringを文字列リテラルと等価なもののように扱っても違和感がない
+* Personは、明らかに文字列リテラルと等価なものではない
+
+といった[セマンティクス](---)的観点によるものである。
+
+クラスPersonと同様に、
+ほとんどのユーザ定義クラスには非explicitなコンストラクタによる暗黙の型変換は必要ない。
+
+#### 暗黙の型変換抑止
+explicit宣言されていないコンストラクタを持つクラスは、
+下記のコードのように[暗黙の型変換](---)が起こる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #0:1 begin -1
+```
+
+暗黙の型変換はわかりづらいバグを生み出してしまうことがあるため、
+下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #1:1 begin -1
+```
+
+C++03までは、[オブジェクト生成と初期化|一様初期化](---)がサポートされていなかったため、
+explicitは単一引数のコンストラクタに使用されることが一般的であった。
+
+C++11からサポートされた[オブジェクト生成と初期化|一様初期化](---)を下記のように使用することで、
+暗黙の型変換を使用できる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #2:1 begin -1
+```
+
+以下に示す通り、コンストラクタの引数の数によらず、
+C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #3:1 begin -1
+```
+
+#### explicit(COND)
+C++20から導入されたexplicit(COND)は、
+コンストラクタや変換演算子に対して、
+特定の条件下で暗黙の型変換を許可または禁止する機能である。
+CONDには、型特性や定数式などの任意のconstexprな条件式を指定できる。
+以下にこのシンタックスの単純な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #6:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #6:1 begin -1
+```
+
+テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #7:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #7:1 begin -1
+```
+
+こういった工夫により、コードの過度な柔軟性を適度に保つことができ、
+可読性の向上につながる。
+
+#### explicit type operator()
+型変換演算子のオーバーロードの戻り値をさらに別の型に変換すると、
+きわめてわかりづらいバグを生み出してしまうことがあるため、
+この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #4:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #4:1 begin -1
+```
+
+以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
+
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #5:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/explicit_ut.cpp #5:1 begin -1
+```
+
+### ==演算子
+クラスの==演算子の実装方法には、
+[メンバ==演算子](---)、[非メンバ==演算子](---)の2つの方法がある。
+
+#### メンバ==演算子
+メンバ==演算子には、[非メンバ==演算子](---)に比べ、下記のようなメリットがある。
+
+* メンバ変数へのアクセスが容易であるため、より実装が単純になりやすい。
+* メンバ変数へのアクセスが容易であるため、パフォーマンスが向上する。
+* インライン化し易い。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #0:0 begin
+```
+
+すべてのメンバ変数に==演算子が定義されている場合、
+C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #5:0 begin
+```
+
+#### 非メンバ==演算子
+非メンバ==演算子には、[メンバ==演算子](---)に比べ、下記のようなメリットがある。
+
+* クラスをよりコンパクトに記述できるが、その副作用として、
+  アクセッサやfriend宣言が必要になることがある。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #1:0 begin
+```
+
+* [暗黙の型変換](---)を利用した以下に示すようなシンプルな記述ができる場合がある。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #1:1 begin -2
+```
+
+すべてのメンバ変数に==演算子が定義されている場合、
+C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #6:0 begin
+```
+
+### 比較演算子
+比較演算子とは、[==演算子](--)の他に、!=、 <=、>、>= <、>を指す。
+C++20から導入された[<=>演算子](---)の定義により、すべてが定義される。
+
+#### <=>演算子
+「[std::tuppleを使用した比較演算子の実装方法](---)」
+で示した定型のコードはコンパイラが自動生成するのがC++規格のセオリーである。
+このためC++20から導入されたのが<=>演算子`<=>`である。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #3:1 begin -1
+```
+
+定型の比較演算子では不十分である場合、<=>演算子を実装する必要が出てくる。
+そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #4:0 begin
+```
+
+#### 三方比較演算子
+三方比較演算子とは[<=>演算子](---)を指す。
+
+#### spaceship operator
+spaceship operatorとは[<=>演算子](---)を指す。
+この名前は`<=>`が宇宙船に見えることに由来としている。
+
+
 ### リスト初期化
 リスト初期化とは、C++11で導入された`{}`を使ったオブジェクトの初期化構文を指す。
 以下にコード例を示す。
@@ -884,44 +1355,19 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 一様初期化(Uniform Initialization)は 、
 [オブジェクト生成と初期化|リスト初期化](---)による初期化方法がC++における初期化を統一的に扱えるように設計された概念を指さす。
 
-### 初期化子リストコンストラクタ
-初期化子リストコンストラクタ([オブジェクト生成と初期化|リスト初期化](---)用のコンストラクタ)とは、
-{}による[オブジェクト生成と初期化|リスト初期化](---)をサポートするためのコンストラクタである。
-下記コードでは、 E::E(std::initializer_list\<uint32_t>)が初期化子リストコンストラクタである。
+### 非静的なメンバ変数の初期化
+非静的なメンバ変数の初期化には下記の3つの方法がある。
 
-```cpp
-    // @@@ example/term_explanation/constructor_ut.cpp #0:0 begin
-```
+* [NSDMI](---)
+* [初期化子リストでの初期化](---)
+* [コンストラクタ内での非静的なメンバ変数の初期値の代入](---)
 
-デフォルトコンストラクタと初期化子リストコンストラクタが、
-それぞれに定義されているクラスの初期化時に空の初期化子リストが渡された場合、
-デフォルトコンストラクタが呼び出される。
+同一変数に対して、
+「[NSDMI](---)」と「[初期化子リストでの初期化](---)」
+が行われた場合、その変数に対するNSDMIは行われない。
 
-初期化子リストコンストラクタと、
-「その初期化子リストの要素型と同じ型の仮引数のみを受け取るコンストラクタ
-(上記コードのE::E(uint32_t, uint32_t))」
-の両方を持つクラスの初期化時にどちらでも呼び出せる初期化子リストが渡された場合({}を使った呼び出し)、
-初期化子コンストラクタが呼び出される。
 
-### 継承コンストラクタ
-継承コンストラクタとは、基底クラスで定義したコンストラクタ群を、
-派生クラスのインターフェースとしても使用できるようにするための機能である。
-下記コードのように、継承コンストラクタは派生クラス内でusingを用いて宣言される。
-
-```cpp
-    // @@@ example/term_explanation/constructor_ut.cpp #1:0 begin
-```
-
-### 委譲コンストラクタ
-委譲コンストラクタとは、コンストラクタから同じクラスの他のコンストラクタに処理を委譲する機能である。
-以下のコード中では、委譲コンストラクタを使い、
-A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
-
-```cpp
-    // @@@ example/term_explanation/constructor_ut.cpp #2:0 begin
-```
-
-### NSDMI
+#### NSDMI
 NSDMIとは、non-static data member initializerの略語であり、
 下記のような非静的なメンバ変数の初期化子を指す。
 
@@ -929,7 +1375,7 @@ NSDMIとは、non-static data member initializerの略語であり、
     // @@@ example/term_explanation/nsdmi.cpp #0:0 begin
 ```
 
-### 初期化子リストでの初期化
+#### 初期化子リストでの初期化
 「非静的メンバ変数をコンストラクタの本体よりも前に初期化する」言語機能である。
 メンバ変数は宣言された順序で初期化されるため、
 初期化子リストでの順序は、実際の初期化の順序とは関係がない。
@@ -941,7 +1387,7 @@ constメンバ変数は、初期化子リストでの初期化か[NSDMI](---)で
     // @@@ example/term_explanation/nsdmi.cpp #0:1 begin
 ```
 
-### コンストラクタ内での非静的なメンバ変数の初期値の代入
+#### コンストラクタ内での非静的なメンバ変数の初期値の代入
 この方法は単なる代入でありメンバ変数の初期化ではない。
 
 [NSDMI](---)、
@@ -950,6 +1396,26 @@ constメンバ変数は、初期化子リストでの初期化か[NSDMI](---)で
 ```cpp
     // @@@ example/term_explanation/nsdmi.cpp #0:2 begin
 ```
+
+### オブジェクトのライフタイム
+オブジェクトは、以下のような種類のライフタイムを持つ。
+
+* 静的に生成されたオブジェクトのライフタイム
+* thread_localに生成されたオブジェクトのライフタイム
+* newで生成されたオブジェクトのライフタイム
+* スタック上に生成されたオブジェクトのライフタイム
+* prvalue(「[expression|rvalue](---)」参照)のライフタイム
+
+なお、リファレンスの初期化をrvalueで行った場合、
+そのrvalueはリファレンスがスコープを抜けるまで存続し続ける。
+
+rvalueをバインドするリファレンスが存在しない状態で、
+そのrvalueがメンバ変数へのリファレンスを返す関数を呼び出し、
+そのリファレンスをバインドするリファレンス変数を初期化した場合、
+リファレンスが指すオブジェクトはすでにライフタイムを終了している。
+このような状態のリファレンスを[danglingリファレンス](---)と呼ぶ。
+同様に、このような状態のポインタを[danglingポインタ](---)と呼ぶ。
+
 
 ## 値カテゴリとリファレンス
 ここでは、expression(式)の値カテゴリや、それに付随した機能についての解説を行う。
@@ -2995,7 +3461,8 @@ type_traitsは、型に関する情報をコンパイル時に取得・変換す
 - [std::enable_if](---)
 - [std::conditional](---)
 - [std::is_void](---)
-
+- [std::is_copy_assignable](---)
+- [std::is_move_assignable](---)
 
 #### std::integral_constant
 std::integral_constantは「テンプレートパラメータとして与えられた型とその定数から新たな型を定義する」
@@ -3156,6 +3623,17 @@ std::is_voidはテンプレートパラメータの型が
 ```cpp
     // @@@ example/term_explanation/type_traits_ut.cpp #2:0 begin -1
 ```
+
+#### std::is_copy_assignable
+std::is_copy_assignableはテンプレートパラメータの型(T)がcopy代入可能かを調べる。
+Tが[CopyAssignable要件](---)を満たすためには`std::is_copy_assignable<T>`がtrueでなければならないが、
+その逆が成立するとは限らない。
+
+
+#### std::is_move_assignable
+std::is_move_assignableはテンプレートパラメータの型(T)がmove代入可能かを調べる。
+Tが[MoveAssignable要件](---)を満たすためには`std::is_move_assignable<T>`がtrueでなければならないが、
+その逆が成立するとは限らない。
 
 
 ### 並列処理
@@ -3344,17 +3822,67 @@ transfer_ng()がデッドロックを引き起こすシナリオは、以下の�
 スマートポインタは通常、所有権とスコープに基づいてメモリの解放を自動的に行う。
 C++標準ライブラリでは、主に以下の3種類のスマートポインタが提供されている。
 
-* **`std::unique_ptr`** 
-   はダイナミックにアロケートされた[オブジェクトの排他所有](---)を表すために用いられる。  
-* **`std::shared_ptr`** 
-   はダイナミックにアロケート[オブジェクトの共有所有](---)を表現、管理するために用いられる。   
-* **[std::weak_ptr](---)**
-   は`std::shared_ptr`と組み合わせて使用される補助的なスマートポインタである。
-   参照カウントに影響を与えず、[オブジェクトの循環所有](---)よるメモリリークを防ぐために用いられる。
-   std::weak_ptr`はリソースへの弱い参照を保持し、リソースの有効性を確認する際に使用される。  
-* `std::auto_ptr`はC++11以前に導入された初期のスマートポインタであるが、
-   異常な[copyセマンティクス](---)を持つため、多くの誤用を生み出し、
-   C++11から非推奨とされ、C++17から規格から排除された。
+* [std::unique_ptr](---)
+* [std::shared_ptr](---)
+* [std::weak_ptr](---)
+* [std::auto_ptr](---)
+
+#### std::unique_ptr
+std::unique_ptrは、C++11で導入されたスマートポインタの一種であり、std::shared_ptrとは異なり、
+[オブジェクトの排他所有](---)を表すために用いられる。所有権は一つのunique_ptrインスタンスに限定され、
+他のポインタと共有することはできない。ムーブ操作によってのみ所有権を移譲でき、
+スコープを抜けると自動的にリソースが解放されるため、メモリ管理の安全性と効率性が向上する。
+
+#### std::shared_ptr
+std::shared_ptrは、同じくC++11で導入されたスマートポインタであり、[オブジェクトの共有所有](---)を表すために用いられる。
+複数のshared_ptrインスタンスが同じリソースを参照でき、
+内部の参照カウントによって最後の所有者が破棄された時点でリソースが解放される。
+[std::weak_ptr](---)は、shared_ptrと連携して使用されるスマートポインタであり、オブジェクトの非所有参照を表す。
+参照カウントには影響せず、循環参照を防ぐために用いられる。weak_ptrから一時的にshared_ptrを取得するにはlock()を使用する。
+
+#### std::weak_ptr
+std::weak_ptrは、スマートポインタの一種である。
+
+std::weak_ptrは参照カウントに影響を与えず、[std::shared_ptr](---)とオブジェクトを共有所有するのではなく、
+その`shared_ptr`インスタンスとの関連のみを保持するのため、[オブジェクトの循環所有](---)の問題を解決できる。
+
+[オブジェクトの循環所有](---)で示した問題のあるクラスの修正版を以下に示す
+(以下の例では、Xは前のままで、Yのみ修正した)。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:1 begin
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:2 begin
+```
+
+このコードからわかるように修正版YはXオブジェクトを参照するために、
+`std::shared_ptr<X>`の代わりに`std::weak_ptr<X>`を使用する。
+Xオブジェクトにアクセスする必要があるときに、
+下記のY::WhoIsWith()関数の内部処理のようにすることで、`std::weak_ptr<X>`オブジェクトから、
+それと紐づいた`std::shared_ptr<X>`オブジェクトを生成できる。
+
+なお、上記コードは[初期化付きif文](---)を使うことで、
+生成した`std::shared_ptr<X>`オブジェクトのスコープを最小に留めている。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:1 begin
+```
+
+Xと修正版Yの単体テストによりメモリーリークが修正されたことを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:3 begin -1
+```
+
+上記コード例で見てきたように`std::weak_ptr`を使用することで:
+
+- 循環参照によるメモリリークを防ぐことができる
+- 必要に応じて`lock()`でオブジェクトにアクセスできる
+- オブジェクトが既に解放されている場合は`lock()`が空の`shared_ptr`を返すため、安全に処理できる
+
+#### std::auto_ptr
+`std::auto_ptr`はC++11以前に導入された初期のスマートポインタであるが、異常な[copyセマンティクス](---)を持つため、
+多くの誤用を生み出し、C++11から非推奨とされ、C++17から規格から排除された。
 
 ### コンテナ
 データを格納し、
@@ -3494,6 +4022,32 @@ std::variantとstd::visit([Visitor](---)パターンの実装の一種)を組み
 ```
 ```cpp
     // @@@ example/term_explanation/variant_ut.cpp #1:1 begin -1
+```
+
+### オブジェクトの比較
+#### std::rel_ops
+クラスに`operator==`と`operator<`の2つの演算子が定義されていれば、
+それがメンバか否かにかかわらず、他の比較演算子 !=、<=、>、>= はこれらを基に自動的に導出できる。
+std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を機械的に生成する仕組みが提供されている。
+
+次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #0:1 begin -1
+```
+
+なお、std::rel_opsはC++20から導入された[<=>演算子](---)により不要になったため、
+非推奨とされた。
+
+#### std::tuppleを使用した比較演算子の実装方法
+クラスのメンバが多い場合、[==演算子](---)で示したような方法は、
+可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
+
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #2:1 begin
 ```
 
 
@@ -3705,34 +4259,5 @@ new/deleteの呼び出しをまとめたり省略したりすることができ�
 ```
     ??=  ??/  ??'  ??(  ??)  ??!  ??<  ??>  ??-
 ```
-
----
-
-| **第9章**  | 
-言語拡張機能                    
-モジュール／ラムダ式／クロージャ型／コルーチン（co_await／co_yield／co_return）                                                                          | 「言語機能」節                                  |
-
-| **第10章** |
-テンプレートと型推論   
-SFINAE／コンセプト／CTAD／パラメータパック／畳み込み式／constexpr if／decltype(auto)／autoパラメータ                                                        | 「template強化機能」「型推論」節                     |
-
-| **第14章** | 言語仕様の定義要素                 
-ill-formed／well-formed／未定義動作／未規定動作／ODR／alignas
-／alignof
-／addressof／
-評価順序                                                         | 「C++その他」節（RVOなど実装依存は注記扱い）                |
-
-
-
-| **付録A**  | 歴史的項目と実装依存                | 
-RVO／SSO／heap allocation elision／
-std::rel_ops／Most Vexing Parse／トライグラフ／g++／clang++                                             | 「C++その他」「C++コンパイラ」節から抽出                  |
-
-
-
-
-| **第7章**  | 比較と等価性                    | ==演算子／<=>／三方比較／spaceship operator                                                                                             | 「比較演算子」「==演算子」節                          |
-
-
 
 
