@@ -728,7 +728,7 @@ constexprはC++11で導入されたキーワードで、
 C++11以前で定数を定義する方法は、
 
 * マクロ定数
-* [enum](---)
+* [列挙型とバイト表現|enum](---)
 * static const(定数となるか否かは、コンパイラの実装依存に依存する)
 
 の方法があったが、それぞれの方法には下記のような問題がある。
@@ -1386,7 +1386,7 @@ rvalueの内部ハンドルを返さないようにすることが可能とな�
 [rvalue修飾](---)を参照せよ。
 
 
-## 構文と制御構造          
+## 構文と制御構造
 
 ### 属性構文
 C++14から導入されたの属性構文は、[[属性名]]の形式で記述され、
@@ -1752,6 +1752,1959 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
     // @@@ example/term_explanation_cpp20/designated_init_ut.cpp #1:1 begin -2
 ```
 
+## テンプレートと型推論
+### SFINAE
+[SFINAE](https://cpprefjp.github.io/lang/cpp11/sfinae_expressions.html)
+(Substitution Failure Is Not An Errorの略称、スフィネェと読む)とは、
+「テンプレートのパラメータ置き換えに失敗した([ill-formed](---)になった)際に、
+即時にコンパイルエラーとはせず、置き換えに失敗したテンプレートを
+[name lookup](---)の候補から除外する」
+という言語機能である。
+
+### メタ関数
+メタ関数とは、型を引数として型または値を返すテンプレートのことを指す。
+通常の関数が実行時に値を返すのに対し、メタ関数はコンパイル時に型情報を生成または変換する。
+主要なメタ関数は標準ライブラリの[type_traits](---)で定義されている。
+
+### コンセプト
+C++17までのテンプレートには以下のような問題があった。
+
+* [SFINAE](---)による制約が複雑  
+  テンプレートの制約を行うために、
+  std::enable_ifやの仕組みを使う必要があり、コードが非常に複雑で難読になりがちだった。
+* エラーメッセージが不明瞭  
+  テンプレートのパラメータが不適切な型だった場合に、
+  コンパイルエラーのメッセージが非常にわかりにくく、問題の原因を特定するのが困難だった。
+* テンプレートの適用範囲が不明確  
+  テンプレートの使用可能な型の範囲がドキュメントやコメントでしか表現されず、
+  明確な制約がコードに反映されていなかったため、コードの意図が伝わりづらい。
+* 部分特殊化やオーバーロードによる冗長性  
+  特定の型に対するテンプレートの処理を制限するために、
+  部分特殊化やテンプレートオーバーロードを行うことが多く、コードが冗長になりがちだった。
+
+C++20から導入された「コンセプト(concepts)」は、
+テンプレートパラメータを制約する機能である。
+この機能を使用することで、以下のようなプログラミングでのメリットが得られる。
+
+* テンプレートの制約を明確に定義できる  
+  コンセプトを使うことで、テンプレートパラメータが満たすべき条件を宣言的に記述できるため、
+  コードの意図が明確にできる。
+* コンパイルエラーがわかりやすくなる  
+  コンセプトを使用すると、テンプレートの適用範囲外の型に対して、
+  より具体的でわかりやすいエラーメッセージが表示される。
+* コードの可読性が向上する  
+  コンセプトを利用することで、
+  テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #0:0 begin
+
+    // @@@ example/term_explanation/concept_ut.cpp #0:1 begin -1
+```
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #1:0 begin
+
+    // @@@ example/term_explanation/concept_ut.cpp #1:1 begin -1
+```
+
+以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #2:0 begin
+```
+
+以上の関数テンプレートをコンセプトを使用して改善した例である。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #3:0 begin
+```
+
+フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
+
+```cpp
+    // @@@ example/term_explanation/concept_ut.cpp #4:0 begin
+```
+
+### パラメータパック
+パラメータパック(parameter pack)は、可変長テンプレート引数を表現するためにC++11で導入されたシンタックスである。
+テンプレートの定義時に、任意個数のテンプレート引数または関数引数をまとめて受け取ることができる。
+
+パラメータパックのシンタックスは以下のようなものである。
+
+* `typename... Args` - テンプレートパラメータパック
+* `Args... args` - 関数パラメータパック
+* `args...` - パック展開（pack expansion）
+* `sizeof...(args)` - パック内の要素数を取得
+
+パラメータパックを使用した関数テンプレートは以下のように定義する。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp #3:0 begin
+```
+
+以下の単体テストは上記の関数の使い方を示している。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp #3:1 begin -1
+```
+
+### 畳み込み式
+畳み式(fold expression)とは、C++17から導入された新機能であり、
+可変引数テンプレートのパラメータパックに対して二項演算を累積的に行うためのものである。
+
+畳み込み式のシンタックスの使用は下記のようなものである。
+```
+( pack op ... )          // (1) 単項右畳み込み
+( ... op pack )          // (2) 単項左畳み込み
+( pack op ... op init )  // (3) 二項右畳み込み
+( init op ... op pack )  // (4) 二項左畳み込み
+```
+
+1. 単項右畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:0 begin 
+```
+2. 単項左畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:1 begin 
+```
+3. 二項右畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:2 begin 
+```
+4. 二項左畳み込み
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #0:3 begin 
+```
+
+上記したような単純な例では、畳み込み式の効果はわかりづらいため、
+もっと複雑なで読解が困難な再帰構造を持ったコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #1:0 begin 
+```
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #1:1 begin
+```
+
+畳み込み式を使うことで、この問題をある程度緩和したコードを下記する。
+
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #2:0 begin 
+```
+```cpp
+    // @@@ example/term_explanation/flold_expression_ut.cpp #2:1 begin
+```
+
+### ジェネリックラムダ
+ジェネリックラムダとは、C++11のラムダ式のパラメータの型にautoを指定できるようにした機能で、
+C++14で導入された。
+
+この機能により関数の中で関数テンプレートと同等のものが定義できるようになった。
+
+ジェネリックラムダで定義されたクロージャは、通常のラムダと同様にオブジェクトであるため、
+下記のように使用することもできる便利な記法である。
+
+```cpp
+    // @@@ example/term_explanation/generic_lambda_ut.cpp #0:0 begin
+```
+
+なお、上記のジェネリックラムダは下記クラスのインスタンスの動きと同じである。
+
+```cpp
+    // @@@ example/term_explanation/generic_lambda_ut.cpp #0:1 begin
+```
+
+### クラステンプレートのテンプレート引数の型推論
+C++17から、
+「コンストラクタに渡される値によって、クラステンプレートのテンプレート引数を推論する」
+機能が導入された。
+
+この機能がないC++14までは以下のように記述する必要があった。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp #0:0 begin -1
+```
+
+これに対して、この機能により、以下のようにシンプルに記述できるようになった。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp #0:1 begin -1
+```
+
+### テンプレートの型推論ガイド
+テンプレートの型推論ガイド([CTAD(Class Template Argument Deduction)](---))は、
+C++17で導入された機能である。この機能により、
+クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
+引数から自動的に型を推論できるようになる。型推論ガイドを使用することで、
+コードの可読性と簡潔性が向上する。
+
+型推論ガイドがない場合、[クラステンプレートのテンプレート引数の型推論](---)は限定的であり、
+明示的にテンプレート引数を指定する必要がある場合が多い。
+一方、型推論ガイドを使用することで、
+コンストラクタの引数からテンプレート引数を自動的に決定することが可能になる。
+
+```cpp
+    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:0 begin
+```
+上記のクラステンプレートは、ガイドがない場合、
+以下に示すように型推論によりテンプレート引数を決定することができない。
+
+```cpp
+    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:1 begin -1
+```
+
+以上に示したクラステンプレートに以下の型推論ガイドを追加することにより、
+テンプレート引数を型推論できるようになる。
+
+```cpp
+    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:2 begin 
+```
+```cpp
+    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:3 begin -1
+```
+
+### CTAD(Class Template Argument Deduction)
+CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論ガイド](---)のことである。
+
+### 変数テンプレート
+変数テンプレートとは、下記のコード示したような機能である。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp #1:0 begin
+```
+
+なお、変数テンプレートはconstexprと定義されるが、
+「定数テンプレート」ではなく変数テンプレートである。
+
+
+### エイリアステンプレート
+エイリアステンプレート(alias templates)とはC++11から導入され、
+下記のコード例で示したようにテンプレートによって型の別名を定義する機能である。
+
+```cpp
+    // @@@ example/term_explanation/template_ut.cpp #2:0 begin
+```
+
+### constexpr if文
+C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/if_constexpr.html)とは、
+文を条件付きコンパイルすることができるようにするための制御構文である。
+
+まずは、この構文を使用しない例を示す。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #0:1 begin -1
+```
+
+このような場合、[SFINAE](---)によるオーバーロードが必須であったが、
+この文を使用することで、下記のようにオーバーロードを使用せずに記述できるため、
+条件分岐の可読性の向上が見込める。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #0:2 begin
+```
+
+この構文は[パラメータパック](---)の展開においても有用な場合がある。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #1:1 begin -1
+```
+
+C++14までの構文を使用する場合、
+上記のようなオーバーロードとリカーシブコールの組み合わせが必要であったが、
+constexpr ifを使用することで、やや単純に記述できる。
+
+```cpp
+    // @@@ example/term_explanation/constexpr_if_ut.cpp #1:2 begin
+```
+
+### autoパラメータによる関数テンプレートの簡易定義
+この機能は、C++20から導入された。
+下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #4:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #4:1 begin -1
+```
+
+### AAAスタイル
+このドキュメントでのAAAとは、単体テストのパターンarrange-act-assertではなく、
+almost always autoを指し、
+AAAスタイルとは、「可能な場合、型を左辺に明示して変数を宣言する代わりに、autoを使用する」
+というコーディングスタイルである。
+この用語は、Andrei Alexandrescuによって造られ、Herb Sutterによって広く推奨されている。
+
+特定の型を明示して使用する必要がない場合、下記のように書く。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #0:0 begin -1
+```
+
+特定の型を明示して使用する必要がある場合、下記のように書く。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #1:0 begin -1
+```
+
+関数の戻り値を受け取る変数を宣言する場合、下記のように書く。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #2:0 begin -1
+```
+
+ただし、関数の戻り値型が容易に推測しがたい下記のような場合、
+型を明示しないAAAスタイルは使うべきではない。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #2:1 begin -1
+```
+
+インライン関数や関数テンプレートの宣言は、下記のように書く。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #3:0 begin
+```
+
+ただし、インライン関数や関数テンプレートが複雑な下記のような場合、
+AAAスタイルは出来る限り避けるべきである。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #3:1 begin
+```
+
+このスタイルには下記のような狙いがある。
+
+* コードの安全性の向上  
+  autoで宣言された変数は未初期化にすることができないため、未初期化変数によるバグを防げる。
+  また、下記のように縮小型変換(下記では、unsignedからsignedの変換)を防ぐこともできる。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #4:0 begin -1
+```
+
+* コードの可読性の向上  
+  冗長なコードを排除することで、可読性の向上が見込める。
+
+* コードの保守性の向上  
+  「変数宣言時での左辺と右辺を同一の型にする」非AAAスタイルは
+  [DRYの原則](https://ja.wikipedia.org/wiki/Don%27t_repeat_yourself#:~:text=Don't%20repeat%20yourself%EF%BC%88DRY,%E3%81%A7%E3%81%AA%E3%81%84%E3%81%93%E3%81%A8%E3%82%92%E5%BC%B7%E8%AA%BF%E3%81%99%E3%82%8B%E3%80%82)
+  に反するが、この観点において、AAAスタイルはDRYの原則に沿うため、
+  コード修正時に型の変更があった場合でも、それに付随したコード修正を最小限に留められる。
+
+
+AAAスタイルでは、以下のような場合に注意が必要である。
+
+* 関数の戻り値をautoで宣言された変数で受ける場合  
+  上記で述べた通り、AAAの過剰な仕様は、可読性を下げてしまう。
+
+* autoで推論された型が直感に反する場合  
+  下記のような型推論は、直感に反する場合があるため、autoの使い方に対する習熟が必要である。
+
+```cpp
+    // @@@ example/term_explanation/aaa.cpp #5:0 begin -1
+```
+ 
+### auto
+autoは、C++11で導入された型推論キーワードである。変数宣言時に明示的な型指定を省略し、
+初期化式からコンパイラが型を自動的に推定する。 これにより、複雑な型やテンプレート使用時の記述が簡潔になり、
+可読性と保守性が向上する。
+コード例については、[テンプレートと型推論|decltype](---)を参照せよ。
+
+### decltype
+decltypeはオペランドに[expression](---)を取り、その型を算出する機能である。
+下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #0:0 begin -1
+```
+
+decltypeは、テンプレートプログラミングに多用されるが、
+クロージャ型(「[言語拡張機能|ラムダ式](---)」参照)
+のような記述不可能な型をオブジェクトから算出できるため、
+下記例のような場合にも有用である。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #0:1 begin
+```
+
+### decltype(auto)
+decltype(auto)はC++14から導入されたdecltypeの類似機能である。
+
+auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #0:2 begin -1
+```
+
+### CTAD（Class Template Argument Deduction）
+
+### 戻り値型を後置する関数宣言
+関数の戻り値型後置構文は戻り値型をプレースホルダ(auto)にして、
+実際の型を->で示して型推論させるシンタックスを指す。実際には関数テンプレートで使用されることが多い。
+コード例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #1:0 begin
+```
+
+この構文をC++11から導入された理由は以下のコードを見れば明らかだろう。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #1:1 begin
+```
+
+### 関数の戻り値型auto
+C++14から導入された機能で、関数の戻り値の型をautoキーワードで宣言することで、
+コンパイラがreturn文から自動的に型を推論してくれる機能である。
+これにより、複雑な型の戻り値を持つ関数でも、より簡潔に記述できるようになる
+(「[autoパラメータによる関数テンプレートの簡易定義](---)」を参照)。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #2:1 begin -1
+```
+
+### 後置戻り値型auto
+C++14から導入された[関数の戻り値型auto](---)と似た、
+関数の戻り値の型を関数本体の後に-> autoと書くことでができる機能である。
+autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
+
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/decltype_ut.cpp #3:1 begin -1
+```
+
+## name lookupと継承構造                 
+ここではname lookupとそれに影響を与える名前空間について解説する。
+
+### ルックアップ
+このドキュメントでのルックアップとは[name lookup](---)を指す。
+
+### name lookup
+[name lookup](https://en.cppreference.com/w/cpp/language/lookup)
+とはソースコードで名前が検出された時に、その名前をその宣言と関連付けることである。
+以下、name lookupの例を上げる。
+
+下記のようなコードがあった場合、
+
+```cpp
+    // @@@ example/term_explanation/name_lookup_ut.cpp #0:0 begin
+```
+
+以下のコードでの関数呼び出しf()のname lookupは、
+
+
+```cpp
+    // @@@ example/term_explanation/name_lookup_ut.cpp #1:0 begin -1
+```
+
+1. NS_LUをその前方で宣言された名前空間と関連付けする
+2. f()呼び出しをその前方の名前空間NS_LUで宣言された関数fと関連付ける
+
+という手順で行われる。
+
+下記のようなコードがあった場合、
+
+```cpp
+    // @@@ example/term_explanation/name_lookup_ut.cpp #0:1 begin
+```
+
+以下のコードでの関数呼び出しg()のname lookupは、
+
+
+```cpp
+    // @@@ example/term_explanation/name_lookup_ut.cpp #1:1 begin -1
+```
+
+1. NS_LUをその前方で宣言された名前空間と関連付けする
+2. 名前空間NS_LU内で宣言された複数のgを見つける
+3. g()呼び出しを、
+   すでに見つけたgの中からベストマッチしたg(T const (&)[N])と関連付ける
+
+という手順で行われる。
+
+下記記のようなコードがあった場合、
+
+```cpp
+    // @@@ example/term_explanation/name_lookup_ut.cpp #2:0 begin
+```
+
+以下のコードでの関数呼び出しToString()のname lookupは、
+
+```cpp
+    // @@@ example/term_explanation/name_lookup_ut.cpp #2:1 begin -1
+```
+
+1. ToString()呼び出しの引数xの型Xが名前空間NS_LUで定義されているため、
+   ToStringを探索する名前空間にNS_LUを組み入れる(「[関連名前空間](---)」参照)
+2. ToString()呼び出しより前方で宣言されたグローバル名前空間とNS_LUの中から、
+   複数のToStringの定義を見つける
+3. ToString()呼び出しを、
+   すでに見つけたToStringの中からベストマッチしたNS_LU::ToStringと関連付ける
+
+という手順で行われる。
+
+
+### two phase name lookup
+[two phase name lookup](https://en.cppreference.com/w/cpp/language/two-phase_lookup)
+とはテンプレートをインスタンス化するときに使用される、下記のような2段階でのname lookupである。
+
+1. テンプレート定義内でname lookupを行う(通常のname lookupと同じ)。
+   この時、テンプレートパラメータに依存した名前
+   ([dependent_name](https://en.cppreference.com/w/cpp/language/dependent_name))は
+   name lookupの対象外となる(name lookupの対象が確定しないため)。
+2. 1の後、テンプレートパラメータを展開した関数内で、
+   [関連名前空間](---)の宣言も含めたname lookupを行う。
+
+以下の議論では、
+
+* 上記1のname lookupを1st name lookup
+* 上記2のname lookupを2nd name lookup
+
+と呼ぶことにする。
+
+下記のようなコードがあった場合、
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:0 begin
+```
+
+以下のコードでのTypeNameのインスタンス化に伴うname lookupは、
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:1 begin -1
+```
+
+1. TypeName()呼び出しの引数xの型Xが名前空間NS_TPLUで宣言されているため、
+   NS_TPLUをTypeNameを探索する[関連名前空間](---)にする。
+2. TypeName()呼び出しより前方で宣言されたグローバル名前空間とNS_TPLUの中からTypeNameを見つける。
+3. TypeNameは関数テンプレートであるためtwo phase lookupが以下のように行われる。
+    1. TypeName内でのHeader(int{})の呼び出しは、1st name lookupにより、
+       Header(long)の宣言と関連付けられる。
+       Header(int)はHeader(long)よりもマッチ率が高い、
+       TypeNameの定義より後方で宣言されているため、name lookupの対象外となる。
+    2. TypeName内でのToType(t)の呼び出しに対しては、2nd name lookupが行われる。
+       このためTypeName定義より前方で宣言されたグローバル名前空間と、
+       tの型がNS_TPLU::Xであるため[関連名前空間](---)となったNS_TPLUがname lookupの対象となるが、
+       グローバル名前空間内のToTypeは、
+       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](---)が起こり、
+       TypeNameからは非可視となるためname lookupの対象から外れる。
+       このため、ToType(t)の呼び出しは、NS_TPLU::ToType(X const&)の宣言と関連付けられる。
+
+という手順で行われる。
+
+上と同じ定義、宣言がある場合の以下のコードでのTypeNameのインスタンス化に伴うname lookupは、
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:2 begin -1
+```
+
+1. NS_TPLUを名前空間と関連付けする
+   (引数の型がintなのでNS_TPLUは[関連名前空間](---)とならず、NS_TPLUを明示する必要がある)。
+2. TypeName()呼び出しより前方で宣言されたNS_TPLUの中からTypeNameを見つける。
+3. TypeNameは関数テンプレートであるためtwo phase lookupが以下のように行われる。
+    1. TypeName内でのHeader(int{})の呼び出しは、1st name lookupにより、
+       前例と同じ理由で、Header(long)の宣言と関連付けられる。
+    2. TypeName内でのToType(t)の呼び出しに対しては、2nd name lookupが行われる。
+       tの型がintであるためNS_TPLUは[関連名前空間](---)とならず、通常のname lookupと同様に
+       ToType(t)の呼び出し前方のグローバル名前空間とNS_TPLUがname lookupの対象になるが、
+       グローバル名前空間内のToTypeは、
+       NS_TPLU内でTypeNameより前に宣言されたtemplate<> ToTypeによって[name-hiding](---)が起こり、
+       TypeNameからは非可視となるためname lookupの対象から外れる。
+       また、ToType(int const&)は、TypeNameの定義より後方で宣言されているため、
+       name lookupの対象外となり、
+       その結果、ToType(t)の呼び出しは、NS_TPLU内のtemplate<> ToTypeの宣言と関連付けられる。
+
+という手順で行われる。
+
+以上の理由から、先に示した例でのToTypeの戻り値は"X"となり、
+後に示した例でのToTypeの戻り値は"unknown"となる。
+これはtwo phase lookupの結果であり、
+two phase lookupが実装されていないコンパイラ(こういったコンパイラは存在する)では、
+結果が異なるため注意が必要である
+(本ドキュメントではこのような問題をできる限り避けるために、
+サンプルコードを[g++](---)と[clang++](---)でコンパイルしている)。
+
+以下に、two phase lookupにまつわるさらに驚くべきコード例を紹介する。
+上と同じ定義、宣言がある場合の以下のコードの動作を考える。
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:3 begin -1
+```
+
+NS_TPLU::TypeName(int{})のintをlongにしただけなので、この単体テストはパスしないが、
+この単体テストコードの後(実際にはこのファイルのコンパイル単位の中のNS_TPLU内で、
+且つtemplate<> ToTypeの宣言の後方であればどこでもよい)
+に以下のコードを追加するとパスしてしまう。
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:4 begin
+```
+
+この理由は、関数テンプレート内での2nd name lookupで選択された名前が関数テンプレートであった場合、
+その特殊化の検索範囲はコンパイル単位内になることがあるからである
+([template_specialization](https://en.cppreference.com/w/cpp/language/template_specialization)
+によるとこの動作は未定義のようだが、
+[g++](---)/[clang++](---)両方ともこのコードを警告なしでコンパイルする)。
+
+TypeName(long{})内でのtwo phase name lookupは、TypeName(int{})とほぼ同様に進み、
+template<> ToTypeの宣言を探し出すが、
+さらに前述したようにこのコンパイル単位のNS_TPLU内からその特殊化も探し出す。
+その結果、ToType(t)の呼び出しは、NS_TPLU内のtemplate<> ToType\<long>の定義と関連付けられる。
+
+以上の議論からわかる通り、関数テンプレートとその特殊化の組み合わせは、
+そのインスタンス化箇所(この場合単体テストコード内)の後方から、
+name lookupでバインドされる関数を変更することができるため、
+極めて分かりづらいコードを生み出す。ここから、
+
+* 関数テンプレートとその特殊化はソースコード上なるべく近い位置で宣言するべきである
+* STL関数テンプレートの特殊化は行うべきではない
+
+という教訓が得られる。
+
+なお、関数とその関数オーバーロードのname lookupの対象は、呼び出し箇所前方の宣言のみであるため、
+関数テンプレートToType(T const& t)の代わりに、関数ToType(...)を使うことで、
+上記問題は回避可能である。
+
+次に示す例は、一見2nd name lookupで関連付けされるように見える関数ToType(NS_TPLU2::Y const&)が、
+実際には関連付けされないコードである。
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #1:1 begin
+```
+
+これは先に示したNS_TPLU::Xの例と極めて似ている。本質的な違いは、
+TypeNameやToTypeがグローバル名前空間で宣言されていることのみである。
+だが、下記の単体テストで示す通り、
+TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y const&)が選択されないのである。
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #1:2 begin -1
+```
+
+ここまでの現象を正確に理解するには、
+「two phase lookupの対象となる宣言」を下記のように、より厳密に認識する必要がある。
+
+* TypeNameの中で行われる1st name lookupの対象となる宣言は下記の積集合である。
+    * TypeNameと同じ名前空間内かグローバル名前空間内の宣言
+    * TypeName定義位置より前方の宣言
+
+* TypeNameの中で行われる2nd name lookupの対象となる宣言は下記の和集合である。
+    * 1st name lookupで使われた宣言
+    * TypeName呼び出しより前方にある[関連名前空間](---)内の宣言
+
+この認識に基づくNS_TPLU2::Yに対するグローバルなTypeName内でのtwo phase name lookupは、
+
+1. TypeName内に1st name lookupの対象がないため何もしない。
+2. TypeName内の2nd name lookupに使用される[関連名前空間](---)NS_TPLU2は、
+   ToType(NS_TPLU2::Y const&)の宣言を含まないため、この宣言は2nd name lookupの対象とならない。
+   その結果、ToType(t)の呼び出しは関数テンプレートToType(T const&)と関連付けられる。
+
+という手順で行われる。
+
+以上が、TypeNameからToType(NS_TPLU2::Y const&)が使われない理由である。
+
+ここまでで示したようにtwo phase name lookupは理解しがたく、
+理解したとしてもその使いこなしはさらに難しい。
+
+次のコードは、この難解さに翻弄されるのが現場のプログラマのみではないことを示す。
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #2:0 begin
+```
+
+上記の宣言、定義があった場合、operator+の単体テストは以下のようになる。
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #2:1 begin -2
+```
+
+このテストは当然パスするが、次はどうだろう？
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #2:2 begin -2
+```
+
+これまでのtwo phase name lookupの説明では、
+operator+(NS_TPLU2::Y const& y, int i)はTypeNum内でのname lookupの対象にはならないため、
+このテストはエラーとならなければならないが、[g++](---)ではパスしてしまう。
+2nd name lookupのロジックにバグがあるようである。
+
+有難いことに、[clang++](---)では仕様通りこのテストはエラーとなり、
+当然ながら以下のテストはパスする(つまり、g++ではエラーする)。
+
+```cpp
+    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #2:3 begin -2
+```
+
+なお、TypeNum内のコードである
+
+```cpp
+    return t + 0;
+```
+
+を下記のように変更することで
+
+```cpp
+    return operator+(t, 0);
+```
+
+g++のname lookupはclang++と同じように動作するため、
+記法に違和感があるものの、この方法はg++のバグのワークアランドとして使用できる。
+
+また、operator+(NS_TPLU2::Y const& y, int i)をNS_TPLU2で宣言することで、
+g++ではパスしたテストをclang++でもパスさせられるようになる(これは正しい動作)。
+これにより、型とその2項演算子オーバーロードは同じ名前空間で宣言するべきである、
+という教訓が得られる。
+
+以上で見てきたようにtwo phase name lookupは、現場プログラマのみではなく、
+コンパイラを開発するプログラマをも混乱させるほど難解ではあるが、
+STLを含むテンプレートメタプログラミングを支える重要な機能であるため、
+C++プログラマには、最低でもこれを理解し、出来れば使いこなせるようになってほしい。
+
+
+### 実引数依存探索
+実引数依存探索とは、argument-dependent lookupの和訳語であり、
+通常はその略語である[ADL](---)と呼ばれる。
+
+### ADL
+ADLとは、関数の実引数の型が宣言されている名前空間(これを[関連名前空間](---)と呼ぶ)内の宣言が、
+その関数の[name lookup](---)の対象になることである。
+
+下記のようなコードがあった場合、
+
+```cpp
+    // @@@ example/term_explanation/name_lookup_adl_ut.cpp #0:0 begin
+```
+
+以下のコードでのToStringの呼び出しに対するのname lookupは、
+
+```cpp
+    // @@@ example/term_explanation/name_lookup_adl_ut.cpp #0:1 begin -1
+```
+
+* ToStringの呼び出しより前方で行われているグローバル名前空間内の宣言
+* ToStringの呼び出しより前方で行われているNS_ADL内の宣言
+
+の両方を対象として行われる。
+NS_ADL内の宣言がToStringの呼び出しに対するのname lookupの対象になる理由は、
+ToStringの呼び出しに使われている実引数aの型AがNS_ADLで宣言されているからである。
+すでに述べたようにこれをADLと呼び、この場合のNS_ADLを[関連名前空間](---)と呼ぶ。
+
+ADLは思わぬname lookupによるバグを誘発することもあるが、
+下記コードを見れば明らかなように、また、
+多くのプログラマはそれと気づかずに使っていることからもわかる通り、
+コードをより自然に、より簡潔に記述するための重要な機能となっている。
+
+```cpp
+    // @@@ example/term_explanation/name_lookup_adl_ut.cpp #0:2 begin -1
+```
+
+### 関連名前空間
+関連名前空間(associated namespace)とは、
+[ADL](---)(実引数依存探索)によってname lookupの対象になった宣言を含む名前空間のことである。
+
+
+### 修飾付き関数呼び出し
+修飾付き関数呼び出し(Qualified Call)は、
+C++で関数やメンバ関数を明示的にスコープやクラス名で修飾して呼び出す方法である。
+名前の曖昧性を回避し、特定の関数やクラスメンバを明確に選択する際に利用される。
+これにより、意図しない[name lookup](---)を回避することができるため、可読性と安全性が向上する。
+一方で、[ADL](---)が働かなくなるため、フレキシブルな[name lookup](---)ができなくなる。
+
+```cpp
+    // @@@ example/term_explanation/etc_ut.cpp #2:0 begin -1
+```
+
+### hidden-friend関数
+hidden-friend関数(隠れたフレンド関数、あるいは単にhidden-friend)とは、
+
+* クラスの内部で定義された、
+* 名前空間スコープでの通常の[name lookup](---)できず、[ADL](---)のみでname lookupできる
+
+friend関数のことを指す。このような性質から、non-namespace-visible friend関数と呼ばれることもある。
+
+これにより、意図的に外部からのアクセスを制限し、
+必要な場合にのみ利用されることを保証する設計が可能となる。
+
+hidden-friend関数(隠れたフレンド関数)の目的は、
+
+* カプセル化の強化：
+  クラスの内部実装を外部から隠しつつ、特定の操作だけを許可する。
+* 名前空間汚染の防止：
+  関数が名前空間スコープに現れないため、他の名前と衝突しにくい。
+* 最適化：
+  コンパイラによる最適化を妨げることなく、特定の機能を提供する。
+
+```cpp
+    // @@@ example/term_explanation/hidden_friend_ut.cpp #0:0 begin 
+```
+```cpp
+    // @@@ example/term_explanation/hidden_friend_ut.cpp #0:1 begin -1
+```
+
+
+### name-hiding
+name-hidingとは
+「前方の識別子が、その後方に同一の名前をもつ識別子があるために、
+[name lookup](---)の対象外になる」現象一般を指す通称である
+([namespace](https://en.cppreference.com/w/cpp/language/namespace)参照)。
+
+まずは、クラスとその派生クラスでのname-hidingの例を示す。
+
+```cpp
+    // @@@ example/term_explanation/name_hiding.cpp #0:0 begin
+```
+
+上記の関数fは一見オーバーロードに見えるが、そうではない。下記のコードで示したように、
+Base::f()には、修飾しない形式でのDerivedクラス経由のアクセスはできない。
+
+```cpp
+    // @@@ example/term_explanation/name_hiding.cpp #0:1 begin
+```
+
+これは前述したように、
+Base::fがその後方にあるDerived::f(int)によりname-hidingされたために起こる現象である
+(name lookupによる探索には識別子が使われるため、シグネチャの違いはname-hidingに影響しない)。
+
+下記のように[using宣言](---)を使用することで、
+修飾しない形式でのDerivedクラス経由のBase::f()へのアクセスが可能となる。
+
+```cpp
+    // @@@ example/term_explanation/name_hiding.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/name_hiding.cpp #1:1 begin -1
+```
+
+下記コードは、名前空間でも似たような現象が起こることを示している。
+
+```cpp
+    // @@@ example/term_explanation/name_hiding.cpp #2:0 begin
+```
+
+この問題に対しては、下記のようにf(int)の定義位置を後方に移動することで回避できる。
+
+```cpp
+    // @@@ example/term_explanation/name_hiding.cpp #2:1 begin
+```
+
+また、先述のクラスでの方法と同様にusing宣言を使い、下記のようにすることもできる。
+
+```cpp
+    // @@@ example/term_explanation/name_hiding.cpp #2:2 begin
+```
+
+当然ながら、下記のようにf()の呼び出しを::で修飾することもできる。
+
+```cpp
+    // @@@ example/term_explanation/name_hiding.cpp #2:3 begin
+```
+
+修飾の副作用として「[two phase name lookup](---)」の例で示したような
+[ADL](---)を利用した高度な静的ディスパッチが使用できなくなるが、
+通常のソフトウェア開発では、ADLが必要な場面は限られているため、
+デフォルトでは名前空間を使用して修飾を行うことにするのが、
+無用の混乱をさけるための安全な記法であると言えるだろう。
+
+次に、そういった混乱を引き起こすであろうコードを示す。
+
+```cpp
+    // @@@ example/term_explanation/name_hiding.cpp #3:0 begin
+```
+
+NS_B_Inner::g()内のf(int)の呼び出しはコンパイルできるが、
+name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパイルできず、
+名前空間で修飾することが必要になる。
+一方で、ADLの効果で名前空間での修飾をしていないf(S_in_B)の呼び出しはコンパイルできる。
+
+全チームメンバがこういったname lookupを正しく扱えると確信できないのであれば、
+前述の通り、デフォルトでは名前空間を使用して修飾を行うのが良いだろう。
+
+### ダイヤモンド継承
+ダイヤモンド継承(Diamond Inheritance)とは、以下のような構造のクラス継承を指す。
+
+* 基底クラス(Base)が一つ存在し、その基底クラスから二つのクラス(Derived_0、Derived_1)が派生する。
+* Derived_0とDerived_1からさらに一つのクラス(DerivedDerived)が派生する。
+  したがって、DerivedDerivedはBaseの孫クラスとなる。
+
+この継承は、多重継承の一形態であり、クラス図で表すと下記のようになるため、
+ダイヤモンド継承と呼ばれる。
+
+![diamond inheritance](plant_uml/diamond_inheritance.png)
+
+ダイヤモンド継承は、
+[仮想継承](---)(virtual inheritance)を使ったものと、使わないものに分類できる。
+
+[仮想継承](---)を使わないダイヤモンド継承のコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #0:1 begin -1
+```
+
+これからわかるように、DerivedDerivedインスタンスの中に2つのBaseインスタンスが存在する。
+この状態をオブジェクト図で表すと下記のようになる。
+
+![diamond inheritance](plant_uml/diamond_inheritance_obj.png)
+
+下記コードは、それが原因で名前解決が曖昧になりコンパイルできない。
+
+```cpp
+    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #0:2 begin -1
+```
+
+この問題に対処するには、クラス名による修飾が必要になるが、
+Baseインスタンスが2つ存在するため、下記に示すようなわかりづらいバグの温床となる。
+
+```cpp
+    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #0:3 begin -1
+```
+
+次に示すのは、[仮想継承](---)を使用したダイヤモンド継承の例である。
+
+```cpp
+    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #1:1 begin -1
+```
+
+仮想継承の効果で、DerivedDerivedインスタンスの中に存在するBaseインスタンスは1つになるため、
+上で示した仮想継承を使わないダイヤモンド継承での問題は解消される
+(が、[仮想継承](---)による別の問題が発生する)。
+
+```cpp
+    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #1:2 begin -1
+```
+
+この状態をオブジェクト図で表すと下記のようになる。
+
+![diamond inheritance](plant_uml/diamond_inheritance_virtual_obj.png)
+
+### 仮想継承
+下記に示した継承方法を仮想継承、仮想継承の基底クラスを仮想基底クラスと呼ぶ。
+
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:0 begin
+```
+
+仮想継承は、[ダイヤモンド継承](---)の基底クラスのインスタンスを、
+その継承ヒエラルキーの中で1つのみにするための言語機能である。
+
+仮想継承の独特の動作を示すため、
+上記コードに加え、仮想継承クラス、通常の継承クラス、
+それぞれを通常の継承したクラスを下記のように定義する。
+
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:1 begin
+```
+
+この場合、継承ヒエラルキーに仮想継承を含むクラスと、含まないクラスでは、
+以下に示したような違いが発生する。
+
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:2 begin -1
+```
+
+この動作は、下記の仕様に起因している
+(引数なしで呼び出せる基底クラスのコンストラクタがない場合はコンパイルエラー)。
+
+__「仮想継承クラスを継承したクラスが、仮想継承クラスの基底クラスのコンストラクタを明示的に呼び出さない場合、
+引数なしで呼び出せる基底クラスのコンストラクタが呼ばれる」__  
+
+以下では、これを「仮想継承のコンストラクタ呼び出し」仕様と呼ぶことにする。
+
+仮想継承クラスが、基底クラスのコンストラクタを呼び出したとしても、この仕様が優先されるため、
+上記コードのような動作となる。
+
+これを通常の継承クラスと同様な動作にするには、下記のようにしなければならない。
+
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:3 begin
+```
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:4 begin -1
+```
+「仮想継承のコンストラクタ呼び出し」仕様は、
+[ダイヤモンド継承](---)での基底クラスのコンストラクタ呼び出しを一度にするために存在する。
+
+もし、この機能がなければ、下記のコードでの基底クラスのコンストラクタ呼び出しは2度になるため、
+デバッグ困難なバグが発生してしまうことは容易に想像できるだろう。
+
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #1:1 begin -1
+```
+
+基底クラスのコンストラクタ呼び出しは、下記のコードのようにした場合でも、
+単体テストが示すように、一番最初に行われる。
+
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #2:1 begin -1
+```
+
+このため、基底クラスのコンストラクタ呼び出しは下記のような順番で行うべきである。
+
+```cpp
+    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #3:0 begin
+```
+
+### 仮想基底
+仮想基底(クラス)とは、[仮想継承](---)の基底クラス指す。
+
+### ドミナンス
+[ドミナンス(Dominance、支配性)](https://en.wikipedia.org/wiki/Dominance_(C%2B%2B))とは、
+「探索対称の名前が継承の中にも存在するような場合の[name lookup](---)の仕様の一部」
+を指す慣用句である。
+
+以下に
+
+* [ダイヤモンド継承を含まない場合](---)
+* [ダイヤモンド継承かつそれが仮想継承でない場合](---)
+* [ダイヤモンド継承かつそれが仮想継承である場合](---)
+
+のドミナンスについてのコードを例示する。
+
+この例で示したように、[ダイヤモンド継承](---)を通常の継承で行うか、
+[仮想継承](---)で行うかでは結果が全く異なるため、注意が必要である。
+
+#### ダイヤモンド継承を含まない場合
+
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #0:1 begin -1
+```
+
+この[name lookup](---)については、[name-hiding](---)で説明した通りである。
+
+#### ダイヤモンド継承かつそれが仮想継承でない場合
+
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #1:0 begin
+```
+
+上記コードはコードブロック内のコメントのようなメッセージが原因でコンパイルできない。
+
+Derived_0のドミナンスにより、DerivedDerived::gはDerived_0::fを呼び出すように見えるが、
+もう一つの継承元であるDerived_1が導入したDerived_1::f(実際には、Derived_1::Base::f)があるため、
+Derived_1によるドミナンスも働き、その結果として、呼び出しが曖昧(ambiguous)になることで、
+このような結果となる。
+
+#### ダイヤモンド継承かつそれが仮想継承である場合
+
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/dominance_ut.cpp #2:1 begin -1
+```
+
+これまでと同様にDerived_0のドミナンスによりBase::fは[name-hiding](---)されることになる。
+この時、Derived_0、Derived_1がBaseから[仮想継承](---)した効果により、
+この継承ヒエラルキーの中でBaseは１つのみ存在することになるため、
+Derived_1により導入されたBase::fも併せて[name-hiding](---)される。
+結果として、曖昧性は排除され、コンパイルエラーにはならず、このような結果となる。
+
+### using宣言
+using宣言とは、"using XXX::func"のような記述である。
+この記述が行われたスコープでは、この記述後の行から名前空間XXXでの修飾をすることなく、
+funcが使用できる。
+
+```cpp
+    // @@@ example/term_explanation/namespace_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/namespace_ut.cpp #0:1 begin
+```
+
+### usingディレクティブ
+usingディレクティブとは、"using namespace XXX"のような記述である。
+この記述が行われたスコープでは、下記例のように、この記述後から名前空間XXXでの修飾をすることなく、
+XXXの識別子が使用できる。
+
+```cpp
+    // @@@ example/term_explanation/namespace_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/namespace_ut.cpp #0:2 begin
+```
+
+より多くの識別子が名前空間の修飾無しで使えるようになる点において、
+[using宣言](---)よりも危険であり、また、
+下記のように[name-hiding](---)された識別子の導入には効果がない。
+
+```cpp
+    // @@@ example/term_explanation/namespace_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/namespace_ut.cpp #0:3 begin
+```
+
+従って、usingディレクティブの使用は避けるべきである。
+
+
+## エクセプション安全性の保証
+関数のエクセプション発生時の安全性の保証には以下の3つのレベルが規定されている。
+
+* [no-fail保証](---)
+* [強い安全性の保証](---)
+* [基本的な安全性の保証](---)
+
+### no-fail保証
+「no-fail保証」を満たす関数はエクセプションをthrowしない。
+no-failを保証する関数は、
+[noexcept](---)を使用してエクセプションを発生させないことを明示できる。
+
+標準テンプレートクラスのパラメータとして使用するクラスのメンバ関数には、
+正確にnoexceptの宣言をしないと、
+テンプレートクラスのメンバ関数によってはパフォーマンスを起こしてしまう可能性がある。
+
+### 強い安全性の保証
+「強い保証」を満たす関数は、この関数がエクセプションによりスコープから外れた場合でも、
+この関数が呼ばれなかった状態と同じ(プログラムカウンタ以外の状態は同じ)であることを保証する。
+従って、この関数呼び出しは成功したか、完全な無効だったかのどちらかになる。
+
+### 基本的な安全性の保証
+「基本的な安全性の保証」を満たす関数は、この関数がエクセプションによりスコープから外れた場合でも、
+メモリ等のリソースリークは起こさず、
+オブジェクトは(変更されたかもしれないが)引き続き使えることを保証する。
+
+### noexcept
+C++11で導入されたnoexceptキーワードには、以下の2つの意味がある。
+
+* C++03までのthrowキーワードによるエクセプション仕様の代替。
+  関数がどのエクセプションを送出する可能性があるかを列挙するのではなく、
+  エクセプションを送出する可能性があるかないかのみを指定する。
+
+* sizeofと同じような形式で使用されるのような演算子としてのnoexceptは、
+  noexcept(expression)の形式使用され、
+  expressionがエクセプションを送出しないと宣言されている場合(noexceptと宣言された関数の呼び出し)、
+  noexcept(expression)は静的にtrueとなる。
+
+以下に上記のコード例を示す。
+
+```cpp
+    // @@@ example/term_explanation/noexcept_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/noexcept_ut.cpp #0:1 begin -1
+```
+
+演算子としてのnoexceptはテンプレートで頻繁に使用されるため、以下にそのような例を示す。
+
+```cpp
+    // @@@ example/term_explanation/noexcept_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/noexcept_ut.cpp #1:1 begin -1
+```
+
+### exception-unfriendly
+以下のような関数  
+
+* 初期化に関連する関数やコンストラクタ
+    * 静的または thread_local な変数を初期化する関数やコンストラクタ
+* 特殊メンバ関数
+    * すべてのデストラクタ
+    * すべてのエクセプションオブジェクトのコピーコンストラクタ
+    * すべてのムーブコンストラクタ
+    * すべてのムーブ代入演算子
+* 特定の名前を持つ関数
+    * "swap" という名前のすべての関数
+* C言語との互換性を持つ関数
+    * Cとのリンケージを持つすべての関数
+
+の呼び出しでエクセプションがthrowされると、[未定義動作](---)や[未規定動作](---)が発生するため、
+exception-unfriendly(エクセプションに不向き)であるとされる。
+従って上記の関数は暗黙的または明示的に`noexcept`であることが求められる。
+
+
+## 標準ライブラリとプログラミング概念
+### ユーティリティ
+#### std::move
+std::moveは引数を[rvalueリファレンス](---)に変換する関数テンプレートである。
+
+|引数                 |std::moveの動作                                    |
+|---------------------|---------------------------------------------------|
+|非const [lvalue](---)|引数を[rvalueリファレンス](---)にキャストする      |
+|const [lvalue](---)  |引数をconst [rvalueリファレンス](---)にキャストする|
+
+この表の動作仕様を下記ののコードで示す。
+
+```cpp
+    // @@@ example/term_explanation/utility_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/utility_ut.cpp #0:1 begin -1
+```
+
+std::moveは以下の２つの概念ときわめて密接に関連しており、
+
+* [rvalueリファレンス](---)
+* [moveセマンティクス](---)
+
+これら3つが組み合わさることで、不要なコピーを避けた高効率なリソース管理が実現される。
+
+#### std::forward
+std::forwardは、下記の２つの概念を実現するための関数テンプレートである。
+
+* [forwardingリファレンス](---)
+* [perfect forwarding](---)
+
+std::forwardを適切に使用することで、引数の値カテゴリを保持したまま転送でき、
+move可能なオブジェクトの不要なコピーを避けることができる。
+
+### type_traits
+type_traitsは、型に関する情報をコンパイル時に取得・変換するためのメタ関数群で、
+型特性の判定や型操作を静的に行うために用いられる。
+
+以下に代表的なものをいくつか説明する。
+
+- [std::integral_constant](---)
+- [std::true_type](---)/[std::false_type](---)
+- [std::is_same](---)
+- [std::enable_if](---)
+- [std::conditional](---)
+- [std::is_void](---)
+
+
+#### std::integral_constant
+std::integral_constantは「テンプレートパラメータとして与えられた型とその定数から新たな型を定義する」
+クラステンプレートである。
+
+以下に簡単な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #0:0 begin -1
+```
+
+また、すでに示したようにstd::true_type/std::false_typeを実装するためのクラステンプレートでもある。
+
+
+#### std::true_type
+`std::true_type`(と`std::false_type`)は真/偽を返すSTL[メタ関数](---)群の戻り型となる型エイリアスであるため、
+最も使われるテンプレートの一つである。
+
+これらは、下記で確かめられる通り、後述する[std::integral_constant](---)を使い定義されている。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #1:0 begin -1
+```
+
+それぞれの型が持つvalue定数は、下記のように定義されている。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #1:1 begin -1
+```
+
+これらが何の役に立つのか直ちに理解することは難しいが、
+true/falseのメタ関数版と考えれば、追々理解できるだろう。
+
+以下に簡単な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #1:2 begin
+```
+
+上記の単体テストは下記のようになる。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #1:3 begin -1
+```
+
+IsCovertibleToIntの呼び出しをdecltypeのオペランドにすることで、
+std::true_typeかstd::false_typeを受け取ることができる。
+
+#### std::false_type
+[std::true_type](---)を参照せよ。
+
+#### std::is_same
+
+すでに上記の例でも使用したが、std::is_sameは2つのテンプレートパラメータが
+
+* 同じ型である場合、std::true_type
+* 違う型である場合、std::false_type
+
+から派生した型となる。
+
+以下に簡単な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #3:0 begin -1
+```
+
+また、 C++17で導入されたstd::is_same_vは、定数テンプレートを使用し、
+下記のように定義されている。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #3:1 begin
+```
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #3:2 begin -1
+```
+
+このような簡潔な記述の一般形式は、
+
+```
+   T::value  -> T_v
+   T::type   -> T_t
+```
+
+のように定義されている(このドキュメントのほとんど場所では、簡潔な形式を用いる)。
+
+第1テンプレートパラメータが第2テンプレートパラメータの基底クラスかどうかを判断する
+std::is_base_ofを使うことで下記のようにstd::is_sameの基底クラス確認することもできる。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #3:3 begin -1
+```
+
+#### std::enable_if
+std::enable_ifは、bool値である第1テンプレートパラメータが
+
+* trueである場合、型である第2テンプレートパラメータをメンバ型typeとして宣言する。
+* falseである場合、メンバ型typeを持たない。
+
+下記のコードはクラステンプレートの特殊化を用いたstd::enable_ifの実装例である。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #4:0 begin
+```
+
+std::enable_ifの使用例を下記に示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #4:1 begin -1
+```
+
+実装例から明らかなように
+
+* std::enable_if\<true>::typeは[well-formed](---)
+* std::enable_if\<false>::typeは[ill-formed](---)
+
+となるため、下記のコードはコンパイルできない。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #4:2 begin -1
+```
+
+std::enable_ifのこの特性と後述する[SFINAE](---)により、
+様々な静的ディスパッチを行うことができる。
+
+
+#### std::conditional
+
+std::conditionalは、bool値である第1テンプレートパラメータが
+
+* trueである場合、第2テンプレートパラメータ
+* falseである場合、第3テンプレートパラメータ
+
+をメンバ型typeとして宣言する。
+
+下記のコードはクラステンプレートの特殊化を用いたstd::conditionalの実装例である。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #5:0 begin
+```
+
+std::conditionalの使用例を下記に示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #5:1 begin -1
+```
+
+#### std::is_void
+std::is_voidはテンプレートパラメータの型が
+
+* voidである場合、std::true_type
+* voidでない場合、std::false_type
+
+から派生した型となる。
+
+以下に簡単な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/type_traits_ut.cpp #2:0 begin -1
+```
+
+
+### 並列処理
+
+#### std::thread
+クラスthread は、新しい実行のスレッドの作成/待機/その他を行う機構を提供する。
+
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #0:1 begin -1
+```
+
+#### std::mutex
+mutex は、スレッド間で使用する共有リソースを排他制御するためのクラスである。 
+
+<pre>
+- lock()    :メンバ関数によってリソースのロックを取得
+- unlock()  :メンバ関数でリソースのロックを解放
+</pre>
+
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/thread_ut.cpp #1:1 begin
+    // @@@ example/term_explanation/thread_ut.cpp #1:2 begin
+```
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #1:3 begin -1
+```
+
+lock()を呼び出した状態で、unlock()を呼び出さなかった場合、デッドロックを引き起こしてしまうため、
+永久に処理が完了しないバグの元となり得るため、このような問題を避けるために、
+mutexは通常、[std::lock_guard](---)と組み合わせて使われる。
+
+```cpp
+
+    // @@@ example/term_explanation/thread_ut.cpp #1:1 begin -1
+```
+
+#### std::atomic
+atomicクラステンプレートは、型Tをアトミック操作するためのものである。
+[組み込み型](---)に対する特殊化が提供されており、それぞれに特化した演算が用意されている。
+[std::mutex](---)で示したような単純なコードではstd::atomicを使用して下記のように書く方が一般的である。
+
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #2:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/thread_ut.cpp #2:1 begin -1
+```
+
+### ロック所有ラッパー
+ロック所有ラッパーとはミューテックスのロックおよびアンロックを管理するための以下のクラスを指す。
+
+- [std::lock_guard](---)
+- [std::unique_lock](---)
+- [std::scoped_lock](---)
+
+
+#### std::lock_guard
+
+std::lock_guardを使わない問題のあるコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:0 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:1 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:2 begin
+```
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:1 begin -1
+```
+
+上記で示したConflict::increment()には以下のようなリスクが存在する。
+
+1. 関数が複雑化してエクセプションを投げる可能性がある場合、
+    - エクセプションをこの関数内で捕捉し、ロック解除 (mtx_.unlock()) を行った上で再スローしなければならない。
+    - ロック解除を忘れるとデッドロックにつながる。
+
+2. 複数の return 文を持つように関数が拡張された場合、
+    - すべての return の前で mtx_.unlock() を呼び出さなければならない。
+
+これらを正しく管理するためには、重複コードが増え、関数の保守性が著しく低下する。
+
+std::lock_guardを使用して、このような問題に対処したコードを以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:0 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:1 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:2 begin
+```
+
+単体テストに変更は無いため、省略する。
+
+オリジナルの単純な以下のincrement()と改善版を比較すると、大差ないように見えるが、
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:1 begin -1
+```
+
+オリジナルのコードで指摘したすべてのリスクが、わずか一行の変更で解決されている。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:1 begin -1
+```
+
+#### std::unique_lock
+std::unique_lockとは、ミューテックスのロック管理を柔軟に行えるロックオブジェクトである。
+std::lock_guardと異なり、ロックの手動解放や再取得が可能であり、特にcondition_variable::wait()と組み合わせて使用される。
+wait()は内部でロックを一時的に解放し、通知受信後に再取得する。
+
+下記の例では、IntQueue::push()、 IntQueue::pop_ng()、
+IntQueue::pop_ok()の中で行われるIntQueue::q_へのアクセスで発生する競合を回避するためにIntQueue::mtx_を使用する。
+
+下記のコード例では、[std::lock_guard](---)の説明で述べたようにmutex::lock()、mutex::unlock()を直接呼び出すのではなく、
+std::unique_lockやstd::lock_guardによりmutexを使用する。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:0 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:1 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:2 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:3 begin
+```
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:4 begin -1
+```
+
+一般に条件変数には、[Spurious Wakeup](---)という問題があり、std::condition_variableも同様である。
+
+上記の抜粋である下記のコード例では[Spurious Wakeup](---)の対策が行われていないため、
+意図通り動作しない可能性がある。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:1 begin -1
+```
+
+下記のIntQueue::pop_ok()は、pop_ng()にSpurious Wakeupの対策を施したものである。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:2 begin -1
+```
+
+#### std::scoped_lock
+std::scoped_lockとは、複数のミューテックスを同時にロックするためのロックオブジェクトである。
+C++17で導入され、デッドロックを回避しながら複数のミューテックスを安全にロックできる。
+
+複数のミューテックスを扱う際、異なるスレッドが異なる順序でロックを取得しようとすると、
+デッドロックが発生する可能性がある。下記の例では、2つの銀行口座間で送金を行う際に、
+両方の口座を同時にロックする必要がある。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:0 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:1 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:2 begin
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:3 begin
+```
+下記の例では、2つのスレッドがそれぞれ逆方向の送金を同時に行う。
+transfer_ok()の代わりにtransfer_ng()を使用した場合、デッドロックが発生する可能性がある。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:4 begin -1
+```
+
+transfer_ng()がデッドロックを引き起こすシナリオは、以下のようなものである。
+
+1. スレッド1が acc1.transfer_ng(acc2, 100) を呼び出し、acc1.mtx_ をロック
+2. スレッド2が acc2.transfer_ng(acc1, 100) を呼び出し、acc2.mtx_ をロック
+3. スレッド1が acc2.mtx_ のロックを試みるが、スレッド2が保持しているため待機
+4. スレッド2が acc1.mtx_ のロックを試みるが、スレッド1が保持しているため待機
+5. 互いに相手のロック解放を待ち続け、永遠に進まない（デッドロック）
+
+![layout](plant_uml/mutex_deadlock.png)
+
+
+下記のBankAccount::transfer_ok()は、std::scoped_lockを使用して前述したデッドロックを回避したものである。
+
+```cpp
+    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:2 begin -1
+```
+
+### スマートポインタ
+スマートポインタは、C++標準ライブラリが提供するメモリ管理クラス群を指す。
+生のポインタの代わりに使用され、リソース管理を容易にし、
+メモリリークや二重解放といった問題を防ぐことを目的としている。
+
+スマートポインタは通常、所有権とスコープに基づいてメモリの解放を自動的に行う。
+C++標準ライブラリでは、主に以下の3種類のスマートポインタが提供されている。
+
+* **`std::unique_ptr`** 
+   はダイナミックにアロケートされた[オブジェクトの排他所有](---)を表すために用いられる。  
+* **`std::shared_ptr`** 
+   はダイナミックにアロケート[オブジェクトの共有所有](---)を表現、管理するために用いられる。   
+* **[std::weak_ptr](---)**
+   は`std::shared_ptr`と組み合わせて使用される補助的なスマートポインタである。
+   参照カウントに影響を与えず、[オブジェクトの循環所有](---)よるメモリリークを防ぐために用いられる。
+   std::weak_ptr`はリソースへの弱い参照を保持し、リソースの有効性を確認する際に使用される。  
+* `std::auto_ptr`はC++11以前に導入された初期のスマートポインタであるが、
+   異常な[copyセマンティクス](---)を持つため、多くの誤用を生み出し、
+   C++11から非推奨とされ、C++17から規格から排除された。
+
+### コンテナ
+データを格納し、
+効率的に操作するための汎用的なデータ構造を提供するC++標準ライブラリの下記のようなクラス群である。
+
+* [シーケンスコンテナ(Sequence Containers)](---)
+* [連想コンテナ(Associative Containers)(---)
+* [無順序連想コンテナ(Unordered Associative Containers)](---)
+* [コンテナアダプタ(Container Adapters)](---)
+* [特殊なコンテナ](---)
+
+#### シーケンスコンテナ(Sequence Containers)
+データが挿入順に保持され、順序が重要な場合に使用する。
+
+| コンテナ                 | 説明                                                                |
+|--------------------------|---------------------------------------------------------------------|
+| `std::vector`            | 動的な配列で、ランダムアクセスが高速。末尾への挿入/削除が効率的     |
+| `std::deque`             | 両端に効率的な挿入/削除が可能な動的配列                             |
+| `std::list`              | 双方向リスト。要素の順序を維持し、中間の挿入/削除が効率的           |
+| [std::forward_list](---) | 単方向リスト。軽量だが、双方向の操作はできない                      |
+| `std::array`             | 固定長配列で、サイズがコンパイル時に決まる                          |
+| `std::string`            | 可変長の文字列を管理するクラス(厳密には`std::basic_string`の特殊化) |
+
+##### std::forward_list
+
+```cpp
+    // @@@ example/term_explanation/container_ut.cpp #0:0 begin -1
+```
+
+#### 連想コンテナ(Associative Containers)
+データがキーに基づいて自動的にソートされ、検索が高速である。
+
+| コンテナ           | 説明                                             |
+|--------------------|--------------------------------------------------|
+| `std::set`         | 要素がソートされ、重複が許されない集合           |
+| `std::multiset`    | ソートされるが、重複が許される集合               |
+| `std::map`         | ソートされたキーと値のペアを保持。キーは一意     |
+| `std::multimap`    | ソートされたキーと値のペアを保持。キーは重複可能 |
+
+#### 無順序連想コンテナ(Unordered Associative Containers)
+ハッシュテーブルを基盤としたコンテナで、順序を保証しないが高速な検索を提供する。
+
+| コンテナ                  | 説明                                                   |
+|---------------------------|--------------------------------------------------------|
+| [std::unordered_set](---) | ハッシュテーブルベースの集合。重複は許されない         |
+| `std::unordered_multiset` | ハッシュテーブルベースの集合。重複が許される           |
+| [std::unordered_map](---) | ハッシュテーブルベースのキーと値のペア。キーは一意     |
+| `std::unordered_multimap` | ハッシュテーブルベースのキーと値のペア。キーは重複可能 |
+| [std::type_index](---)    | 型情報型を連想コンテナのキーとして使用するためのクラス |
+
+##### std::unordered_set
+
+```cpp
+    // @@@ example/term_explanation/container_ut.cpp #1:0 begin -1
+```
+
+##### std::unordered_map
+
+```cpp
+    // @@@ example/term_explanation/container_ut.cpp #2:0 begin -1
+```
+
+##### std::type_index
+std::type_indexはコンテナではないが、
+型情報型を連想コンテナのキーとして使用するためのクラスであるため、この場所に掲載する。
+
+```cpp
+    // @@@ example/term_explanation/container_ut.cpp #3:0 begin -1
+```
+
+
+#### コンテナアダプタ(Container Adapters)
+特定の操作のみを公開するためのラッパーコンテナ。
+
+| コンテナ              | 説明                                     |
+|-----------------------|------------------------------------------|
+| `std::stack`          | LIFO(後入れ先出し)操作を提供するアダプタ |
+| `std::queue`          | FIFO(先入れ先出し)操作を提供するアダプタ |
+| `std::priority_queue` | 優先度に基づく操作を提供するアダプタ     |
+
+#### 特殊なコンテナ
+上記したようなコンテナとは一線を画すが、特定の用途や目的のために設計された一種のコンテナ。
+
+| コンテナ             | 説明                                                       |
+|----------------------|------------------------------------------------------------|
+| `std::span`          | 生ポインタや配列を抽象化し、安全に操作するための軽量ビュー |
+| `std::bitset`        | 固定長のビット集合を管理するクラス                         |
+| `std::basic_string`  | カスタム文字型をサポートする文字列コンテナ                 |
+
+### std::optional
+C++17から導入されたstd::optionalには、以下のような2つの用途がある。
+以下の用途2から、
+このクラスがオブジェクトのダイナミックなメモリアロケーションを行うような印象を受けるが、
+そのようなことは行わない。
+このクラスがオブジェクトのダイナミックな生成が必要になった場合、プレースメントnewを実行する。
+ただし、std::optionalが保持する型自身がnewを実行する場合は、この限りではない。
+
+1. 関数の任意の型の[戻り値の無効表現](---)を持たせる
+2. [オブジェクトの遅延初期化](---)する(初期化処理が重く、
+   条件によってはそれが無駄になる場合にこの機能を使う)
+
+#### 戻り値の無効表現
+```cpp
+    // @@@ example/term_explanation/optional_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/optional_ut.cpp #0:1 begin -1
+```
+
+#### オブジェクトの遅延初期化
+```cpp
+    // @@@ example/term_explanation/optional_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/optional_ut.cpp #1:1 begin -1
+```
+
+### std::variant
+std::variantは、C++17で導入された型安全なunionである。
+このクラスは複数の型のうち1つの値を保持することができ、
+従来のunionに伴う低レベルな操作の安全性の問題を解消するために設計された。
+
+std::variant自身では、オブジェクトのダイナミックな生成が必要な場合でも通常のnewを実行せず、
+代わりにプレースメントnewを用いる
+(以下のコード例のようにstd::variantが保持する型自身がnewを実行する場合は、この限りではない)。
+
+以下にstd::variantの典型的な使用例を示す。
+
+```cpp
+    // @@@ example/term_explanation/variant_ut.cpp #0:0 begin -1
+```
+
+std::variantとstd::visit([Visitor](---)パターンの実装の一種)を組み合わせた場合の使用例を以下に示す。
+
+```cpp
+    // @@@ example/term_explanation/variant_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/term_explanation/variant_ut.cpp #1:1 begin -1
+```
+
+
+## 言語仕様の定義要素
+### ill-formed
+[標準規格と処理系](https://cpprefjp.github.io/implementation-compliance.html)に詳しい解説があるが、
+
+* [well-formed](---)(適格)とはプログラムが全ての構文規則・診断対象の意味規則・
+  単一定義規則を満たすことである。
+* ill-formed(不適格)とはプログラムが適格でないことである。
+
+プログラムがwell-formedになった場合、そのプログラムはコンパイルできる。
+プログラムがill-formedになった場合、通常はコンパイルエラーになるが、
+対象がテンプレートの場合、事情は少々異なり、[SFINAE](---)によりコンパイルできることもある。
+
+### well-formed
+「[ill-formed](---)」を参照せよ。
+
+### 未定義動作
+未定義動作(Undefined Behavior)とは、
+C++標準が特定の操作や状況に対して一切の制約を設けないケースである。
+未定義動作が発生すると、プログラムの実行結果が予測できなくなり、
+何が起こるかはコンパイラや環境によって異なる。
+未定義動作を含むコードは、クラッシュやセキュリティの問題を引き起こす可能性がある。
+
+```cpp
+    // @@@ example/term_explanation/undefined_ut.cpp #0:0 begin -1
+```
+
+### 未規定動作
+未規定動作(Unspecified Behavior)とは、C++標準がある操作の動作を完全には決めておらず、
+複数の許容可能な選択肢がある場合でのコードの動作を指す。
+未規定動作は、実装ごとに異なる可能性があり、標準は少なくとも「何らかの合理的な結果」を保証する。
+つまり、動作が特定の範囲で予測可能だが、正確な挙動が処理系の実装に依存することになる。
+
+```cpp
+    // @@@ example/term_explanation/undefined_ut.cpp #1:0 begin -1
+```
+
+### 未定義動作と未規定動作
+| 種類            |定義                                                               | 例                               | 結果                           |
+|-----------------|-------------------------------------------------------------------|----------------------------------|--------------------------------|
+|[未定義動作](---)|C++標準が全く保証しない動作                                        | ゼロ除算、配列範囲外アクセス     | 予測不能(クラッシュなど)       |
+|[未規定動作](---)|C++標準が動作を定めていないが、いくつかの選択肢が許容されている動作| `int8_t` に収まらない値のキャスト| 実装依存(異なるが合理的な動作) |
+
+
+### 被修飾型
+被修飾型(unqualified type)とは、変数の宣言において付加される修飾子(const、
+volatile など)やポインタやリファレンスなどの間接指定子を除いた素の型を指す。
+
+修飾子(const、volatile)に注視しい場合、cv-被修飾型(cv-unqualified type)という場合もある。
+
+例えば: 
+
+|定義         |被修飾型|
+|-------------|:------:|
+|const A& a   |A       |
+|volatile B& b|B       |
+|const T* C   |C       |
+|const D d    |D       |
+
+見た目が類似する[修飾付き関数呼び出し](---)とは無関係である。
+
+### 実引数/仮引数
+引数(もしくは実引数、argument)、仮引数(parameter)とは下記のように定義される。
+
+```cpp
+    // @@@ example/term_explanation/argument.cpp #0:0 begin
+```
+
+### 単純代入
+代入は下記のように分類される。
+
+* 単純代入(=)
+* 複合代入(+=，++ 等)
+
+
+### one-definition rule
+「[ODR](---)」を参照せよ。
+
+### ODR
+ODRとは、One Definition Ruleの略語であり、下記のようなことを定めている。
+
+* どの翻訳単位でも、テンプレート、型、関数、またはオブジェクトは、複数の定義を持つことができない。
+* プログラム全体で、オブジェクトまたは非インライン関数は複数の定義を持つことはできない。
+* 型、テンプレート、外部インライン関数等、いくつかのものは複数の翻訳単位で定義することができる。
+
+より詳しい内容がが知りたい場合は、
+[https://en.cppreference.com/w/cpp/language/definition](https://en.cppreference.com/w/cpp/language/definition)
+が参考になる。
+
+### 型特性キーワード
+アライメントとは、
+データが効率的にアクセスされるために特定のメモリアドレス境界に配置される規則である。
+C++03までの規約では、アライメントのコントロールは実装依存した#pragmaなどで行っていた。
+
+[alignas](---)、
+[alignof](---)によりコンパイラの標準的な方法でアライメントのコントロールできるようになった。
+
+#### alignof
+C++11で導入されたキーワードで、型のアライメント要求を取得するために使用する。
+
+```cpp
+    // @@@ example/term_explanation/aliging_ut.cpp #0:0 begin -1
+```
+
+#### alignas
+C++11で導入されたキーワードで、メモリのアライメントを指定するために使用する。
+
+```cpp
+    // @@@ example/term_explanation/aliging_ut.cpp #1:0 begin -1
+```
+
+#### addressof
+addressofは、オブジェクトの「実際の」
+アドレスを取得するために使用されるC++標準ライブラリのユーティリティ関数である。
+通常、オブジェクトのアドレスを取得するには&演算子を使うが、
+operator& がオーバーロードされている場合には、
+&演算子ではオブジェクトのメモリ上の実際のアドレスを取得できない場合があり得る。
+そのような場合にstd::addressofすることにより、
+オーバーロードを無視して元のアドレスを確実に取得できる。
+
+```cpp
+    // @@@ example/term_explanation/aliging_ut.cpp #2:0 begin -1
+```
+```cpp
+    // @@@ example/term_explanation/aliging_ut.cpp #2:1 begin -1
+```
+
+### 演算子のオペランドの評価順位
+
+C++17で、演算子のオペランドに対する評価順序が明確に規定された。
+それに対し、C++14までは、演算子のオペランド部分式の評価順序は[未規定動作](---)であった。
+以下の表で示す演算子に関しては、オペランドaがオペランドbよりも先に評価される。
+
+| 演算子               |説明                                                                   |
+|:---------------------|:----------------------------------------------------------------------|
+| a.b                  |メンバアクセス演算子                                                   |
+| a->b                 |ポインタメンバアクセス演算子                                           |
+| a->\*b               |メンバポインタアクセス演算子                                           |
+| a(b1,  b2, b3)       |関数呼び出し、引数リストの評価順序は規定外)                            |
+| b @= a               |代入演算子 = や複合代入演算子。@は+,-,/,&,\|など                       |
+| a[b]                 |配列アクセス                                                           |
+| a << b               |ビットシフト左演算子                                                   |
+| a >> b               |ビットシフト右演算子                                                   |
+
+C++11以前では、以下のコードの評価順序は未規定であったが、上記の通り定義された。
+
+```cpp
+    // @@@ example/term_explanation/etc_ut.cpp #0:0 begin -1
+```
+
+関数呼び出しにおける引数の式の評価順序は、上記の例a(b1, b2, b3)での評価順序は、
+不定順で序列化される。これは、b1, b2, b3 が特定の順序で評価される保証はなく、
+例えば b3, b2, b1 の順に評価されたり、
+b2, b3, b1 で評価される可能性があることを意味する。
+一方で一度評価が開始された場合、部分式間でインターリーブ（交差実行されることはない。
+つまり、b1 の評価が完全に終わる前に b2 や b3 の評価が開始されることはない。
+
+条件演算子式`condition ? expr1 : expr2`については、
+最初の部分であるconditionがまず評価される。
+conditionの評価結果に基づき、expr1または expr2 のどちらかが選択され、選択された側だけが評価される。  
+
+```cpp
+    // @@@ example/term_explanation/etc_ut.cpp #0:1 begin -1
+```
+
+なお、単項演算子のオペランドは1つであるため、優先順位の定義は不要である。
+
+## その他
+### RVO(Return Value Optimization)
+関数の戻り値がオブジェクトである場合、
+戻り値オブジェクトは、その関数の呼び出し元のオブジェクトにcopyされた後、すぐに破棄される。
+この「オブジェクトをcopyして、その後すぐにそのオブジェクトを破棄する」動作は、
+「関数の戻り値オブジェクトをそのままその関数の呼び出し元で使用する」ことで効率的になる。
+RVOとはこのような最適化を指す。
+
+なお、このような最適化は、
+[C++17から規格化](https://cpprefjp.github.io/lang/cpp17/guaranteed_copy_elision.html)された。
+
+
+### SSO(Small String Optimization)
+一般にstd::stringで文字列を保持する場合、newしたメモリが使用される。
+64ビット環境であれば、newしたメモリのアドレスを保持する領域は8バイトになる。
+std::stringで保持する文字列が終端の'\0'も含め8バイト以下である場合、
+アドレスを保持する領域をその文字列の格納に使用すれば、newする必要がない(当然deleteも不要)。
+こうすることで、短い文字列を保持するstd::stringオブジェクトは効率的に動作できる。
+
+SOOとはこのような最適化を指す。
+
+### heap allocation elision
+C++11までの仕様では、new式によるダイナミックメモリアロケーションはコードに書かれた通りに、
+実行されなければならず、ひとまとめにしたり省略したりすることはできなかった。
+つまり、ヒープ割り当てに対する最適化は認められなかった。
+ダイナミックメモリアロケーションの最適化のため、この制限は緩和され、
+new/deleteの呼び出しをまとめたり省略したりすることができるようになった。
+
+```cpp
+    // @@@ example/term_explanation/heap_allocation_elision_ut.cpp #0:0 begin
+```
+
+この最適化により、std::make_sharedのようにstd::shared_ptrの参照カウントを管理するメモリブロックと、
+オブジェクトの実体を1つのヒープ領域に割り当てることができ、
+ダイナミックメモリアロケーションが1回に抑えられるため、メモリアクセスが高速化される。
+
+### トライグラフ
+トライグラフとは、2つの疑問符とその後に続く1文字によって表される、下記の文字列である。
+
+```
+    ??=  ??/  ??'  ??(  ??)  ??!  ??<  ??>  ??-
+```
 
 ---
 
@@ -1759,13 +3712,22 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 言語拡張機能                    
 モジュール／ラムダ式／クロージャ型／コルーチン（co_await／co_yield／co_return）                                                                          | 「言語機能」節                                  |
 
-| **第10章** | テンプレートと型推論                | SFINAE／コンセプト／CTAD／パラメータパック／畳み込み式／constexpr if／decltype(auto)／autoパラメータ                                                        | 「template強化機能」「型推論」節                     |
-| **第11章** | 名前探索と継承構造                 | name lookup／ADL／two-phase lookup／hidden friend／using宣言／仮想継承／ドミナンス                                                             | 「name lookupと名前空間」節                      |
-| **第12章** | 例外安全と仕様                   | noexcept／no-fail／強い保証／基本保証／例外安全保証の定義                                                                                          | 「エクセプション安全性の保証」節                         |
-| **第13章** | 標準ライブラリとユーティリティ           | std::move／std::forward／type_traits群（is_same, enable_if等）／スマートポインタ／optional／variant／thread／mutex／atomic／lock_guard／scoped_lock | 「プログラミング概念と標準ライブラリ」節                     |
-| **第14章** | 言語仕様の定義要素                 | ill-formed／well-formed／未定義動作／未規定動作／ODR／alignas／alignof／addressof／評価順序                                                         | 「C++その他」節（RVOなど実装依存は注記扱い）                |
-| **付録A**  | 歴史的項目と実装依存                | RVO／SSO／heap allocation elision／std::rel_ops／Most Vexing Parse／トライグラフ／g++／clang++                                             | 「C++その他」「C++コンパイラ」節から抽出                  |
-| **付録B**  | 用語定義・関連概念                 | 副作用（定義のみ）／フリースタンディング環境（規格での定義のみ）                                                                                              | 「ソフトウェア一般」節から抜粋                          |
+| **第10章** |
+テンプレートと型推論   
+SFINAE／コンセプト／CTAD／パラメータパック／畳み込み式／constexpr if／decltype(auto)／autoパラメータ                                                        | 「template強化機能」「型推論」節                     |
+
+| **第14章** | 言語仕様の定義要素                 
+ill-formed／well-formed／未定義動作／未規定動作／ODR／alignas
+／alignof
+／addressof／
+評価順序                                                         | 「C++その他」節（RVOなど実装依存は注記扱い）                |
+
+
+
+| **付録A**  | 歴史的項目と実装依存                | 
+RVO／SSO／heap allocation elision／
+std::rel_ops／Most Vexing Parse／トライグラフ／g++／clang++                                             | 「C++その他」「C++コンパイラ」節から抽出                  |
+
 
 
 
