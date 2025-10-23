@@ -1,9 +1,5 @@
 VPATH:=../term_explanation
-SRCS:=\
-    decltype_ut.cpp concept_ut.cpp \
-    co_await_ut.cpp co_yield_ut.cpp  \
-	designated_init_ut.cpp
-
+SRCS:=coroutine_ut.cpp 
 OBJDIR:= obj20/
 SHARED:=../../
 include $(SHARED)make/env.mk

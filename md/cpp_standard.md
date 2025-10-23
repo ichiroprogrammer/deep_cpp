@@ -1532,7 +1532,7 @@ decltypeの算出結果は下表のようになる。
 に有効に活用できる。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_expression_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/decltype_expression_ut.cpp #0:0 begin -1
 ```
 
 ## リファレンス
@@ -1762,7 +1762,7 @@ C++11からはエラーとならず、TRRはT&となる。
 下記はTをintとした場合のリファレンスcollapsingの動きを示している。
 
 ```cpp
-    // @@@ example/term_explanation/ref_collapsing_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:0 begin -1
 ```
 
 リファレンスcollapsingは、型エイリアス、型であるテンプレートパラメータ、decltypeに対して行われる。
@@ -1778,31 +1778,31 @@ C++11からはエラーとならず、TRRはT&となる。
 下記のようなクラステンプレートを定義した場合、
 
 ```cpp
-    // @@@ example/term_explanation/ref_collapsing_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:1 begin
 ```
 
 下記のコードにより、テンプレートパラメータに対するこの変換則を確かめることができる。
 
 ```cpp
-    // @@@ example/term_explanation/ref_collapsing_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:2 begin -1
 ```
 
 この機能がないC++03では、
 
 ```cpp
-    // @@@ example/term_explanation/ref_collapsing_ut.cpp #0:3 begin
+    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:3 begin
 ```
 
 ようなクラステンプレートに下記コードのようにリファレンス型を渡すとコンパイルエラーとなる。
 
 ```cpp
-    // @@@ example/term_explanation/ref_collapsing_ut.cpp #0:5 begin -1
+    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:5 begin -1
 ```
 
 この問題を回避するためには下記のようなテンプレートの特殊化が必要になる。
 
 ```cpp
-    // @@@ example/term_explanation/ref_collapsing_ut.cpp #0:4 begin
+    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:4 begin
 ```
 
 上記したようなクラステンプレートでのメンバエイリアスの宣言は、
@@ -1816,9 +1816,9 @@ Dangling リファレンスとは、破棄後のオブジェクトを指して�
 このようなリファレンスにアクセスすると、[未定義動作](---)に繋がるに繋がる。
 
 ```cpp
-    // @@@ example/term_explanation/dangling_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/dangling_ut.cpp #0:0 begin
 
-    // @@@ example/term_explanation/dangling_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/dangling_ut.cpp #0:1 begin -1
 ```
 
 ### danglingポインタ
@@ -1842,10 +1842,10 @@ danglingポインタとは、[danglingリファレンス](---)と同じような
 rvalueの内部ハンドルを返さないようにすることが可能となり、上記の危険性を緩和することができる。
 
 ```cpp
-    // @@@ example/term_explanation/ref_qualifiers_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/ref_qualifiers_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/ref_qualifiers_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/ref_qualifiers_ut.cpp #0:1 begin -1
 ```
 
 #### lvalue修飾
@@ -1868,25 +1868,25 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
 |[[no_unique_address]]|C++20 |クラスや構造体のメンバに対して、メモリの最適化促進 |
 
 ```cpp
-    // @@@ example/term_explanation/attr_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/attr_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/attr_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/attr_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/attr_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/attr_ut.cpp #2:0 begin
 
-    // @@@ example/term_explanation/attr_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/attr_ut.cpp #2:1 begin -1
 ```
 ```cpp
-    // @@@ example/term_explanation/attr_ut.cpp #3:0 begin -1
+    // @@@ example/cpp_standard/attr_ut.cpp #3:0 begin -1
 ```
 
 ### 関数tryブロック
 関数tryブロックとはtry-catchを本体とした下記のような関数のブロックを指す。
 
 ```cpp
-    // @@@ example/term_explanation/func_try_block.cpp #0:0 begin
+    // @@@ example/cpp_standard/func_try_block.cpp #0:0 begin
 ```
 
 ### 範囲for文
@@ -1911,13 +1911,13 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
 単純な範囲for文の使用例は下記の通りである。
 
 ```cpp
-    // @@@ example/term_explanation/range_for_ut.cpp #0:0 begin -2
+    // @@@ example/cpp_standard/range_for_ut.cpp #0:0 begin -2
 ```
 
 上記のコードは下記のように展開される。
 
 ```cpp
-    // @@@ example/term_explanation/range_for_ut.cpp #0:1 begin -2
+    // @@@ example/cpp_standard/range_for_ut.cpp #0:1 begin -2
 ```
 
 
@@ -1940,12 +1940,12 @@ C++17以降は、この規制が緩和されたため、以下のように展開
 下記のコードはこの緩和ルールの応用例である。
 
 ```cpp
-    // @@@ example/term_explanation/range_for_ut.cpp #2:0 begin -2
+    // @@@ example/cpp_standard/range_for_ut.cpp #2:0 begin -2
 ```
 上記のコードは下記のように展開される。
 
 ```cpp
-    // @@@ example/term_explanation/range_for_ut.cpp #2:1 begin -2
+    // @@@ example/cpp_standard/range_for_ut.cpp #2:1 begin -2
 ```
 
 ### 構造化束縛
@@ -1953,16 +1953,16 @@ C++17以降は、この規制が緩和されたため、以下のように展開
 構造体のメンバーを個別の変数に分解して簡潔に扱うことをできるようにするための機能である。
 
 ```cpp
-    // @@@ example/term_explanation/structured_binding_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/structured_binding_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/structured_binding_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/structured_binding_ut.cpp #0:1 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/structured_binding_ut.cpp #0:2 begin
+    // @@@ example/cpp_standard/structured_binding_ut.cpp #0:2 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/structured_binding_ut.cpp #0:3 begin
+    // @@@ example/cpp_standard/structured_binding_ut.cpp #0:3 begin
 ```
 
 ### 初期化付きif/switch文
@@ -1991,10 +1991,10 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 上記のと同様の実際のfor文のコードを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/if_switch_init_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/if_switch_init_ut.cpp #1:0 begin -1
 ```
 
 #### 初期化付きwhile文(従来のwhile文)
@@ -2011,7 +2011,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 以下のコード例のように従来の記法は広く知られているため、念とため紹介する。
 
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/if_switch_init_ut.cpp #2:0 begin -1
 ```
 
 #### 初期化付きif文
@@ -2026,16 +2026,16 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 上記と同様の構造を持つ実際のif文のコードを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/if_switch_init_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #3:0 begin -1
+    // @@@ example/cpp_standard/if_switch_init_ut.cpp #3:0 begin -1
 ```
 
 クラスの独自の[<=>演算子](---)を定義する場合、下記のように使用することができる。
 
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #4:0 begin
+    // @@@ example/cpp_standard/if_switch_init_ut.cpp #4:0 begin
 ```
 
 #### 初期化付きswitch文
@@ -2056,10 +2056,10 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 上記と同様の構造を持つ実際のswitch文のコードを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/if_switch_init_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/if_switch_init_ut.cpp #5:0 begin -1
+    // @@@ example/cpp_standard/if_switch_init_ut.cpp #5:0 begin -1
 ```
 
 ## 言語拡張機能
@@ -2075,24 +2075,24 @@ co_awaitはコルーチンの非同期操作の一時停止と再開に使用さ
 co_waitとco_returnを使用したコードを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/co_await_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard20/co_await_ut.cpp #0:0 begin
 ```
 以下単体テストコードによりに上記コルーチンの動作を示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/co_await_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard20/co_await_ut.cpp #0:1 begin -1
 ```
 
 上記のコルーチンと同じ機能を持つクラスのco_await/co_returnを使わない実装を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/co_await_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard20/co_await_ut.cpp #1:0 begin
 ```
 
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/co_await_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard20/co_await_ut.cpp #1:1 begin -1
 ```
 
 C++20から導入されたco_await、co_return、TaskとC++17以前の機能のみを使用したコードの対比によって、
@@ -2107,25 +2107,25 @@ co_yieldはコルーチンから値を返しつつ、
 次の再開ポイントまで処理を中断する。これはジェネレーターの実装に便利である。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/co_yield_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard20/co_yield_ut.cpp #0:0 begin
 ```
 このテストを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/co_yield_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard20/co_yield_ut.cpp #0:1 begin -1
 ```
 
 [co_await](---)、co_returnの例でみたように、
 co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yieldを使わない実装を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/co_yield_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard20/co_yield_ut.cpp #1:0 begin
 ```
 
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/co_yield_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard20/co_yield_ut.cpp #1:1 begin -1
 ```
 
 C++20から導入されたco_await、co_return、TaskとC++17以前の機能のみを使用したコードの対比によって、
@@ -2169,7 +2169,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
   パラメータにautoを使用(型推測)できるようにした機能。
 
 ```cpp
-    // @@@ example/term_explanation/lambda.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/lambda.cpp #0:0 begin -1
 ```
 
 #### クロージャ
@@ -2184,7 +2184,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 複雑な初期化を必要とするconstオブジェクトの生成をするような場合に有用なテクニックである。
 
 ```cpp
-    // @@@ example/term_explanation/transient_lambda_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/transient_lambda_ut.cpp #0:0 begin -1
 ```
 
 #### transient lambda
@@ -2199,23 +2199,23 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 まずは、この機能を有効に使えるクラス例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/designated_init_ut.cpp #0:0 begin 
+    // @@@ example/cpp_standard20/designated_init_ut.cpp #0:0 begin 
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/designated_init_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard20/designated_init_ut.cpp #0:1 begin -1
 ```
 
 下記に示すように、[Polymorphic Memory Resource(pmr)](---)のpool_resourceの初期化には、
 この機能を使うと可読性の改善が期待できる。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/designated_init_ut.cpp #1:0 begin -2
+    // @@@ example/cpp_standard20/designated_init_ut.cpp #1:0 begin -2
 ```
 
 指示付き初期化を使わない以下のコード例と上記を比べれば可読性の改善に議論の余地はないだろう。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/designated_init_ut.cpp #1:1 begin -2
+    // @@@ example/cpp_standard20/designated_init_ut.cpp #1:1 begin -2
 ```
 
 ## テンプレートと型推論
@@ -2263,33 +2263,33 @@ C++20から導入された「コンセプト(concepts)」は、
   テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/concept_ut.cpp #0:0 begin
 
-    // @@@ example/term_explanation/concept_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/concept_ut.cpp #0:1 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/concept_ut.cpp #1:0 begin
 
-    // @@@ example/term_explanation/concept_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/concept_ut.cpp #1:1 begin -1
 ```
 
 以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/concept_ut.cpp #2:0 begin
 ```
 
 以上の関数テンプレートをコンセプトを使用して改善した例である。
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard/concept_ut.cpp #3:0 begin
 ```
 
 フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
 
 ```cpp
-    // @@@ example/term_explanation/concept_ut.cpp #4:0 begin
+    // @@@ example/cpp_standard/concept_ut.cpp #4:0 begin
 ```
 
 ### パラメータパック
@@ -2306,13 +2306,13 @@ C++20から導入された「コンセプト(concepts)」は、
 パラメータパックを使用した関数テンプレートは以下のように定義する。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard/template_ut.cpp #3:0 begin
 ```
 
 以下の単体テストは上記の関数の使い方を示している。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp #3:1 begin -1
+    // @@@ example/cpp_standard/template_ut.cpp #3:1 begin -1
 ```
 
 ### 畳み込み式
@@ -2329,38 +2329,38 @@ C++20から導入された「コンセプト(concepts)」は、
 
 1. 単項右畳み込み
 ```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #0:0 begin 
+    // @@@ example/cpp_standard/flold_expression_ut.cpp #0:0 begin 
 ```
 2. 単項左畳み込み
 ```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #0:1 begin 
+    // @@@ example/cpp_standard/flold_expression_ut.cpp #0:1 begin 
 ```
 3. 二項右畳み込み
 ```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #0:2 begin 
+    // @@@ example/cpp_standard/flold_expression_ut.cpp #0:2 begin 
 ```
 4. 二項左畳み込み
 ```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #0:3 begin 
+    // @@@ example/cpp_standard/flold_expression_ut.cpp #0:3 begin 
 ```
 
 上記したような単純な例では、畳み込み式の効果はわかりづらいため、
 もっと複雑なで読解が困難な再帰構造を持ったコードを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #1:0 begin 
+    // @@@ example/cpp_standard/flold_expression_ut.cpp #1:0 begin 
 ```
 ```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #1:1 begin
+    // @@@ example/cpp_standard/flold_expression_ut.cpp #1:1 begin
 ```
 
 畳み込み式を使うことで、この問題をある程度緩和したコードを下記する。
 
 ```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #2:0 begin 
+    // @@@ example/cpp_standard/flold_expression_ut.cpp #2:0 begin 
 ```
 ```cpp
-    // @@@ example/term_explanation/flold_expression_ut.cpp #2:1 begin
+    // @@@ example/cpp_standard/flold_expression_ut.cpp #2:1 begin
 ```
 
 ### ジェネリックラムダ
@@ -2373,13 +2373,13 @@ C++14で導入された。
 下記のように使用することもできる便利な記法である。
 
 ```cpp
-    // @@@ example/term_explanation/generic_lambda_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/generic_lambda_ut.cpp #0:0 begin
 ```
 
 なお、上記のジェネリックラムダは下記クラスのインスタンスの動きと同じである。
 
 ```cpp
-    // @@@ example/term_explanation/generic_lambda_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/generic_lambda_ut.cpp #0:1 begin
 ```
 
 ### クラステンプレートのテンプレート引数の型推論
@@ -2390,13 +2390,13 @@ C++17から、
 この機能がないC++14までは以下のように記述する必要があった。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/template_ut.cpp #0:0 begin -1
 ```
 
 これに対して、この機能により、以下のようにシンプルに記述できるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/template_ut.cpp #0:1 begin -1
 ```
 
 ### テンプレートの型推論ガイド
@@ -2412,23 +2412,23 @@ C++17で導入された機能である。この機能により、
 コンストラクタの引数からテンプレート引数を自動的に決定することが可能になる。
 
 ```cpp
-    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:0 begin
 ```
 上記のクラステンプレートは、ガイドがない場合、
 以下に示すように型推論によりテンプレート引数を決定することができない。
 
 ```cpp
-    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:1 begin -1
 ```
 
 以上に示したクラステンプレートに以下の型推論ガイドを追加することにより、
 テンプレート引数を型推論できるようになる。
 
 ```cpp
-    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:2 begin 
+    // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:2 begin 
 ```
 ```cpp
-    // @@@ example/term_explanation/deduction_guide_ut.cpp #0:3 begin -1
+    // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:3 begin -1
 ```
 
 ### CTAD(Class Template Argument Deduction)
@@ -2438,7 +2438,7 @@ CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論�
 変数テンプレートとは、下記のコード示したような機能である。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/template_ut.cpp #1:0 begin
 ```
 
 なお、変数テンプレートはconstexprと定義されるが、
@@ -2450,7 +2450,7 @@ CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論�
 下記のコード例で示したようにテンプレートによって型の別名を定義する機能である。
 
 ```cpp
-    // @@@ example/term_explanation/template_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/template_ut.cpp #2:0 begin
 ```
 
 ### constexpr if文
@@ -2460,10 +2460,10 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
 まずは、この構文を使用しない例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/constexpr_if_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/constexpr_if_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/constexpr_if_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/constexpr_if_ut.cpp #0:1 begin -1
 ```
 
 このような場合、[SFINAE](---)によるオーバーロードが必須であったが、
@@ -2471,16 +2471,16 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
 条件分岐の可読性の向上が見込める。
 
 ```cpp
-    // @@@ example/term_explanation/constexpr_if_ut.cpp #0:2 begin
+    // @@@ example/cpp_standard/constexpr_if_ut.cpp #0:2 begin
 ```
 
 この構文は[パラメータパック](---)の展開においても有用な場合がある。
 
 ```cpp
-    // @@@ example/term_explanation/constexpr_if_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/constexpr_if_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/constexpr_if_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/constexpr_if_ut.cpp #1:1 begin -1
 ```
 
 C++14までの構文を使用する場合、
@@ -2488,7 +2488,7 @@ C++14までの構文を使用する場合、
 constexpr ifを使用することで、やや単純に記述できる。
 
 ```cpp
-    // @@@ example/term_explanation/constexpr_if_ut.cpp #1:2 begin
+    // @@@ example/cpp_standard/constexpr_if_ut.cpp #1:2 begin
 ```
 
 ### autoパラメータによる関数テンプレートの簡易定義
@@ -2496,10 +2496,10 @@ constexpr ifを使用することで、やや単純に記述できる。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #4:0 begin
+    // @@@ example/cpp_standard/decltype_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #4:1 begin -1
+    // @@@ example/cpp_standard/decltype_ut.cpp #4:1 begin -1
 ```
 
 ### AAAスタイル
@@ -2512,39 +2512,39 @@ AAAスタイルとは、「可能な場合、型を左辺に明示して変数�
 特定の型を明示して使用する必要がない場合、下記のように書く。
 
 ```cpp
-    // @@@ example/term_explanation/aaa.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/aaa.cpp #0:0 begin -1
 ```
 
 特定の型を明示して使用する必要がある場合、下記のように書く。
 
 ```cpp
-    // @@@ example/term_explanation/aaa.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/aaa.cpp #1:0 begin -1
 ```
 
 関数の戻り値を受け取る変数を宣言する場合、下記のように書く。
 
 ```cpp
-    // @@@ example/term_explanation/aaa.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/aaa.cpp #2:0 begin -1
 ```
 
 ただし、関数の戻り値型が容易に推測しがたい下記のような場合、
 型を明示しないAAAスタイルは使うべきではない。
 
 ```cpp
-    // @@@ example/term_explanation/aaa.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/aaa.cpp #2:1 begin -1
 ```
 
 インライン関数や関数テンプレートの宣言は、下記のように書く。
 
 ```cpp
-    // @@@ example/term_explanation/aaa.cpp #3:0 begin
+    // @@@ example/cpp_standard/aaa.cpp #3:0 begin
 ```
 
 ただし、インライン関数や関数テンプレートが複雑な下記のような場合、
 AAAスタイルは出来る限り避けるべきである。
 
 ```cpp
-    // @@@ example/term_explanation/aaa.cpp #3:1 begin
+    // @@@ example/cpp_standard/aaa.cpp #3:1 begin
 ```
 
 このスタイルには下記のような狙いがある。
@@ -2554,7 +2554,7 @@ AAAスタイルは出来る限り避けるべきである。
   また、下記のように縮小型変換(下記では、unsignedからsignedの変換)を防ぐこともできる。
 
 ```cpp
-    // @@@ example/term_explanation/aaa.cpp #4:0 begin -1
+    // @@@ example/cpp_standard/aaa.cpp #4:0 begin -1
 ```
 
 * コードの可読性の向上  
@@ -2576,7 +2576,7 @@ AAAスタイルでは、以下のような場合に注意が必要である。
   下記のような型推論は、直感に反する場合があるため、autoの使い方に対する習熟が必要である。
 
 ```cpp
-    // @@@ example/term_explanation/aaa.cpp #5:0 begin -1
+    // @@@ example/cpp_standard/aaa.cpp #5:0 begin -1
 ```
  
 ### auto
@@ -2590,7 +2590,7 @@ decltypeはオペランドに[expression](---)を取り、その型を算出す�
 下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/decltype_ut.cpp #0:0 begin -1
 ```
 
 decltypeは、テンプレートプログラミングに多用されるが、
@@ -2599,7 +2599,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
 下記例のような場合にも有用である。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/decltype_ut.cpp #0:1 begin
 ```
 
 ### decltype(auto)
@@ -2608,7 +2608,7 @@ decltype(auto)はC++14から導入されたdecltypeの類似機能である。
 auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_standard/decltype_ut.cpp #0:2 begin -1
 ```
 
 ### CTAD（Class Template Argument Deduction）
@@ -2619,13 +2619,13 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 コード例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/decltype_ut.cpp #1:0 begin
 ```
 
 この構文をC++11から導入された理由は以下のコードを見れば明らかだろう。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #1:1 begin
+    // @@@ example/cpp_standard/decltype_ut.cpp #1:1 begin
 ```
 
 ### 関数の戻り値型auto
@@ -2635,10 +2635,10 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
 (「[autoパラメータによる関数テンプレートの簡易定義](---)」を参照)。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/decltype_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/decltype_ut.cpp #2:1 begin -1
 ```
 
 ### 後置戻り値型auto
@@ -2647,10 +2647,10 @@ C++14から導入された[関数の戻り値型auto](---)と似た、
 autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
 
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard/decltype_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/decltype_ut.cpp #3:1 begin -1
+    // @@@ example/cpp_standard/decltype_ut.cpp #3:1 begin -1
 ```
 
 ## name lookupと継承構造                 
@@ -2667,14 +2667,14 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/term_explanation/name_lookup_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/name_lookup_ut.cpp #0:0 begin
 ```
 
 以下のコードでの関数呼び出しf()のname lookupは、
 
 
 ```cpp
-    // @@@ example/term_explanation/name_lookup_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/name_lookup_ut.cpp #1:0 begin -1
 ```
 
 1. NS_LUをその前方で宣言された名前空間と関連付けする
@@ -2685,14 +2685,14 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/term_explanation/name_lookup_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/name_lookup_ut.cpp #0:1 begin
 ```
 
 以下のコードでの関数呼び出しg()のname lookupは、
 
 
 ```cpp
-    // @@@ example/term_explanation/name_lookup_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/name_lookup_ut.cpp #1:1 begin -1
 ```
 
 1. NS_LUをその前方で宣言された名前空間と関連付けする
@@ -2705,13 +2705,13 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/term_explanation/name_lookup_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/name_lookup_ut.cpp #2:0 begin
 ```
 
 以下のコードでの関数呼び出しToString()のname lookupは、
 
 ```cpp
-    // @@@ example/term_explanation/name_lookup_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/name_lookup_ut.cpp #2:1 begin -1
 ```
 
 1. ToString()呼び出しの引数xの型Xが名前空間NS_LUで定義されているため、
@@ -2745,13 +2745,13 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:0 begin
 ```
 
 以下のコードでのTypeNameのインスタンス化に伴うname lookupは、
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:1 begin -1
 ```
 
 1. TypeName()呼び出しの引数xの型Xが名前空間NS_TPLUで宣言されているため、
@@ -2775,7 +2775,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 上と同じ定義、宣言がある場合の以下のコードでのTypeNameのインスタンス化に伴うname lookupは、
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:2 begin -1
 ```
 
 1. NS_TPLUを名前空間と関連付けする
@@ -2808,7 +2808,7 @@ two phase lookupが実装されていないコンパイラ(こういったコン
 上と同じ定義、宣言がある場合の以下のコードの動作を考える。
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:3 begin -1
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:3 begin -1
 ```
 
 NS_TPLU::TypeName(int{})のintをlongにしただけなので、この単体テストはパスしないが、
@@ -2817,7 +2817,7 @@ NS_TPLU::TypeName(int{})のintをlongにしただけなので、この単体テ�
 に以下のコードを追加するとパスしてしまう。
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #0:4 begin
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:4 begin
 ```
 
 この理由は、関数テンプレート内での2nd name lookupで選択された名前が関数テンプレートであった場合、
@@ -2849,10 +2849,10 @@ name lookupでバインドされる関数を変更することができるため
 実際には関連付けされないコードである。
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #1:1 begin
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #1:1 begin
 ```
 
 これは先に示したNS_TPLU::Xの例と極めて似ている。本質的な違いは、
@@ -2861,7 +2861,7 @@ TypeNameやToTypeがグローバル名前空間で宣言されていることの
 TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y const&)が選択されないのである。
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #1:2 begin -1
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #1:2 begin -1
 ```
 
 ここまでの現象を正確に理解するには、
@@ -2892,22 +2892,22 @@ TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y con
 次のコードは、この難解さに翻弄されるのが現場のプログラマのみではないことを示す。
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #2:0 begin
 ```
 
 上記の宣言、定義があった場合、operator+の単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #2:1 begin -2
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #2:1 begin -2
 ```
 
 このテストは当然パスするが、次はどうだろう？
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #2:2 begin -2
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #2:2 begin -2
 ```
 
 これまでのtwo phase name lookupの説明では、
@@ -2919,7 +2919,7 @@ operator+(NS_TPLU2::Y const& y, int i)はTypeNum内でのname lookupの対象に
 当然ながら以下のテストはパスする(つまり、g++ではエラーする)。
 
 ```cpp
-    // @@@ example/term_explanation/two_phase_name_lookup_ut.cpp #2:3 begin -2
+    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #2:3 begin -2
 ```
 
 なお、TypeNum内のコードである
@@ -2959,13 +2959,13 @@ ADLとは、関数の実引数の型が宣言されている名前空間(これ�
 下記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/term_explanation/name_lookup_adl_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/name_lookup_adl_ut.cpp #0:0 begin
 ```
 
 以下のコードでのToStringの呼び出しに対するのname lookupは、
 
 ```cpp
-    // @@@ example/term_explanation/name_lookup_adl_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/name_lookup_adl_ut.cpp #0:1 begin -1
 ```
 
 * ToStringの呼び出しより前方で行われているグローバル名前空間内の宣言
@@ -2982,7 +2982,7 @@ ADLは思わぬname lookupによるバグを誘発することもあるが、
 コードをより自然に、より簡潔に記述するための重要な機能となっている。
 
 ```cpp
-    // @@@ example/term_explanation/name_lookup_adl_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_standard/name_lookup_adl_ut.cpp #0:2 begin -1
 ```
 
 ### 関連名前空間
@@ -3022,10 +3022,10 @@ hidden-friend関数(隠れたフレンド関数)の目的は、
   コンパイラによる最適化を妨げることなく、特定の機能を提供する。
 
 ```cpp
-    // @@@ example/term_explanation/hidden_friend_ut.cpp #0:0 begin 
+    // @@@ example/cpp_standard/hidden_friend_ut.cpp #0:0 begin 
 ```
 ```cpp
-    // @@@ example/term_explanation/hidden_friend_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/hidden_friend_ut.cpp #0:1 begin -1
 ```
 
 
@@ -3038,14 +3038,14 @@ name-hidingとは
 まずは、クラスとその派生クラスでのname-hidingの例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/name_hiding.cpp #0:0 begin
+    // @@@ example/cpp_standard/name_hiding.cpp #0:0 begin
 ```
 
 上記の関数fは一見オーバーロードに見えるが、そうではない。下記のコードで示したように、
 Base::f()には、修飾しない形式でのDerivedクラス経由のアクセスはできない。
 
 ```cpp
-    // @@@ example/term_explanation/name_hiding.cpp #0:1 begin
+    // @@@ example/cpp_standard/name_hiding.cpp #0:1 begin
 ```
 
 これは前述したように、
@@ -3056,34 +3056,34 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 修飾しない形式でのDerivedクラス経由のBase::f()へのアクセスが可能となる。
 
 ```cpp
-    // @@@ example/term_explanation/name_hiding.cpp #1:0 begin
+    // @@@ example/cpp_standard/name_hiding.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/name_hiding.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/name_hiding.cpp #1:1 begin -1
 ```
 
 下記コードは、名前空間でも似たような現象が起こることを示している。
 
 ```cpp
-    // @@@ example/term_explanation/name_hiding.cpp #2:0 begin
+    // @@@ example/cpp_standard/name_hiding.cpp #2:0 begin
 ```
 
 この問題に対しては、下記のようにf(int)の定義位置を後方に移動することで回避できる。
 
 ```cpp
-    // @@@ example/term_explanation/name_hiding.cpp #2:1 begin
+    // @@@ example/cpp_standard/name_hiding.cpp #2:1 begin
 ```
 
 また、先述のクラスでの方法と同様にusing宣言を使い、下記のようにすることもできる。
 
 ```cpp
-    // @@@ example/term_explanation/name_hiding.cpp #2:2 begin
+    // @@@ example/cpp_standard/name_hiding.cpp #2:2 begin
 ```
 
 当然ながら、下記のようにf()の呼び出しを::で修飾することもできる。
 
 ```cpp
-    // @@@ example/term_explanation/name_hiding.cpp #2:3 begin
+    // @@@ example/cpp_standard/name_hiding.cpp #2:3 begin
 ```
 
 修飾の副作用として「[two phase name lookup](---)」の例で示したような
@@ -3095,7 +3095,7 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 次に、そういった混乱を引き起こすであろうコードを示す。
 
 ```cpp
-    // @@@ example/term_explanation/name_hiding.cpp #3:0 begin
+    // @@@ example/cpp_standard/name_hiding.cpp #3:0 begin
 ```
 
 NS_B_Inner::g()内のf(int)の呼び出しはコンパイルできるが、
@@ -3124,10 +3124,10 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 [仮想継承](---)を使わないダイヤモンド継承のコードを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #0:1 begin -1
 ```
 
 これからわかるように、DerivedDerivedインスタンスの中に2つのBaseインスタンスが存在する。
@@ -3138,23 +3138,23 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 下記コードは、それが原因で名前解決が曖昧になりコンパイルできない。
 
 ```cpp
-    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #0:2 begin -1
 ```
 
 この問題に対処するには、クラス名による修飾が必要になるが、
 Baseインスタンスが2つ存在するため、下記に示すようなわかりづらいバグの温床となる。
 
 ```cpp
-    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #0:3 begin -1
+    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #0:3 begin -1
 ```
 
 次に示すのは、[仮想継承](---)を使用したダイヤモンド継承の例である。
 
 ```cpp
-    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #1:1 begin -1
 ```
 
 仮想継承の効果で、DerivedDerivedインスタンスの中に存在するBaseインスタンスは1つになるため、
@@ -3162,7 +3162,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 (が、[仮想継承](---)による別の問題が発生する)。
 
 ```cpp
-    // @@@ example/term_explanation/diamond_inheritance_ut.cpp #1:2 begin -1
+    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #1:2 begin -1
 ```
 
 この状態をオブジェクト図で表すと下記のようになる。
@@ -3173,7 +3173,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 下記に示した継承方法を仮想継承、仮想継承の基底クラスを仮想基底クラスと呼ぶ。
 
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:0 begin
 ```
 
 仮想継承は、[ダイヤモンド継承](---)の基底クラスのインスタンスを、
@@ -3184,14 +3184,14 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 それぞれを通常の継承したクラスを下記のように定義する。
 
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:1 begin
 ```
 
 この場合、継承ヒエラルキーに仮想継承を含むクラスと、含まないクラスでは、
 以下に示したような違いが発生する。
 
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:2 begin -1
 ```
 
 この動作は、下記の仕様に起因している
@@ -3208,10 +3208,10 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 これを通常の継承クラスと同様な動作にするには、下記のようにしなければならない。
 
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:3 begin
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:3 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #0:4 begin -1
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:4 begin -1
 ```
 「仮想継承のコンストラクタ呼び出し」仕様は、
 [ダイヤモンド継承](---)での基底クラスのコンストラクタ呼び出しを一度にするために存在する。
@@ -3220,26 +3220,26 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 デバッグ困難なバグが発生してしまうことは容易に想像できるだろう。
 
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #1:1 begin -1
 ```
 
 基底クラスのコンストラクタ呼び出しは、下記のコードのようにした場合でも、
 単体テストが示すように、一番最初に行われる。
 
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #2:1 begin -1
 ```
 
 このため、基底クラスのコンストラクタ呼び出しは下記のような順番で行うべきである。
 
 ```cpp
-    // @@@ example/term_explanation/virtual_inheritance_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #3:0 begin
 ```
 
 ### 仮想基底
@@ -3264,10 +3264,10 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 #### ダイヤモンド継承を含まない場合
 
 ```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/dominance_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/dominance_ut.cpp #0:1 begin -1
 ```
 
 この[name lookup](---)については、[name-hiding](---)で説明した通りである。
@@ -3275,7 +3275,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 #### ダイヤモンド継承かつそれが仮想継承でない場合
 
 ```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/dominance_ut.cpp #1:0 begin
 ```
 
 上記コードはコードブロック内のコメントのようなメッセージが原因でコンパイルできない。
@@ -3288,10 +3288,10 @@ Derived_1によるドミナンスも働き、その結果として、呼び出�
 #### ダイヤモンド継承かつそれが仮想継承である場合
 
 ```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/dominance_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/dominance_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/dominance_ut.cpp #2:1 begin -1
 ```
 
 これまでと同様にDerived_0のドミナンスによりBase::fは[name-hiding](---)されることになる。
@@ -3306,10 +3306,10 @@ using宣言とは、"using XXX::func"のような記述である。
 funcが使用できる。
 
 ```cpp
-    // @@@ example/term_explanation/namespace_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/namespace_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/namespace_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/namespace_ut.cpp #0:1 begin
 ```
 
 ### usingディレクティブ
@@ -3318,10 +3318,10 @@ usingディレクティブとは、"using namespace XXX"のような記述であ
 XXXの識別子が使用できる。
 
 ```cpp
-    // @@@ example/term_explanation/namespace_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/namespace_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/namespace_ut.cpp #0:2 begin
+    // @@@ example/cpp_standard/namespace_ut.cpp #0:2 begin
 ```
 
 より多くの識別子が名前空間の修飾無しで使えるようになる点において、
@@ -3329,10 +3329,10 @@ XXXの識別子が使用できる。
 下記のように[name-hiding](---)された識別子の導入には効果がない。
 
 ```cpp
-    // @@@ example/term_explanation/namespace_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/namespace_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/namespace_ut.cpp #0:3 begin
+    // @@@ example/cpp_standard/namespace_ut.cpp #0:3 begin
 ```
 
 従って、usingディレクティブの使用は避けるべきである。
@@ -3379,19 +3379,19 @@ C++11で導入されたnoexceptキーワードには、以下の2つの意味が
 以下に上記のコード例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/noexcept_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/noexcept_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/noexcept_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/noexcept_ut.cpp #0:1 begin -1
 ```
 
 演算子としてのnoexceptはテンプレートで頻繁に使用されるため、以下にそのような例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/noexcept_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/noexcept_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/noexcept_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/noexcept_ut.cpp #1:1 begin -1
 ```
 
 ### exception-unfriendly
@@ -3427,10 +3427,10 @@ std::moveは引数を[rvalueリファレンス](---)に変換する関数テン�
 この表の動作仕様を下記ののコードで示す。
 
 ```cpp
-    // @@@ example/term_explanation/utility_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/utility_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/utility_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/utility_ut.cpp #0:1 begin -1
 ```
 
 std::moveは以下の２つの概念ときわめて密接に関連しており、
@@ -3471,7 +3471,7 @@ std::integral_constantは「テンプレートパラメータとして与えら�
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #0:0 begin -1
 ```
 
 また、すでに示したようにstd::true_type/std::false_typeを実装するためのクラステンプレートでもある。
@@ -3484,13 +3484,13 @@ std::integral_constantは「テンプレートパラメータとして与えら�
 これらは、下記で確かめられる通り、後述する[std::integral_constant](---)を使い定義されている。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #1:0 begin -1
 ```
 
 それぞれの型が持つvalue定数は、下記のように定義されている。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #1:1 begin -1
 ```
 
 これらが何の役に立つのか直ちに理解することは難しいが、
@@ -3499,13 +3499,13 @@ true/falseのメタ関数版と考えれば、追々理解できるだろう。
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #1:2 begin
+    // @@@ example/cpp_standard/type_traits_ut.cpp #1:2 begin
 ```
 
 上記の単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #1:3 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #1:3 begin -1
 ```
 
 IsCovertibleToIntの呼び出しをdecltypeのオペランドにすることで、
@@ -3526,18 +3526,18 @@ std::true_typeかstd::false_typeを受け取ることができる。
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #3:0 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #3:0 begin -1
 ```
 
 また、 C++17で導入されたstd::is_same_vは、定数テンプレートを使用し、
 下記のように定義されている。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #3:1 begin
+    // @@@ example/cpp_standard/type_traits_ut.cpp #3:1 begin
 ```
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #3:2 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #3:2 begin -1
 ```
 
 このような簡潔な記述の一般形式は、
@@ -3553,7 +3553,7 @@ std::true_typeかstd::false_typeを受け取ることができる。
 std::is_base_ofを使うことで下記のようにstd::is_sameの基底クラス確認することもできる。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #3:3 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #3:3 begin -1
 ```
 
 #### std::enable_if
@@ -3565,13 +3565,13 @@ std::enable_ifは、bool値である第1テンプレートパラメータが
 下記のコードはクラステンプレートの特殊化を用いたstd::enable_ifの実装例である。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #4:0 begin
+    // @@@ example/cpp_standard/type_traits_ut.cpp #4:0 begin
 ```
 
 std::enable_ifの使用例を下記に示す。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #4:1 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #4:1 begin -1
 ```
 
 実装例から明らかなように
@@ -3582,7 +3582,7 @@ std::enable_ifの使用例を下記に示す。
 となるため、下記のコードはコンパイルできない。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #4:2 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #4:2 begin -1
 ```
 
 std::enable_ifのこの特性と後述する[SFINAE](---)により、
@@ -3601,13 +3601,13 @@ std::conditionalは、bool値である第1テンプレートパラメータが
 下記のコードはクラステンプレートの特殊化を用いたstd::conditionalの実装例である。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #5:0 begin
+    // @@@ example/cpp_standard/type_traits_ut.cpp #5:0 begin
 ```
 
 std::conditionalの使用例を下記に示す。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #5:1 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #5:1 begin -1
 ```
 
 #### std::is_void
@@ -3621,7 +3621,7 @@ std::is_voidはテンプレートパラメータの型が
 以下に簡単な使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/type_traits_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/type_traits_ut.cpp #2:0 begin -1
 ```
 
 #### std::is_copy_assignable
@@ -3642,10 +3642,10 @@ Tが[MoveAssignable要件](---)を満たすためには`std::is_move_assignable<
 クラスthread は、新しい実行のスレッドの作成/待機/その他を行う機構を提供する。
 
 ```cpp
-    // @@@ example/term_explanation/thread_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/thread_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/thread_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/thread_ut.cpp #0:1 begin -1
 ```
 
 #### std::mutex
@@ -3657,12 +3657,12 @@ mutex は、スレッド間で使用する共有リソースを排他制御す�
 </pre>
 
 ```cpp
-    // @@@ example/term_explanation/thread_ut.cpp #1:0 begin
-    // @@@ example/term_explanation/thread_ut.cpp #1:1 begin
-    // @@@ example/term_explanation/thread_ut.cpp #1:2 begin
+    // @@@ example/cpp_standard/thread_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/thread_ut.cpp #1:1 begin
+    // @@@ example/cpp_standard/thread_ut.cpp #1:2 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/thread_ut.cpp #1:3 begin -1
+    // @@@ example/cpp_standard/thread_ut.cpp #1:3 begin -1
 ```
 
 lock()を呼び出した状態で、unlock()を呼び出さなかった場合、デッドロックを引き起こしてしまうため、
@@ -3671,7 +3671,7 @@ mutexは通常、[std::lock_guard](---)と組み合わせて使われる。
 
 ```cpp
 
-    // @@@ example/term_explanation/thread_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/thread_ut.cpp #1:1 begin -1
 ```
 
 #### std::atomic
@@ -3680,10 +3680,10 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
 [std::mutex](---)で示したような単純なコードではstd::atomicを使用して下記のように書く方が一般的である。
 
 ```cpp
-    // @@@ example/term_explanation/thread_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/thread_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/thread_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/thread_ut.cpp #2:1 begin -1
 ```
 
 ### ロック所有ラッパー
@@ -3699,12 +3699,12 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
 std::lock_guardを使わない問題のあるコードを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:0 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:1 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:2 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #0:2 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #0:1 begin -1
 ```
 
 上記で示したConflict::increment()には以下のようなリスクが存在する。
@@ -3721,9 +3721,9 @@ std::lock_guardを使わない問題のあるコードを以下に示す。
 std::lock_guardを使用して、このような問題に対処したコードを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:0 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:1 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:2 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #1:1 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #1:2 begin
 ```
 
 単体テストに変更は無いため、省略する。
@@ -3731,13 +3731,13 @@ std::lock_guardを使用して、このような問題に対処したコード�
 オリジナルの単純な以下のincrement()と改善版を比較すると、大差ないように見えるが、
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #0:1 begin -1
 ```
 
 オリジナルのコードで指摘したすべてのリスクが、わずか一行の変更で解決されている。
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #1:1 begin -1
 ```
 
 #### std::unique_lock
@@ -3752,13 +3752,13 @@ IntQueue::pop_ok()の中で行われるIntQueue::q_へのアクセスで発生�
 std::unique_lockやstd::lock_guardによりmutexを使用する。
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:0 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:1 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:2 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:3 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #2:1 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #2:2 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #2:3 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:4 begin -1
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #2:4 begin -1
 ```
 
 一般に条件変数には、[Spurious Wakeup](---)という問題があり、std::condition_variableも同様である。
@@ -3767,13 +3767,13 @@ std::unique_lockやstd::lock_guardによりmutexを使用する。
 意図通り動作しない可能性がある。
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #2:1 begin -1
 ```
 
 下記のIntQueue::pop_ok()は、pop_ng()にSpurious Wakeupの対策を施したものである。
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #2:2 begin -1
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #2:2 begin -1
 ```
 
 #### std::scoped_lock
@@ -3785,16 +3785,16 @@ C++17で導入され、デッドロックを回避しながら複数のミュー
 両方の口座を同時にロックする必要がある。
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:0 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:1 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:2 begin
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:3 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #3:1 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #3:2 begin
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #3:3 begin
 ```
 下記の例では、2つのスレッドがそれぞれ逆方向の送金を同時に行う。
 transfer_ok()の代わりにtransfer_ng()を使用した場合、デッドロックが発生する可能性がある。
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:4 begin -1
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #3:4 begin -1
 ```
 
 transfer_ng()がデッドロックを引き起こすシナリオは、以下のようなものである。
@@ -3811,7 +3811,7 @@ transfer_ng()がデッドロックを引き起こすシナリオは、以下の�
 下記のBankAccount::transfer_ok()は、std::scoped_lockを使用して前述したデッドロックを回避したものである。
 
 ```cpp
-    // @@@ example/term_explanation/lock_ownership_wrapper_ut.cpp #3:2 begin -1
+    // @@@ example/cpp_standard/lock_ownership_wrapper_ut.cpp #3:2 begin -1
 ```
 
 ### スマートポインタ
@@ -3850,9 +3850,9 @@ std::weak_ptrは参照カウントに影響を与えず、[std::shared_ptr](---)
 (以下の例では、Xは前のままで、Yのみ修正した)。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:0 begin
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:1 begin
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:2 begin
+    // @@@ example/cpp_standard/weak_ptr_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/weak_ptr_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/weak_ptr_ut.cpp #0:2 begin
 ```
 
 このコードからわかるように修正版YはXオブジェクトを参照するために、
@@ -3865,13 +3865,13 @@ Xオブジェクトにアクセスする必要があるときに、
 生成した`std::shared_ptr<X>`オブジェクトのスコープを最小に留めている。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/weak_ptr_ut.cpp #0:1 begin
 ```
 
 Xと修正版Yの単体テストによりメモリーリークが修正されたことを以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/weak_ptr_ut.cpp #0:3 begin -1
+    // @@@ example/cpp_standard/weak_ptr_ut.cpp #0:3 begin -1
 ```
 
 上記コード例で見てきたように`std::weak_ptr`を使用することで:
@@ -3909,7 +3909,7 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 ##### std::forward_list
 
 ```cpp
-    // @@@ example/term_explanation/container_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/container_ut.cpp #0:0 begin -1
 ```
 
 #### 連想コンテナ(Associative Containers)
@@ -3936,13 +3936,13 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 ##### std::unordered_set
 
 ```cpp
-    // @@@ example/term_explanation/container_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/container_ut.cpp #1:0 begin -1
 ```
 
 ##### std::unordered_map
 
 ```cpp
-    // @@@ example/term_explanation/container_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/container_ut.cpp #2:0 begin -1
 ```
 
 ##### std::type_index
@@ -3950,7 +3950,7 @@ std::type_indexはコンテナではないが、
 型情報型を連想コンテナのキーとして使用するためのクラスであるため、この場所に掲載する。
 
 ```cpp
-    // @@@ example/term_explanation/container_ut.cpp #3:0 begin -1
+    // @@@ example/cpp_standard/container_ut.cpp #3:0 begin -1
 ```
 
 
@@ -3986,18 +3986,18 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
 
 #### 戻り値の無効表現
 ```cpp
-    // @@@ example/term_explanation/optional_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/optional_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/optional_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/optional_ut.cpp #0:1 begin -1
 ```
 
 #### オブジェクトの遅延初期化
 ```cpp
-    // @@@ example/term_explanation/optional_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/optional_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/optional_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/optional_ut.cpp #1:1 begin -1
 ```
 
 ### std::variant
@@ -4012,16 +4012,16 @@ std::variant自身では、オブジェクトのダイナミックな生成が�
 以下にstd::variantの典型的な使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/variant_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/variant_ut.cpp #0:0 begin -1
 ```
 
 std::variantとstd::visit([Visitor](---)パターンの実装の一種)を組み合わせた場合の使用例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/variant_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/variant_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/variant_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/variant_ut.cpp #1:1 begin -1
 ```
 
 ### オブジェクトの比較
