@@ -543,7 +543,7 @@ C言語の構造体のレイアウトと互換性を持つことが一般的で�
 それを示すために、まずは下記のようにクラスX、Y、Zを定義する。
 
 ```cpp
-    // @@@ example/term_explanation/class_layout_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/class_layout_ut.cpp #0:0 begin
 ```
 
 通常のC++コンパイラが作り出すX、Y、Zの概念的なメモリレイアウトは下記のようになる。
@@ -620,7 +620,7 @@ X、Y、Zのメモリレイアウトは以下の様に出力される。
 このようなメモリレイアウトは、
 
 ```cpp
-    // @@@ example/term_explanation/class_layout_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/class_layout_ut.cpp #0:1 begin -1
 ```
 
 のようなオブジェクト生成に密接に関係する。その手順を下記の疑似コードにより示す。
@@ -668,26 +668,26 @@ dynamic_castは、実行時の型チェックと安全なダウンキャスト�
 下記のような[ポリモーフィックなクラス](---)に対しては、
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/rtti_ut.cpp #0:0 begin
 ```
 
 dynamic_castは下記のように振舞う。
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #0:1 begin -1
 ```
 
 
 一方で、下記のような非[ポリモーフィックなクラス](---)に対しては、
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/rtti_ut.cpp #1:0 begin
 ```
 
 dynamic_castは下記のように振舞う。
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #1:1 begin -1
 ```
 
 #### typeid
@@ -698,31 +698,31 @@ typeidのオペランドは[ポリモーフィックなクラス](---)のイン�
 以下の例では[基本型](---)に対するtypeidが返す[std::type_info](---)の振る舞いを表す。
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #0:2 begin -1
 ```
 
 下記のような[ポリモーフィックなクラス](---)のインスタンスに関して、
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #0:0 begin -1
 ```
 
 typeidが返す[std::type_info](---)オブジェクトは下記のように振舞う。
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #0:3 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #0:3 begin -1
 ```
 
 一方で、下記のような非[ポリモーフィックなクラス](---)に対しては、
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/rtti_ut.cpp #1:0 begin
 ```
 
 typeidが返す[std::type_info](---)オブジェクトは下記のように振舞う。
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #1:2 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #1:2 begin -1
 ```
 
 従って、このような場合のtypeidは静的な型(表層の型)に対しての情報を返すため、
@@ -733,7 +733,7 @@ typeidが返す[std::type_info](---)オブジェクトは下記のように振�
 このような場合、オペランド式は実行時に評価される。以下のコードはそのことを表している。
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #0:4 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #0:4 begin -1
 ```
 
 
@@ -741,7 +741,7 @@ typeidが返す[std::type_info](---)オブジェクトは下記のように振�
 コンパイル時に処理されるため、その式は実行されない。以下のコードはそのことを表している。
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #1:4 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #1:4 begin -1
 ```
 
 #### std::type_info
@@ -751,7 +751,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 以下のコードで示したように`std::type_info::name()`によりその型名を取り出すことができる。
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #2:0 begin -1
 ```
 
 `std::type_info::name()`が返すCスタイルの文字列リテラルを、
@@ -763,10 +763,10 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 オブジェクトの[被修飾型](---)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #2:1 begin
+    // @@@ example/cpp_standard/rtti_ut.cpp #2:1 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/rtti_ut.cpp #2:2 begin -1
+    // @@@ example/cpp_standard/rtti_ut.cpp #2:2 begin -1
 ```
 
 ### Run-time Type Information
@@ -781,7 +781,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 多くの場合、抽象基底クラスとして使用される。
 
 ```cpp
-    // @@@ example/term_explanation/interface_class.cpp #0:0 begin
+    // @@@ example/cpp_standard/interface_class.cpp #0:0 begin
 ```
 
 ### constインスタンス
@@ -794,7 +794,7 @@ C++03までのコンパイラに、
 
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #0:0 begin -1
 ```
 
 ### リテラル型
@@ -812,10 +812,10 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
 以下にリテラル型を例示する。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #3:1 begin -1
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #3:1 begin -1
 ```
 
 ## 定数式とコンパイル時評価
@@ -842,10 +842,10 @@ C++11以前で定数を定義する方法は、
 こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #1:1 begin -1
 ```
 
 constexpr定数がif文のオカレンスになる場合、[constexpr if文](---)することで、
@@ -860,10 +860,10 @@ constexpr関数の呼び出し式の値がコンパイル時に確定する場�
 通常の関数呼び出しと同じになる。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #2:1 begin -1
 ```
 
 C++11の規約では、constexpr関数の制約は厳しく、
@@ -871,13 +871,13 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #5:0 begin
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #5:0 begin
 ```
 このため、可読性、保守性があったため、C++14で制約が緩和され、
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #5:1 begin
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #5:1 begin
 ```
 
 ### コア定数式
@@ -915,10 +915,10 @@ constexprインスタンスを生成できる。このリテラル型を使用�
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #4:0 begin
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #4:1 begin -1
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #4:1 begin -1
 ```
 
 ### consteval
@@ -929,10 +929,10 @@ constevalはC++20 から導入されたキーワードであり、
 パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #6:0 begin
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #6:1 begin -1
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #6:1 begin -1
 ```
 
 ### constinit
@@ -959,10 +959,10 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #7:0 begin -1
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #7:0 begin -1
 ```
 ```cpp
-    // @@@ example/term_explanation/const_xxx_ut.cpp #7:1 begin -1
+    // @@@ example/cpp_standard/const_xxx_ut.cpp #7:1 begin -1
 ```
 
 ## オブジェクト生成と初期化
@@ -1072,7 +1072,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 下記コードでは、 E::E(std::initializer_list\<uint32_t>)が初期化子リストコンストラクタである。
 
 ```cpp
-    // @@@ example/term_explanation/constructor_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/constructor_ut.cpp #0:0 begin
 ```
 
 デフォルトコンストラクタと初期化子リストコンストラクタが、
@@ -1091,7 +1091,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 下記コードのように、継承コンストラクタは派生クラス内でusingを用いて宣言される。
 
 ```cpp
-    // @@@ example/term_explanation/constructor_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/constructor_ut.cpp #1:0 begin
 ```
 
 #### 委譲コンストラクタ
@@ -1100,7 +1100,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 
 ```cpp
-    // @@@ example/term_explanation/constructor_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/constructor_ut.cpp #2:0 begin
 ```
 
 ### explicit コンストラクタと型変換制御
@@ -1124,37 +1124,37 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 [汎整数型昇格](---)や[算術変換](---)等を指さない。
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:0 begin
 ```
 
 上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:1 begin
+    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:1 begin
 ```
 
 この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:2 begin
+    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:2 begin
 ```
 
 この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:3 begin -2
+    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:3 begin -2
 ```
 
 以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:4 begin -2
+    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:4 begin -2
 ```
 
 下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
 
 ```cpp
-    // @@@ example/term_explanation/implicit_conversion_ut.cpp #0:5 begin
+    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:5 begin
 ```
 
 std::stringは暗黙の型変換を許して良く、(多くの場合)Personには暗黙の型変換をしない方が良い理由は、
@@ -1173,20 +1173,20 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のコードのように[暗黙の型変換](---)が起こる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/explicit_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/explicit_ut.cpp #0:1 begin -1
 ```
 
 暗黙の型変換はわかりづらいバグを生み出してしまうことがあるため、
 下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/explicit_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/explicit_ut.cpp #1:1 begin -1
 ```
 
 C++03までは、[オブジェクト生成と初期化|一様初期化](---)がサポートされていなかったため、
@@ -1196,20 +1196,20 @@ C++11からサポートされた[オブジェクト生成と初期化|一様初�
 暗黙の型変換を使用できる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/explicit_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/explicit_ut.cpp #2:1 begin -1
 ```
 
 以下に示す通り、コンストラクタの引数の数によらず、
 C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard/explicit_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #3:1 begin -1
+    // @@@ example/cpp_standard/explicit_ut.cpp #3:1 begin -1
 ```
 
 #### explicit(COND)
@@ -1220,19 +1220,19 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 以下にこのシンタックスの単純な使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #6:0 begin
+    // @@@ example/cpp_standard/explicit_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #6:1 begin -1
+    // @@@ example/cpp_standard/explicit_ut.cpp #6:1 begin -1
 ```
 
 テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #7:0 begin
+    // @@@ example/cpp_standard/explicit_ut.cpp #7:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #7:1 begin -1
+    // @@@ example/cpp_standard/explicit_ut.cpp #7:1 begin -1
 ```
 
 こういった工夫により、コードの過度な柔軟性を適度に保つことができ、
@@ -1244,19 +1244,19 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #4:0 begin
+    // @@@ example/cpp_standard/explicit_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #4:1 begin -1
+    // @@@ example/cpp_standard/explicit_ut.cpp #4:1 begin -1
 ```
 
 以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
 
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #5:0 begin
+    // @@@ example/cpp_standard/explicit_ut.cpp #5:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/explicit_ut.cpp #5:1 begin -1
+    // @@@ example/cpp_standard/explicit_ut.cpp #5:1 begin -1
 ```
 
 ### ==演算子
@@ -1271,14 +1271,14 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 * インライン化し易い。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #0:0 begin
 ```
 
 すべてのメンバ変数に==演算子が定義されている場合、
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #5:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #5:0 begin
 ```
 
 #### 非メンバ==演算子
@@ -1288,20 +1288,20 @@ C++20以降より、`=default`により==演算子を自動生成させること
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #1:0 begin
 ```
 
 * [暗黙の型変換](---)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #1:1 begin -2
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #1:1 begin -2
 ```
 
 すべてのメンバ変数に==演算子が定義されている場合、
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #6:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #6:0 begin
 ```
 
 ### 比較演算子
@@ -1314,17 +1314,17 @@ C++20から導入された[<=>演算子](---)の定義により、すべてが�
 このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #3:1 begin -1
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #3:1 begin -1
 ```
 
 定型の比較演算子では不十分である場合、<=>演算子を実装する必要が出てくる。
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #4:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #4:0 begin
 ```
 
 #### 三方比較演算子
@@ -4033,7 +4033,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #0:1 begin -1
 ```
 
 なお、std::rel_opsはC++20から導入された[<=>演算子](---)により不要になったため、
@@ -4044,10 +4044,10 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation_cpp20/comparison_operator_ut.cpp #2:1 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #2:1 begin
 ```
 
 
@@ -4074,7 +4074,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 未定義動作を含むコードは、クラッシュやセキュリティの問題を引き起こす可能性がある。
 
 ```cpp
-    // @@@ example/term_explanation/undefined_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/undefined_ut.cpp #0:0 begin -1
 ```
 
 ### 未規定動作
@@ -4084,7 +4084,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 つまり、動作が特定の範囲で予測可能だが、正確な挙動が処理系の実装に依存することになる。
 
 ```cpp
-    // @@@ example/term_explanation/undefined_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/undefined_ut.cpp #1:0 begin -1
 ```
 
 ### 未定義動作と未規定動作
@@ -4115,7 +4115,7 @@ volatile など)やポインタやリファレンスなどの間接指定子を�
 引数(もしくは実引数、argument)、仮引数(parameter)とは下記のように定義される。
 
 ```cpp
-    // @@@ example/term_explanation/argument.cpp #0:0 begin
+    // @@@ example/cpp_standard/argument.cpp #0:0 begin
 ```
 
 ### 単純代入
@@ -4151,14 +4151,14 @@ C++03までの規約では、アライメントのコントロールは実装依
 C++11で導入されたキーワードで、型のアライメント要求を取得するために使用する。
 
 ```cpp
-    // @@@ example/term_explanation/aliging_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/aliging_ut.cpp #0:0 begin -1
 ```
 
 #### alignas
 C++11で導入されたキーワードで、メモリのアライメントを指定するために使用する。
 
 ```cpp
-    // @@@ example/term_explanation/aliging_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/aliging_ut.cpp #1:0 begin -1
 ```
 
 #### addressof
@@ -4171,10 +4171,10 @@ operator& がオーバーロードされている場合には、
 オーバーロードを無視して元のアドレスを確実に取得できる。
 
 ```cpp
-    // @@@ example/term_explanation/aliging_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/aliging_ut.cpp #2:0 begin -1
 ```
 ```cpp
-    // @@@ example/term_explanation/aliging_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/aliging_ut.cpp #2:1 begin -1
 ```
 
 ### 演算子のオペランドの評価順位

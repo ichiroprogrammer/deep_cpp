@@ -17055,7 +17055,7 @@ C言語の構造体のレイアウトと互換性を持つことが一般的で�
 それを示すために、まずは下記のようにクラスX、Y、Zを定義する。
 
 ```cpp
-    //  example/term_explanation/class_layout_ut.cpp 4
+    //  example/cpp_standard/class_layout_ut.cpp 4
 
     class X {
     public:
@@ -17164,7 +17164,7 @@ X、Y、Zのメモリレイアウトは以下の様に出力される。
 このようなメモリレイアウトは、
 
 ```cpp
-    //  example/term_explanation/class_layout_ut.cpp 40
+    //  example/cpp_standard/class_layout_ut.cpp 40
 
     auto z_ptr = new Z;
 ```
@@ -17214,7 +17214,7 @@ dynamic_castは、実行時の型チェックと安全なダウンキャスト�
 下記のような[ポリモーフィックなクラス](#SS_7_4_8)に対しては、
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 8
+    //  example/cpp_standard/rtti_ut.cpp 8
 
     class Polymorphic_Base {  // ポリモーフィックな基底クラス
     public:
@@ -17228,7 +17228,7 @@ dynamic_castは、実行時の型チェックと安全なダウンキャスト�
 dynamic_castは下記のように振舞う。
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 25
+    //  example/cpp_standard/rtti_ut.cpp 25
 
     auto b = Polymorphic_Base{};
     auto d = Polymorphic_Derived{};
@@ -17255,7 +17255,7 @@ dynamic_castは下記のように振舞う。
 一方で、下記のような非[ポリモーフィックなクラス](#SS_7_4_8)に対しては、
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 102
+    //  example/cpp_standard/rtti_ut.cpp 102
 
     class NonPolymorphic_Base {  // 非ポリモーフィックな基底クラス
     };
@@ -17267,7 +17267,7 @@ dynamic_castは下記のように振舞う。
 dynamic_castは下記のように振舞う。
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 115
+    //  example/cpp_standard/rtti_ut.cpp 115
 
     auto b = NonPolymorphic_Base{};
     auto d = NonPolymorphic_Derived{};
@@ -17293,7 +17293,7 @@ typeidのオペランドは[ポリモーフィックなクラス](#SS_7_4_8)の�
 以下の例では[基本型](#SS_7_1_1)に対するtypeidが返す[std::type_info](#SS_7_4_9_3)の振る舞いを表す。
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 52
+    //  example/cpp_standard/rtti_ut.cpp 52
 
     int   i{};
     long  j{};
@@ -17310,7 +17310,7 @@ typeidのオペランドは[ポリモーフィックなクラス](#SS_7_4_8)の�
 下記のような[ポリモーフィックなクラス](#SS_7_4_8)のインスタンスに関して、
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 8
+    //  example/cpp_standard/rtti_ut.cpp 8
 
 class Polymorphic_Base {  // ポリモーフィックな基底クラス
 public:
@@ -17324,7 +17324,7 @@ class Polymorphic_Derived : public Polymorphic_Base {  // ポリモーフィッ�
 typeidが返す[std::type_info](#SS_7_4_9_3)オブジェクトは下記のように振舞う。
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 65
+    //  example/cpp_standard/rtti_ut.cpp 65
 
     auto b = Polymorphic_Base{};
     auto d = Polymorphic_Derived{};
@@ -17344,7 +17344,7 @@ typeidが返す[std::type_info](#SS_7_4_9_3)オブジェクトは下記のよう
 一方で、下記のような非[ポリモーフィックなクラス](#SS_7_4_8)に対しては、
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 102
+    //  example/cpp_standard/rtti_ut.cpp 102
 
     class NonPolymorphic_Base {  // 非ポリモーフィックな基底クラス
     };
@@ -17356,7 +17356,7 @@ typeidが返す[std::type_info](#SS_7_4_9_3)オブジェクトは下記のよう
 typeidが返す[std::type_info](#SS_7_4_9_3)オブジェクトは下記のように振舞う。
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 139
+    //  example/cpp_standard/rtti_ut.cpp 139
 
     auto b = NonPolymorphic_Base{};
     auto d = NonPolymorphic_Derived{};
@@ -17381,7 +17381,7 @@ typeidが返す[std::type_info](#SS_7_4_9_3)オブジェクトは下記のよう
 このような場合、オペランド式は実行時に評価される。以下のコードはそのことを表している。
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 87
+    //  example/cpp_standard/rtti_ut.cpp 87
 
     Polymorphic_Base    base;
     Polymorphic_Derived derived;
@@ -17399,7 +17399,7 @@ typeidが返す[std::type_info](#SS_7_4_9_3)オブジェクトは下記のよう
 コンパイル時に処理されるため、その式は実行されない。以下のコードはそのことを表している。
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 161
+    //  example/cpp_standard/rtti_ut.cpp 161
 
     NonPolymorphic_Base    base;
     NonPolymorphic_Derived derived;
@@ -17419,7 +17419,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 以下のコードで示したように`std::type_info::name()`によりその型名を取り出すことができる。
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 179
+    //  example/cpp_standard/rtti_ut.cpp 179
 
     auto s = std::string{"str"};
     auto v = std::string_view{"str"};
@@ -17439,7 +17439,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 オブジェクトの[被修飾型](#SS_7_15_6)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
 
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 191
+    //  example/cpp_standard/rtti_ut.cpp 191
 
     #include <cxxabi.h>  // g++/clang++実装依存ヘッダ abi::__cxa_demangleの宣言
 
@@ -17459,7 +17459,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
     }
 ```
 ```cpp
-    //  example/term_explanation/rtti_ut.cpp 213
+    //  example/cpp_standard/rtti_ut.cpp 213
 
     int   i{};
     auto  s     = std::string{"str"};
@@ -17493,7 +17493,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 多くの場合、抽象基底クラスとして使用される。
 
 ```cpp
-    //  example/term_explanation/interface_class.cpp 8
+    //  example/cpp_standard/interface_class.cpp 8
 
     class InterfaceClass {  // インターフェースクラス
     public:
@@ -17524,7 +17524,7 @@ C++03までのコンパイラに、
 
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 13
+    //  example/cpp_standard/const_xxx_ut.cpp 13
 
     using namespace std;
     auto const str = string{"str"};  // strはプログラムがこの行を通過するときに初期化
@@ -17562,7 +17562,7 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
 以下にリテラル型を例示する。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 94
+    //  example/cpp_standard/const_xxx_ut.cpp 94
 
     class Integer {
     public:
@@ -17576,7 +17576,7 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
     };
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 112
+    //  example/cpp_standard/const_xxx_ut.cpp 112
 
     constexpr auto i5 = 5;                // i5はconstexprインスタンス
     constexpr auto int_5 = Integer{i5};   // int_5はconstexprインスタンス
@@ -17615,7 +17615,7 @@ C++11以前で定数を定義する方法は、
 こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 40
+    //  example/cpp_standard/const_xxx_ut.cpp 40
 
     template <int N>
     struct Templ {
@@ -17623,7 +17623,7 @@ C++11以前で定数を定義する方法は、
     };
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 49
+    //  example/cpp_standard/const_xxx_ut.cpp 49
 
     constexpr int a = 5;  // aは定数であるためかきのような使い方ができる
     static_assert(a == 5);
@@ -17650,13 +17650,13 @@ constexpr関数の呼び出し式の値がコンパイル時に確定する場�
 通常の関数呼び出しと同じになる。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 68
+    //  example/cpp_standard/const_xxx_ut.cpp 68
 
     constexpr int f(int a) noexcept { return a * 3; }  // aがconstexprならばf(a)もconstexpr
     int g(int a) noexcept { return a * 3; }            // aがconstexprであってもg(a)は非constexpr
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 78
+    //  example/cpp_standard/const_xxx_ut.cpp 78
 
     auto x = int{0};
 
@@ -17672,7 +17672,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 148
+    //  example/cpp_standard/const_xxx_ut.cpp 148
 
     constexpr uint64_t bit_mask(uint32_t max) { return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1); }
     constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
@@ -17682,7 +17682,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 154
+    //  example/cpp_standard/const_xxx_ut.cpp 154
 
     constexpr uint64_t bit_mask_for(uint32_t max)
     {
@@ -17733,7 +17733,7 @@ constexprインスタンスを生成できる。このリテラル型を使用�
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 130
+    //  example/cpp_standard/const_xxx_ut.cpp 130
 
     constexpr Integer operator"" _i(unsigned long long int value)  // ユーザ定義リテラルの定義
     {
@@ -17741,7 +17741,7 @@ constexprインスタンスを生成できる。このリテラル型を使用�
     }
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 140
+    //  example/cpp_standard/const_xxx_ut.cpp 140
 
     constexpr auto i = 123_i;
     static_assert(i == 123);
@@ -17756,7 +17756,7 @@ constevalはC++20 から導入されたキーワードであり、
 パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 184
+    //  example/cpp_standard/const_xxx_ut.cpp 184
 
     #if __cplusplus >= 202002L  // c++20
     consteval uint64_t bit_mask(uint32_t max)  // コンパイル時、評価ができなければエラー
@@ -17774,7 +17774,7 @@ constevalはC++20 から導入されたキーワードであり、
     }
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 206
+    //  example/cpp_standard/const_xxx_ut.cpp 206
 
     static_assert(0b1111'1111 == bit_mask(8));
 
@@ -17810,7 +17810,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 223
+    //  example/cpp_standard/const_xxx_ut.cpp 223
 
     constexpr auto factorial = [](int n) {  // constexpr ラムダの定義
         int result = 1;
@@ -17824,7 +17824,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
     static_assert(fact_5 == 120);
 ```
 ```cpp
-    //  example/term_explanation/const_xxx_ut.cpp 240
+    //  example/cpp_standard/const_xxx_ut.cpp 240
 
     constexpr auto factorial = [](auto self, int n) -> int {  // リカーシブconstexprラムダ
         return (n <= 1) ? 1 : n * self(self, n - 1);
@@ -17941,7 +17941,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 下記コードでは、 E::E(std::initializer_list\<uint32_t>)が初期化子リストコンストラクタである。
 
 ```cpp
-    //  example/term_explanation/constructor_ut.cpp 6
+    //  example/cpp_standard/constructor_ut.cpp 6
 
     class E {
     public:
@@ -17990,7 +17990,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 下記コードのように、継承コンストラクタは派生クラス内でusingを用いて宣言される。
 
 ```cpp
-    //  example/term_explanation/constructor_ut.cpp 40
+    //  example/cpp_standard/constructor_ut.cpp 40
 
     class Base {
     public:
@@ -18020,7 +18020,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 
 ```cpp
-    //  example/term_explanation/constructor_ut.cpp 72
+    //  example/cpp_standard/constructor_ut.cpp 72
 
     class A {
     public:
@@ -18059,7 +18059,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 [汎整数型昇格](#SS_7_1_7)や[算術変換](#SS_7_1_6)等を指さない。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 8
+    //  example/cpp_standard/implicit_conversion_ut.cpp 8
 
     class Person {
     public:
@@ -18095,7 +18095,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 40
+    //  example/cpp_standard/implicit_conversion_ut.cpp 40
 
     void f(Person const& person) noexcept
     {
@@ -18111,7 +18111,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 54
+    //  example/cpp_standard/implicit_conversion_ut.cpp 54
 
     void not_using_implicit_coversion()
     {
@@ -18122,7 +18122,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 66
+    //  example/cpp_standard/implicit_conversion_ut.cpp 66
 
     auto otani = std::string{"Ohtani"};
 
@@ -18136,7 +18136,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 80
+    //  example/cpp_standard/implicit_conversion_ut.cpp 80
 
     auto otani = Person{"Ohtani", 26};
 
@@ -18154,7 +18154,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
 
 ```cpp
-    //  example/term_explanation/implicit_conversion_ut.cpp 112
+    //  example/cpp_standard/implicit_conversion_ut.cpp 112
 
     class Person {
     public:
@@ -18205,7 +18205,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のコードのように[暗黙の型変換](#SS_7_6_2_2)が起こる。
 
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 10
+    //  example/cpp_standard/explicit_ut.cpp 10
 
     struct A {
         A(int a) : x{a} {}
@@ -18215,7 +18215,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
     A f(A a) { return a; };
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 21
+    //  example/cpp_standard/explicit_ut.cpp 21
 
     A a = 1;  // A::Aがexplicitでないため、iはA{1}に変換される
     ASSERT_EQ(a.x, 1);
@@ -18228,7 +18228,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
 
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 34
+    //  example/cpp_standard/explicit_ut.cpp 34
 
     struct A {
         explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
@@ -18238,7 +18238,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
     A f(A a) { return a; };
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 45
+    //  example/cpp_standard/explicit_ut.cpp 45
 
     // A a = 1;    // A::Aがexplicitであるため、コンパイルエラー
     // auto b = f(2);  // A::Aがexplicitであるため、コンパイルエラー
@@ -18251,7 +18251,7 @@ C++11からサポートされた[一様初期化](#SS_7_6_6)を下記のよう�
 暗黙の型変換を使用できる。
 
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 56
+    //  example/cpp_standard/explicit_ut.cpp 56
 
     struct A {
         A(int a, int b) : x{a}, y{b} {}
@@ -18263,7 +18263,7 @@ C++11からサポートされた[一様初期化](#SS_7_6_6)を下記のよう�
     bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 70
+    //  example/cpp_standard/explicit_ut.cpp 70
 
     A a = {1, 2};  // A::Aがexplicitでないため、iはA{1, 2}に変換される
     ASSERT_EQ(a, (A{1, 2}));
@@ -18276,7 +18276,7 @@ C++11からサポートされた[一様初期化](#SS_7_6_6)を下記のよう�
 C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
 
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 82
+    //  example/cpp_standard/explicit_ut.cpp 82
 
     struct A {
         explicit A(int a, int b) : x{a}, y{b} {}
@@ -18288,7 +18288,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
     bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 96
+    //  example/cpp_standard/explicit_ut.cpp 96
 
     // A a = {1, 2};  // A::Aがexplicitであるため、コンパイルエラー
     // auto b = f({2, 1});  // A::Aがexplicitであるため、コンパイルエラー
@@ -18302,7 +18302,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 以下にこのシンタックスの単純な使用例を示す。
 
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 162
+    //  example/cpp_standard/explicit_ut.cpp 162
 
     template <typename T>  // Tが整数型の場合、暗黙の型変換を許可
     struct S {
@@ -18327,7 +18327,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     S(T)->S<T>;
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 190
+    //  example/cpp_standard/explicit_ut.cpp 190
 
     S s = 1;      // Tがintであるため、explicit宣言されていないため、暗黙の型変換は許可
     // S t = 1.0; // Tが整数型でないため暗黙の型変換は禁止であるため、コンパイルエラー
@@ -18339,7 +18339,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
 
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 203
+    //  example/cpp_standard/explicit_ut.cpp 203
 
     template <typename T>
     struct Optional {
@@ -18368,7 +18368,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     Optional(T)->Optional<T>;
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 235
+    //  example/cpp_standard/explicit_ut.cpp 235
 
     Optional a = 2;   // T == intであるため、暗黙の型変換を許可
     ASSERT_TRUE(a);   // has_value_がtrueであるため
@@ -18388,7 +18388,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
 
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 110
+    //  example/cpp_standard/explicit_ut.cpp 110
 
     struct A {
         explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
@@ -18397,7 +18397,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     };
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 123
+    //  example/cpp_standard/explicit_ut.cpp 123
 
     auto a = A{2};
 
@@ -18412,7 +18412,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
 
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 137
+    //  example/cpp_standard/explicit_ut.cpp 137
 
     struct A {
         explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
@@ -18421,7 +18421,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     };
 ```
 ```cpp
-    //  example/term_explanation/explicit_ut.cpp 150
+    //  example/cpp_standard/explicit_ut.cpp 150
 
     auto a = A{2};
 
@@ -18441,7 +18441,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 * インライン化し易い。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 12
+    //  example/cpp_standard20/comparison_operator_ut.cpp 12
 
     class Integer {
     public:
@@ -18463,7 +18463,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 217
+    //  example/cpp_standard20/comparison_operator_ut.cpp 217
 
     class Integer {
     public:
@@ -18483,7 +18483,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 56
+    //  example/cpp_standard20/comparison_operator_ut.cpp 56
 
     class Integer {
     public:
@@ -18505,7 +18505,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 * [暗黙の型変換](#SS_7_6_2_2)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 78
+    //  example/cpp_standard20/comparison_operator_ut.cpp 78
 
     auto a = Integer{5};
 
@@ -18516,7 +18516,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 241
+    //  example/cpp_standard20/comparison_operator_ut.cpp 241
 
     class Integer {
     public:
@@ -18541,7 +18541,7 @@ C++20から導入された[<=>演算子](#SS_7_6_4_1)の定義により、すべ
 このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 141
+    //  example/cpp_standard20/comparison_operator_ut.cpp 141
 
     struct Point {
         int x;
@@ -18552,7 +18552,7 @@ C++20から導入された[<=>演算子](#SS_7_6_4_1)の定義により、すべ
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 154
+    //  example/cpp_standard20/comparison_operator_ut.cpp 154
 
     auto p1 = Point{1, 2};
     auto p2 = Point{1, 2};
@@ -18584,7 +18584,7 @@ C++20から導入された[<=>演算子](#SS_7_6_4_1)の定義により、すべ
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 185
+    //  example/cpp_standard20/comparison_operator_ut.cpp 185
 
     struct Point {
         int x;
@@ -24585,7 +24585,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 32
+    //  example/cpp_standard20/comparison_operator_ut.cpp 32
 
     using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
 
@@ -24614,7 +24614,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 110
+    //  example/cpp_standard20/comparison_operator_ut.cpp 110
 
     struct Point {
         int x;
@@ -24626,7 +24626,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
     };
 ```
 ```cpp
-    //  example/term_explanation_cpp20/comparison_operator_ut.cpp 124
+    //  example/cpp_standard20/comparison_operator_ut.cpp 124
 
         auto a = Point{1, 2};
         auto b = Point{1, 3};
@@ -24664,7 +24664,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 未定義動作を含むコードは、クラッシュやセキュリティの問題を引き起こす可能性がある。
 
 ```cpp
-    //  example/term_explanation/undefined_ut.cpp 14
+    //  example/cpp_standard/undefined_ut.cpp 14
 
     int a = 42;
     int b = 0;
@@ -24682,7 +24682,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 つまり、動作が特定の範囲で予測可能だが、正確な挙動が処理系の実装に依存することになる。
 
 ```cpp
-    //  example/term_explanation/undefined_ut.cpp 35
+    //  example/cpp_standard/undefined_ut.cpp 35
 
     enum class MyEnum : int { Value1 = 1, Value2 = 256 };
     int value = static_cast<int8_t>(MyEnum::Value2);  // 未規定 - 256はint8_tとして表現できない
@@ -24720,7 +24720,7 @@ volatile など)やポインタやリファレンスなどの間接指定子を�
 引数(もしくは実引数、argument)、仮引数(parameter)とは下記のように定義される。
 
 ```cpp
-    //  example/term_explanation/argument.cpp 2
+    //  example/cpp_standard/argument.cpp 2
 
     int f0(int a, int& b) noexcept  // a, bは仮引数
     {
@@ -24768,7 +24768,7 @@ C++03までの規約では、アライメントのコントロールは実装依
 C++11で導入されたキーワードで、型のアライメント要求を取得するために使用する。
 
 ```cpp
-    //  example/term_explanation/aliging_ut.cpp 12
+    //  example/cpp_standard/aliging_ut.cpp 12
 
     struct alignas(16) AlignedStruct {  // メモリ上で16バイト境界にアライメントされる
         char   a;
@@ -24788,7 +24788,7 @@ C++11で導入されたキーワードで、型のアライメント要求を取
 C++11で導入されたキーワードで、メモリのアライメントを指定するために使用する。
 
 ```cpp
-    //  example/term_explanation/aliging_ut.cpp 27
+    //  example/cpp_standard/aliging_ut.cpp 27
 
     ASSERT_EQ(alignof(long double), 16);  // アライメントが正しいか確認
     ASSERT_EQ(alignof(long long), 8);     // アライメントが正しいか確認
@@ -24806,7 +24806,7 @@ operator& がオーバーロードされている場合には、
 オーバーロードを無視して元のアドレスを確実に取得できる。
 
 ```cpp
-    //  example/term_explanation/aliging_ut.cpp 38
+    //  example/cpp_standard/aliging_ut.cpp 38
 
     class X {
     public:
@@ -24823,7 +24823,7 @@ operator& がオーバーロードされている場合には、
     };
 ```
 ```cpp
-    //  example/term_explanation/aliging_ut.cpp 54
+    //  example/cpp_standard/aliging_ut.cpp 54
 
     X obj{42};
 

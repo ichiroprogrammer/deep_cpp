@@ -1,6 +1,6 @@
 VPATH:=../cpp_standard
 SRCS:=\
-    literal_ut.cpp enum_ut.cpp 
+    literal_ut.cpp enum_ut.cpp const_xxx_ut.cpp explicit_ut.cpp comparison_operator_ut.cpp 
 
 OBJDIR:= obj20/
 SHARED:=../../
