@@ -288,17 +288,17 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ユーザ定義リテラル演算子とは以下のようなものである。
 
 ```cpp
-    // @@@ example/term_explanation/user_defined_literal_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/user_defined_literal_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/user_defined_literal_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/user_defined_literal_ut.cpp #0:1 begin -1
 ```
 
 #### std::string型リテラル
 "xxx"sとすることで、std::string型のリテラルを作ることができる。
 
 ```cpp
-    // @@@ example/term_explanation/user_defined_literal_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/user_defined_literal_ut.cpp #1:0 begin -1
 ```
 
 #### std::chronoのリテラル
@@ -559,7 +559,7 @@ sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24で�
 g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
 
 ```cpp
-    // @@@ example/term_explanation/Makefile #0:0 begin
+    // @@@ example/cpp_standard/Makefile #0:0 begin
 ```
 
 X、Y、Zのメモリレイアウトは以下の様に出力される。
@@ -1340,7 +1340,7 @@ spaceship operatorとは[<=>演算子](---)を指す。
 以下にコード例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/uniform_initialization_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/uniform_initialization_ut.cpp #0:0 begin -1
 ```
 
 変数による一様初期化が縮小型変換を起こす場合や、
@@ -1348,7 +1348,7 @@ spaceship operatorとは[<=>演算子](---)を指す。
 この機能を積極的に使用することで、縮小型変換による初期化のバグを未然に防ぐことができる。
 
 ```cpp
-    // @@@ example/term_explanation/uniform_initialization_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/uniform_initialization_ut.cpp #0:1 begin -1
 ```
 
 ### 一様初期化
@@ -1372,7 +1372,7 @@ NSDMIとは、non-static data member initializerの略語であり、
 下記のような非静的なメンバ変数の初期化子を指す。
 
 ```cpp
-    // @@@ example/term_explanation/nsdmi.cpp #0:0 begin
+    // @@@ example/cpp_standard/nsdmi.cpp #0:0 begin
 ```
 
 #### 初期化子リストでの初期化
@@ -1384,7 +1384,7 @@ NSDMIとは、non-static data member initializerの略語であり、
 constメンバ変数は、初期化子リストでの初期化か[NSDMI](---)でしか初期化できない。
 
 ```cpp
-    // @@@ example/term_explanation/nsdmi.cpp #0:1 begin
+    // @@@ example/cpp_standard/nsdmi.cpp #0:1 begin
 ```
 
 #### コンストラクタ内での非静的なメンバ変数の初期値の代入
@@ -1394,7 +1394,7 @@ constメンバ変数は、初期化子リストでの初期化か[NSDMI](---)で
 [初期化子リストでの初期化](---)で初期化できない変数を未初期化でない状態にするための唯一の方法である。
 
 ```cpp
-    // @@@ example/term_explanation/nsdmi.cpp #0:2 begin
+    // @@@ example/cpp_standard/nsdmi.cpp #0:2 begin
 ```
 
 ### オブジェクトのライフタイム
@@ -1499,7 +1499,7 @@ C++17以降は[RVO(Return Value Optimization)](---)により、
 このドキュメントでも、そうなっていることもある。
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #0:0 begin -1
 ```
 
 #### glvalue
@@ -1562,18 +1562,18 @@ lvalueリファレンスとは、
     * const lvalueリファレンスは[expression|rvalue](---)をバインドできる。
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #1:0 begin -1
 ```
 
 このようなリファレンスのバインドの可否はオーバーロードにも影響を与える。
 
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:1 begin
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #1:1 begin
 ```
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #1:2 begin -1
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #1:2 begin -1
 ```
 
 ### rvalueリファレンス
@@ -1586,25 +1586,25 @@ rvalueリファレンスは、
 * **注意2** 型が`T&&`である変数は、`T&`でバインドできる。
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:0 begin -1
 ```
 
 このようなリファレンスのバインドの可否はオーバーロードにも影響を与える。
 
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:1 begin
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:1 begin
 ```
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:2 begin -1
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:3 begin -1
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:2 begin -1
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:3 begin -1
 ```
 
 上記コードの最後の部分の抜粋である以下のコードについては、少々解説が必要だろう。
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:3 begin -1
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:3 begin -1
 ```
 
 ref_refの型は`int &&`であるが、ref_refの値カテゴリは[expression|rvalue](---)ではなく、[lvalue](---)である。
@@ -1616,10 +1616,10 @@ rvalueリファレンス型の仮引数（`T&&`）を持つ関数は、ムーブ
 [moveセマンティクス](---)や[perfect forwarding](---)を正しく実装/使用するために極めて重要である。
 
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:4 begin
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:4 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/rvalue_lvalue_ut.cpp #2:5 begin -1
+    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:5 begin -1
 ```
 ---
 
@@ -1637,7 +1637,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 下記コードにより「[expression|lvalue](---)からの代入」を説明する。
 
 ```.cpp
-    // @@@ example/term_explanation/rvalue_move_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_standard/rvalue_move_ut.cpp #0:0 begin -1
 ```
 
 * 行１、２  
@@ -1655,7 +1655,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 下記コードにより「[expression|rvalue](---)からの代入」を説明する。
 
 ```.cpp
-    // @@@ example/term_explanation/rvalue_move_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/rvalue_move_ut.cpp #0:1 begin -1
 ```
 
 * 行１  
@@ -1679,7 +1679,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 下記コードにより「std::move(lvalue)からの代入」を説明する。
 
 ```.cpp
-    // @@@ example/term_explanation/rvalue_move_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_standard/rvalue_move_ut.cpp #0:2 begin -1
 ```
 
 * 行１  
@@ -1709,16 +1709,16 @@ forwardingリファレンスは一見rvalueリファレンスのように見え�
 ([リファレンスcollapsing](---)により、このようなバインドが可能になる)。
 
 ```cpp
-    // @@@ example/term_explanation/universal_ref_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/universal_ref_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/universal_ref_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/universal_ref_ut.cpp #0:1 begin -1
 ```
 
 下記のコードは[ジェネリックラムダ](---)の引数をforwardingリファレンスにした例である。
 
 ```cpp
-    // @@@ example/term_explanation/universal_ref_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_standard/universal_ref_ut.cpp #0:2 begin -1
 ```
 
 通常、forwardingリファレンスはstd::forwardと組み合わせて使用される。
@@ -1737,10 +1737,10 @@ perfect forwarding(完全転送)とは、引数の[expression|rvalue](---)性や
 perfect forwardingの使用例を以下に示す。
 
 ```cpp
-    // @@@ example/term_explanation/perfect_forwarding_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/perfect_forwarding_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/perfect_forwarding_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/perfect_forwarding_ut.cpp #0:1 begin -1
 ```
 
 ### リファレンスcollapsing

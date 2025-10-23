@@ -4,15 +4,14 @@ SRCS20:=decltype_ut.cpp concept_ut.cpp  \
 SRCS:=\
     aaa.cpp hidden_friend_ut.cpp \
     deep_shallow_copy_ut.cpp func_try_block.cpp flold_expression_ut.cpp \
-    \
-    generic_lambda_ut.cpp lambda.cpp nsdmi.cpp \
+    generic_lambda_ut.cpp lambda.cpp \
     name_hiding.cpp name_lookup_adl_ut.cpp name_lookup_ut.cpp namespace_ut.cpp \
     range_for_ut.cpp ref_collapsing_ut.cpp \
-    rvalue_lvalue_ut.cpp semantics_ut.cpp slice_ut.cpp \
-    decltype_expression_ut.cpp two_phase_name_lookup_ut.cpp uniform_initialization_ut.cpp \
-    constexpr_if_ut.cpp ambiguous_ownership_ut.cpp universal_ref_ut.cpp rvalue_move_ut.cpp \
-    user_defined_literal_ut.cpp  dominance_ut.cpp ref_qualifiers_ut.cpp perfect_forwarding_ut.cpp \
-    unique_ptr_ownership_ut.cpp shared_ptr_ownership_ut.cpp shared_ptr_cycle_ut.cpp weak_ptr_ut.cpp \
+    semantics_ut.cpp slice_ut.cpp \
+    decltype_expression_ut.cpp two_phase_name_lookup_ut.cpp \
+    constexpr_if_ut.cpp \
+    dominance_ut.cpp ref_qualifiers_ut.cpp \
+    shared_ptr_ownership_ut.cpp shared_ptr_cycle_ut.cpp weak_ptr_ut.cpp \
     diamond_inheritance_ut.cpp virtual_inheritance_ut.cpp type_traits_ut.cpp \
     structured_binding_ut.cpp dangling_ut.cpp utility_ut.cpp \
     attr_ut.cpp template_ut.cpp noexcept_ut.cpp \

@@ -44,7 +44,7 @@ x0、x1、...、xNがaを共有所有する場合、x0、x1、...、xN全体で�
 その解放責務も曖昧となる。
 
 ```cpp
-    // @@@ example/term_explanation/ambiguous_ownership_ut.cpp #0:0 begin -1
+    // @@@ example/cpp_semantics/ambiguous_ownership_ut.cpp #0:0 begin -1
 ```
 
 こういった問題に対処するためのプログラミングパターンを以下の
@@ -56,7 +56,7 @@ x0、x1、...、xNがaを共有所有する場合、x0、x1、...、xN全体で�
 の仕様を説明するために、下記のようにクラスA、Xを定義する。
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:0 begin
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #0:0 begin
 ```
 
 下記に示した上記クラスの単体テストにより、
@@ -64,40 +64,40 @@ x0、x1、...、xNがaを共有所有する場合、x0、x1、...、xN全体で�
 std::unique_ptr、std::move()、[expression|rvalue](---)の関係を解説する。
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #0:1 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #0:2 begin -1
 ```
 
 ![所有権1](plant_uml/unique_ownership_1.png)
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:3 begin -1
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #0:3 begin -1
 ```
 
 ![所有権2](plant_uml/unique_ownership_2.png)
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:4 begin -1
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #0:4 begin -1
 ```
 ![所有権3](plant_uml/unique_ownership_3.png)
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:5 begin -1
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #0:5 begin -1
 ```
 
 ![所有権4](plant_uml/unique_ownership_4.png)
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:6 begin -1
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #0:6 begin -1
 ```
 
 ![所有権5](plant_uml/unique_ownership_5.png)
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #0:7 begin -1
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #0:7 begin -1
 ```
 
 ![所有権6](plant_uml/unique_ownership_6.png)
@@ -106,7 +106,7 @@ std::unique_ptr、std::move()、[expression|rvalue](---)の関係を解説する
 また、以下に見るようにstd::unique_ptrはcopy生成やcopy代入を許可しない。
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #1:0 begin -1
 ```
 
 以上で示したstd::unique_ptrの仕様の要点をまとめると、以下のようになる。
@@ -119,7 +119,7 @@ std::unique_ptr、std::move()、[expression|rvalue](---)の関係を解説する
   複数のstd::unique_ptrが1つのオブジェクトを共有することはできない。
 
 ```cpp
-    // @@@ example/term_explanation/unique_ptr_ownership_ut.cpp #2:0 begin -1
+    // @@@ example/cpp_semantics/unique_ptr_ownership_ut.cpp #2:0 begin -1
 ```
 
 こういった機能によりstd::unique_ptrはオブジェクトの排他所有を実現している。
