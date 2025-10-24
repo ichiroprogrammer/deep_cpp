@@ -1,7 +1,8 @@
 SRCS20:=
 
 SRCS:=\
-     ambiguous_ownership_ut.cpp unique_ptr_ownership_ut.cpp 
+     ambiguous_ownership_ut.cpp unique_ptr_ownership_ut.cpp shared_ptr_ownership_ut.cpp shared_ptr_cycle_ut.cpp \
+     deep_shallow_copy_ut.cpp semantics_ut.cpp slice_ut.cpp rule_of_zero_ut.cpp \
 
 SRCS+=$(SRCS20)
 

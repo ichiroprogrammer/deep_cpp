@@ -130,7 +130,7 @@ std::unique_ptr、std::move()、[expression|rvalue](---)の関係を解説する
 の仕様を説明するために、下記のようにクラスA、Xを定義する。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:0 begin
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #0:0 begin
 ```
 
 下記に示した上記クラスの単体テストにより、
@@ -138,50 +138,50 @@ std::unique_ptr、std::move()、[expression|rvalue](---)の関係を解説する
 std::shared_ptr、std::move()、[expression|rvalue](---)の関係を解説する。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #0:1 begin -1
 ```
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:2 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #0:2 begin -1
 ```
 
 ![所有権1](plant_uml/shared_ownership_1.png)
 
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:3 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #0:3 begin -1
 ```
 
 ![所有権2](plant_uml/shared_ownership_2.png)
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:4 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #0:4 begin -1
 ```
 
 ![所有権3](plant_uml/shared_ownership_3.png)
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:5 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #0:5 begin -1
 ```
 
 ![所有権4](plant_uml/shared_ownership_4.png)
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:6 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #0:6 begin -1
 ```
 
 ![所有権5](plant_uml/shared_ownership_5.png)
 
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:7 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #0:7 begin -1
 ```
 
 ![所有権6](plant_uml/shared_ownership_6.png)
 
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #0:8 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #0:8 begin -1
 ```
 
 ![所有権7](plant_uml/shared_ownership_7.png)
@@ -198,7 +198,7 @@ std::shared_ptr、std::move()、[expression|rvalue](---)の関係を解説する
   [未定義動作](---)に繋がる。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_ownership_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_ownership_ut.cpp #1:0 begin -1
 ```
 
 こういった機能によりstd::shared_ptrはオブジェクトの共有所有を実現している。
@@ -217,13 +217,13 @@ std::shared_ptr、std::move()、[expression|rvalue](---)の関係を解説する
 まずは、**メモリリークが発生しない**`std::shared_ptr`の正しい使用例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #0:0 begin
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #0:0 begin
 ```
 
 上記のクラスの使用例を示す。下記をステップ1とする。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #1:0 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_each_1.png)
@@ -232,7 +232,7 @@ std::shared_ptr、std::move()、[expression|rvalue](---)の関係を解説する
 上記の続きを以下に示し、ステップ2とする。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #1:1 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_each_2.png)
@@ -241,7 +241,7 @@ std::shared_ptr、std::move()、[expression|rvalue](---)の関係を解説する
 上記の続きを以下に示し、ステップ3とする。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #1:2 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #1:2 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_each_3.png)
@@ -250,7 +250,7 @@ std::shared_ptr、std::move()、[expression|rvalue](---)の関係を解説する
 上記の続きを以下に示し、ステップ4とする。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #1:3 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #1:3 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_each_4.png)
@@ -263,20 +263,20 @@ std::shared_ptr、std::move()、[expression|rvalue](---)の関係を解説する
 次は**メモリリークが発生する**`std::shared_ptr`の誤用を示す。まずはクラスの定義から。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:0 begin
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #2:0 begin
 ```
 
 上記のクラスの動作を以下に示したコードで示す。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #2:1 begin -1
 ```
 
 x0のライフタイムに差を作るために新しいスコープを導入し、そのスコープ内で、y0を生成し、
 `X::Register`、`Y::Register`を用いて、循環を作ってしまう例(メモリーリークを起こすバグ)を示す。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:2 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #2:2 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_cyclic.png)
@@ -285,7 +285,7 @@ x0のライフタイムに差を作るために新しいスコープを導入し
 Yオブジェクトの参照カウントは1になる(x0::y_が存在するため0にならない)。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:3 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #2:3 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_cyclic_2.png)
@@ -303,7 +303,7 @@ X、Yオブジェクトの参照カウントは0にならず、従ってこれ�
 (shared_ptrは参照カウントが1->0に変化するタイミングで保持するオブジェクトを解放する)。
 
 ```cpp
-    // @@@ example/term_explanation/shared_ptr_cycle_ut.cpp #2:4 begin -1
+    // @@@ example/cpp_semantics/shared_ptr_cycle_ut.cpp #2:4 begin -1
 ```
 
 ![shread_ptrメモリーリーク](plant_uml/shared_cyclic_3.png)
@@ -325,14 +325,14 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 下記のコードは、その性質を表している。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #0:0 begin -2
+    // @@@ example/cpp_semantics/semantics_ut.cpp #0:0 begin -2
 ```
 
 しかし、下記のコード内のa、bは同じ値を持つが、
 アドレスが異なるため同一のオブジェクトではないにもかかわらず、組み込みの==の値はtrueとなる。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #0:1 begin -2
+    // @@@ example/cpp_semantics/semantics_ut.cpp #0:1 begin -2
 ```
 
 このような場合、aとbは等価であるという。同一ならば等価であるが、等価であっても同一とは限らない。
@@ -346,26 +346,26 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 クラスAを下記のように定義し、
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #1:0 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #1:0 begin
 ```
 
 そのoperator==を下記のように定義した場合、
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #1:1 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #1:1 begin
 ```
 
 単体テストは下記のように書けるだろう。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #1:2 begin -2
+    // @@@ example/cpp_semantics/semantics_ut.cpp #1:2 begin -2
 ```
 
 これは、一応パスするが(処理系定義の動作を前提とするため、必ず動作する保証はない)、
 下記のようにすると、パスしなくなる。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #1:3 begin -2
+    // @@@ example/cpp_semantics/semantics_ut.cpp #1:3 begin -2
 ```
 
 一般にポインタの等価性は、その値の同一性ではなく、
@@ -375,7 +375,7 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 次に、これを修正した例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #1:4 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #1:4 begin
 ```
 
 ポインタをメンバに持つクラスのoperator==については、上記したような処理が必要となる。
@@ -383,50 +383,50 @@ C++における組み込みの==も純粋数学の等号と同じ性質を満た
 次に示す例は、基底クラスBaseとそのoperator==である。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #2:0 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #2:0 begin
 ```
 
 次の単体テストが示す通り、これ自体には問題がないように見える。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_semantics/semantics_ut.cpp #2:1 begin -1
 ```
 
 しかし、Baseから派生したクラスDerivedを
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #3:0 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #3:0 begin
 ```
 
 のように定義すると、下記の単体テストで示す通り、等価性のセマンティクスが破壊される。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #3:1 begin -1
+    // @@@ example/cpp_semantics/semantics_ut.cpp #3:1 begin -1
 ```
 
 Derived用のoperator==を
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #4:0 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #4:0 begin
 ```
 
 と定義しても、下記に示す通り部分的な効果しかない。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #4:1 begin -1
+    // @@@ example/cpp_semantics/semantics_ut.cpp #4:1 begin -1
 ```
 
 この問題は、「[型とインスタンス|RTTI](---)」使った下記のようなコードで対処できる。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #5:0 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #5:0 begin
 ```
 
 下記に示す通り、このコードは、
 [オープン・クローズドの原則(OCP)](---)にも対応した柔軟な構造を実現している。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #5:1 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #5:1 begin
 ```
 
 前例では「両辺の型が等しいこと」が「等価であること」の必要条件となるが、
@@ -436,7 +436,7 @@ Derived用のoperator==を
 等価性のセマンティクスを満たしている例である。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #6:0 begin -1
+    // @@@ example/cpp_semantics/semantics_ut.cpp #6:0 begin -1
 ```
 
 これは、文字列リテラルを第1引数に取るstd::stringのコンストラクタが非explicitであることによって、
@@ -460,13 +460,13 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 下記に示す通り、std::stringはcopyセマンティクスを満たしている。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #7:0 begin -2
+    // @@@ example/cpp_semantics/semantics_ut.cpp #7:0 begin -2
 ```
 
 一方で、std::auto_ptrはcopyセマンティクスを満たしていない。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #7:1 begin -2
+    // @@@ example/cpp_semantics/semantics_ut.cpp #7:1 begin -2
 ```
 
 この仕様は極めて不自然であり、std::auto_ptrはC++11で非推奨となり、C++17で規格から排除された。
@@ -475,7 +475,7 @@ copyセマンティクスとは以下を満たすようなセマンティクス�
 「[等価性のセマンティクス](---)」で示した最後の例も、copyセマンティクスを満たしていない。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #7:2 begin -2
+    // @@@ example/cpp_semantics/semantics_ut.cpp #7:2 begin -2
 ```
 
 原因は、copy代入で[オブジェクトのコピー|スライシング](---)が起こるためである。
@@ -507,14 +507,14 @@ moveセマンティクスの目的である「パフォーマンスの向上」�
 そのため、このようなmove代入は避けるべきである。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #8:0 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #8:0 begin
 ```
 
 下記のコードのようにメンバの代入もできる限りmove代入を使うことで、
 パフォーマンスの良い代入ができる。
 
 ```cpp
-    // @@@ example/term_explanation/semantics_ut.cpp #8:1 begin
+    // @@@ example/cpp_semantics/semantics_ut.cpp #8:1 begin
 ```
 
 ## MoveAssignable要件
@@ -568,10 +568,10 @@ CopyAssignable要件は、C++において型がcopy代入をサポートする�
 この法則に従うと、自身で特殊メンバ関数を定義する必要がななくなる。
 
 ```cpp
-    // @@@ example/term_explanation/rule_of_zero_ut.cpp #0:0 begin
+    // @@@ example/cpp_semantics/rule_of_zero_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/term_explanation/rule_of_zero_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_semantics/rule_of_zero_ut.cpp #0:1 begin -1
 ```
 
 クラスがリソースを直接管理する場合、メモリリークや二重解放などのリスクを伴う。
@@ -620,7 +620,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
 実践的にはこのようなことはすべきではない)。
 
 ```cpp
-    // @@@ example/term_explanation/deep_shallow_copy_ut.cpp #0:0 begin
+    // @@@ example/cpp_semantics/deep_shallow_copy_ut.cpp #0:0 begin
 ```
 
 コンストラクタでポインタのようなリソースを確保し、
@@ -629,7 +629,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
 下記のShallowNGはその例である。
 
 ```cpp
-    // @@@ example/term_explanation/deep_shallow_copy_ut.cpp #1:0 begin
+    // @@@ example/cpp_semantics/deep_shallow_copy_ut.cpp #1:0 begin
 ```
 
 シャローコピーにより、メンバで保持していたポインタ(ポインタが指しているオブジェクトではない)
@@ -637,7 +637,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
 メモリリークや2重解放を起こしてしまう。
 
 ```cpp
-    // @@@ example/term_explanation/deep_shallow_copy_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_semantics/deep_shallow_copy_ut.cpp #1:1 begin -1
 ```
 
 ### ディープコピー
@@ -646,7 +646,7 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
 以下に例を示す。
 
 ```cpp
-    // @@@ example/term_explanation/deep_shallow_copy_ut.cpp #2:0 begin
+    // @@@ example/cpp_semantics/deep_shallow_copy_ut.cpp #2:0 begin
 ```
 
 上記クラスのDeepは、copyコンストラクタ、copy代入演算子でポインタをコピーするのではなく、
@@ -672,11 +672,11 @@ copy代入演算子と同等なものを定義したが、これは問題のな�
 以下のクラスと単体テストはこの現象を表している。
 
 ```cpp
-    // @@@ example/term_explanation/slice_ut.cpp #0:0 begin
+    // @@@ example/cpp_semantics/slice_ut.cpp #0:0 begin
 ```
 
 ```cpp
-    // @@@ example/term_explanation/slice_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_semantics/slice_ut.cpp #0:1 begin -1
 ```
 
 copy代入演算子(=)によりコピーが行われた場合、=の両辺のオブジェクトは等価になるべきだが
@@ -716,7 +716,7 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 そのポインタを配列のように使用した場合に発生する」スライシングと類似の現象である。
 
 ```cpp
-    // @@@ example/term_explanation/slice_ut.cpp #1:0 begin -1
+    // @@@ example/cpp_semantics/slice_ut.cpp #1:0 begin -1
 ```
 
 ![スライシング配列](plant_uml/slicing_array.png)
