@@ -6,7 +6,7 @@
 
 namespace {
 
-TEST(AAA, not_commit_specific_type)
+TEST(coding_style, AAA)
 {
     // @@@ sample begin 0:0
 

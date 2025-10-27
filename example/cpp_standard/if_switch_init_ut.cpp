@@ -37,6 +37,7 @@ TEST(TermExp, if_switch_init0)
     }
 
     // 以下、成功時の処理
+    // ...
     // @@@ sample end
 }
 

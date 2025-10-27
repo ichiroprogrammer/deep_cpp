@@ -1,3 +1,13 @@
 *
 !.gitignore
 !deep.md
+!core_lang_spec.md
+!cpp_idioms.md
+!deep_cpp.md
+!deep_intro.md
+!design_pattern.md
+!dynamic_memory_allocation.md
+!sample_code.md
+!solid.md
+!standard_lib_programming_concepts.md
+!template_meta_programming.md

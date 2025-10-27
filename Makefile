@@ -11,8 +11,8 @@ MD_GEN:=./md_gen/export/py
 # VPATH=./md:dir1:dir2
 VPATH=./md:
 
-MDS:=deep_intro.md solid.md design_pattern.md template_meta_programming.md \
-     dynamic_memory_allocation.md cpp_idiom.md cpp_standard.md cpp_semantics.md
+MDS:=deep_intro.md solid.md design_pattern.md template_meta_programming.md dynamic_memory_allocation.md \
+	 core_lang_spec.md standard_lib_programming_concepts.md cpp_idioms.md
 
 INDEX_OPT:=--exclude $(addsuffix :1,$(MDS) sample_code.md)
 
