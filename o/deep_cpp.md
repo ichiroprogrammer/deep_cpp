@@ -15174,12 +15174,11 @@ __この章の構成__
 &emsp;&emsp;&emsp; [auto](#SS_6_11_14)  
 &emsp;&emsp;&emsp; [decltype](#SS_6_11_15)  
 &emsp;&emsp;&emsp; [decltype(auto)](#SS_6_11_16)  
-&emsp;&emsp;&emsp; [CTAD（Class Template Argument Deduction）](#SS_6_11_17)  
-&emsp;&emsp;&emsp; [戻り値型を後置する関数宣言](#SS_6_11_18)  
-&emsp;&emsp;&emsp; [関数の戻り値型auto](#SS_6_11_19)  
-&emsp;&emsp;&emsp; [後置戻り値型auto](#SS_6_11_20)  
+&emsp;&emsp;&emsp; [戻り値型を後置する関数宣言](#SS_6_11_17)  
+&emsp;&emsp;&emsp; [関数の戻り値型auto](#SS_6_11_18)  
+&emsp;&emsp;&emsp; [後置戻り値型auto](#SS_6_11_19)  
 
-&emsp;&emsp; [name lookupと継承構造                 ](#SS_6_12)  
+&emsp;&emsp; [name lookupと継承構造](#SS_6_12)  
 &emsp;&emsp;&emsp; [ルックアップ](#SS_6_12_1)  
 &emsp;&emsp;&emsp; [name lookup](#SS_6_12_2)  
 &emsp;&emsp;&emsp; [two phase name lookup](#SS_6_12_3)  
@@ -16308,7 +16307,7 @@ sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24で�
 g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
 
 ```cpp
-    //  example/cpp_standard/Makefile 24
+    //  example/cpp_standard/Makefile 23
 
     CCFLAGS_ADD:=-fdump-lang-class
 ```
@@ -17723,7 +17722,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    //  example/cpp_standard/comparison_operator_old_ut.cpp 56
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 53
 
     class Integer {
     public:
@@ -17745,7 +17744,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 * [暗黙の型変換](#SS_6_6_2_2)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    //  example/cpp_standard/comparison_operator_old_ut.cpp 78
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 75
 
     auto a = Integer{5};
 
@@ -20530,23 +20529,15 @@ constexpr ifを使用することで、やや単純に記述できる。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 182
+    //  example/cpp_standard20/abbreviated_func_template_ut.cpp 11
 
-    #if __cplusplus >= 202002L  // c++20
-    auto add(auto lhs, auto rhs) { 
-        return lhs + rhs; 
-    }
-
-    #else  // c++17
-    template <typename T, typename U>
-    auto add(T lhs, U rhs)
+    auto add(auto lhs, auto rhs)  // c++20で導入された記法
     {
         return lhs + rhs;
     }
-    #endif
 ```
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 201
+    //  example/cpp_standard20/abbreviated_func_template_ut.cpp 21
 
     ASSERT_EQ(add(1, 2), 3);
 
@@ -20640,9 +20631,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
     static_assert(std::is_same_v<decltype(c), int&>);
 ```
 
-### CTAD（Class Template Argument Deduction） <a id="SS_6_11_17"></a>
-
-### 戻り値型を後置する関数宣言 <a id="SS_6_11_18"></a>
+### 戻り値型を後置する関数宣言 <a id="SS_6_11_17"></a>
 関数の戻り値型後置構文は戻り値型をプレースホルダ(auto)にして、
 実際の型を->で示して型推論させるシンタックスを指す。実際には関数テンプレートで使用されることが多い。
 コード例を以下に示す。
@@ -20679,7 +20668,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
                                  std::string>);  // addの戻り値型はstd::stringに型推論
 ```
 
-### 関数の戻り値型auto <a id="SS_6_11_19"></a>
+### 関数の戻り値型auto <a id="SS_6_11_18"></a>
 C++14から導入された機能で、関数の戻り値の型をautoキーワードで宣言することで、
 コンパイラがreturn文から自動的に型を推論してくれる機能である。
 これにより、複雑な型の戻り値を持つ関数でも、より簡潔に記述できるようになる
@@ -20723,8 +20712,8 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
     ASSERT_EQ(result[1], "world");
 ```
 
-### 後置戻り値型auto <a id="SS_6_11_20"></a>
-C++14から導入された[関数の戻り値型auto](#SS_6_11_19)と似た、
+### 後置戻り値型auto <a id="SS_6_11_19"></a>
+C++14から導入された[関数の戻り値型auto](#SS_6_11_18)と似た、
 関数の戻り値の型を関数本体の後に-> autoと書くことでができる機能である。
 autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
 
@@ -20752,7 +20741,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
     ASSERT_EQ(gvalue, 12);
 ```
 
-## name lookupと継承構造                  <a id="SS_6_12"></a>
+## name lookupと継承構造 <a id="SS_6_12"></a>
 ここではname lookupとそれに影響を与える名前空間について解説する。
 
 ### ルックアップ <a id="SS_6_12_1"></a>
@@ -22449,7 +22438,7 @@ RVOとはこのような最適化を指す。
 ```
 
 
-<!-- ./md/standard_lib_programming_concepts.md -->
+<!-- ./md/stdlib_and_concepts.md -->
 # 標準ライブラリとプログラミングの概念 <a id="SS_7"></a>
 この章では、C++標準ライブラリやそれによって導入されたプログラミングの概念等の紹介を行う。
 
@@ -22533,7 +22522,7 @@ std::moveは引数を[rvalueリファレンス](#SS_6_8_2)に変換する関数�
 この表の動作仕様を下記ののコードで示す。
 
 ```cpp
-    //  example/cpp_standard/utility_ut.cpp 10
+    //  example/stdlib_and__concepts/utility_ut.cpp 10
 
     uint32_t f(std::string&) { return 0; }         // f-0
     uint32_t f(std::string&&) { return 1; }        // f-1
@@ -22541,7 +22530,7 @@ std::moveは引数を[rvalueリファレンス](#SS_6_8_2)に変換する関数�
     uint32_t f(std::string const&&) { return 3; }  // f-3
 ```
 ```cpp
-    //  example/cpp_standard/utility_ut.cpp 21
+    //  example/stdlib_and__concepts/utility_ut.cpp 21
 
     std::string       str{};
     std::string const cstr{};
@@ -22591,7 +22580,7 @@ std::integral_constantは「テンプレートパラメータとして与えら�
 以下に簡単な使用例を示す。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 13
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 13
 
     using int3 = std::integral_constant<int, 3>;
 
@@ -22617,7 +22606,7 @@ std::integral_constantは「テンプレートパラメータとして与えら�
 これらは、下記で確かめられる通り、後述する[std::integral_constant](#SS_7_2_1)を使い定義されている。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 32
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 32
 
     // std::is_same_vの2パラメータが同一であれば、std::is_same_v<> == true
     static_assert(std::is_same_v<std::integral_constant<bool, true>, std::true_type>);
@@ -22627,7 +22616,7 @@ std::integral_constantは「テンプレートパラメータとして与えら�
 それぞれの型が持つvalue定数は、下記のように定義されている。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 39
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 39
 
     static_assert(std::true_type::value, "must be true");
     static_assert(!std::false_type::value, "must be false");
@@ -22639,7 +22628,7 @@ true/falseのメタ関数版と考えれば、追々理解できるだろう。
 以下に簡単な使用例を示す。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 48
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 48
 
     // 引数の型がintに変換できるかどうかを判定する関数
     // decltypeの中でのみ使用されるため、定義は不要
@@ -22650,7 +22639,7 @@ true/falseのメタ関数版と考えれば、追々理解できるだろう。
 上記の単体テストは下記のようになる。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 59
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 59
 
     static_assert(decltype(IsCovertibleToInt(1))::value);
     static_assert(decltype(IsCovertibleToInt(1u))::value);
@@ -22687,7 +22676,7 @@ std::true_typeかstd::false_typeを受け取ることができる。
 以下に簡単な使用例を示す。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 99
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 99
 
     static_assert(std::is_same<int, int>::value);
     static_assert(std::is_same<int, int32_t>::value);   // 64ビットg++/clang++
@@ -22700,14 +22689,14 @@ std::true_typeかstd::false_typeを受け取ることができる。
 下記のように定義されている。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 90
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 90
 
     template <typename T, typename U>
     constexpr bool is_same_v{std::is_same<T, U>::value};
 ```
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 108
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 108
 
     static_assert(is_same_v<int, int>);
     static_assert(is_same_v<int, int32_t>);   // 64ビットg++/clang++
@@ -22729,7 +22718,7 @@ std::true_typeかstd::false_typeを受け取ることができる。
 std::is_base_ofを使うことで下記のようにstd::is_sameの基底クラス確認することもできる。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 117
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 117
 
     static_assert(std::is_base_of_v<std::true_type, std::is_same<int, int>>);
     static_assert(std::is_base_of_v<std::false_type, std::is_same<int, char>>);
@@ -22744,7 +22733,7 @@ std::enable_ifは、bool値である第1テンプレートパラメータが
 下記のコードはクラステンプレートの特殊化を用いたstd::enable_ifの実装例である。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 124
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 124
 
     template <bool T_F, typename T = void>
     struct enable_if;
@@ -22765,7 +22754,7 @@ std::enable_ifは、bool値である第1テンプレートパラメータが
 std::enable_ifの使用例を下記に示す。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 148
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 148
 
     static_assert(std::is_same_v<void, std::enable_if_t<true>>);
     static_assert(std::is_same_v<int, std::enable_if_t<true, int>>);
@@ -22779,7 +22768,7 @@ std::enable_ifの使用例を下記に示す。
 となるため、下記のコードはコンパイルできない。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 155
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 155
 
     // 下記はill-formedとなるため、コンパイルできない。
     static_assert(std::is_same_v<void, std::enable_if_t<false>>);
@@ -22802,7 +22791,7 @@ std::conditionalは、bool値である第1テンプレートパラメータが
 下記のコードはクラステンプレートの特殊化を用いたstd::conditionalの実装例である。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 164
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 164
 
     template <bool T_F, typename, typename>
     struct conditional;
@@ -22824,7 +22813,7 @@ std::conditionalは、bool値である第1テンプレートパラメータが
 std::conditionalの使用例を下記に示す。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 189
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 189
 
     static_assert(std::is_same_v<int, std::conditional_t<true, int, char>>);
     static_assert(std::is_same_v<char, std::conditional_t<false, int, char>>);
@@ -22841,7 +22830,7 @@ std::is_voidはテンプレートパラメータの型が
 以下に簡単な使用例を示す。
 
 ```cpp
-    //  example/cpp_standard/type_traits_ut.cpp 82
+    //  example/stdlib_and__concepts/type_traits_ut.cpp 82
 
     static_assert(std::is_void<void>::value);
     static_assert(!std::is_void<int>::value);
@@ -22866,7 +22855,7 @@ Tが[MoveAssignable要件](#SS_8_3_4)を満たすためには`std::is_move_assig
 クラスthread は、新しい実行のスレッドの作成/待機/その他を行う機構を提供する。
 
 ```cpp
-    //  example/cpp_standard/thread_ut.cpp 9
+    //  example/stdlib_and__concepts/thread_ut.cpp 9
 
     struct Conflict {
         void     increment() { ++count_; }  // 非アトミック（データレースの原因）
@@ -22881,7 +22870,7 @@ Tが[MoveAssignable要件](#SS_8_3_4)を満たすためには`std::is_move_assig
     }
 ```
 ```cpp
-    //  example/cpp_standard/thread_ut.cpp 26
+    //  example/stdlib_and__concepts/thread_ut.cpp 26
 
     Conflict c;
 
@@ -22916,7 +22905,7 @@ mutex は、スレッド間で使用する共有リソースを排他制御す�
 </pre>
 
 ```cpp
-    //  example/cpp_standard/thread_ut.cpp 55
+    //  example/stdlib_and__concepts/thread_ut.cpp 55
 
     struct Conflict {
         void increment()
@@ -22938,7 +22927,7 @@ mutex は、スレッド間で使用する共有リソースを排他制御す�
     }
 ```
 ```cpp
-    //  example/cpp_standard/thread_ut.cpp 83
+    //  example/stdlib_and__concepts/thread_ut.cpp 83
 
     Conflict c;
 
@@ -22968,7 +22957,7 @@ mutexは通常、[std::lock_guard](#SS_7_4_1)と組み合わせて使われる�
 
 ```cpp
 
-    //  example/cpp_standard/thread_ut.cpp 60
+    //  example/stdlib_and__concepts/thread_ut.cpp 60
     {
         std::lock_guard<std::mutex> lock{mtx_};  // lockオブジェクトのコンストラクタでmtx_.lock()が呼ばれる
                                                  // ++count_の排他
@@ -22983,7 +22972,7 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
 [std::mutex](#SS_7_3_2)で示したような単純なコードではstd::atomicを使用して下記のように書く方が一般的である。
 
 ```cpp
-    //  example/cpp_standard/thread_ut.cpp 109
+    //  example/stdlib_and__concepts/thread_ut.cpp 109
 
     struct Conflict {
         void increment()
@@ -23003,7 +22992,7 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
     }
 ```
 ```cpp
-    //  example/cpp_standard/thread_ut.cpp 131
+    //  example/stdlib_and__concepts/thread_ut.cpp 131
 
     Conflict c;
 
@@ -23040,7 +23029,7 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
 std::lock_guardを使わない問題のあるコードを以下に示す。
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 14
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 14
 
     struct Conflict {
         void increment()
@@ -23057,7 +23046,7 @@ std::lock_guardを使わない問題のあるコードを以下に示す。
     };
 ```
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 19
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 19
     {
         mtx_.lock();  // ++count_の排他のためのロック
 
@@ -23081,7 +23070,7 @@ std::lock_guardを使わない問題のあるコードを以下に示す。
 std::lock_guardを使用して、このような問題に対処したコードを以下に示す。
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 63
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 63
 
     struct Conflict {
         void increment()
@@ -23101,7 +23090,7 @@ std::lock_guardを使用して、このような問題に対処したコード�
 オリジナルの単純な以下のincrement()と改善版を比較すると、大差ないように見えるが、
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 19
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 19
     {
         mtx_.lock();  // ++count_の排他のためのロック
 
@@ -23114,7 +23103,7 @@ std::lock_guardを使用して、このような問題に対処したコード�
 オリジナルのコードで指摘したすべてのリスクが、わずか一行の変更で解決されている。
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 68
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 68
     {
         std::lock_guard<std::mutex> lock{mtx_};  // lockオブジェクトのコンストラクタでmtx_.lock()が呼ばれる
                                                  // ++count_の排他
@@ -23135,7 +23124,7 @@ IntQueue::pop_ok()の中で行われるIntQueue::q_へのアクセスで発生�
 std::unique_lockやstd::lock_guardによりmutexを使用する。
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 112
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 112
 
     class IntQueue {
     public:
@@ -23182,7 +23171,7 @@ std::unique_lockやstd::lock_guardによりmutexを使用する。
     };
 ```
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 168
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 168
 
     IntQueue           iq;
     constexpr int      end_data       = -1;
@@ -23222,7 +23211,7 @@ std::unique_lockやstd::lock_guardによりmutexを使用する。
 意図通り動作しない可能性がある。
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 127
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 127
 
     int pop_ng()
     {
@@ -23240,7 +23229,7 @@ std::unique_lockやstd::lock_guardによりmutexを使用する。
 下記のIntQueue::pop_ok()は、pop_ng()にSpurious Wakeupの対策を施したものである。
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 141
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 141
 
     int pop_ok()
     {
@@ -23266,7 +23255,7 @@ C++17で導入され、デッドロックを回避しながら複数のミュー
 両方の口座を同時にロックする必要がある。
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 205
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 205
 
     class BankAccount {
     public:
@@ -23310,7 +23299,7 @@ C++17で導入され、デッドロックを回避しながら複数のミュー
 transfer_ok()の代わりにtransfer_ng()を使用した場合、デッドロックが発生する可能性がある。
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 254
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 254
 
     BankAccount acc1{1000};
     BankAccount acc2{1000};
@@ -23353,7 +23342,7 @@ transfer_ng()がデッドロックを引き起こすシナリオは、以下の�
 下記のBankAccount::transfer_ok()は、std::scoped_lockを使用して前述したデッドロックを回避したものである。
 
 ```cpp
-    //  example/cpp_standard/lock_ownership_wrapper_ut.cpp 225
+    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 225
 
     void transfer_ok(BankAccount& to, int amount)
     {
@@ -23403,7 +23392,7 @@ std::weak_ptrは参照カウントに影響を与えず、[std::shared_ptr](#SS_
 (以下の例では、Xは前のままで、Yのみ修正した)。
 
 ```cpp
-    //  example/cpp_standard/weak_ptr_ut.cpp 9
+    //  example/stdlib_and__concepts/weak_ptr_ut.cpp 9
 
     class Y;
     class X final {
@@ -23478,7 +23467,7 @@ Xオブジェクトにアクセスする必要があるときに、
 生成した`std::shared_ptr<X>`オブジェクトのスコープを最小に留めている。
 
 ```cpp
-    //  example/cpp_standard/weak_ptr_ut.cpp 63
+    //  example/stdlib_and__concepts/weak_ptr_ut.cpp 63
     std::string Y::WhoIsWith() const  // 修正版Y::WhoIsWithの定義
     {
         if (auto x = x_.lock(); x) {  // Xオブジェクトが解放されていた場合、xはstd::shared_ptr<X>{}となり、falseと評価される
@@ -23493,7 +23482,7 @@ Xオブジェクトにアクセスする必要があるときに、
 Xと修正版Yの単体テストによりメモリーリークが修正されたことを以下に示す。
 
 ```cpp
-    //  example/cpp_standard/weak_ptr_ut.cpp 82
+    //  example/stdlib_and__concepts/weak_ptr_ut.cpp 82
 
     {
         ASSERT_EQ(X::constructed_counter, 0);
@@ -23585,7 +23574,7 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 #### std::forward_list <a id="SS_7_6_1_1"></a>
 
 ```cpp
-    //  example/cpp_standard/container_ut.cpp 14
+    //  example/stdlib_and__concepts/container_ut.cpp 14
 
     std::forward_list<int> fl{1, 2, 3};
 
@@ -23624,7 +23613,7 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 #### std::unordered_set <a id="SS_7_6_3_1"></a>
 
 ```cpp
-    //  example/cpp_standard/container_ut.cpp 32
+    //  example/stdlib_and__concepts/container_ut.cpp 32
 
     std::unordered_set<int> uset{1, 2, 3};
 
@@ -23644,7 +23633,7 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 #### std::unordered_map <a id="SS_7_6_3_2"></a>
 
 ```cpp
-    //  example/cpp_standard/container_ut.cpp 52
+    //  example/stdlib_and__concepts/container_ut.cpp 52
 
     std::unordered_map<int, std::string> umap;
 
@@ -23668,7 +23657,7 @@ std::type_indexはコンテナではないが、
 型情報型を連想コンテナのキーとして使用するためのクラスであるため、この場所に掲載する。
 
 ```cpp
-    //  example/cpp_standard/container_ut.cpp 74
+    //  example/stdlib_and__concepts/container_ut.cpp 74
 
     std::unordered_map<std::type_index, std::string> type_map;
 
@@ -23719,7 +23708,7 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
 
 ### 戻り値の無効表現 <a id="SS_7_7_1"></a>
 ```cpp
-    //  example/cpp_standard/optional_ut.cpp 11
+    //  example/stdlib_and__concepts/optional_ut.cpp 11
 
     /// @brief 指定されたファイル名から拡張子を取得する。
     /// @param filename ファイル名（パスを含む場合も可）
@@ -23734,7 +23723,7 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
     }
 ```
 ```cpp
-    //  example/cpp_standard/optional_ut.cpp 28
+    //  example/stdlib_and__concepts/optional_ut.cpp 28
 
     auto ret0 = file_extension("xxx.yyy");
 
@@ -23750,7 +23739,7 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
 
 ### オブジェクトの遅延初期化 <a id="SS_7_7_2"></a>
 ```cpp
-    //  example/cpp_standard/optional_ut.cpp 43
+    //  example/stdlib_and__concepts/optional_ut.cpp 43
 
     class HeavyResource {
     public:
@@ -23769,7 +23758,7 @@ C++17から導入されたstd::optionalには、以下のような2つの用途�
     bool HeavyResource::initialied;
 ```
 ```cpp
-    //  example/cpp_standard/optional_ut.cpp 64
+    //  example/stdlib_and__concepts/optional_ut.cpp 64
 
     std::optional<HeavyResource> resource;
 
@@ -23801,7 +23790,7 @@ std::variant自身では、オブジェクトのダイナミックな生成が�
 以下にstd::variantの典型的な使用例を示す。
 
 ```cpp
-    //  example/cpp_standard/variant_ut.cpp 13
+    //  example/stdlib_and__concepts/variant_ut.cpp 13
 
     std::variant<int, std::string, double> var  = 10;
     auto                                   var2 = var;  // コピーコンストラクタの呼び出し
@@ -23827,7 +23816,7 @@ std::variant自身では、オブジェクトのダイナミックな生成が�
 std::variantとstd::visit([Visitor](#SS_3_21)パターンの実装の一種)を組み合わせた場合の使用例を以下に示す。
 
 ```cpp
-    //  example/cpp_standard/variant_ut.cpp 37
+    //  example/stdlib_and__concepts/variant_ut.cpp 37
 
     void output_from_variant(std::variant<int, double, std::string> const& var, std::ostringstream& oss)
     {
@@ -23835,7 +23824,7 @@ std::variantとstd::visit([Visitor](#SS_3_21)パターンの実装の一種)を�
     }
 ```
 ```cpp
-    //  example/cpp_standard/variant_ut.cpp 47
+    //  example/stdlib_and__concepts/variant_ut.cpp 47
 
     std::ostringstream                     oss;
     std::variant<int, double, std::string> var = 42;
@@ -23861,7 +23850,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
 
 ```cpp
-    //  example/cpp_standard/comparison_operator_old_ut.cpp 12
+    //  example/stdlib_and__concepts/comparison_stdlib_ut.cpp 12
 
     class Integer {
     public:
@@ -23880,7 +23869,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 ```
 
 ```cpp
-    //  example/cpp_standard/comparison_operator_old_ut.cpp 32
+    //  example/stdlib_and__concepts/comparison_stdlib_ut.cpp 32
 
     using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
 
@@ -23889,7 +23878,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
     auto c = Integer{5};
 
     // std::rel_opsとは無関係に直接定義
-    ASSERT_EQ(a, c);       // a == c
+    ASSERT_TRUE(a == c);   // a == c
     ASSERT_FALSE(a == b);  // !(a == b)
     ASSERT_TRUE(a < b);    // aはbより小さい
     ASSERT_FALSE(b < a);   // bはaより小さくない
@@ -23909,7 +23898,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
-    //  example/cpp_standard/comparison_operator_old_ut.cpp 110
+    //  example/stdlib_and__concepts/comparison_stdlib_ut.cpp 56
 
     struct Point {
         int x;
@@ -23921,7 +23910,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
     };
 ```
 ```cpp
-    //  example/cpp_standard/comparison_operator_old_ut.cpp 124
+    //  example/stdlib_and__concepts/comparison_stdlib_ut.cpp 70
 
     auto a = Point{1, 2};
     auto b = Point{1, 3};
@@ -23953,7 +23942,7 @@ C++11までの仕様では、new式によるダイナミックメモリアロケ
 new/deleteの呼び出しをまとめたり省略したりすることができるようになった。
 
 ```cpp
-    //  example/cpp_standard/heap_allocation_elision_ut.cpp 4
+    //  example/stdlib_and__concepts/heap_allocation_elision_ut.cpp 4
 
     void lump()  // 実装によっては、ダイナミックメモリアロケーションをまとめらる場合がある
     {

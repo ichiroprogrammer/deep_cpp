@@ -2501,10 +2501,10 @@ constexpr ifを使用することで、やや単純に記述できる。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #4:0 begin
+    // @@@ example/cpp_standard20/abbreviated_func_template_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #4:1 begin -1
+    // @@@ example/cpp_standard20/abbreviated_func_template_ut.cpp #0:1 begin -1
 ```
 
 ### auto
@@ -2538,8 +2538,6 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 ```cpp
     // @@@ example/cpp_standard/decltype_ut.cpp #0:2 begin -1
 ```
-
-### CTAD（Class Template Argument Deduction）
 
 ### 戻り値型を後置する関数宣言
 関数の戻り値型後置構文は戻り値型をプレースホルダ(auto)にして、
@@ -2581,7 +2579,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
     // @@@ example/cpp_standard/decltype_ut.cpp #3:1 begin -1
 ```
 
-## name lookupと継承構造                 
+## name lookupと継承構造
 ここではname lookupとそれに影響を与える名前空間について解説する。
 
 ### ルックアップ

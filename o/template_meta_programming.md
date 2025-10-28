@@ -346,7 +346,7 @@ sum(3)は1つ目のsumにマッチするため、最終的には下記のよう�
 C言語での可変長引数関数では不可能だった引数の型チェックができるようになったため、
 C言語でのランタイムエラーがコンパイルエラーにできるようになった。
 
-なお、上記コードで使用した[std::is_same](standard_lib_programming_concepts.md#SS_7_2_4)は、
+なお、上記コードで使用した[std::is_same](stdlib_and_concepts.md#SS_7_2_4)は、
 与えられた2つのテンプレートパラメータが同じ型であった場合、
 valueをtrueで初期化するクラステンプレートであり、 type_traitsで定義されている
 (後ほど使用するstd::is_same_vはstd::is_same<>::valueと等価な定数テンプレート)。
@@ -1527,10 +1527,10 @@ SafeArray2のコードは、
 その後SafeArray2を見ていくことにする。
 
 ## メタ関数のテクニック <a id="SS_4_3"></a>
-本節では、[type_traits](standard_lib_programming_concepts.md#SS_7_2)の[メタ関数](core_lang_spec.md#SS_6_11_2)の実装等で広く使われいる下記のようなテクニックを
+本節では、[type_traits](stdlib_and_concepts.md#SS_7_2)の[メタ関数](core_lang_spec.md#SS_6_11_2)の実装等で広く使われいる下記のようなテクニックを
 
-- [std::is_void](standard_lib_programming_concepts.md#SS_7_2_7)と同等のメタ関数を[is_void_xxxの実装](template_meta_programming.md#SS_4_3_1)
-- [std::is_same](standard_lib_programming_concepts.md#SS_7_2_4)と同等のメタ関数を[is_same_xxxの実装](template_meta_programming.md#SS_4_3_2)
+- [std::is_void](stdlib_and_concepts.md#SS_7_2_7)と同等のメタ関数を[is_void_xxxの実装](template_meta_programming.md#SS_4_3_1)
+- [std::is_same](stdlib_and_concepts.md#SS_7_2_4)と同等のメタ関数を[is_same_xxxの実装](template_meta_programming.md#SS_4_3_2)
 - std::is_convertibleと同等のメタ関数を[AreConvertibleXxxの実装](template_meta_programming.md#SS_4_3_3)
 
 で紹介する。
@@ -1923,7 +1923,7 @@ SFINAEとクラステンプレートの特殊化を組み合わせたメタ関�
 ```
 
 #### is_void_ena_s <a id="SS_4_3_1_6"></a>
-[std::enable_if](standard_lib_programming_concepts.md#SS_7_2_5)による[SFINAE](core_lang_spec.md#SS_6_11_1)とクラステンプレートの特殊化を使用した
+[std::enable_if](stdlib_and_concepts.md#SS_7_2_5)による[SFINAE](core_lang_spec.md#SS_6_11_1)とクラステンプレートの特殊化を使用した
 is_void_ena_sの実装は以下のようになる。
 
 ```cpp
@@ -1981,7 +1981,7 @@ std::enable_ifの値パラメータis_void_f\<T>()は、「[is_void_f](template_
 
 
 #### is_void_cond_s <a id="SS_4_3_1_7"></a>
-[std::conditional](standard_lib_programming_concepts.md#SS_7_2_6)と関数テンプレートの特殊化を使用したis_void_cond_sの実装は以下のようになる。
+[std::conditional](stdlib_and_concepts.md#SS_7_2_6)と関数テンプレートの特殊化を使用したis_void_cond_sの実装は以下のようになる。
 
 ```cpp
     //  example/template/is_void_ut.cpp 277
@@ -4177,7 +4177,7 @@ Nstd::SafeIndexにNstd::SafeArrayの実装が取り込めれば、リファク�
 理由は、パラメータパックにはそのすべてに型を指定するか、そのすべてに値を指定しなければならず、
 上記のコードのような型と値の混在が許されていないからである。
 
-値を型に変換する[std::integral_constant](standard_lib_programming_concepts.md#SS_7_2_1)を使用し、この問題を解決できる。
+値を型に変換する[std::integral_constant](stdlib_and_concepts.md#SS_7_2_1)を使用し、この問題を解決できる。
 std::arrayから派生した下記のStdArrayLikeは、std::integral_constant::valueから値を取り出し、
 基底クラスstd::arrayの第2テンプレートパラメータとする。
 この仕組みにより、StdArrayLikeは、
@@ -6268,7 +6268,7 @@ lookupによるバグの混入を起こしてしまうことがある。
 
 といった方法の他にも、「[コンテナ用Nstd::operator\<\<の開発](template_meta_programming.md#SS_4_4_4)」で示した
 
-* [std::enable_if](standard_lib_programming_concepts.md#SS_7_2_5)や[コンセプト](core_lang_spec.md#SS_6_11_3)等を使用してテンプレートに適用できる型を制約する
+* [std::enable_if](stdlib_and_concepts.md#SS_7_2_5)や[コンセプト](core_lang_spec.md#SS_6_11_3)等を使用してテンプレートに適用できる型を制約する
 
 ことも考えられる。
 ベストな方法は状況に大きく依存するため一概には決められない。
