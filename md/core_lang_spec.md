@@ -797,27 +797,6 @@ C++03までのコンパイラに、
     // @@@ example/cpp_standard/const_ut.cpp #0:0 begin -1
 ```
 
-### リテラル型
-constexpr導入後のC++11の標準では、下記の条件を満たすクラスは、
-
-* constexprコンストラクタを持つ
-* すべてのメンバ変数がリテラル型である
-* 仮想関数や仮想基底クラスを持たない
-
-constexpr定数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
-[constexprインスタンス](---)を生成できる。
-
-このようなクラスは慣習的にリテラル型(literal type)と呼ばれる。
-
-以下にリテラル型を例示する。
-
-```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #3:0 begin
-```
-```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #3:1 begin -1
-```
-
 ## 定数式とコンパイル時評価
 
 ### constexpr
@@ -842,10 +821,10 @@ C++11以前で定数を定義する方法は、
 こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/constexpr_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #1:1 begin -1
+    // @@@ example/cpp_standard/constexpr_ut.cpp #0:1 begin -1
 ```
 
 constexpr定数がif文のオカレンスになる場合、[constexpr if文](---)することで、
@@ -860,10 +839,10 @@ constexpr関数の呼び出し式の値がコンパイル時に確定する場�
 通常の関数呼び出しと同じになる。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/constexpr_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #2:1 begin -1
+    // @@@ example/cpp_standard/constexpr_ut.cpp #1:1 begin -1
 ```
 
 C++11の規約では、constexpr関数の制約は厳しく、
@@ -871,13 +850,13 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #5:0 begin
+    // @@@ example/cpp_standard/constexpr_ut.cpp #2:0 begin
 ```
 このため、可読性、保守性があったため、C++14で制約が緩和され、
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #5:1 begin
+    // @@@ example/cpp_standard/constexpr_ut.cpp #2:1 begin
 ```
 
 ### コア定数式
@@ -909,6 +888,27 @@ for/if文や条件分岐のような処理を含むことができなかった�
 
 このドキュメントでは慣用的に[constexpr定数](---)と呼んでいる概念が、コア定数式である。
 
+### リテラル型
+constexpr導入後のC++11の標準では、下記の条件を満たすクラスは、
+
+* constexprコンストラクタを持つ
+* すべてのメンバ変数がリテラル型である
+* 仮想関数や仮想基底クラスを持たない
+
+constexpr定数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
+[constexprインスタンス](---)を生成できる。
+
+このようなクラスは慣習的にリテラル型(literal type)と呼ばれる。
+
+以下にリテラル型を例示する。
+
+```cpp
+    // @@@ example/cpp_standard/constexpr_ut.cpp #3:0 begin
+```
+```cpp
+    // @@@ example/cpp_standard/constexpr_ut.cpp #3:1 begin -1
+```
+
 ### constexprインスタンス
 [constexpr定数](---)を引数にして、[リテラル型](---)のconstexprコンストラクタを呼び出せば、
 constexprインスタンスを生成できる。このリテラル型を使用して下記のように[ユーザー定義リテラル](---)
@@ -922,21 +922,36 @@ constexprインスタンスを生成できる。このリテラル型を使用�
 ```
 
 ### consteval
-constevalはC++20 から導入されたキーワードであり、
-常にコンパイル時に評価されることを保証する関数を定義するために使用される。
-このキーワードを使用すると、引数や関数内の処理がコンパイル時に確定できなければ、
-コンパイルエラーが発生する。constexprと異なり、ランタイム評価が許されないため、
-パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
+constevalはC++20から導入されたキーワードであり、
+呼び出しが必ずコンパイル時に評価されなければならない関数を定義するために使用される。
+この関数は、コンパイル時に評価できない引数や式が与えられるとコンパイルエラーとなる。
+constexpr関数が「コンパイル時に評価されることもできる」のに対し、
+consteval関数は「必ずコンパイル時に評価されなければならない」という点で異なる。
+
+この特性により、ランタイム評価を完全に排除した定数生成専用関数を記述でき、
+パフォーマンスの最適化や定数検証（static_assertなど）に利用できる。
+consteval関数の呼び出しは、その結果が定数式でなければコンパイルエラーとなる。
+
+```cpp
+    // @@@ example/cpp_standard/constexpr_ut.cpp #5:0 begin
+```
+```cpp
+    // @@@ example/cpp_standard/constexpr_ut.cpp #5:1 begin -1
+```
+
+### constinit
+constinitはC++20から導入されたキーワードであり、
+静的記憶域期間（static、namespaceスコープ）またはthread_local変数が、
+コンパイル時に初期化されることを保証するために使用される。
+これにより、[Static Initialization Order Fiasco(静的初期化順序問題)](---)を回避できる。
+
+このキーワードを付与すると、初期化が動的である場合にはコンパイルエラーとなる。
+ただし、constexprと異なり、変数自体がconstになるわけではないため、再代入は可能である。
+また、constinitはローカル(自動変数)には意味を持たない。
 
 ```cpp
     // @@@ example/cpp_standard/constexpr_ut.cpp #6:0 begin
 ```
-```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #6:1 begin -1
-```
-
-### constinit
-constinitはC++20から導入されたキーワードであり、コンパイル時における変数の初期化を強制する。
 
 ### constexprラムダ
 constexprラムダはC++17から導入された機能であり、以下の条件を満たした[言語拡張機能|ラムダ式](---)である。
@@ -1271,14 +1286,14 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 * インライン化し易い。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #0:0 begin
+    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #0:0 begin
 ```
 
 すべてのメンバ変数に==演算子が定義されている場合、
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #5:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #0:0 begin
 ```
 
 #### 非メンバ==演算子
@@ -1288,20 +1303,20 @@ C++20以降より、`=default`により==演算子を自動生成させること
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #1:0 begin
+    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #1:0 begin
 ```
 
 * [暗黙の型変換](---)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #1:1 begin -2
+    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #1:1 begin -2
 ```
 
 すべてのメンバ変数に==演算子が定義されている場合、
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #6:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #1:0 begin
 ```
 
 ### 比較演算子
@@ -1314,17 +1329,17 @@ C++20から導入された[<=>演算子](---)の定義により、すべてが�
 このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #3:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #3:1 begin -1
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #2:1 begin -1
 ```
 
 定型の比較演算子では不十分である場合、<=>演算子を実装する必要が出てくる。
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #4:0 begin
+    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #3:0 begin
 ```
 
 #### 三方比較演算子
@@ -1810,19 +1825,6 @@ C++11からはエラーとならず、TRRはT&となる。
 で頻繁に使用されるため、
 このようなテンプレートの特殊化を不要にするリファレンスcollapsingは、
 有用な機能拡張であると言える。
-
-### danglingリファレンス
-Dangling リファレンスとは、破棄後のオブジェクトを指しているリファレンスを指す。
-このようなリファレンスにアクセスすると、[未定義動作](---)に繋がるに繋がる。
-
-```cpp
-    // @@@ example/cpp_standard/dangling_ut.cpp #0:0 begin
-
-    // @@@ example/cpp_standard/dangling_ut.cpp #0:1 begin -1
-```
-
-### danglingポインタ
-danglingポインタとは、[danglingリファレンス](---)と同じような状態になったポインタを指す。
 
 ### リファレンス修飾
 [rvalue修飾](---)と[lvalue修飾](---)とを併せて、リファレンス修飾と呼ぶ。
@@ -2399,23 +2401,25 @@ C++17から、
     // @@@ example/cpp_standard/template_ut.cpp #0:1 begin -1
 ```
 
-### テンプレートの型推論ガイド
-テンプレートの型推論ガイド([CTAD(Class Template Argument Deduction)](---))は、
-C++17で導入された機能である。この機能により、
-クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
-引数から自動的に型を推論できるようになる。型推論ガイドを使用することで、
-コードの可読性と簡潔性が向上する。
+### CTAD(Class Template Argument Deduction)
+CTAD（Class Template Argument Deduction、クラステンプレート実引数推論）は、C++17で導入された機能である。
+この機能により、クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
+コンストラクタの引数から自動的に型を推論できるようになる。
+クラステンプレートの型推論が不十分な場合、[テンプレートの型推論ガイド](---)を追加することにより、
+型推論を強化することができる。
 
-型推論ガイドがない場合、[クラステンプレートのテンプレート引数の型推論](---)は限定的であり、
-明示的にテンプレート引数を指定する必要がある場合が多い。
-一方、型推論ガイドを使用することで、
-コンストラクタの引数からテンプレート引数を自動的に決定することが可能になる。
+
+### テンプレートの型推論ガイド
+[CTAD(Class Template Argument Deduction)](---)による型推論をカスタマイズするために、型推論ガイドを定義できる。
+特にコンストラクタがテンプレートである場合など、暗黙の型推論では不十分な場合に有用である。
 
 ```cpp
     // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:0 begin
 ```
-上記のクラステンプレートは、ガイドがない場合、
-以下に示すように型推論によりテンプレート引数を決定することができない。
+
+上記のクラステンプレートは、型推論ガイドがない場合、コンストラクタがテンプレートであるため、
+[CTAD(Class Template Argument Deduction)](---)による型推論ができない。
+そのため、以下のように明示的にテンプレート引数を指定する必要がある。
 
 ```cpp
     // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:1 begin -1
@@ -2431,8 +2435,9 @@ C++17で導入された機能である。この機能により、
     // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:3 begin -1
 ```
 
-### CTAD(Class Template Argument Deduction)
-CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論ガイド](---)のことである。
+多くの場合、コンパイラは暗黙の型推論ガイドを生成するため、明示的に型推論ガイドを書く必要はない。
+明示的な型推論ガイドが必要なのは、 上記の例のようにコンストラクタがテンプレートである場合や、
+特殊な推論ルールが必要な場合である。
 
 ### 変数テンプレート
 変数テンプレートとは、下記のコード示したような機能である。

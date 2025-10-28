@@ -630,7 +630,11 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #0:1 begin -1
+    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #0:0 begin
+```
+
+```cpp
+    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #0:1 begin -1
 ```
 
 なお、std::rel_opsはC++20から導入された[<=>演算子](---)により不要になったため、
@@ -641,10 +645,10 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #2:0 begin
+    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #2:1 begin
+    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #2:1 begin -1
 ```
 
 ## その他

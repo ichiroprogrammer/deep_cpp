@@ -8,7 +8,7 @@
 
 namespace {
 
-// @@@ sample begin 1:0
+// @@@ sample begin 0:0
 
 template <int N>
 struct Templ {
@@ -17,7 +17,7 @@ struct Templ {
 // @@@ sample end
 TEST(TermExp, constexpr_constant)
 {
-    // @@@ sample begin 1:1
+    // @@@ sample begin 0:1
 
     constexpr int a = 5;  // aは定数であるためかきのような使い方ができる
     static_assert(a == 5);
@@ -36,7 +36,7 @@ TEST(TermExp, constexpr_constant)
 }
 
 // clang-format off
-// @@@ sample begin 2:0
+// @@@ sample begin 1:0
 
 constexpr int f(int a) noexcept { return a * 3; }  // aがconstexprならばf(a)もconstexpr
 int g(int a) noexcept { return a * 3; }            // aがconstexprであってもg(a)は非constexpr
@@ -46,7 +46,7 @@ int g(int a) noexcept { return a * 3; }            // aがconstexprであって�
 TEST(TermExp, constexpr_func)
 {
     // clang-format off
-    // @@@ sample begin 2:1
+    // @@@ sample begin 1:1
 
     auto x = int{0};
 
@@ -60,6 +60,28 @@ TEST(TermExp, constexpr_func)
 
     IGNORE_UNUSED_VAR(x, a, c, e);
 }
+
+// @@@ sample begin 2:0
+
+constexpr uint64_t bit_mask(uint32_t max) { return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1); }
+constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
+static_assert(0b1111 == bit_mask_0);
+// @@@ sample end
+// @@@ sample begin 2:1
+
+constexpr uint64_t bit_mask_for(uint32_t max)
+{
+    uint64_t ret = 0;
+
+    for (auto i = 0u; i < max; ++i) {
+        ret |= 1ULL << i;
+    }
+
+    return ret;
+}
+constexpr uint64_t bit_mask_1 = bit_mask_for(4);  // C++17からサポート
+static_assert(0b1111 == bit_mask_1);
+// @@@ sample end
 
 // clang-format off
 // @@@ sample begin 3:0
@@ -115,28 +137,6 @@ TEST(TermExp, user_defined_literal)
     // @@@ sample end
 }
 
-// @@@ sample begin 5:0
-
-constexpr uint64_t bit_mask(uint32_t max) { return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1); }
-constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
-static_assert(0b1111 == bit_mask_0);
-// @@@ sample end
-// @@@ sample begin 5:1
-
-constexpr uint64_t bit_mask_for(uint32_t max)
-{
-    uint64_t ret = 0;
-
-    for (auto i = 0u; i < max; ++i) {
-        ret |= 1ULL << i;
-    }
-
-    return ret;
-}
-constexpr uint64_t bit_mask_1 = bit_mask_for(4);  // C++17からサポート
-static_assert(0b1111 == bit_mask_1);
-// @@@ sample end
-
 template <uint32_t N>
 struct bit_mask_struct {
     static constexpr uint64_t value = (1ULL << (N - 1)) | bit_mask_struct<N - 1>::value;
@@ -151,7 +151,7 @@ static_assert(0b1111 == bit_mask_struct<4>::value);
 
 namespace cpp20 {
 // clang-format off
-// @@@ sample begin 6:0
+// @@@ sample begin 5:0
 
 #if __cplusplus >= 202002L  // c++20
 consteval uint64_t bit_mask(uint32_t max)  // コンパイル時、評価ができなければエラー
@@ -173,12 +173,12 @@ constexpr uint64_t bit_mask(uint32_t max)  // コンパイル時、評価され�
 TEST(TermExp, bit_mask_recursive)
 {
     // clang-format off
-    // @@@ sample begin 6:1
+    // @@@ sample begin 5:1
 
     static_assert(0b1111'1111 == bit_mask(8));
 
     // auto i = 8UL;         // bit_maskがconstevalであるため、コンパイルエラー
-    constexpr auto i = 8UL;  // iがconstexpであるためbit_maskががコンパイル時評価されるため、
+    constexpr auto i = 8UL;  // iがconstexprであるためbit_maskがコンパイル時評価されるため、
     auto bm = bit_mask(i);   // bit_mask(i)の呼び出しは効率的になる
                              // bmをconsexprにするとさらに効率的になる
 
@@ -186,6 +186,30 @@ TEST(TermExp, bit_mask_recursive)
     // @@@ sample end
     // clang-format on
 }
+
+SUPPRESS_WARN_BEGIN;
+SUPPRESS_WARN_UNUSED_VAR;
+// @@@ sample begin 6:0
+
+#if __cplusplus >= 202002L  // c++20
+
+// constinit は静的・スレッドローカル変数の初期化が動的でないことを保証する。
+// この変数は const にはならず、後から変更可能である。
+constinit float pi = 3.14f;
+
+// C++17以前ではconstinitが存在しないため、constexprを使用する。
+// ただしconstexprでは変数がconstになり、再代入はできない点が異なる。
+constinit uint32_t mask = bit_mask(16);
+
+#else  // C++17
+
+// C++17ではconstinitが存在しないため、constexprを代用する。
+// ただしconstexprでは変数がconstとなり、再代入はできない。
+constexpr float    pi   = 3.14f;
+constexpr uint32_t mask = bit_mask(16);
+#endif
+// @@@ sample end
+SUPPRESS_WARN_END;
 }  // namespace cpp20
 
 TEST(TermExp, constexpr_lmbda)

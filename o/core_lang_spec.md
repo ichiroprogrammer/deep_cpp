@@ -61,17 +61,17 @@ __この章の構成__
 &emsp;&emsp;&emsp; [Run-time Type Information](core_lang_spec.md#SS_6_4_10)  
 &emsp;&emsp;&emsp; [インターフェースクラス](core_lang_spec.md#SS_6_4_11)  
 &emsp;&emsp;&emsp; [constインスタンス](core_lang_spec.md#SS_6_4_12)  
-&emsp;&emsp;&emsp; [リテラル型](core_lang_spec.md#SS_6_4_13)  
 
 &emsp;&emsp; [定数式とコンパイル時評価](core_lang_spec.md#SS_6_5)  
 &emsp;&emsp;&emsp; [constexpr](core_lang_spec.md#SS_6_5_1)  
 &emsp;&emsp;&emsp; [constexpr定数](core_lang_spec.md#SS_6_5_2)  
 &emsp;&emsp;&emsp; [constexpr関数](core_lang_spec.md#SS_6_5_3)  
 &emsp;&emsp;&emsp; [コア定数式](core_lang_spec.md#SS_6_5_4)  
-&emsp;&emsp;&emsp; [constexprインスタンス](core_lang_spec.md#SS_6_5_5)  
-&emsp;&emsp;&emsp; [consteval](core_lang_spec.md#SS_6_5_6)  
-&emsp;&emsp;&emsp; [constinit](core_lang_spec.md#SS_6_5_7)  
-&emsp;&emsp;&emsp; [constexprラムダ](core_lang_spec.md#SS_6_5_8)  
+&emsp;&emsp;&emsp; [リテラル型](core_lang_spec.md#SS_6_5_5)  
+&emsp;&emsp;&emsp; [constexprインスタンス](core_lang_spec.md#SS_6_5_6)  
+&emsp;&emsp;&emsp; [consteval](core_lang_spec.md#SS_6_5_7)  
+&emsp;&emsp;&emsp; [constinit](core_lang_spec.md#SS_6_5_8)  
+&emsp;&emsp;&emsp; [constexprラムダ](core_lang_spec.md#SS_6_5_9)  
 
 &emsp;&emsp; [オブジェクト生成と初期化](core_lang_spec.md#SS_6_6)  
 &emsp;&emsp;&emsp; [特殊メンバ関数](core_lang_spec.md#SS_6_6_1)  
@@ -125,11 +125,9 @@ __この章の構成__
 &emsp;&emsp;&emsp; [ユニバーサルリファレンス](core_lang_spec.md#SS_6_8_4)  
 &emsp;&emsp;&emsp; [perfect forwarding](core_lang_spec.md#SS_6_8_5)  
 &emsp;&emsp;&emsp; [リファレンスcollapsing](core_lang_spec.md#SS_6_8_6)  
-&emsp;&emsp;&emsp; [danglingリファレンス](core_lang_spec.md#SS_6_8_7)  
-&emsp;&emsp;&emsp; [danglingポインタ](core_lang_spec.md#SS_6_8_8)  
-&emsp;&emsp;&emsp; [リファレンス修飾](core_lang_spec.md#SS_6_8_9)  
-&emsp;&emsp;&emsp;&emsp; [rvalue修飾](core_lang_spec.md#SS_6_8_9_1)  
-&emsp;&emsp;&emsp;&emsp; [lvalue修飾](core_lang_spec.md#SS_6_8_9_2)  
+&emsp;&emsp;&emsp; [リファレンス修飾](core_lang_spec.md#SS_6_8_7)  
+&emsp;&emsp;&emsp;&emsp; [rvalue修飾](core_lang_spec.md#SS_6_8_7_1)  
+&emsp;&emsp;&emsp;&emsp; [lvalue修飾](core_lang_spec.md#SS_6_8_7_2)  
 
 &emsp;&emsp; [構文と制御構造](core_lang_spec.md#SS_6_9)  
 &emsp;&emsp;&emsp; [属性構文](core_lang_spec.md#SS_6_9_1)  
@@ -165,8 +163,8 @@ __この章の構成__
 &emsp;&emsp;&emsp; [畳み込み式](core_lang_spec.md#SS_6_11_5)  
 &emsp;&emsp;&emsp; [ジェネリックラムダ](core_lang_spec.md#SS_6_11_6)  
 &emsp;&emsp;&emsp; [クラステンプレートのテンプレート引数の型推論](core_lang_spec.md#SS_6_11_7)  
-&emsp;&emsp;&emsp; [テンプレートの型推論ガイド](core_lang_spec.md#SS_6_11_8)  
-&emsp;&emsp;&emsp; [CTAD(Class Template Argument Deduction)](core_lang_spec.md#SS_6_11_9)  
+&emsp;&emsp;&emsp; [CTAD(Class Template Argument Deduction)](core_lang_spec.md#SS_6_11_8)  
+&emsp;&emsp;&emsp; [テンプレートの型推論ガイド](core_lang_spec.md#SS_6_11_9)  
 &emsp;&emsp;&emsp; [変数テンプレート](core_lang_spec.md#SS_6_11_10)  
 &emsp;&emsp;&emsp; [エイリアステンプレート](core_lang_spec.md#SS_6_11_11)  
 &emsp;&emsp;&emsp; [constexpr if文](core_lang_spec.md#SS_6_11_12)  
@@ -1725,9 +1723,9 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 constインスタンスは、ランタイムまたはコンパイル時に初期化され、
 その後、状態が不変であるインスタンスである。
 必ずしも以下に示すようにconstインスタンスがコンパイル時に値が定まっているわけではない。
-[constexprインスタンス](core_lang_spec.md#SS_6_5_5)はconstインスタンスである。
+[constexprインスタンス](core_lang_spec.md#SS_6_5_6)はconstインスタンスである。
 C++03までのコンパイラに、
-最適化の一環で`static const`インスタンスを[constexprインスタンス](core_lang_spec.md#SS_6_5_5)と扱うものもあった。
+最適化の一環で`static const`インスタンスを[constexprインスタンス](core_lang_spec.md#SS_6_5_6)と扱うものもあった。
 
 
 ```cpp
@@ -1752,50 +1750,6 @@ C++03までのコンパイラに、
 
     constexpr int c_int = 1;
     static_assert(is_const_v<decltype(c_int)>);  // c_intはcons
-```
-
-### リテラル型 <a id="SS_6_4_13"></a>
-constexpr導入後のC++11の標準では、下記の条件を満たすクラスは、
-
-* constexprコンストラクタを持つ
-* すべてのメンバ変数がリテラル型である
-* 仮想関数や仮想基底クラスを持たない
-
-constexpr定数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
-[constexprインスタンス](core_lang_spec.md#SS_6_5_5)を生成できる。
-
-このようなクラスは慣習的にリテラル型(literal type)と呼ばれる。
-
-以下にリテラル型を例示する。
-
-```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 65
-
-    class Integer {
-    public:
-        constexpr Integer(int32_t integer) noexcept : integer_{integer} {}
-        constexpr operator int() const noexcept { return integer_; }  // constexprメンバ関数はconst
-        constexpr int32_t Allways2() const noexcept { return 2; }     // constexprメンバ関数はconst
-        static constexpr int32_t Allways3() noexcept { return 3; }    // static関数のconstexpr化
-
-    private:
-        int32_t integer_;
-    };
-```
-```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 83
-
-    constexpr auto i5 = 5;                // i5はconstexprインスタンス
-    constexpr auto int_5 = Integer{i5};   // int_5はconstexprインスタンス
-    static_assert(int_5 == 5);            // intへの暗黙の型変換
-
-    auto i3  = 3;                         // i3はconstexpr定数ではない
-    auto int_3 = Integer{i3};             // int_3はconstexprインスタンスではない
-    // static_assert(int_3 == 5);         // int_3がconstexprではないため、コンパイルエラー
-    static_assert(int_3.Allways2() == 2); // int_3はconstexprインスタンスではないが、
-                                          // int_3.Allways2()はconstexprt定数
-    static_assert(int_3.Allways3() == 3); // int_3はconstexprインスタンスではないが、
-                                          // int_3.Allways3()はconstexprt定数
 ```
 
 ## 定数式とコンパイル時評価 <a id="SS_6_5"></a>
@@ -1879,7 +1833,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 118
+    //  example/cpp_standard/constexpr_ut.cpp 64
 
     constexpr uint64_t bit_mask(uint32_t max) { return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1); }
     constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
@@ -1889,7 +1843,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 124
+    //  example/cpp_standard/constexpr_ut.cpp 70
 
     constexpr uint64_t bit_mask_for(uint32_t max)
     {
@@ -1934,13 +1888,57 @@ for/if文や条件分岐のような処理を含むことができなかった�
 
 このドキュメントでは慣用的に[constexpr定数](core_lang_spec.md#SS_6_5_2)と呼んでいる概念が、コア定数式である。
 
-### constexprインスタンス <a id="SS_6_5_5"></a>
-[constexpr定数](core_lang_spec.md#SS_6_5_2)を引数にして、[リテラル型](core_lang_spec.md#SS_6_4_13)のconstexprコンストラクタを呼び出せば、
+### リテラル型 <a id="SS_6_5_5"></a>
+constexpr導入後のC++11の標準では、下記の条件を満たすクラスは、
+
+* constexprコンストラクタを持つ
+* すべてのメンバ変数がリテラル型である
+* 仮想関数や仮想基底クラスを持たない
+
+constexpr定数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
+[constexprインスタンス](core_lang_spec.md#SS_6_5_6)を生成できる。
+
+このようなクラスは慣習的にリテラル型(literal type)と呼ばれる。
+
+以下にリテラル型を例示する。
+
+```cpp
+    //  example/cpp_standard/constexpr_ut.cpp 87
+
+    class Integer {
+    public:
+        constexpr Integer(int32_t integer) noexcept : integer_{integer} {}
+        constexpr operator int() const noexcept { return integer_; }  // constexprメンバ関数はconst
+        constexpr int32_t Allways2() const noexcept { return 2; }     // constexprメンバ関数はconst
+        static constexpr int32_t Allways3() noexcept { return 3; }    // static関数のconstexpr化
+
+    private:
+        int32_t integer_;
+    };
+```
+```cpp
+    //  example/cpp_standard/constexpr_ut.cpp 105
+
+    constexpr auto i5 = 5;                // i5はconstexprインスタンス
+    constexpr auto int_5 = Integer{i5};   // int_5はconstexprインスタンス
+    static_assert(int_5 == 5);            // intへの暗黙の型変換
+
+    auto i3  = 3;                         // i3はconstexpr定数ではない
+    auto int_3 = Integer{i3};             // int_3はconstexprインスタンスではない
+    // static_assert(int_3 == 5);         // int_3がconstexprではないため、コンパイルエラー
+    static_assert(int_3.Allways2() == 2); // int_3はconstexprインスタンスではないが、
+                                          // int_3.Allways2()はconstexprt定数
+    static_assert(int_3.Allways3() == 3); // int_3はconstexprインスタンスではないが、
+                                          // int_3.Allways3()はconstexprt定数
+```
+
+### constexprインスタンス <a id="SS_6_5_6"></a>
+[constexpr定数](core_lang_spec.md#SS_6_5_2)を引数にして、[リテラル型](core_lang_spec.md#SS_6_5_5)のconstexprコンストラクタを呼び出せば、
 constexprインスタンスを生成できる。このリテラル型を使用して下記のように[ユーザー定義リテラル](core_lang_spec.md#SS_6_2_6)
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 100
+    //  example/cpp_standard/constexpr_ut.cpp 122
 
     constexpr Integer operator"" _i(unsigned long long int value)  // ユーザ定義リテラルの定義
     {
@@ -1948,19 +1946,23 @@ constexprインスタンスを生成できる。このリテラル型を使用�
     }
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 110
+    //  example/cpp_standard/constexpr_ut.cpp 132
 
     constexpr auto i = 123_i;
     static_assert(i == 123);
     static_assert(std::is_same_v<decltype(i), Integer const>);
 ```
 
-### consteval <a id="SS_6_5_6"></a>
-constevalはC++20 から導入されたキーワードであり、
-常にコンパイル時に評価されることを保証する関数を定義するために使用される。
-このキーワードを使用すると、引数や関数内の処理がコンパイル時に確定できなければ、
-コンパイルエラーが発生する。constexprと異なり、ランタイム評価が許されないため、
-パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
+### consteval <a id="SS_6_5_7"></a>
+constevalはC++20から導入されたキーワードであり、
+呼び出しが必ずコンパイル時に評価されなければならない関数を定義するために使用される。
+この関数は、コンパイル時に評価できない引数や式が与えられるとコンパイルエラーとなる。
+constexpr関数が「コンパイル時に評価されることもできる」のに対し、
+consteval関数は「必ずコンパイル時に評価されなければならない」という点で異なる。
+
+この特性により、ランタイム評価を完全に排除した定数生成専用関数を記述でき、
+パフォーマンスの最適化や定数検証（static_assertなど）に利用できる。
+consteval関数の呼び出しは、その結果が定数式でなければコンパイルエラーとなる。
 
 ```cpp
     //  example/cpp_standard/constexpr_ut.cpp 154
@@ -1986,17 +1988,46 @@ constevalはC++20 から導入されたキーワードであり、
     static_assert(0b1111'1111 == bit_mask(8));
 
     // auto i = 8UL;         // bit_maskがconstevalであるため、コンパイルエラー
-    constexpr auto i = 8UL;  // iがconstexpであるためbit_maskががコンパイル時評価されるため、
+    constexpr auto i = 8UL;  // iがconstexprであるためbit_maskがコンパイル時評価されるため、
     auto bm = bit_mask(i);   // bit_mask(i)の呼び出しは効率的になる
                              // bmをconsexprにするとさらに効率的になる
 
     ASSERT_EQ(0b1111'1111, bm);
 ```
 
-### constinit <a id="SS_6_5_7"></a>
-constinitはC++20から導入されたキーワードであり、コンパイル時における変数の初期化を強制する。
+### constinit <a id="SS_6_5_8"></a>
+constinitはC++20から導入されたキーワードであり、
+静的記憶域期間（static、namespaceスコープ）またはthread_local変数が、
+コンパイル時に初期化されることを保証するために使用される。
+これにより、[Static Initialization Order Fiasco(静的初期化順序問題)](cpp_idioms.md#SS_8_8_6)を回避できる。
 
-### constexprラムダ <a id="SS_6_5_8"></a>
+このキーワードを付与すると、初期化が動的である場合にはコンパイルエラーとなる。
+ただし、constexprと異なり、変数自体がconstになるわけではないため、再代入は可能である。
+また、constinitはローカル(自動変数)には意味を持たない。
+
+```cpp
+    //  example/cpp_standard/constexpr_ut.cpp 192
+
+    #if __cplusplus >= 202002L  // c++20
+
+    // constinit は静的・スレッドローカル変数の初期化が動的でないことを保証する。
+    // この変数は const にはならず、後から変更可能である。
+    constinit float pi = 3.14f;
+
+    // C++17以前ではconstinitが存在しないため、constexprを使用する。
+    // ただしconstexprでは変数がconstになり、再代入はできない点が異なる。
+    constinit uint32_t mask = bit_mask(16);
+
+    #else  // C++17
+
+    // C++17ではconstinitが存在しないため、constexprを代用する。
+    // ただしconstexprでは変数がconstとなり、再代入はできない。
+    constexpr float    pi   = 3.14f;
+    constexpr uint32_t mask = bit_mask(16);
+    #endif
+```
+
+### constexprラムダ <a id="SS_6_5_9"></a>
 constexprラムダはC++17から導入された機能であり、以下の条件を満たした[ラムダ式](core_lang_spec.md#SS_6_10_3)である。
 
 * 引数やラムダ式内の処理がコンパイル時に評価可能である必要がある。
@@ -2017,7 +2048,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 193
+    //  example/cpp_standard/constexpr_ut.cpp 217
 
     constexpr auto factorial = [](int n) {  // constexpr ラムダの定義
         int result = 1;
@@ -2031,7 +2062,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
     static_assert(fact_5 == 120);
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 210
+    //  example/cpp_standard/constexpr_ut.cpp 234
 
     constexpr auto factorial = [](auto self, int n) -> int {  // リカーシブconstexprラムダ
         return (n <= 1) ? 1 : n * self(self, n - 1);
@@ -2648,7 +2679,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 * インライン化し易い。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 12
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 12
 
     class Integer {
     public:
@@ -2670,7 +2701,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 217
+    //  example/cpp_standard20/comparison_operator_ut.cpp 11
 
     class Integer {
     public:
@@ -2690,7 +2721,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 56
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 56
 
     class Integer {
     public:
@@ -2712,7 +2743,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 * [暗黙の型変換](core_lang_spec.md#SS_6_6_2_2)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 78
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 78
 
     auto a = Integer{5};
 
@@ -2723,7 +2754,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 241
+    //  example/cpp_standard20/comparison_operator_ut.cpp 35
 
     class Integer {
     public:
@@ -2748,7 +2779,7 @@ C++20から導入された[<=>演算子](core_lang_spec.md#SS_6_6_4_1)の定義�
 このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 141
+    //  example/cpp_standard20/comparison_operator_ut.cpp 61
 
     struct Point {
         int x;
@@ -2759,7 +2790,7 @@ C++20から導入された[<=>演算子](core_lang_spec.md#SS_6_6_4_1)の定義�
     };
 ```
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 154
+    //  example/cpp_standard20/comparison_operator_ut.cpp 74
 
     auto p1 = Point{1, 2};
     auto p2 = Point{1, 2};
@@ -2791,7 +2822,7 @@ C++20から導入された[<=>演算子](core_lang_spec.md#SS_6_6_4_1)の定義�
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 185
+    //  example/cpp_standard20/comparison_operator_ut.cpp 105
 
     struct Point {
         int x;
@@ -2976,8 +3007,8 @@ rvalueをバインドするリファレンスが存在しない状態で、
 そのrvalueがメンバ変数へのリファレンスを返す関数を呼び出し、
 そのリファレンスをバインドするリファレンス変数を初期化した場合、
 リファレンスが指すオブジェクトはすでにライフタイムを終了している。
-このような状態のリファレンスを[danglingリファレンス](core_lang_spec.md#SS_6_8_7)と呼ぶ。
-同様に、このような状態のポインタを[danglingポインタ](core_lang_spec.md#SS_6_8_8)と呼ぶ。
+このような状態のリファレンスを[danglingリファレンス](cpp_idioms.md#SS_8_7_2)と呼ぶ。
+同様に、このような状態のポインタを[danglingポインタ](cpp_idioms.md#SS_8_7_3)と呼ぶ。
 
 
 ## 値カテゴリとリファレンス <a id="SS_6_7"></a>
@@ -3600,55 +3631,10 @@ C++11からはエラーとならず、TRRはT&となる。
 このようなテンプレートの特殊化を不要にするリファレンスcollapsingは、
 有用な機能拡張であると言える。
 
-### danglingリファレンス <a id="SS_6_8_7"></a>
-Dangling リファレンスとは、破棄後のオブジェクトを指しているリファレンスを指す。
-このようなリファレンスにアクセスすると、[未定義動作](core_lang_spec.md#SS_6_14_3)に繋がるに繋がる。
+### リファレンス修飾 <a id="SS_6_8_7"></a>
+[rvalue修飾](core_lang_spec.md#SS_6_8_7_1)と[lvalue修飾](core_lang_spec.md#SS_6_8_7_2)とを併せて、リファレンス修飾と呼ぶ。
 
-```cpp
-    //  example/cpp_standard/dangling_ut.cpp 9
-
-    bool X_destructed;
-    class X {
-    public:
-        X() { X_destructed = false; }
-        ~X() { X_destructed = true; }
-    };
-
-    bool A_destructed;
-    class A {
-    public:
-        A() { A_destructed = false; }
-        ~A() { A_destructed = true; }
-
-        X const& GetX() const noexcept { return x_; }
-
-    private:
-        X x_;
-    };
-
-    //  example/cpp_standard/dangling_ut.cpp 34
-
-    auto a = A{};
-
-    auto const& x_safe = a.GetX();  // x_safeはダングリングリファレンスではない
-    ASSERT_FALSE(A_destructed || X_destructed);
-
-    auto const& x_dangling = A{}.GetX();  // 次の行でxが指すオブジェクトは解放される
-    // この行ではxはdangngling リファレンスになる。
-    ASSERT_TRUE(A_destructed && X_destructed);
-
-    auto const* x_ptr_dangling = &A{}.GetX();  // 次の行でxが指すオブジェクトは解放される
-    // この行ではxはdangngling ポインタになる。
-    ASSERT_TRUE(A_destructed && X_destructed);
-```
-
-### danglingポインタ <a id="SS_6_8_8"></a>
-danglingポインタとは、[danglingリファレンス](core_lang_spec.md#SS_6_8_7)と同じような状態になったポインタを指す。
-
-### リファレンス修飾 <a id="SS_6_8_9"></a>
-[rvalue修飾](core_lang_spec.md#SS_6_8_9_1)と[lvalue修飾](core_lang_spec.md#SS_6_8_9_2)とを併せて、リファレンス修飾と呼ぶ。
-
-#### rvalue修飾 <a id="SS_6_8_9_1"></a>
+#### rvalue修飾 <a id="SS_6_8_7_1"></a>
 下記GetString0()のような関数が返すオブジェクトの内部メンバに対する[ハンドル](cpp_idioms.md#SS_8_8_1)は、
 オブジェクトのライフタイム終了後にもアクセスすることができるため、
 そのハンドルを通じて、
@@ -3724,8 +3710,8 @@ rvalueの内部ハンドルを返さないようにすることが可能とな�
     // auto const& s4_1 = C{"c1"}.GetString4();  // 危険なのでコンパイルさせない
 ```
 
-#### lvalue修飾 <a id="SS_6_8_9_2"></a>
-[rvalue修飾](core_lang_spec.md#SS_6_8_9_1)を参照せよ。
+#### lvalue修飾 <a id="SS_6_8_7_2"></a>
+[rvalue修飾](core_lang_spec.md#SS_6_8_7_1)を参照せよ。
 
 
 ## 構文と制御構造 <a id="SS_6_9"></a>
@@ -4698,7 +4684,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 * クロージャ型とは、クロージャオブジェクトの型。
 * キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
 * ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
-* [constexprラムダ](core_lang_spec.md#SS_6_5_8)とはクロージャ型の[constexprインスタンス](core_lang_spec.md#SS_6_5_5)。
+* [constexprラムダ](core_lang_spec.md#SS_6_5_9)とはクロージャ型の[constexprインスタンス](core_lang_spec.md#SS_6_5_6)。
 * [ジェネリックラムダ](core_lang_spec.md#SS_6_11_6)とは、C++11のラムダ式を拡張して、
   パラメータにautoを使用(型推測)できるようにした機能。
 
@@ -5299,17 +5285,17 @@ C++17から、
     static_assert(std::is_same_v<decltype(a), std::vector<int>>);  // テンプレート引数がintと推論
 ```
 
-### テンプレートの型推論ガイド <a id="SS_6_11_8"></a>
-テンプレートの型推論ガイド([CTAD(Class Template Argument Deduction)](core_lang_spec.md#SS_6_11_9))は、
-C++17で導入された機能である。この機能により、
-クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
-引数から自動的に型を推論できるようになる。型推論ガイドを使用することで、
-コードの可読性と簡潔性が向上する。
+### CTAD(Class Template Argument Deduction) <a id="SS_6_11_8"></a>
+CTAD（Class Template Argument Deduction、クラステンプレート実引数推論）は、C++17で導入された機能である。
+この機能により、クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
+コンストラクタの引数から自動的に型を推論できるようになる。
+クラステンプレートの型推論が不十分な場合、[テンプレートの型推論ガイド](core_lang_spec.md#SS_6_11_9)を追加することにより、
+型推論を強化することができる。
 
-型推論ガイドがない場合、[クラステンプレートのテンプレート引数の型推論](core_lang_spec.md#SS_6_11_7)は限定的であり、
-明示的にテンプレート引数を指定する必要がある場合が多い。
-一方、型推論ガイドを使用することで、
-コンストラクタの引数からテンプレート引数を自動的に決定することが可能になる。
+
+### テンプレートの型推論ガイド <a id="SS_6_11_9"></a>
+[CTAD(Class Template Argument Deduction)](core_lang_spec.md#SS_6_11_8)による型推論をカスタマイズするために、型推論ガイドを定義できる。
+特にコンストラクタがテンプレートである場合など、暗黙の型推論では不十分な場合に有用である。
 
 ```cpp
     //  example/cpp_standard/deduction_guide_ut.cpp 8
@@ -5332,18 +5318,21 @@ C++17で導入された機能である。この機能により、
     };
 
 ```
-上記のクラステンプレートは、ガイドがない場合、
-以下に示すように型推論によりテンプレート引数を決定することができない。
+
+上記のクラステンプレートは、型推論ガイドがない場合、コンストラクタがテンプレートであるため、
+[CTAD(Class Template Argument Deduction)](core_lang_spec.md#SS_6_11_8)による型推論ができない。
+そのため、以下のように明示的にテンプレート引数を指定する必要がある。
 
 ```cpp
     //  example/cpp_standard/deduction_guide_ut.cpp 31
 
+    // 型推論ガイドがないため、下記はコンパイルできない
+    // S s1{42};   // エラー: テンプレート引数を推論できない
+    // S s2{1.0};  // エラー: テンプレート引数を推論できない
+
+    // 上記の問題を回避するためには型推論ガイドを定義するか、テンプレート引数を指定しなければならない
     S<int>    s1{42};   // 明示的にテンプレート引数を指定
     S<double> s2{1.0};  // 明示的にテンプレート引数を指定
-
-    // テンプレート引数の推論ができず、下記はコンパイルできない
-    // S       s1{42};   // 明示的にテンプレート引数を指定
-    // S       s2{1.0};  // 明示的にテンプレート引数を指定
 ```
 
 以上に示したクラステンプレートに以下の型推論ガイドを追加することにより、
@@ -5360,12 +5349,13 @@ C++17で導入された機能である。この機能により、
 
     S s1{42};   // 推論ガイドの効果
     S s2{1.0};  // 推論ガイドの効果
-    S s3 = 42;  // S<int>のコンストラクタがintであるため、暗黙の型変換が可能
-    // S    s4 = 1.0;  // S<double>のコンストラクタがexplicitであるため
+    S s3 = 42;  // OK: S<int>のコンストラクタが非explicitのため、暗黙の変換が可能
+    // S    s4 = 1.0;  // S<double>のコンストラクタがexplicitであるため、暗黙の変換不可
 ```
 
-### CTAD(Class Template Argument Deduction) <a id="SS_6_11_9"></a>
-CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論ガイド](core_lang_spec.md#SS_6_11_8)のことである。
+多くの場合、コンパイラは暗黙の型推論ガイドを生成するため、明示的に型推論ガイドを書く必要はない。
+明示的な型推論ガイドが必要なのは、 上記の例のようにコンストラクタがテンプレートである場合や、
+特殊な推論ルールが必要な場合である。
 
 ### 変数テンプレート <a id="SS_6_11_10"></a>
 変数テンプレートとは、下記のコード示したような機能である。

@@ -4,7 +4,7 @@ SRCS:=\
     lack_of_cohesion_ut.cpp spurious_wakeup_ut.cpp class_relation_ut.cpp override_overload_ut.cpp \
     most_vexing_parse_ut.cpp aaa.cpp  east_west_const.cpp ambiguous_ownership_ut.cpp unique_ptr_ownership_ut.cpp \
     shared_ptr_ownership_ut.cpp shared_ptr_cycle_ut.cpp deep_shallow_copy_ut.cpp semantics_ut.cpp \
-    slice_ut.cpp rule_of_zero_ut.cpp \
+    slice_ut.cpp rule_of_zero_ut.cpp dangling_ut.cpp \
 
 
 SRCS+=$(SRCS20)

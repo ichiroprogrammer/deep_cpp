@@ -15063,17 +15063,17 @@ __この章の構成__
 &emsp;&emsp;&emsp; [Run-time Type Information](#SS_6_4_10)  
 &emsp;&emsp;&emsp; [インターフェースクラス](#SS_6_4_11)  
 &emsp;&emsp;&emsp; [constインスタンス](#SS_6_4_12)  
-&emsp;&emsp;&emsp; [リテラル型](#SS_6_4_13)  
 
 &emsp;&emsp; [定数式とコンパイル時評価](#SS_6_5)  
 &emsp;&emsp;&emsp; [constexpr](#SS_6_5_1)  
 &emsp;&emsp;&emsp; [constexpr定数](#SS_6_5_2)  
 &emsp;&emsp;&emsp; [constexpr関数](#SS_6_5_3)  
 &emsp;&emsp;&emsp; [コア定数式](#SS_6_5_4)  
-&emsp;&emsp;&emsp; [constexprインスタンス](#SS_6_5_5)  
-&emsp;&emsp;&emsp; [consteval](#SS_6_5_6)  
-&emsp;&emsp;&emsp; [constinit](#SS_6_5_7)  
-&emsp;&emsp;&emsp; [constexprラムダ](#SS_6_5_8)  
+&emsp;&emsp;&emsp; [リテラル型](#SS_6_5_5)  
+&emsp;&emsp;&emsp; [constexprインスタンス](#SS_6_5_6)  
+&emsp;&emsp;&emsp; [consteval](#SS_6_5_7)  
+&emsp;&emsp;&emsp; [constinit](#SS_6_5_8)  
+&emsp;&emsp;&emsp; [constexprラムダ](#SS_6_5_9)  
 
 &emsp;&emsp; [オブジェクト生成と初期化](#SS_6_6)  
 &emsp;&emsp;&emsp; [特殊メンバ関数](#SS_6_6_1)  
@@ -15127,11 +15127,9 @@ __この章の構成__
 &emsp;&emsp;&emsp; [ユニバーサルリファレンス](#SS_6_8_4)  
 &emsp;&emsp;&emsp; [perfect forwarding](#SS_6_8_5)  
 &emsp;&emsp;&emsp; [リファレンスcollapsing](#SS_6_8_6)  
-&emsp;&emsp;&emsp; [danglingリファレンス](#SS_6_8_7)  
-&emsp;&emsp;&emsp; [danglingポインタ](#SS_6_8_8)  
-&emsp;&emsp;&emsp; [リファレンス修飾](#SS_6_8_9)  
-&emsp;&emsp;&emsp;&emsp; [rvalue修飾](#SS_6_8_9_1)  
-&emsp;&emsp;&emsp;&emsp; [lvalue修飾](#SS_6_8_9_2)  
+&emsp;&emsp;&emsp; [リファレンス修飾](#SS_6_8_7)  
+&emsp;&emsp;&emsp;&emsp; [rvalue修飾](#SS_6_8_7_1)  
+&emsp;&emsp;&emsp;&emsp; [lvalue修飾](#SS_6_8_7_2)  
 
 &emsp;&emsp; [構文と制御構造](#SS_6_9)  
 &emsp;&emsp;&emsp; [属性構文](#SS_6_9_1)  
@@ -15167,8 +15165,8 @@ __この章の構成__
 &emsp;&emsp;&emsp; [畳み込み式](#SS_6_11_5)  
 &emsp;&emsp;&emsp; [ジェネリックラムダ](#SS_6_11_6)  
 &emsp;&emsp;&emsp; [クラステンプレートのテンプレート引数の型推論](#SS_6_11_7)  
-&emsp;&emsp;&emsp; [テンプレートの型推論ガイド](#SS_6_11_8)  
-&emsp;&emsp;&emsp; [CTAD(Class Template Argument Deduction)](#SS_6_11_9)  
+&emsp;&emsp;&emsp; [CTAD(Class Template Argument Deduction)](#SS_6_11_8)  
+&emsp;&emsp;&emsp; [テンプレートの型推論ガイド](#SS_6_11_9)  
 &emsp;&emsp;&emsp; [変数テンプレート](#SS_6_11_10)  
 &emsp;&emsp;&emsp; [エイリアステンプレート](#SS_6_11_11)  
 &emsp;&emsp;&emsp; [constexpr if文](#SS_6_11_12)  
@@ -16727,9 +16725,9 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 constインスタンスは、ランタイムまたはコンパイル時に初期化され、
 その後、状態が不変であるインスタンスである。
 必ずしも以下に示すようにconstインスタンスがコンパイル時に値が定まっているわけではない。
-[constexprインスタンス](#SS_6_5_5)はconstインスタンスである。
+[constexprインスタンス](#SS_6_5_6)はconstインスタンスである。
 C++03までのコンパイラに、
-最適化の一環で`static const`インスタンスを[constexprインスタンス](#SS_6_5_5)と扱うものもあった。
+最適化の一環で`static const`インスタンスを[constexprインスタンス](#SS_6_5_6)と扱うものもあった。
 
 
 ```cpp
@@ -16754,50 +16752,6 @@ C++03までのコンパイラに、
 
     constexpr int c_int = 1;
     static_assert(is_const_v<decltype(c_int)>);  // c_intはcons
-```
-
-### リテラル型 <a id="SS_6_4_13"></a>
-constexpr導入後のC++11の標準では、下記の条件を満たすクラスは、
-
-* constexprコンストラクタを持つ
-* すべてのメンバ変数がリテラル型である
-* 仮想関数や仮想基底クラスを持たない
-
-constexpr定数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
-[constexprインスタンス](#SS_6_5_5)を生成できる。
-
-このようなクラスは慣習的にリテラル型(literal type)と呼ばれる。
-
-以下にリテラル型を例示する。
-
-```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 65
-
-    class Integer {
-    public:
-        constexpr Integer(int32_t integer) noexcept : integer_{integer} {}
-        constexpr operator int() const noexcept { return integer_; }  // constexprメンバ関数はconst
-        constexpr int32_t Allways2() const noexcept { return 2; }     // constexprメンバ関数はconst
-        static constexpr int32_t Allways3() noexcept { return 3; }    // static関数のconstexpr化
-
-    private:
-        int32_t integer_;
-    };
-```
-```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 83
-
-    constexpr auto i5 = 5;                // i5はconstexprインスタンス
-    constexpr auto int_5 = Integer{i5};   // int_5はconstexprインスタンス
-    static_assert(int_5 == 5);            // intへの暗黙の型変換
-
-    auto i3  = 3;                         // i3はconstexpr定数ではない
-    auto int_3 = Integer{i3};             // int_3はconstexprインスタンスではない
-    // static_assert(int_3 == 5);         // int_3がconstexprではないため、コンパイルエラー
-    static_assert(int_3.Allways2() == 2); // int_3はconstexprインスタンスではないが、
-                                          // int_3.Allways2()はconstexprt定数
-    static_assert(int_3.Allways3() == 3); // int_3はconstexprインスタンスではないが、
-                                          // int_3.Allways3()はconstexprt定数
 ```
 
 ## 定数式とコンパイル時評価 <a id="SS_6_5"></a>
@@ -16881,7 +16835,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 118
+    //  example/cpp_standard/constexpr_ut.cpp 64
 
     constexpr uint64_t bit_mask(uint32_t max) { return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1); }
     constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
@@ -16891,7 +16845,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 124
+    //  example/cpp_standard/constexpr_ut.cpp 70
 
     constexpr uint64_t bit_mask_for(uint32_t max)
     {
@@ -16936,13 +16890,57 @@ for/if文や条件分岐のような処理を含むことができなかった�
 
 このドキュメントでは慣用的に[constexpr定数](#SS_6_5_2)と呼んでいる概念が、コア定数式である。
 
-### constexprインスタンス <a id="SS_6_5_5"></a>
-[constexpr定数](#SS_6_5_2)を引数にして、[リテラル型](#SS_6_4_13)のconstexprコンストラクタを呼び出せば、
+### リテラル型 <a id="SS_6_5_5"></a>
+constexpr導入後のC++11の標準では、下記の条件を満たすクラスは、
+
+* constexprコンストラクタを持つ
+* すべてのメンバ変数がリテラル型である
+* 仮想関数や仮想基底クラスを持たない
+
+constexpr定数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
+[constexprインスタンス](#SS_6_5_6)を生成できる。
+
+このようなクラスは慣習的にリテラル型(literal type)と呼ばれる。
+
+以下にリテラル型を例示する。
+
+```cpp
+    //  example/cpp_standard/constexpr_ut.cpp 87
+
+    class Integer {
+    public:
+        constexpr Integer(int32_t integer) noexcept : integer_{integer} {}
+        constexpr operator int() const noexcept { return integer_; }  // constexprメンバ関数はconst
+        constexpr int32_t Allways2() const noexcept { return 2; }     // constexprメンバ関数はconst
+        static constexpr int32_t Allways3() noexcept { return 3; }    // static関数のconstexpr化
+
+    private:
+        int32_t integer_;
+    };
+```
+```cpp
+    //  example/cpp_standard/constexpr_ut.cpp 105
+
+    constexpr auto i5 = 5;                // i5はconstexprインスタンス
+    constexpr auto int_5 = Integer{i5};   // int_5はconstexprインスタンス
+    static_assert(int_5 == 5);            // intへの暗黙の型変換
+
+    auto i3  = 3;                         // i3はconstexpr定数ではない
+    auto int_3 = Integer{i3};             // int_3はconstexprインスタンスではない
+    // static_assert(int_3 == 5);         // int_3がconstexprではないため、コンパイルエラー
+    static_assert(int_3.Allways2() == 2); // int_3はconstexprインスタンスではないが、
+                                          // int_3.Allways2()はconstexprt定数
+    static_assert(int_3.Allways3() == 3); // int_3はconstexprインスタンスではないが、
+                                          // int_3.Allways3()はconstexprt定数
+```
+
+### constexprインスタンス <a id="SS_6_5_6"></a>
+[constexpr定数](#SS_6_5_2)を引数にして、[リテラル型](#SS_6_5_5)のconstexprコンストラクタを呼び出せば、
 constexprインスタンスを生成できる。このリテラル型を使用して下記のように[ユーザー定義リテラル](#SS_6_2_6)
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 100
+    //  example/cpp_standard/constexpr_ut.cpp 122
 
     constexpr Integer operator"" _i(unsigned long long int value)  // ユーザ定義リテラルの定義
     {
@@ -16950,19 +16948,23 @@ constexprインスタンスを生成できる。このリテラル型を使用�
     }
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 110
+    //  example/cpp_standard/constexpr_ut.cpp 132
 
     constexpr auto i = 123_i;
     static_assert(i == 123);
     static_assert(std::is_same_v<decltype(i), Integer const>);
 ```
 
-### consteval <a id="SS_6_5_6"></a>
-constevalはC++20 から導入されたキーワードであり、
-常にコンパイル時に評価されることを保証する関数を定義するために使用される。
-このキーワードを使用すると、引数や関数内の処理がコンパイル時に確定できなければ、
-コンパイルエラーが発生する。constexprと異なり、ランタイム評価が許されないため、
-パフォーマンスの最適化やコンパイル時のエラー検出に特化した関数を作成する際に便利である。
+### consteval <a id="SS_6_5_7"></a>
+constevalはC++20から導入されたキーワードであり、
+呼び出しが必ずコンパイル時に評価されなければならない関数を定義するために使用される。
+この関数は、コンパイル時に評価できない引数や式が与えられるとコンパイルエラーとなる。
+constexpr関数が「コンパイル時に評価されることもできる」のに対し、
+consteval関数は「必ずコンパイル時に評価されなければならない」という点で異なる。
+
+この特性により、ランタイム評価を完全に排除した定数生成専用関数を記述でき、
+パフォーマンスの最適化や定数検証（static_assertなど）に利用できる。
+consteval関数の呼び出しは、その結果が定数式でなければコンパイルエラーとなる。
 
 ```cpp
     //  example/cpp_standard/constexpr_ut.cpp 154
@@ -16988,17 +16990,46 @@ constevalはC++20 から導入されたキーワードであり、
     static_assert(0b1111'1111 == bit_mask(8));
 
     // auto i = 8UL;         // bit_maskがconstevalであるため、コンパイルエラー
-    constexpr auto i = 8UL;  // iがconstexpであるためbit_maskががコンパイル時評価されるため、
+    constexpr auto i = 8UL;  // iがconstexprであるためbit_maskがコンパイル時評価されるため、
     auto bm = bit_mask(i);   // bit_mask(i)の呼び出しは効率的になる
                              // bmをconsexprにするとさらに効率的になる
 
     ASSERT_EQ(0b1111'1111, bm);
 ```
 
-### constinit <a id="SS_6_5_7"></a>
-constinitはC++20から導入されたキーワードであり、コンパイル時における変数の初期化を強制する。
+### constinit <a id="SS_6_5_8"></a>
+constinitはC++20から導入されたキーワードであり、
+静的記憶域期間（static、namespaceスコープ）またはthread_local変数が、
+コンパイル時に初期化されることを保証するために使用される。
+これにより、[Static Initialization Order Fiasco(静的初期化順序問題)](#SS_8_8_6)を回避できる。
 
-### constexprラムダ <a id="SS_6_5_8"></a>
+このキーワードを付与すると、初期化が動的である場合にはコンパイルエラーとなる。
+ただし、constexprと異なり、変数自体がconstになるわけではないため、再代入は可能である。
+また、constinitはローカル(自動変数)には意味を持たない。
+
+```cpp
+    //  example/cpp_standard/constexpr_ut.cpp 192
+
+    #if __cplusplus >= 202002L  // c++20
+
+    // constinit は静的・スレッドローカル変数の初期化が動的でないことを保証する。
+    // この変数は const にはならず、後から変更可能である。
+    constinit float pi = 3.14f;
+
+    // C++17以前ではconstinitが存在しないため、constexprを使用する。
+    // ただしconstexprでは変数がconstになり、再代入はできない点が異なる。
+    constinit uint32_t mask = bit_mask(16);
+
+    #else  // C++17
+
+    // C++17ではconstinitが存在しないため、constexprを代用する。
+    // ただしconstexprでは変数がconstとなり、再代入はできない。
+    constexpr float    pi   = 3.14f;
+    constexpr uint32_t mask = bit_mask(16);
+    #endif
+```
+
+### constexprラムダ <a id="SS_6_5_9"></a>
 constexprラムダはC++17から導入された機能であり、以下の条件を満たした[ラムダ式](#SS_6_10_3)である。
 
 * 引数やラムダ式内の処理がコンパイル時に評価可能である必要がある。
@@ -17019,7 +17050,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 193
+    //  example/cpp_standard/constexpr_ut.cpp 217
 
     constexpr auto factorial = [](int n) {  // constexpr ラムダの定義
         int result = 1;
@@ -17033,7 +17064,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
     static_assert(fact_5 == 120);
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 210
+    //  example/cpp_standard/constexpr_ut.cpp 234
 
     constexpr auto factorial = [](auto self, int n) -> int {  // リカーシブconstexprラムダ
         return (n <= 1) ? 1 : n * self(self, n - 1);
@@ -17650,7 +17681,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 * インライン化し易い。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 12
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 12
 
     class Integer {
     public:
@@ -17672,7 +17703,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 217
+    //  example/cpp_standard20/comparison_operator_ut.cpp 11
 
     class Integer {
     public:
@@ -17692,7 +17723,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 56
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 56
 
     class Integer {
     public:
@@ -17714,7 +17745,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 * [暗黙の型変換](#SS_6_6_2_2)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 78
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 78
 
     auto a = Integer{5};
 
@@ -17725,7 +17756,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 241
+    //  example/cpp_standard20/comparison_operator_ut.cpp 35
 
     class Integer {
     public:
@@ -17750,7 +17781,7 @@ C++20から導入された[<=>演算子](#SS_6_6_4_1)の定義により、すべ
 このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 141
+    //  example/cpp_standard20/comparison_operator_ut.cpp 61
 
     struct Point {
         int x;
@@ -17761,7 +17792,7 @@ C++20から導入された[<=>演算子](#SS_6_6_4_1)の定義により、すべ
     };
 ```
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 154
+    //  example/cpp_standard20/comparison_operator_ut.cpp 74
 
     auto p1 = Point{1, 2};
     auto p2 = Point{1, 2};
@@ -17793,7 +17824,7 @@ C++20から導入された[<=>演算子](#SS_6_6_4_1)の定義により、すべ
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 185
+    //  example/cpp_standard20/comparison_operator_ut.cpp 105
 
     struct Point {
         int x;
@@ -17978,8 +18009,8 @@ rvalueをバインドするリファレンスが存在しない状態で、
 そのrvalueがメンバ変数へのリファレンスを返す関数を呼び出し、
 そのリファレンスをバインドするリファレンス変数を初期化した場合、
 リファレンスが指すオブジェクトはすでにライフタイムを終了している。
-このような状態のリファレンスを[danglingリファレンス](#SS_6_8_7)と呼ぶ。
-同様に、このような状態のポインタを[danglingポインタ](#SS_6_8_8)と呼ぶ。
+このような状態のリファレンスを[danglingリファレンス](#SS_8_7_2)と呼ぶ。
+同様に、このような状態のポインタを[danglingポインタ](#SS_8_7_3)と呼ぶ。
 
 
 ## 値カテゴリとリファレンス <a id="SS_6_7"></a>
@@ -18602,55 +18633,10 @@ C++11からはエラーとならず、TRRはT&となる。
 このようなテンプレートの特殊化を不要にするリファレンスcollapsingは、
 有用な機能拡張であると言える。
 
-### danglingリファレンス <a id="SS_6_8_7"></a>
-Dangling リファレンスとは、破棄後のオブジェクトを指しているリファレンスを指す。
-このようなリファレンスにアクセスすると、[未定義動作](#SS_6_14_3)に繋がるに繋がる。
+### リファレンス修飾 <a id="SS_6_8_7"></a>
+[rvalue修飾](#SS_6_8_7_1)と[lvalue修飾](#SS_6_8_7_2)とを併せて、リファレンス修飾と呼ぶ。
 
-```cpp
-    //  example/cpp_standard/dangling_ut.cpp 9
-
-    bool X_destructed;
-    class X {
-    public:
-        X() { X_destructed = false; }
-        ~X() { X_destructed = true; }
-    };
-
-    bool A_destructed;
-    class A {
-    public:
-        A() { A_destructed = false; }
-        ~A() { A_destructed = true; }
-
-        X const& GetX() const noexcept { return x_; }
-
-    private:
-        X x_;
-    };
-
-    //  example/cpp_standard/dangling_ut.cpp 34
-
-    auto a = A{};
-
-    auto const& x_safe = a.GetX();  // x_safeはダングリングリファレンスではない
-    ASSERT_FALSE(A_destructed || X_destructed);
-
-    auto const& x_dangling = A{}.GetX();  // 次の行でxが指すオブジェクトは解放される
-    // この行ではxはdangngling リファレンスになる。
-    ASSERT_TRUE(A_destructed && X_destructed);
-
-    auto const* x_ptr_dangling = &A{}.GetX();  // 次の行でxが指すオブジェクトは解放される
-    // この行ではxはdangngling ポインタになる。
-    ASSERT_TRUE(A_destructed && X_destructed);
-```
-
-### danglingポインタ <a id="SS_6_8_8"></a>
-danglingポインタとは、[danglingリファレンス](#SS_6_8_7)と同じような状態になったポインタを指す。
-
-### リファレンス修飾 <a id="SS_6_8_9"></a>
-[rvalue修飾](#SS_6_8_9_1)と[lvalue修飾](#SS_6_8_9_2)とを併せて、リファレンス修飾と呼ぶ。
-
-#### rvalue修飾 <a id="SS_6_8_9_1"></a>
+#### rvalue修飾 <a id="SS_6_8_7_1"></a>
 下記GetString0()のような関数が返すオブジェクトの内部メンバに対する[ハンドル](#SS_8_8_1)は、
 オブジェクトのライフタイム終了後にもアクセスすることができるため、
 そのハンドルを通じて、
@@ -18726,8 +18712,8 @@ rvalueの内部ハンドルを返さないようにすることが可能とな�
     // auto const& s4_1 = C{"c1"}.GetString4();  // 危険なのでコンパイルさせない
 ```
 
-#### lvalue修飾 <a id="SS_6_8_9_2"></a>
-[rvalue修飾](#SS_6_8_9_1)を参照せよ。
+#### lvalue修飾 <a id="SS_6_8_7_2"></a>
+[rvalue修飾](#SS_6_8_7_1)を参照せよ。
 
 
 ## 構文と制御構造 <a id="SS_6_9"></a>
@@ -19700,7 +19686,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 * クロージャ型とは、クロージャオブジェクトの型。
 * キャプチャとは、ラムダ式外部の変数をラムダ式内にコピーかリファレンスとして定義する機能。
 * ラムダ式からキャプチャできるのは、ラムダ式から可視である自動変数と仮引数(thisを含む)。
-* [constexprラムダ](#SS_6_5_8)とはクロージャ型の[constexprインスタンス](#SS_6_5_5)。
+* [constexprラムダ](#SS_6_5_9)とはクロージャ型の[constexprインスタンス](#SS_6_5_6)。
 * [ジェネリックラムダ](#SS_6_11_6)とは、C++11のラムダ式を拡張して、
   パラメータにautoを使用(型推測)できるようにした機能。
 
@@ -20301,17 +20287,17 @@ C++17から、
     static_assert(std::is_same_v<decltype(a), std::vector<int>>);  // テンプレート引数がintと推論
 ```
 
-### テンプレートの型推論ガイド <a id="SS_6_11_8"></a>
-テンプレートの型推論ガイド([CTAD(Class Template Argument Deduction)](#SS_6_11_9))は、
-C++17で導入された機能である。この機能により、
-クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
-引数から自動的に型を推論できるようになる。型推論ガイドを使用することで、
-コードの可読性と簡潔性が向上する。
+### CTAD(Class Template Argument Deduction) <a id="SS_6_11_8"></a>
+CTAD（Class Template Argument Deduction、クラステンプレート実引数推論）は、C++17で導入された機能である。
+この機能により、クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
+コンストラクタの引数から自動的に型を推論できるようになる。
+クラステンプレートの型推論が不十分な場合、[テンプレートの型推論ガイド](#SS_6_11_9)を追加することにより、
+型推論を強化することができる。
 
-型推論ガイドがない場合、[クラステンプレートのテンプレート引数の型推論](#SS_6_11_7)は限定的であり、
-明示的にテンプレート引数を指定する必要がある場合が多い。
-一方、型推論ガイドを使用することで、
-コンストラクタの引数からテンプレート引数を自動的に決定することが可能になる。
+
+### テンプレートの型推論ガイド <a id="SS_6_11_9"></a>
+[CTAD(Class Template Argument Deduction)](#SS_6_11_8)による型推論をカスタマイズするために、型推論ガイドを定義できる。
+特にコンストラクタがテンプレートである場合など、暗黙の型推論では不十分な場合に有用である。
 
 ```cpp
     //  example/cpp_standard/deduction_guide_ut.cpp 8
@@ -20334,18 +20320,21 @@ C++17で導入された機能である。この機能により、
     };
 
 ```
-上記のクラステンプレートは、ガイドがない場合、
-以下に示すように型推論によりテンプレート引数を決定することができない。
+
+上記のクラステンプレートは、型推論ガイドがない場合、コンストラクタがテンプレートであるため、
+[CTAD(Class Template Argument Deduction)](#SS_6_11_8)による型推論ができない。
+そのため、以下のように明示的にテンプレート引数を指定する必要がある。
 
 ```cpp
     //  example/cpp_standard/deduction_guide_ut.cpp 31
 
+    // 型推論ガイドがないため、下記はコンパイルできない
+    // S s1{42};   // エラー: テンプレート引数を推論できない
+    // S s2{1.0};  // エラー: テンプレート引数を推論できない
+
+    // 上記の問題を回避するためには型推論ガイドを定義するか、テンプレート引数を指定しなければならない
     S<int>    s1{42};   // 明示的にテンプレート引数を指定
     S<double> s2{1.0};  // 明示的にテンプレート引数を指定
-
-    // テンプレート引数の推論ができず、下記はコンパイルできない
-    // S       s1{42};   // 明示的にテンプレート引数を指定
-    // S       s2{1.0};  // 明示的にテンプレート引数を指定
 ```
 
 以上に示したクラステンプレートに以下の型推論ガイドを追加することにより、
@@ -20362,12 +20351,13 @@ C++17で導入された機能である。この機能により、
 
     S s1{42};   // 推論ガイドの効果
     S s2{1.0};  // 推論ガイドの効果
-    S s3 = 42;  // S<int>のコンストラクタがintであるため、暗黙の型変換が可能
-    // S    s4 = 1.0;  // S<double>のコンストラクタがexplicitであるため
+    S s3 = 42;  // OK: S<int>のコンストラクタが非explicitのため、暗黙の変換が可能
+    // S    s4 = 1.0;  // S<double>のコンストラクタがexplicitであるため、暗黙の変換不可
 ```
 
-### CTAD(Class Template Argument Deduction) <a id="SS_6_11_9"></a>
-CTAD(Class Template Argument Deduction)とは、[テンプレートの型推論ガイド](#SS_6_11_8)のことである。
+多くの場合、コンパイラは暗黙の型推論ガイドを生成するため、明示的に型推論ガイドを書く必要はない。
+明示的な型推論ガイドが必要なのは、 上記の例のようにコンストラクタがテンプレートである場合や、
+特殊な推論ルールが必要な場合である。
 
 ### 変数テンプレート <a id="SS_6_11_10"></a>
 変数テンプレートとは、下記のコード示したような機能である。
@@ -23871,7 +23861,26 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 32
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 12
+
+    class Integer {
+    public:
+        Integer(int x) noexcept : x_{x} {}
+
+        // operator==とoperator<だけを定義
+        int get() const noexcept { return x_; }
+
+        // メンバ関数の比較演算子
+        bool operator==(const Integer& other) const noexcept { return x_ == other.x_; }
+        bool operator<(const Integer& other) const noexcept { return x_ < other.x_; }
+
+    private:
+        int x_;
+    };
+```
+
+```cpp
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 32
 
     using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
 
@@ -23880,10 +23889,10 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
     auto c = Integer{5};
 
     // std::rel_opsとは無関係に直接定義
-    ASSERT_EQ(a, c);      // a == c
-    ASSERT_NE(a, b);      // a != c
-    ASSERT_TRUE(a < b);   // aはbより小さい
-    ASSERT_FALSE(b < a);  // bはaより小さくない
+    ASSERT_EQ(a, c);       // a == c
+    ASSERT_FALSE(a == b);  // !(a == b)
+    ASSERT_TRUE(a < b);    // aはbより小さい
+    ASSERT_FALSE(b < a);   // bはaより小さくない
 
     // std::rel_ops による!=, <=, >, >=の定義
     ASSERT_TRUE(a != b);   // aとbは異なる
@@ -23900,7 +23909,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 110
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 110
 
     struct Point {
         int x;
@@ -23912,18 +23921,18 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
     };
 ```
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 124
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 124
 
-        auto a = Point{1, 2};
-        auto b = Point{1, 3};
-        auto c = Point{1, 2};
+    auto a = Point{1, 2};
+    auto b = Point{1, 3};
+    auto c = Point{1, 2};
 
-        using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
+    using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
 
-        ASSERT_TRUE(a == c);
-        ASSERT_TRUE(a != b);
-        ASSERT_TRUE(a < b);
-        ASSERT_FALSE(a > b);
+    ASSERT_TRUE(a == c);
+    ASSERT_TRUE(a != b);
+    ASSERT_TRUE(a < b);
+    ASSERT_FALSE(a > b);
 ```
 
 ## その他 <a id="SS_7_10"></a>
@@ -24029,7 +24038,9 @@ __この章の構成__
 
 &emsp;&emsp; [C++注意点](#SS_8_7)  
 &emsp;&emsp;&emsp; [オーバーライドとオーバーロードの違い](#SS_8_7_1)  
-&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_8_7_2)  
+&emsp;&emsp;&emsp; [danglingリファレンス](#SS_8_7_2)  
+&emsp;&emsp;&emsp; [danglingポインタ](#SS_8_7_3)  
+&emsp;&emsp;&emsp; [Most Vexing Parse](#SS_8_7_4)  
 
 &emsp;&emsp; [ソフトウェア一般](#SS_8_8)  
 &emsp;&emsp;&emsp; [ハンドル](#SS_8_8_1)  
@@ -24040,8 +24051,9 @@ __この章の構成__
 &emsp;&emsp;&emsp;&emsp; [LCOMの評価基準](#SS_8_8_4_2)  
 
 &emsp;&emsp;&emsp; [Spurious Wakeup](#SS_8_8_5)  
-&emsp;&emsp;&emsp; [副作用](#SS_8_8_6)  
-&emsp;&emsp;&emsp; [Itanium C++ ABI](#SS_8_8_7)  
+&emsp;&emsp;&emsp; [Static Initialization Order Fiasco(静的初期化順序問題)](#SS_8_8_6)  
+&emsp;&emsp;&emsp; [副作用](#SS_8_8_7)  
+&emsp;&emsp;&emsp; [Itanium C++ ABI](#SS_8_8_8)  
 
 &emsp;&emsp; [C++コンパイラ](#SS_8_9)  
 &emsp;&emsp;&emsp; [g++](#SS_8_9_1)  
@@ -26344,7 +26356,53 @@ Base::g()、Derived::g()の呼び出し選択は、オブジェクトの表層�
 
 このようなメカニズムにより仮想関数呼び出しが行われる。
 
-### Most Vexing Parse <a id="SS_8_7_2"></a>
+### danglingリファレンス <a id="SS_8_7_2"></a>
+Dangling リファレンスとは、破棄後のオブジェクトを指しているリファレンスを指す。
+このようなリファレンスにアクセスすると、[未定義動作](#SS_6_14_3)に繋がるに繋がる。
+
+```cpp
+    //  example/cpp_idioms/dangling_ut.cpp 9
+
+    bool X_destructed;
+    class X {
+    public:
+        X() { X_destructed = false; }
+        ~X() { X_destructed = true; }
+    };
+
+    bool A_destructed;
+    class A {
+    public:
+        A() { A_destructed = false; }
+        ~A() { A_destructed = true; }
+
+        X const& GetX() const noexcept { return x_; }
+
+    private:
+        X x_;
+    };
+
+    //  example/cpp_idioms/dangling_ut.cpp 34
+
+    auto a = A{};
+
+    auto const& x_safe = a.GetX();  // x_safeはダングリングリファレンスではない
+    ASSERT_FALSE(A_destructed || X_destructed);
+
+    auto const& x_dangling = A{}.GetX();  // 次の行でxが指すオブジェクトは解放される
+    // この行ではxはdangngling リファレンスになる。
+    ASSERT_TRUE(A_destructed && X_destructed);
+
+    auto const* x_ptr_dangling = &A{}.GetX();  // 次の行でxが指すオブジェクトは解放される
+    // この行ではxはdangngling ポインタになる。
+    ASSERT_TRUE(A_destructed && X_destructed);
+```
+
+### danglingポインタ <a id="SS_8_7_3"></a>
+danglingポインタとは、[danglingリファレンス](#SS_8_7_2)と同じような状態になったポインタを指す。
+
+
+### Most Vexing Parse <a id="SS_8_7_4"></a>
 Most Vexing Parse(最も困惑させる構文解析)とは、C++の文法に関連する問題で、
 Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつけたことに由来する。
 
@@ -26582,7 +26640,19 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
     }
 ```
 
-### 副作用 <a id="SS_8_8_6"></a>
+### Static Initialization Order Fiasco(静的初期化順序問題) <a id="SS_8_8_6"></a>
+静的初期化順序問題とは、
+グローバルや名前空間スコープの静的オブジェクトの初期化順序が翻訳単位間で未定義であることに起因する不具合である。
+あるオブジェクトAが初期化時に別のオブジェクトBに依存していても、Bがまだ初期化されていない場合、
+Aの初期化は未定義の状態となり、不正アクセスやクラッシュを引き起こす可能性がある。
+
+原因は、C++標準が同じ翻訳単位内の静的オブジェクトの初期化順序は保証するが、
+異なる翻訳単位間の順序は保証しないことにある。さらに、動的初期化を必要とするオブジェクトでは、
+初期化順序の依存関係が問題を起こす。
+
+C++20からこの問題の対策として、[constinit](#SS_6_5_8)が導入された。
+
+### 副作用 <a id="SS_8_8_7"></a>
 プログラミングにおいて、式の評価による作用には、
 主たる作用とそれ以外の
 [副作用](https://ja.wikipedia.org/wiki/%E5%89%AF%E4%BD%9C%E7%94%A8_(%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0))
@@ -26593,7 +26663,7 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
 ファイルの読み書き等のI/O実行、等がある。
 
 
-### Itanium C++ ABI <a id="SS_8_8_7"></a>
+### Itanium C++ ABI <a id="SS_8_8_8"></a>
 ItaniumC++ABIとは、C++コンパイラ間でバイナリ互換性を確保するための規約である。
 関数呼び出し規約、クラスレイアウト、仮想関数テーブル、例外処理、
 名前修飾(マングリング)などC++のオブジェクト表現と呼び出し方法に関する標準ルールを定めている。
@@ -26667,7 +26737,6 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
 再び一から作ること」を指すための慣用句である。
 ソフトウェア開発では、STLのような優れたライブラリを使わずに、
 それと同様なライブラリを自分たちで実装するような非効率な様を指すことが多い。
-
 
 
 

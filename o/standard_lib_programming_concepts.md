@@ -1410,7 +1410,26 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 次の例では、std::rel_opsを利用して、少ないコードで全ての比較演算子をサポートする例を示す。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 32
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 12
+
+    class Integer {
+    public:
+        Integer(int x) noexcept : x_{x} {}
+
+        // operator==とoperator<だけを定義
+        int get() const noexcept { return x_; }
+
+        // メンバ関数の比較演算子
+        bool operator==(const Integer& other) const noexcept { return x_ == other.x_; }
+        bool operator<(const Integer& other) const noexcept { return x_ < other.x_; }
+
+    private:
+        int x_;
+    };
+```
+
+```cpp
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 32
 
     using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
 
@@ -1419,10 +1438,10 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
     auto c = Integer{5};
 
     // std::rel_opsとは無関係に直接定義
-    ASSERT_EQ(a, c);      // a == c
-    ASSERT_NE(a, b);      // a != c
-    ASSERT_TRUE(a < b);   // aはbより小さい
-    ASSERT_FALSE(b < a);  // bはaより小さくない
+    ASSERT_EQ(a, c);       // a == c
+    ASSERT_FALSE(a == b);  // !(a == b)
+    ASSERT_TRUE(a < b);    // aはbより小さい
+    ASSERT_FALSE(b < a);   // bはaより小さくない
 
     // std::rel_ops による!=, <=, >, >=の定義
     ASSERT_TRUE(a != b);   // aとbは異なる
@@ -1439,7 +1458,7 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
 可読性、保守性の問題が発生する場合が多い。下記に示す方法はこの問題を幾分緩和する。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 110
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 110
 
     struct Point {
         int x;
@@ -1451,18 +1470,18 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
     };
 ```
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 124
+    //  example/cpp_standard/comparison_operator_old_ut.cpp 124
 
-        auto a = Point{1, 2};
-        auto b = Point{1, 3};
-        auto c = Point{1, 2};
+    auto a = Point{1, 2};
+    auto b = Point{1, 3};
+    auto c = Point{1, 2};
 
-        using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
+    using namespace std::rel_ops;  // std::rel_opsを使うために名前空間を追加
 
-        ASSERT_TRUE(a == c);
-        ASSERT_TRUE(a != b);
-        ASSERT_TRUE(a < b);
-        ASSERT_FALSE(a > b);
+    ASSERT_TRUE(a == c);
+    ASSERT_TRUE(a != b);
+    ASSERT_TRUE(a < b);
+    ASSERT_FALSE(a > b);
 ```
 
 ## その他 <a id="SS_7_10"></a>
