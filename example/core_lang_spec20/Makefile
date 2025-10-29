@@ -1,4 +1,4 @@
-VPATH:=../cpp_standard
+VPATH:=../core_lang_spec
 SRCS:=\
     literal_ut.cpp enum_ut.cpp explicit_ut.cpp comparison_operator_ut.cpp if_switch_init_ut.cpp concept_ut.cpp \
     decltype_ut.cpp co_await_ut.cpp co_yield_ut.cpp  designated_init_ut.cpp constexpr_ut.cpp \

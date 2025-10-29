@@ -75,20 +75,20 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 算術変換は、[汎整数型昇格](---)と通常算術変換に分けられる。
 
 ```cpp
-    // @@@ example/cpp_standard/integral_promotion_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/integral_promotion_ut.cpp #0:0 begin -1
 ```
 
 [オブジェクト生成と初期化|一様初期化](---)を使用することで、
 変数定義時の算術変換による意図しない値の変換([縮小型変換](---))を防ぐことができる。
 
 ```cpp
-    // @@@ example/cpp_standard/integral_promotion_ut.cpp #0:1 begin -2
+    // @@@ example/core_lang_spec/integral_promotion_ut.cpp #0:1 begin -2
 ```
 
 以下に示すように、算術変換の結果は直感に反することがあるため、注意が必要である。
 
 ```cpp
-    // @@@ example/cpp_standard/integral_promotion_ut.cpp #0:2 begin -2
+    // @@@ example/core_lang_spec/integral_promotion_ut.cpp #0:2 begin -2
 ```
 
 ### 汎整数型昇格
@@ -105,7 +105,7 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 下記のようにintに変換される。
 
 ```cpp
-    // @@@ example/cpp_standard/integral_promotion_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/integral_promotion_ut.cpp #1:0 begin -1
 ```
 
 ### 汎整数型拡張
@@ -116,7 +116,7 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 float型オブジェクトがdoulbe型に変換されることを指す。
 
 ```cpp
-    // @@@ example/cpp_standard/integral_promotion_ut.cpp #2:0 begin -1
+    // @@@ example/core_lang_spec/integral_promotion_ut.cpp #2:0 begin -1
 ```
 
 ### デフォルト引数昇格
@@ -134,7 +134,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 主に[型システムと算術の基礎|整数型](---)や[型システムと算術の基礎|浮動小数点型](---)などの値を小さな範囲の型に変換する際に起こる。
 
 ```cpp
-    // @@@ example/cpp_standard/etc_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/etc_ut.cpp #0:0 begin -1
 ```
 
 [オブジェクト生成と初期化|リスト初期化](---)を使うことで、このような変換によるバグの発生を防ぐことができる。
@@ -171,7 +171,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 以下のコードにより誤差が容易に発生することを示す。
 
 ```cpp
-    // @@@ example/cpp_standard/float_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/float_ut.cpp #0:0 begin -1
 ```
 
 #### イプシロン
@@ -185,7 +185,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 イプシロンを使用した浮動小数点変数の同値判定のコード例を以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/float_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/float_ut.cpp #1:0 begin -1
 ```
 
 #### 浮動小数点の演算エラー
@@ -204,7 +204,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 浮動小数点の演算エラーの検出コード例を以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/float_ut.cpp #2:0 begin -1
+    // @@@ example/core_lang_spec/float_ut.cpp #2:0 begin -1
 ```
 
 なお、上記のコードで使用した`std::fetestexcept`は一般にスレッドセーフである。
@@ -222,21 +222,21 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 C++11から導入された導入されたリテラル。
 
 ```cpp
-    // @@@ example/cpp_standard/literal_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/literal_ut.cpp #0:0 begin
 ```
 
 ### 2進数リテラル
 C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
 
 ```cpp
-    // @@@ example/cpp_standard/literal_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/literal_ut.cpp #1:0 begin -1
 ```
 
 ### 数値リテラル
 C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
 
 ```cpp
-    // @@@ example/cpp_standard/literal_ut.cpp #2:0 begin -1
+    // @@@ example/core_lang_spec/literal_ut.cpp #2:0 begin -1
 ```
 
 ### ワイド文字列
@@ -247,7 +247,7 @@ C++14では区切り文字'を使用し、数値リテラルを記述できる�
 * char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
 
 ```cpp
-    // @@@ example/cpp_standard/literal_ut.cpp #3:0 begin
+    // @@@ example/core_lang_spec/literal_ut.cpp #3:0 begin
 ```
 
 ### 16進浮動小数点数リテラル
@@ -278,7 +278,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ```
 
 ```cpp
-    // @@@ example/cpp_standard/literal_ut.cpp #4:0 begin -1
+    // @@@ example/core_lang_spec/literal_ut.cpp #4:0 begin -1
 ```
 
 ### ユーザー定義リテラル
@@ -288,31 +288,31 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ユーザ定義リテラル演算子とは以下のようなものである。
 
 ```cpp
-    // @@@ example/cpp_standard/user_defined_literal_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/user_defined_literal_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/user_defined_literal_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/user_defined_literal_ut.cpp #0:1 begin -1
 ```
 
 #### std::string型リテラル
 "xxx"sとすることで、std::string型のリテラルを作ることができる。
 
 ```cpp
-    // @@@ example/cpp_standard/user_defined_literal_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/user_defined_literal_ut.cpp #1:0 begin -1
 ```
 
 #### std::chronoのリテラル
 std::chronoのリテラルは以下のコードのように使用できる。
 
 ```cpp
-    // @@@ example/cpp_standard/literal_ut.cpp #5:0 begin
+    // @@@ example/core_lang_spec/literal_ut.cpp #5:0 begin
 ```
 
 #### std::complexリテラル
 std::complexリテラル以下のコードのように使用できる。
 
 ```cpp
-    // @@@ example/cpp_standard/literal_ut.cpp #6:0 begin -1
+    // @@@ example/core_lang_spec/literal_ut.cpp #6:0 begin -1
 ```
 
 ## 列挙型とバイト表現
@@ -327,18 +327,18 @@ C++03までのenumには、以下のような問題があった。
 * 名前空間の汚染: グローバルスコープに定義されたenumは、名前空間を汚染する。
 
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/enum_ut.cpp #0:0 begin -1
 ```
 
 ### enum class
 enum classは通常の[列挙型とバイト表現|enum](---)の問題を解決するためにC++11から導入された。
 
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/enum_ut.cpp #1:0 begin -1
 ```
 
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/enum_ut.cpp #1:1 begin -1
 ```
 
 ### スコープドenum
@@ -351,7 +351,7 @@ C++11で導入されたシンタックスである。enumのサイズをユー�
 特定のバイナリプロトコルとの互換性が必要な場合や、特定のハードウェアと連携する際に特に有効である。
 
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/enum_ut.cpp #2:0 begin
 ```
 
 C++17までは、型安全の観点から、初期化においては、以下のコードコメントのような仕様であったが、
@@ -359,7 +359,7 @@ C++17から導入された[std::byte](---)の利便性のため、
 underlying typeを指定したenumやenum class変数のunderlying typeインスタンスによる初期化が認められるようになった。
 
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec/enum_ut.cpp #2:1 begin -1
 ```
 
 上記コードにもあるが、underlying typeインスタンスによる初期化を行う場合は、
@@ -370,7 +370,7 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 前方宣言できないが、underlying typeを指定したenum、enum classは前方宣言することができる。
 
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #3:0 begin
+    // @@@ example/core_lang_spec/enum_ut.cpp #3:0 begin
 ```
 
 ### std::byte
@@ -380,7 +380,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 可読性、保守性の向上が見込める。
 
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #4:0 begin -1
+    // @@@ example/core_lang_spec/enum_ut.cpp #4:0 begin -1
 ```
 
 ### using enum
@@ -399,17 +399,17 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 とすることで、スコープによる修飾を省略するための記法である。
 
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #5:0 begin
+    // @@@ example/core_lang_spec/enum_ut.cpp #5:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #5:1 begin
+    // @@@ example/core_lang_spec/enum_ut.cpp #5:1 begin
 ```
 
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #6:0 begin
+    // @@@ example/core_lang_spec/enum_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/enum_ut.cpp #6:1 begin -1
+    // @@@ example/core_lang_spec/enum_ut.cpp #6:1 begin -1
 ```
 
 この記法は、簡潔に記述できるものの、一方では過度な使用は、
@@ -435,7 +435,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 下記のコードはその使用例である。
 
 ```cpp
-    // @@@ example/cpp_standard/trivial_ut.cpp #0:3 begin -2
+    // @@@ example/core_lang_spec/trivial_ut.cpp #0:3 begin -2
 ```
 
 ### トリビアルに破壊可能な型
@@ -446,7 +446,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 * 型に含まれるすべてのメンバ変数や基底クラスも「トリビアルに破壊可能」である。
 
 ```cpp
-    // @@@ example/cpp_standard/trivial_ut.cpp #1:0 begin -2
+    // @@@ example/core_lang_spec/trivial_ut.cpp #1:0 begin -2
 ```
 
 ### 標準レイアウト型
@@ -459,7 +459,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 下記のコードはその使用例である。
 
 ```cpp
-    // @@@ example/cpp_standard/trivial_ut.cpp #0:2 begin -2
+    // @@@ example/core_lang_spec/trivial_ut.cpp #0:2 begin -2
 ```
 
 ### 集成体
@@ -493,13 +493,13 @@ PODとは、 Plain Old Dataの略語であり、
 従って、std::is_pod_vは以下のように置き換えられるべきである。
 
 ```cpp
-    // @@@ example/cpp_standard/trivial_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/trivial_ut.cpp #0:0 begin
 ```
 
 下記のコードは置き換えられたstd::is_pod_vの使用例である。
 
 ```cpp
-    // @@@ example/cpp_standard/trivial_ut.cpp #0:1 begin -2
+    // @@@ example/core_lang_spec/trivial_ut.cpp #0:1 begin -2
 ```
 
 上記からわかる通り、POD型とは概ね、C言語と互換性のある型を指すと思って良い。
@@ -510,13 +510,13 @@ PODとは、 Plain Old Dataの略語であり、
 以下のis_completeで示したテンプレート定数で、不完全型か否かを判定できる。
 
 ```cpp
-    // @@@ example/cpp_standard/incomplete_type_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/incomplete_type_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/incomplete_type_ut.cpp #1:0 begin -2
+    // @@@ example/core_lang_spec/incomplete_type_ut.cpp #1:0 begin -2
 ```
 ```cpp
-    // @@@ example/cpp_standard/incomplete_type_ut.cpp #1:1 begin -2
+    // @@@ example/core_lang_spec/incomplete_type_ut.cpp #1:1 begin -2
 ```
 
 ### 完全型
@@ -543,7 +543,7 @@ C言語の構造体のレイアウトと互換性を持つことが一般的で�
 それを示すために、まずは下記のようにクラスX、Y、Zを定義する。
 
 ```cpp
-    // @@@ example/cpp_standard/class_layout_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/class_layout_ut.cpp #0:0 begin
 ```
 
 通常のC++コンパイラが作り出すX、Y、Zの概念的なメモリレイアウトは下記のようになる。
@@ -559,7 +559,7 @@ sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24で�
 g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
 
 ```cpp
-    // @@@ example/cpp_standard/Makefile #0:0 begin
+    // @@@ example/core_lang_spec/Makefile #0:0 begin
 ```
 
 X、Y、Zのメモリレイアウトは以下の様に出力される。
@@ -620,7 +620,7 @@ X、Y、Zのメモリレイアウトは以下の様に出力される。
 このようなメモリレイアウトは、
 
 ```cpp
-    // @@@ example/cpp_standard/class_layout_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/class_layout_ut.cpp #0:1 begin -1
 ```
 
 のようなオブジェクト生成に密接に関係する。その手順を下記の疑似コードにより示す。
@@ -668,26 +668,26 @@ dynamic_castは、実行時の型チェックと安全なダウンキャスト�
 下記のような[ポリモーフィックなクラス](---)に対しては、
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/rtti_ut.cpp #0:0 begin
 ```
 
 dynamic_castは下記のように振舞う。
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #0:1 begin -1
 ```
 
 
 一方で、下記のような非[ポリモーフィックなクラス](---)に対しては、
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/rtti_ut.cpp #1:0 begin
 ```
 
 dynamic_castは下記のように振舞う。
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #1:1 begin -1
 ```
 
 #### typeid
@@ -698,31 +698,31 @@ typeidのオペランドは[ポリモーフィックなクラス](---)のイン�
 以下の例では[基本型](---)に対するtypeidが返す[std::type_info](---)の振る舞いを表す。
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #0:2 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #0:2 begin -1
 ```
 
 下記のような[ポリモーフィックなクラス](---)のインスタンスに関して、
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #0:0 begin -1
 ```
 
 typeidが返す[std::type_info](---)オブジェクトは下記のように振舞う。
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #0:3 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #0:3 begin -1
 ```
 
 一方で、下記のような非[ポリモーフィックなクラス](---)に対しては、
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/rtti_ut.cpp #1:0 begin
 ```
 
 typeidが返す[std::type_info](---)オブジェクトは下記のように振舞う。
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #1:2 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #1:2 begin -1
 ```
 
 従って、このような場合のtypeidは静的な型(表層の型)に対しての情報を返すため、
@@ -733,7 +733,7 @@ typeidが返す[std::type_info](---)オブジェクトは下記のように振�
 このような場合、オペランド式は実行時に評価される。以下のコードはそのことを表している。
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #0:4 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #0:4 begin -1
 ```
 
 
@@ -741,7 +741,7 @@ typeidが返す[std::type_info](---)オブジェクトは下記のように振�
 コンパイル時に処理されるため、その式は実行されない。以下のコードはそのことを表している。
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #1:4 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #1:4 begin -1
 ```
 
 #### std::type_info
@@ -751,7 +751,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 以下のコードで示したように`std::type_info::name()`によりその型名を取り出すことができる。
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #2:0 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #2:0 begin -1
 ```
 
 `std::type_info::name()`が返すCスタイルの文字列リテラルを、
@@ -763,10 +763,10 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 オブジェクトの[被修飾型](---)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #2:1 begin
+    // @@@ example/core_lang_spec/rtti_ut.cpp #2:1 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/rtti_ut.cpp #2:2 begin -1
+    // @@@ example/core_lang_spec/rtti_ut.cpp #2:2 begin -1
 ```
 
 ### Run-time Type Information
@@ -781,7 +781,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 多くの場合、抽象基底クラスとして使用される。
 
 ```cpp
-    // @@@ example/cpp_standard/interface_class.cpp #0:0 begin
+    // @@@ example/core_lang_spec/interface_class.cpp #0:0 begin
 ```
 
 ### constインスタンス
@@ -794,7 +794,7 @@ C++03までのコンパイラに、
 
 
 ```cpp
-    // @@@ example/cpp_standard/const_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/const_ut.cpp #0:0 begin -1
 ```
 
 ## 定数式とコンパイル時評価
@@ -821,10 +821,10 @@ C++11以前で定数を定義する方法は、
 こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #0:1 begin -1
 ```
 
 constexpr定数がif文のオカレンスになる場合、[constexpr if文](---)することで、
@@ -839,10 +839,10 @@ constexpr関数の呼び出し式の値がコンパイル時に確定する場�
 通常の関数呼び出しと同じになる。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #1:1 begin -1
 ```
 
 C++11の規約では、constexpr関数の制約は厳しく、
@@ -850,13 +850,13 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #2:0 begin
 ```
 このため、可読性、保守性があったため、C++14で制約が緩和され、
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #2:1 begin
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #2:1 begin
 ```
 
 ### コア定数式
@@ -903,10 +903,10 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
 以下にリテラル型を例示する。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #3:0 begin
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #3:1 begin -1
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #3:1 begin -1
 ```
 
 ### constexprインスタンス
@@ -915,10 +915,10 @@ constexprインスタンスを生成できる。このリテラル型を使用�
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #4:0 begin
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #4:1 begin -1
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #4:1 begin -1
 ```
 
 ### consteval
@@ -933,10 +933,10 @@ consteval関数は「必ずコンパイル時に評価されなければなら�
 consteval関数の呼び出しは、その結果が定数式でなければコンパイルエラーとなる。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #5:0 begin
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #5:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #5:1 begin -1
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #5:1 begin -1
 ```
 
 ### constinit
@@ -950,7 +950,7 @@ constinitはC++20から導入されたキーワードであり、
 また、constinitはローカル(自動変数)には意味を持たない。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #6:0 begin
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #6:0 begin
 ```
 
 ### constexprラムダ
@@ -974,10 +974,10 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #7:0 begin -1
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #7:0 begin -1
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_ut.cpp #7:1 begin -1
+    // @@@ example/core_lang_spec/constexpr_ut.cpp #7:1 begin -1
 ```
 
 ## オブジェクト生成と初期化
@@ -1087,7 +1087,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 下記コードでは、 E::E(std::initializer_list\<uint32_t>)が初期化子リストコンストラクタである。
 
 ```cpp
-    // @@@ example/cpp_standard/constructor_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/constructor_ut.cpp #0:0 begin
 ```
 
 デフォルトコンストラクタと初期化子リストコンストラクタが、
@@ -1106,7 +1106,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 下記コードのように、継承コンストラクタは派生クラス内でusingを用いて宣言される。
 
 ```cpp
-    // @@@ example/cpp_standard/constructor_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/constructor_ut.cpp #1:0 begin
 ```
 
 #### 委譲コンストラクタ
@@ -1115,7 +1115,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 
 ```cpp
-    // @@@ example/cpp_standard/constructor_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/constructor_ut.cpp #2:0 begin
 ```
 
 ### explicit コンストラクタと型変換制御
@@ -1139,37 +1139,37 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 [汎整数型昇格](---)や[算術変換](---)等を指さない。
 
 ```cpp
-    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/implicit_conversion_ut.cpp #0:0 begin
 ```
 
 上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
 
 ```cpp
-    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:1 begin
+    // @@@ example/core_lang_spec/implicit_conversion_ut.cpp #0:1 begin
 ```
 
 この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
 
 ```cpp
-    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:2 begin
+    // @@@ example/core_lang_spec/implicit_conversion_ut.cpp #0:2 begin
 ```
 
 この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
 
 ```cpp
-    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:3 begin -2
+    // @@@ example/core_lang_spec/implicit_conversion_ut.cpp #0:3 begin -2
 ```
 
 以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
 
 ```cpp
-    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:4 begin -2
+    // @@@ example/core_lang_spec/implicit_conversion_ut.cpp #0:4 begin -2
 ```
 
 下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
 
 ```cpp
-    // @@@ example/cpp_standard/implicit_conversion_ut.cpp #0:5 begin
+    // @@@ example/core_lang_spec/implicit_conversion_ut.cpp #0:5 begin
 ```
 
 std::stringは暗黙の型変換を許して良く、(多くの場合)Personには暗黙の型変換をしない方が良い理由は、
@@ -1188,20 +1188,20 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のコードのように[暗黙の型変換](---)が起こる。
 
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/explicit_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/explicit_ut.cpp #0:1 begin -1
 ```
 
 暗黙の型変換はわかりづらいバグを生み出してしまうことがあるため、
 下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
 
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/explicit_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/explicit_ut.cpp #1:1 begin -1
 ```
 
 C++03までは、[オブジェクト生成と初期化|一様初期化](---)がサポートされていなかったため、
@@ -1211,20 +1211,20 @@ C++11からサポートされた[オブジェクト生成と初期化|一様初�
 暗黙の型変換を使用できる。
 
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/explicit_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec/explicit_ut.cpp #2:1 begin -1
 ```
 
 以下に示す通り、コンストラクタの引数の数によらず、
 C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
 
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #3:0 begin
+    // @@@ example/core_lang_spec/explicit_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #3:1 begin -1
+    // @@@ example/core_lang_spec/explicit_ut.cpp #3:1 begin -1
 ```
 
 #### explicit(COND)
@@ -1235,19 +1235,19 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 以下にこのシンタックスの単純な使用例を示す。
 
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #6:0 begin
+    // @@@ example/core_lang_spec/explicit_ut.cpp #6:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #6:1 begin -1
+    // @@@ example/core_lang_spec/explicit_ut.cpp #6:1 begin -1
 ```
 
 テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #7:0 begin
+    // @@@ example/core_lang_spec/explicit_ut.cpp #7:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #7:1 begin -1
+    // @@@ example/core_lang_spec/explicit_ut.cpp #7:1 begin -1
 ```
 
 こういった工夫により、コードの過度な柔軟性を適度に保つことができ、
@@ -1259,19 +1259,19 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
 
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #4:0 begin
+    // @@@ example/core_lang_spec/explicit_ut.cpp #4:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #4:1 begin -1
+    // @@@ example/core_lang_spec/explicit_ut.cpp #4:1 begin -1
 ```
 
 以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
 
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #5:0 begin
+    // @@@ example/core_lang_spec/explicit_ut.cpp #5:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/explicit_ut.cpp #5:1 begin -1
+    // @@@ example/core_lang_spec/explicit_ut.cpp #5:1 begin -1
 ```
 
 ### ==演算子
@@ -1286,14 +1286,14 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 * インライン化し易い。
 
 ```cpp
-    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/comparison_operator_old_ut.cpp #0:0 begin
 ```
 
 すべてのメンバ変数に==演算子が定義されている場合、
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec20/comparison_operator_ut.cpp #0:0 begin
 ```
 
 #### 非メンバ==演算子
@@ -1303,20 +1303,20 @@ C++20以降より、`=default`により==演算子を自動生成させること
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/comparison_operator_old_ut.cpp #1:0 begin
 ```
 
 * [暗黙の型変換](---)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    // @@@ example/cpp_standard/comparison_operator_old_ut.cpp #1:1 begin -2
+    // @@@ example/core_lang_spec/comparison_operator_old_ut.cpp #1:1 begin -2
 ```
 
 すべてのメンバ変数に==演算子が定義されている場合、
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec20/comparison_operator_ut.cpp #1:0 begin
 ```
 
 ### 比較演算子
@@ -1329,17 +1329,17 @@ C++20から導入された[<=>演算子](---)の定義により、すべてが�
 このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec20/comparison_operator_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec20/comparison_operator_ut.cpp #2:1 begin -1
 ```
 
 定型の比較演算子では不十分である場合、<=>演算子を実装する必要が出てくる。
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard20/comparison_operator_ut.cpp #3:0 begin
+    // @@@ example/core_lang_spec20/comparison_operator_ut.cpp #3:0 begin
 ```
 
 #### 三方比較演算子
@@ -1355,7 +1355,7 @@ spaceship operatorとは[<=>演算子](---)を指す。
 以下にコード例を示す。
 
 ```cpp
-    // @@@ example/cpp_standard/uniform_initialization_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/uniform_initialization_ut.cpp #0:0 begin -1
 ```
 
 変数による一様初期化が縮小型変換を起こす場合や、
@@ -1363,7 +1363,7 @@ spaceship operatorとは[<=>演算子](---)を指す。
 この機能を積極的に使用することで、縮小型変換による初期化のバグを未然に防ぐことができる。
 
 ```cpp
-    // @@@ example/cpp_standard/uniform_initialization_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/uniform_initialization_ut.cpp #0:1 begin -1
 ```
 
 ### 一様初期化
@@ -1387,7 +1387,7 @@ NSDMIとは、non-static data member initializerの略語であり、
 下記のような非静的なメンバ変数の初期化子を指す。
 
 ```cpp
-    // @@@ example/cpp_standard/nsdmi.cpp #0:0 begin
+    // @@@ example/core_lang_spec/nsdmi.cpp #0:0 begin
 ```
 
 #### 初期化子リストでの初期化
@@ -1399,7 +1399,7 @@ NSDMIとは、non-static data member initializerの略語であり、
 constメンバ変数は、初期化子リストでの初期化か[NSDMI](---)でしか初期化できない。
 
 ```cpp
-    // @@@ example/cpp_standard/nsdmi.cpp #0:1 begin
+    // @@@ example/core_lang_spec/nsdmi.cpp #0:1 begin
 ```
 
 #### コンストラクタ内での非静的なメンバ変数の初期値の代入
@@ -1409,7 +1409,7 @@ constメンバ変数は、初期化子リストでの初期化か[NSDMI](---)で
 [初期化子リストでの初期化](---)で初期化できない変数を未初期化でない状態にするための唯一の方法である。
 
 ```cpp
-    // @@@ example/cpp_standard/nsdmi.cpp #0:2 begin
+    // @@@ example/core_lang_spec/nsdmi.cpp #0:2 begin
 ```
 
 ### オブジェクトのライフタイム
@@ -1514,7 +1514,7 @@ C++17以降は[RVO(Return Value Optimization)](---)により、
 このドキュメントでも、そうなっていることもある。
 
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #0:0 begin -1
 ```
 
 #### glvalue
@@ -1547,7 +1547,7 @@ decltypeの算出結果は下表のようになる。
 に有効に活用できる。
 
 ```cpp
-    // @@@ example/cpp_standard/decltype_expression_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/decltype_expression_ut.cpp #0:0 begin -1
 ```
 
 ## リファレンス
@@ -1577,18 +1577,18 @@ lvalueリファレンスとは、
     * const lvalueリファレンスは[expression|rvalue](---)をバインドできる。
 
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #1:0 begin -1
 ```
 
 このようなリファレンスのバインドの可否はオーバーロードにも影響を与える。
 
 
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #1:1 begin
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #1:1 begin
 ```
 
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #1:2 begin -1
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #1:2 begin -1
 ```
 
 ### rvalueリファレンス
@@ -1601,25 +1601,25 @@ rvalueリファレンスは、
 * **注意2** 型が`T&&`である変数は、`T&`でバインドできる。
 
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:0 begin -1
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #2:0 begin -1
 ```
 
 このようなリファレンスのバインドの可否はオーバーロードにも影響を与える。
 
 
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:1 begin
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #2:1 begin
 ```
 
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:2 begin -1
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:3 begin -1
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #2:2 begin -1
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #2:3 begin -1
 ```
 
 上記コードの最後の部分の抜粋である以下のコードについては、少々解説が必要だろう。
 
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:3 begin -1
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #2:3 begin -1
 ```
 
 ref_refの型は`int &&`であるが、ref_refの値カテゴリは[expression|rvalue](---)ではなく、[lvalue](---)である。
@@ -1631,10 +1631,10 @@ rvalueリファレンス型の仮引数（`T&&`）を持つ関数は、ムーブ
 [moveセマンティクス](---)や[perfect forwarding](---)を正しく実装/使用するために極めて重要である。
 
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:4 begin
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #2:4 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/rvalue_lvalue_ut.cpp #2:5 begin -1
+    // @@@ example/core_lang_spec/rvalue_lvalue_ut.cpp #2:5 begin -1
 ```
 ---
 
@@ -1652,7 +1652,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 下記コードにより「[expression|lvalue](---)からの代入」を説明する。
 
 ```.cpp
-    // @@@ example/cpp_standard/rvalue_move_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/rvalue_move_ut.cpp #0:0 begin -1
 ```
 
 * 行１、２  
@@ -1670,7 +1670,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 下記コードにより「[expression|rvalue](---)からの代入」を説明する。
 
 ```.cpp
-    // @@@ example/cpp_standard/rvalue_move_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/rvalue_move_ut.cpp #0:1 begin -1
 ```
 
 * 行１  
@@ -1694,7 +1694,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 下記コードにより「std::move(lvalue)からの代入」を説明する。
 
 ```.cpp
-    // @@@ example/cpp_standard/rvalue_move_ut.cpp #0:2 begin -1
+    // @@@ example/core_lang_spec/rvalue_move_ut.cpp #0:2 begin -1
 ```
 
 * 行１  
@@ -1724,16 +1724,16 @@ forwardingリファレンスは一見rvalueリファレンスのように見え�
 ([リファレンスcollapsing](---)により、このようなバインドが可能になる)。
 
 ```cpp
-    // @@@ example/cpp_standard/universal_ref_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/universal_ref_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/universal_ref_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/universal_ref_ut.cpp #0:1 begin -1
 ```
 
 下記のコードは[ジェネリックラムダ](---)の引数をforwardingリファレンスにした例である。
 
 ```cpp
-    // @@@ example/cpp_standard/universal_ref_ut.cpp #0:2 begin -1
+    // @@@ example/core_lang_spec/universal_ref_ut.cpp #0:2 begin -1
 ```
 
 通常、forwardingリファレンスはstd::forwardと組み合わせて使用される。
@@ -1752,10 +1752,10 @@ perfect forwarding(完全転送)とは、引数の[expression|rvalue](---)性や
 perfect forwardingの使用例を以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/perfect_forwarding_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/perfect_forwarding_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/perfect_forwarding_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/perfect_forwarding_ut.cpp #0:1 begin -1
 ```
 
 ### リファレンスcollapsing
@@ -1777,7 +1777,7 @@ C++11からはエラーとならず、TRRはT&となる。
 下記はTをintとした場合のリファレンスcollapsingの動きを示している。
 
 ```cpp
-    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/ref_collapsing_ut.cpp #0:0 begin -1
 ```
 
 リファレンスcollapsingは、型エイリアス、型であるテンプレートパラメータ、decltypeに対して行われる。
@@ -1793,31 +1793,31 @@ C++11からはエラーとならず、TRRはT&となる。
 下記のようなクラステンプレートを定義した場合、
 
 ```cpp
-    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:1 begin
+    // @@@ example/core_lang_spec/ref_collapsing_ut.cpp #0:1 begin
 ```
 
 下記のコードにより、テンプレートパラメータに対するこの変換則を確かめることができる。
 
 ```cpp
-    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:2 begin -1
+    // @@@ example/core_lang_spec/ref_collapsing_ut.cpp #0:2 begin -1
 ```
 
 この機能がないC++03では、
 
 ```cpp
-    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:3 begin
+    // @@@ example/core_lang_spec/ref_collapsing_ut.cpp #0:3 begin
 ```
 
 ようなクラステンプレートに下記コードのようにリファレンス型を渡すとコンパイルエラーとなる。
 
 ```cpp
-    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:5 begin -1
+    // @@@ example/core_lang_spec/ref_collapsing_ut.cpp #0:5 begin -1
 ```
 
 この問題を回避するためには下記のようなテンプレートの特殊化が必要になる。
 
 ```cpp
-    // @@@ example/cpp_standard/ref_collapsing_ut.cpp #0:4 begin
+    // @@@ example/core_lang_spec/ref_collapsing_ut.cpp #0:4 begin
 ```
 
 上記したようなクラステンプレートでのメンバエイリアスの宣言は、
@@ -1844,10 +1844,10 @@ C++11からはエラーとならず、TRRはT&となる。
 rvalueの内部ハンドルを返さないようにすることが可能となり、上記の危険性を緩和することができる。
 
 ```cpp
-    // @@@ example/cpp_standard/ref_qualifiers_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/ref_qualifiers_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/ref_qualifiers_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/ref_qualifiers_ut.cpp #0:1 begin -1
 ```
 
 #### lvalue修飾
@@ -1870,25 +1870,25 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
 |[[no_unique_address]]|C++20 |クラスや構造体のメンバに対して、メモリの最適化促進 |
 
 ```cpp
-    // @@@ example/cpp_standard/attr_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/attr_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/attr_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/attr_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/attr_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/attr_ut.cpp #2:0 begin
 
-    // @@@ example/cpp_standard/attr_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec/attr_ut.cpp #2:1 begin -1
 ```
 ```cpp
-    // @@@ example/cpp_standard/attr_ut.cpp #3:0 begin -1
+    // @@@ example/core_lang_spec/attr_ut.cpp #3:0 begin -1
 ```
 
 ### 関数tryブロック
 関数tryブロックとはtry-catchを本体とした下記のような関数のブロックを指す。
 
 ```cpp
-    // @@@ example/cpp_standard/func_try_block.cpp #0:0 begin
+    // @@@ example/core_lang_spec/func_try_block.cpp #0:0 begin
 ```
 
 ### 範囲for文
@@ -1913,13 +1913,13 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
 単純な範囲for文の使用例は下記の通りである。
 
 ```cpp
-    // @@@ example/cpp_standard/range_for_ut.cpp #0:0 begin -2
+    // @@@ example/core_lang_spec/range_for_ut.cpp #0:0 begin -2
 ```
 
 上記のコードは下記のように展開される。
 
 ```cpp
-    // @@@ example/cpp_standard/range_for_ut.cpp #0:1 begin -2
+    // @@@ example/core_lang_spec/range_for_ut.cpp #0:1 begin -2
 ```
 
 
@@ -1942,12 +1942,12 @@ C++17以降は、この規制が緩和されたため、以下のように展開
 下記のコードはこの緩和ルールの応用例である。
 
 ```cpp
-    // @@@ example/cpp_standard/range_for_ut.cpp #2:0 begin -2
+    // @@@ example/core_lang_spec/range_for_ut.cpp #2:0 begin -2
 ```
 上記のコードは下記のように展開される。
 
 ```cpp
-    // @@@ example/cpp_standard/range_for_ut.cpp #2:1 begin -2
+    // @@@ example/core_lang_spec/range_for_ut.cpp #2:1 begin -2
 ```
 
 ### 構造化束縛
@@ -1955,16 +1955,16 @@ C++17以降は、この規制が緩和されたため、以下のように展開
 構造体のメンバーを個別の変数に分解して簡潔に扱うことをできるようにするための機能である。
 
 ```cpp
-    // @@@ example/cpp_standard/structured_binding_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/structured_binding_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/structured_binding_ut.cpp #0:1 begin
+    // @@@ example/core_lang_spec/structured_binding_ut.cpp #0:1 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/structured_binding_ut.cpp #0:2 begin
+    // @@@ example/core_lang_spec/structured_binding_ut.cpp #0:2 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/structured_binding_ut.cpp #0:3 begin
+    // @@@ example/core_lang_spec/structured_binding_ut.cpp #0:3 begin
 ```
 
 ### 初期化付きif/switch文
@@ -1993,10 +1993,10 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 上記のと同様の実際のfor文のコードを以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/if_switch_init_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/if_switch_init_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/if_switch_init_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/if_switch_init_ut.cpp #1:0 begin -1
 ```
 
 #### 初期化付きwhile文(従来のwhile文)
@@ -2013,7 +2013,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 以下のコード例のように従来の記法は広く知られているため、念とため紹介する。
 
 ```cpp
-    // @@@ example/cpp_standard/if_switch_init_ut.cpp #2:0 begin -1
+    // @@@ example/core_lang_spec/if_switch_init_ut.cpp #2:0 begin -1
 ```
 
 #### 初期化付きif文
@@ -2028,16 +2028,16 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 上記と同様の構造を持つ実際のif文のコードを以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/if_switch_init_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/if_switch_init_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/if_switch_init_ut.cpp #3:0 begin -1
+    // @@@ example/core_lang_spec/if_switch_init_ut.cpp #3:0 begin -1
 ```
 
 クラスの独自の[<=>演算子](---)を定義する場合、下記のように使用することができる。
 
 ```cpp
-    // @@@ example/cpp_standard/if_switch_init_ut.cpp #4:0 begin
+    // @@@ example/core_lang_spec/if_switch_init_ut.cpp #4:0 begin
 ```
 
 #### 初期化付きswitch文
@@ -2058,10 +2058,10 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 上記と同様の構造を持つ実際のswitch文のコードを以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/if_switch_init_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/if_switch_init_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/if_switch_init_ut.cpp #5:0 begin -1
+    // @@@ example/core_lang_spec/if_switch_init_ut.cpp #5:0 begin -1
 ```
 
 ## 言語拡張機能
@@ -2077,24 +2077,24 @@ co_awaitはコルーチンの非同期操作の一時停止と再開に使用さ
 co_waitとco_returnを使用したコードを以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard20/co_await_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec20/co_await_ut.cpp #0:0 begin
 ```
 以下単体テストコードによりに上記コルーチンの動作を示す。
 
 ```cpp
-    // @@@ example/cpp_standard20/co_await_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec20/co_await_ut.cpp #0:1 begin -1
 ```
 
 上記のコルーチンと同じ機能を持つクラスのco_await/co_returnを使わない実装を以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard20/co_await_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec20/co_await_ut.cpp #1:0 begin
 ```
 
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    // @@@ example/cpp_standard20/co_await_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec20/co_await_ut.cpp #1:1 begin -1
 ```
 
 C++20から導入されたco_await、co_return、TaskとC++17以前の機能のみを使用したコードの対比によって、
@@ -2109,25 +2109,25 @@ co_yieldはコルーチンから値を返しつつ、
 次の再開ポイントまで処理を中断する。これはジェネレーターの実装に便利である。
 
 ```cpp
-    // @@@ example/cpp_standard20/co_yield_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec20/co_yield_ut.cpp #0:0 begin
 ```
 このテストを以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard20/co_yield_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec20/co_yield_ut.cpp #0:1 begin -1
 ```
 
 [co_await](---)、co_returnの例でみたように、
 co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yieldを使わない実装を以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard20/co_yield_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec20/co_yield_ut.cpp #1:0 begin
 ```
 
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    // @@@ example/cpp_standard20/co_yield_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec20/co_yield_ut.cpp #1:1 begin -1
 ```
 
 C++20から導入されたco_await、co_return、TaskとC++17以前の機能のみを使用したコードの対比によって、
@@ -2171,7 +2171,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
   パラメータにautoを使用(型推測)できるようにした機能。
 
 ```cpp
-    // @@@ example/cpp_standard/lambda.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/lambda.cpp #0:0 begin -1
 ```
 
 #### クロージャ
@@ -2186,7 +2186,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 複雑な初期化を必要とするconstオブジェクトの生成をするような場合に有用なテクニックである。
 
 ```cpp
-    // @@@ example/cpp_standard/transient_lambda_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/transient_lambda_ut.cpp #0:0 begin -1
 ```
 
 #### transient lambda
@@ -2201,23 +2201,23 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 まずは、この機能を有効に使えるクラス例を以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard20/designated_init_ut.cpp #0:0 begin 
+    // @@@ example/core_lang_spec20/designated_init_ut.cpp #0:0 begin 
 ```
 ```cpp
-    // @@@ example/cpp_standard20/designated_init_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec20/designated_init_ut.cpp #0:1 begin -1
 ```
 
 下記に示すように、[Polymorphic Memory Resource(pmr)](---)のpool_resourceの初期化には、
 この機能を使うと可読性の改善が期待できる。
 
 ```cpp
-    // @@@ example/cpp_standard20/designated_init_ut.cpp #1:0 begin -2
+    // @@@ example/core_lang_spec20/designated_init_ut.cpp #1:0 begin -2
 ```
 
 指示付き初期化を使わない以下のコード例と上記を比べれば可読性の改善に議論の余地はないだろう。
 
 ```cpp
-    // @@@ example/cpp_standard20/designated_init_ut.cpp #1:1 begin -2
+    // @@@ example/core_lang_spec20/designated_init_ut.cpp #1:1 begin -2
 ```
 
 ## テンプレートと型推論
@@ -2265,33 +2265,33 @@ C++20から導入された「コンセプト(concepts)」は、
   テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
 
 ```cpp
-    // @@@ example/cpp_standard/concept_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/concept_ut.cpp #0:0 begin
 
-    // @@@ example/cpp_standard/concept_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/concept_ut.cpp #0:1 begin -1
 ```
 
 ```cpp
-    // @@@ example/cpp_standard/concept_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/concept_ut.cpp #1:0 begin
 
-    // @@@ example/cpp_standard/concept_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/concept_ut.cpp #1:1 begin -1
 ```
 
 以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
 
 ```cpp
-    // @@@ example/cpp_standard/concept_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/concept_ut.cpp #2:0 begin
 ```
 
 以上の関数テンプレートをコンセプトを使用して改善した例である。
 
 ```cpp
-    // @@@ example/cpp_standard/concept_ut.cpp #3:0 begin
+    // @@@ example/core_lang_spec/concept_ut.cpp #3:0 begin
 ```
 
 フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
 
 ```cpp
-    // @@@ example/cpp_standard/concept_ut.cpp #4:0 begin
+    // @@@ example/core_lang_spec/concept_ut.cpp #4:0 begin
 ```
 
 ### パラメータパック
@@ -2308,13 +2308,13 @@ C++20から導入された「コンセプト(concepts)」は、
 パラメータパックを使用した関数テンプレートは以下のように定義する。
 
 ```cpp
-    // @@@ example/cpp_standard/template_ut.cpp #3:0 begin
+    // @@@ example/core_lang_spec/template_ut.cpp #3:0 begin
 ```
 
 以下の単体テストは上記の関数の使い方を示している。
 
 ```cpp
-    // @@@ example/cpp_standard/template_ut.cpp #3:1 begin -1
+    // @@@ example/core_lang_spec/template_ut.cpp #3:1 begin -1
 ```
 
 ### 畳み込み式
@@ -2331,38 +2331,38 @@ C++20から導入された「コンセプト(concepts)」は、
 
 1. 単項右畳み込み
 ```cpp
-    // @@@ example/cpp_standard/flold_expression_ut.cpp #0:0 begin 
+    // @@@ example/core_lang_spec/flold_expression_ut.cpp #0:0 begin 
 ```
 2. 単項左畳み込み
 ```cpp
-    // @@@ example/cpp_standard/flold_expression_ut.cpp #0:1 begin 
+    // @@@ example/core_lang_spec/flold_expression_ut.cpp #0:1 begin 
 ```
 3. 二項右畳み込み
 ```cpp
-    // @@@ example/cpp_standard/flold_expression_ut.cpp #0:2 begin 
+    // @@@ example/core_lang_spec/flold_expression_ut.cpp #0:2 begin 
 ```
 4. 二項左畳み込み
 ```cpp
-    // @@@ example/cpp_standard/flold_expression_ut.cpp #0:3 begin 
+    // @@@ example/core_lang_spec/flold_expression_ut.cpp #0:3 begin 
 ```
 
 上記したような単純な例では、畳み込み式の効果はわかりづらいため、
 もっと複雑なで読解が困難な再帰構造を持ったコードを以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/flold_expression_ut.cpp #1:0 begin 
+    // @@@ example/core_lang_spec/flold_expression_ut.cpp #1:0 begin 
 ```
 ```cpp
-    // @@@ example/cpp_standard/flold_expression_ut.cpp #1:1 begin
+    // @@@ example/core_lang_spec/flold_expression_ut.cpp #1:1 begin
 ```
 
 畳み込み式を使うことで、この問題をある程度緩和したコードを下記する。
 
 ```cpp
-    // @@@ example/cpp_standard/flold_expression_ut.cpp #2:0 begin 
+    // @@@ example/core_lang_spec/flold_expression_ut.cpp #2:0 begin 
 ```
 ```cpp
-    // @@@ example/cpp_standard/flold_expression_ut.cpp #2:1 begin
+    // @@@ example/core_lang_spec/flold_expression_ut.cpp #2:1 begin
 ```
 
 ### ジェネリックラムダ
@@ -2375,13 +2375,13 @@ C++14で導入された。
 下記のように使用することもできる便利な記法である。
 
 ```cpp
-    // @@@ example/cpp_standard/generic_lambda_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/generic_lambda_ut.cpp #0:0 begin
 ```
 
 なお、上記のジェネリックラムダは下記クラスのインスタンスの動きと同じである。
 
 ```cpp
-    // @@@ example/cpp_standard/generic_lambda_ut.cpp #0:1 begin
+    // @@@ example/core_lang_spec/generic_lambda_ut.cpp #0:1 begin
 ```
 
 ### クラステンプレートのテンプレート引数の型推論
@@ -2392,13 +2392,13 @@ C++17から、
 この機能がないC++14までは以下のように記述する必要があった。
 
 ```cpp
-    // @@@ example/cpp_standard/template_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/template_ut.cpp #0:0 begin -1
 ```
 
 これに対して、この機能により、以下のようにシンプルに記述できるようになった。
 
 ```cpp
-    // @@@ example/cpp_standard/template_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/template_ut.cpp #0:1 begin -1
 ```
 
 ### CTAD(Class Template Argument Deduction)
@@ -2414,7 +2414,7 @@ CTAD（Class Template Argument Deduction、クラステンプレート実引数�
 特にコンストラクタがテンプレートである場合など、暗黙の型推論では不十分な場合に有用である。
 
 ```cpp
-    // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/deduction_guide_ut.cpp #0:0 begin
 ```
 
 上記のクラステンプレートは、型推論ガイドがない場合、コンストラクタがテンプレートであるため、
@@ -2422,17 +2422,17 @@ CTAD（Class Template Argument Deduction、クラステンプレート実引数�
 そのため、以下のように明示的にテンプレート引数を指定する必要がある。
 
 ```cpp
-    // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/deduction_guide_ut.cpp #0:1 begin -1
 ```
 
 以上に示したクラステンプレートに以下の型推論ガイドを追加することにより、
 テンプレート引数を型推論できるようになる。
 
 ```cpp
-    // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:2 begin 
+    // @@@ example/core_lang_spec/deduction_guide_ut.cpp #0:2 begin 
 ```
 ```cpp
-    // @@@ example/cpp_standard/deduction_guide_ut.cpp #0:3 begin -1
+    // @@@ example/core_lang_spec/deduction_guide_ut.cpp #0:3 begin -1
 ```
 
 多くの場合、コンパイラは暗黙の型推論ガイドを生成するため、明示的に型推論ガイドを書く必要はない。
@@ -2443,7 +2443,7 @@ CTAD（Class Template Argument Deduction、クラステンプレート実引数�
 変数テンプレートとは、下記のコード示したような機能である。
 
 ```cpp
-    // @@@ example/cpp_standard/template_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/template_ut.cpp #1:0 begin
 ```
 
 なお、変数テンプレートはconstexprと定義されるが、
@@ -2455,7 +2455,7 @@ CTAD（Class Template Argument Deduction、クラステンプレート実引数�
 下記のコード例で示したようにテンプレートによって型の別名を定義する機能である。
 
 ```cpp
-    // @@@ example/cpp_standard/template_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/template_ut.cpp #2:0 begin
 ```
 
 ### constexpr if文
@@ -2465,10 +2465,10 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
 まずは、この構文を使用しない例を示す。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_if_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/constexpr_if_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_if_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/constexpr_if_ut.cpp #0:1 begin -1
 ```
 
 このような場合、[SFINAE](---)によるオーバーロードが必須であったが、
@@ -2476,16 +2476,16 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
 条件分岐の可読性の向上が見込める。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_if_ut.cpp #0:2 begin
+    // @@@ example/core_lang_spec/constexpr_if_ut.cpp #0:2 begin
 ```
 
 この構文は[パラメータパック](---)の展開においても有用な場合がある。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_if_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/constexpr_if_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/constexpr_if_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/constexpr_if_ut.cpp #1:1 begin -1
 ```
 
 C++14までの構文を使用する場合、
@@ -2493,7 +2493,7 @@ C++14までの構文を使用する場合、
 constexpr ifを使用することで、やや単純に記述できる。
 
 ```cpp
-    // @@@ example/cpp_standard/constexpr_if_ut.cpp #1:2 begin
+    // @@@ example/core_lang_spec/constexpr_if_ut.cpp #1:2 begin
 ```
 
 ### autoパラメータによる関数テンプレートの簡易定義
@@ -2501,10 +2501,10 @@ constexpr ifを使用することで、やや単純に記述できる。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
 ```cpp
-    // @@@ example/cpp_standard20/abbreviated_func_template_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec20/abbreviated_func_template_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard20/abbreviated_func_template_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec20/abbreviated_func_template_ut.cpp #0:1 begin -1
 ```
 
 ### auto
@@ -2518,7 +2518,7 @@ decltypeはオペランドに[expression](---)を取り、その型を算出す�
 下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
 
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/decltype_ut.cpp #0:0 begin -1
 ```
 
 decltypeは、テンプレートプログラミングに多用されるが、
@@ -2527,7 +2527,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
 下記例のような場合にも有用である。
 
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #0:1 begin
+    // @@@ example/core_lang_spec/decltype_ut.cpp #0:1 begin
 ```
 
 ### decltype(auto)
@@ -2536,7 +2536,7 @@ decltype(auto)はC++14から導入されたdecltypeの類似機能である。
 auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
 
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #0:2 begin -1
+    // @@@ example/core_lang_spec/decltype_ut.cpp #0:2 begin -1
 ```
 
 ### 戻り値型を後置する関数宣言
@@ -2545,13 +2545,13 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 コード例を以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/decltype_ut.cpp #1:0 begin
 ```
 
 この構文をC++11から導入された理由は以下のコードを見れば明らかだろう。
 
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #1:1 begin
+    // @@@ example/core_lang_spec/decltype_ut.cpp #1:1 begin
 ```
 
 ### 関数の戻り値型auto
@@ -2561,10 +2561,10 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
 (「[autoパラメータによる関数テンプレートの簡易定義](---)」を参照)。
 
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/decltype_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec/decltype_ut.cpp #2:1 begin -1
 ```
 
 ### 後置戻り値型auto
@@ -2573,10 +2573,10 @@ C++14から導入された[関数の戻り値型auto](---)と似た、
 autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
 
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #3:0 begin
+    // @@@ example/core_lang_spec/decltype_ut.cpp #3:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/decltype_ut.cpp #3:1 begin -1
+    // @@@ example/core_lang_spec/decltype_ut.cpp #3:1 begin -1
 ```
 
 ## name lookupと継承構造
@@ -2593,14 +2593,14 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/cpp_standard/name_lookup_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/name_lookup_ut.cpp #0:0 begin
 ```
 
 以下のコードでの関数呼び出しf()のname lookupは、
 
 
 ```cpp
-    // @@@ example/cpp_standard/name_lookup_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/name_lookup_ut.cpp #1:0 begin -1
 ```
 
 1. NS_LUをその前方で宣言された名前空間と関連付けする
@@ -2611,14 +2611,14 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/cpp_standard/name_lookup_ut.cpp #0:1 begin
+    // @@@ example/core_lang_spec/name_lookup_ut.cpp #0:1 begin
 ```
 
 以下のコードでの関数呼び出しg()のname lookupは、
 
 
 ```cpp
-    // @@@ example/cpp_standard/name_lookup_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/name_lookup_ut.cpp #1:1 begin -1
 ```
 
 1. NS_LUをその前方で宣言された名前空間と関連付けする
@@ -2631,13 +2631,13 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/cpp_standard/name_lookup_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/name_lookup_ut.cpp #2:0 begin
 ```
 
 以下のコードでの関数呼び出しToString()のname lookupは、
 
 ```cpp
-    // @@@ example/cpp_standard/name_lookup_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec/name_lookup_ut.cpp #2:1 begin -1
 ```
 
 1. ToString()呼び出しの引数xの型Xが名前空間NS_LUで定義されているため、
@@ -2671,13 +2671,13 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #0:0 begin
 ```
 
 以下のコードでのTypeNameのインスタンス化に伴うname lookupは、
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #0:1 begin -1
 ```
 
 1. TypeName()呼び出しの引数xの型Xが名前空間NS_TPLUで宣言されているため、
@@ -2701,7 +2701,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 上と同じ定義、宣言がある場合の以下のコードでのTypeNameのインスタンス化に伴うname lookupは、
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:2 begin -1
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #0:2 begin -1
 ```
 
 1. NS_TPLUを名前空間と関連付けする
@@ -2734,7 +2734,7 @@ two phase lookupが実装されていないコンパイラ(こういったコン
 上と同じ定義、宣言がある場合の以下のコードの動作を考える。
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:3 begin -1
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #0:3 begin -1
 ```
 
 NS_TPLU::TypeName(int{})のintをlongにしただけなので、この単体テストはパスしないが、
@@ -2743,7 +2743,7 @@ NS_TPLU::TypeName(int{})のintをlongにしただけなので、この単体テ�
 に以下のコードを追加するとパスしてしまう。
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #0:4 begin
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #0:4 begin
 ```
 
 この理由は、関数テンプレート内での2nd name lookupで選択された名前が関数テンプレートであった場合、
@@ -2775,10 +2775,10 @@ name lookupでバインドされる関数を変更することができるため
 実際には関連付けされないコードである。
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #1:1 begin
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #1:1 begin
 ```
 
 これは先に示したNS_TPLU::Xの例と極めて似ている。本質的な違いは、
@@ -2787,7 +2787,7 @@ TypeNameやToTypeがグローバル名前空間で宣言されていることの
 TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y const&)が選択されないのである。
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #1:2 begin -1
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #1:2 begin -1
 ```
 
 ここまでの現象を正確に理解するには、
@@ -2818,22 +2818,22 @@ TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y con
 次のコードは、この難解さに翻弄されるのが現場のプログラマのみではないことを示す。
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #2:0 begin
 ```
 
 上記の宣言、定義があった場合、operator+の単体テストは以下のようになる。
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #2:1 begin -2
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #2:1 begin -2
 ```
 
 このテストは当然パスするが、次はどうだろう？
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #2:2 begin -2
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #2:2 begin -2
 ```
 
 これまでのtwo phase name lookupの説明では、
@@ -2845,7 +2845,7 @@ operator+(NS_TPLU2::Y const& y, int i)はTypeNum内でのname lookupの対象に
 当然ながら以下のテストはパスする(つまり、g++ではエラーする)。
 
 ```cpp
-    // @@@ example/cpp_standard/two_phase_name_lookup_ut.cpp #2:3 begin -2
+    // @@@ example/core_lang_spec/two_phase_name_lookup_ut.cpp #2:3 begin -2
 ```
 
 なお、TypeNum内のコードである
@@ -2885,13 +2885,13 @@ ADLとは、関数の実引数の型が宣言されている名前空間(これ�
 下記のようなコードがあった場合、
 
 ```cpp
-    // @@@ example/cpp_standard/name_lookup_adl_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/name_lookup_adl_ut.cpp #0:0 begin
 ```
 
 以下のコードでのToStringの呼び出しに対するのname lookupは、
 
 ```cpp
-    // @@@ example/cpp_standard/name_lookup_adl_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/name_lookup_adl_ut.cpp #0:1 begin -1
 ```
 
 * ToStringの呼び出しより前方で行われているグローバル名前空間内の宣言
@@ -2908,7 +2908,7 @@ ADLは思わぬname lookupによるバグを誘発することもあるが、
 コードをより自然に、より簡潔に記述するための重要な機能となっている。
 
 ```cpp
-    // @@@ example/cpp_standard/name_lookup_adl_ut.cpp #0:2 begin -1
+    // @@@ example/core_lang_spec/name_lookup_adl_ut.cpp #0:2 begin -1
 ```
 
 ### 関連名前空間
@@ -2924,7 +2924,7 @@ C++で関数やメンバ関数を明示的にスコープやクラス名で修�
 一方で、[ADL](---)が働かなくなるため、フレキシブルな[name lookup](---)ができなくなる。
 
 ```cpp
-    // @@@ example/cpp_standard/etc_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/etc_ut.cpp #1:0 begin -1
 ```
 
 ### hidden-friend関数
@@ -2948,10 +2948,10 @@ hidden-friend関数(隠れたフレンド関数)の目的は、
   コンパイラによる最適化を妨げることなく、特定の機能を提供する。
 
 ```cpp
-    // @@@ example/cpp_standard/hidden_friend_ut.cpp #0:0 begin 
+    // @@@ example/core_lang_spec/hidden_friend_ut.cpp #0:0 begin 
 ```
 ```cpp
-    // @@@ example/cpp_standard/hidden_friend_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/hidden_friend_ut.cpp #0:1 begin -1
 ```
 
 
@@ -2964,14 +2964,14 @@ name-hidingとは
 まずは、クラスとその派生クラスでのname-hidingの例を示す。
 
 ```cpp
-    // @@@ example/cpp_standard/name_hiding.cpp #0:0 begin
+    // @@@ example/core_lang_spec/name_hiding.cpp #0:0 begin
 ```
 
 上記の関数fは一見オーバーロードに見えるが、そうではない。下記のコードで示したように、
 Base::f()には、修飾しない形式でのDerivedクラス経由のアクセスはできない。
 
 ```cpp
-    // @@@ example/cpp_standard/name_hiding.cpp #0:1 begin
+    // @@@ example/core_lang_spec/name_hiding.cpp #0:1 begin
 ```
 
 これは前述したように、
@@ -2982,34 +2982,34 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 修飾しない形式でのDerivedクラス経由のBase::f()へのアクセスが可能となる。
 
 ```cpp
-    // @@@ example/cpp_standard/name_hiding.cpp #1:0 begin
+    // @@@ example/core_lang_spec/name_hiding.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/name_hiding.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/name_hiding.cpp #1:1 begin -1
 ```
 
 下記コードは、名前空間でも似たような現象が起こることを示している。
 
 ```cpp
-    // @@@ example/cpp_standard/name_hiding.cpp #2:0 begin
+    // @@@ example/core_lang_spec/name_hiding.cpp #2:0 begin
 ```
 
 この問題に対しては、下記のようにf(int)の定義位置を後方に移動することで回避できる。
 
 ```cpp
-    // @@@ example/cpp_standard/name_hiding.cpp #2:1 begin
+    // @@@ example/core_lang_spec/name_hiding.cpp #2:1 begin
 ```
 
 また、先述のクラスでの方法と同様にusing宣言を使い、下記のようにすることもできる。
 
 ```cpp
-    // @@@ example/cpp_standard/name_hiding.cpp #2:2 begin
+    // @@@ example/core_lang_spec/name_hiding.cpp #2:2 begin
 ```
 
 当然ながら、下記のようにf()の呼び出しを::で修飾することもできる。
 
 ```cpp
-    // @@@ example/cpp_standard/name_hiding.cpp #2:3 begin
+    // @@@ example/core_lang_spec/name_hiding.cpp #2:3 begin
 ```
 
 修飾の副作用として「[two phase name lookup](---)」の例で示したような
@@ -3021,7 +3021,7 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 次に、そういった混乱を引き起こすであろうコードを示す。
 
 ```cpp
-    // @@@ example/cpp_standard/name_hiding.cpp #3:0 begin
+    // @@@ example/core_lang_spec/name_hiding.cpp #3:0 begin
 ```
 
 NS_B_Inner::g()内のf(int)の呼び出しはコンパイルできるが、
@@ -3050,10 +3050,10 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 [仮想継承](---)を使わないダイヤモンド継承のコードを以下に示す。
 
 ```cpp
-    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/diamond_inheritance_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/diamond_inheritance_ut.cpp #0:1 begin -1
 ```
 
 これからわかるように、DerivedDerivedインスタンスの中に2つのBaseインスタンスが存在する。
@@ -3064,23 +3064,23 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 下記コードは、それが原因で名前解決が曖昧になりコンパイルできない。
 
 ```cpp
-    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #0:2 begin -1
+    // @@@ example/core_lang_spec/diamond_inheritance_ut.cpp #0:2 begin -1
 ```
 
 この問題に対処するには、クラス名による修飾が必要になるが、
 Baseインスタンスが2つ存在するため、下記に示すようなわかりづらいバグの温床となる。
 
 ```cpp
-    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #0:3 begin -1
+    // @@@ example/core_lang_spec/diamond_inheritance_ut.cpp #0:3 begin -1
 ```
 
 次に示すのは、[仮想継承](---)を使用したダイヤモンド継承の例である。
 
 ```cpp
-    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/diamond_inheritance_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/diamond_inheritance_ut.cpp #1:1 begin -1
 ```
 
 仮想継承の効果で、DerivedDerivedインスタンスの中に存在するBaseインスタンスは1つになるため、
@@ -3088,7 +3088,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 (が、[仮想継承](---)による別の問題が発生する)。
 
 ```cpp
-    // @@@ example/cpp_standard/diamond_inheritance_ut.cpp #1:2 begin -1
+    // @@@ example/core_lang_spec/diamond_inheritance_ut.cpp #1:2 begin -1
 ```
 
 この状態をオブジェクト図で表すと下記のようになる。
@@ -3099,7 +3099,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 下記に示した継承方法を仮想継承、仮想継承の基底クラスを仮想基底クラスと呼ぶ。
 
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #0:0 begin
 ```
 
 仮想継承は、[ダイヤモンド継承](---)の基底クラスのインスタンスを、
@@ -3110,14 +3110,14 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 それぞれを通常の継承したクラスを下記のように定義する。
 
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:1 begin
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #0:1 begin
 ```
 
 この場合、継承ヒエラルキーに仮想継承を含むクラスと、含まないクラスでは、
 以下に示したような違いが発生する。
 
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:2 begin -1
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #0:2 begin -1
 ```
 
 この動作は、下記の仕様に起因している
@@ -3134,10 +3134,10 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 これを通常の継承クラスと同様な動作にするには、下記のようにしなければならない。
 
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:3 begin
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #0:3 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #0:4 begin -1
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #0:4 begin -1
 ```
 「仮想継承のコンストラクタ呼び出し」仕様は、
 [ダイヤモンド継承](---)での基底クラスのコンストラクタ呼び出しを一度にするために存在する。
@@ -3146,26 +3146,26 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 デバッグ困難なバグが発生してしまうことは容易に想像できるだろう。
 
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #1:1 begin -1
 ```
 
 基底クラスのコンストラクタ呼び出しは、下記のコードのようにした場合でも、
 単体テストが示すように、一番最初に行われる。
 
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #2:1 begin -1
 ```
 
 このため、基底クラスのコンストラクタ呼び出しは下記のような順番で行うべきである。
 
 ```cpp
-    // @@@ example/cpp_standard/virtual_inheritance_ut.cpp #3:0 begin
+    // @@@ example/core_lang_spec/virtual_inheritance_ut.cpp #3:0 begin
 ```
 
 ### 仮想基底
@@ -3190,10 +3190,10 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 #### ダイヤモンド継承を含まない場合
 
 ```cpp
-    // @@@ example/cpp_standard/dominance_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/dominance_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/dominance_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/dominance_ut.cpp #0:1 begin -1
 ```
 
 この[name lookup](---)については、[name-hiding](---)で説明した通りである。
@@ -3201,7 +3201,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 #### ダイヤモンド継承かつそれが仮想継承でない場合
 
 ```cpp
-    // @@@ example/cpp_standard/dominance_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/dominance_ut.cpp #1:0 begin
 ```
 
 上記コードはコードブロック内のコメントのようなメッセージが原因でコンパイルできない。
@@ -3214,10 +3214,10 @@ Derived_1によるドミナンスも働き、その結果として、呼び出�
 #### ダイヤモンド継承かつそれが仮想継承である場合
 
 ```cpp
-    // @@@ example/cpp_standard/dominance_ut.cpp #2:0 begin
+    // @@@ example/core_lang_spec/dominance_ut.cpp #2:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/dominance_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec/dominance_ut.cpp #2:1 begin -1
 ```
 
 これまでと同様にDerived_0のドミナンスによりBase::fは[name-hiding](---)されることになる。
@@ -3232,10 +3232,10 @@ using宣言とは、"using XXX::func"のような記述である。
 funcが使用できる。
 
 ```cpp
-    // @@@ example/cpp_standard/namespace_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/namespace_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/namespace_ut.cpp #0:1 begin
+    // @@@ example/core_lang_spec/namespace_ut.cpp #0:1 begin
 ```
 
 ### usingディレクティブ
@@ -3244,10 +3244,10 @@ usingディレクティブとは、"using namespace XXX"のような記述であ
 XXXの識別子が使用できる。
 
 ```cpp
-    // @@@ example/cpp_standard/namespace_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/namespace_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/namespace_ut.cpp #0:2 begin
+    // @@@ example/core_lang_spec/namespace_ut.cpp #0:2 begin
 ```
 
 より多くの識別子が名前空間の修飾無しで使えるようになる点において、
@@ -3255,10 +3255,10 @@ XXXの識別子が使用できる。
 下記のように[name-hiding](---)された識別子の導入には効果がない。
 
 ```cpp
-    // @@@ example/cpp_standard/namespace_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/namespace_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/namespace_ut.cpp #0:3 begin
+    // @@@ example/core_lang_spec/namespace_ut.cpp #0:3 begin
 ```
 
 従って、usingディレクティブの使用は避けるべきである。
@@ -3305,19 +3305,19 @@ C++11で導入されたnoexceptキーワードには、以下の2つの意味が
 以下に上記のコード例を示す。
 
 ```cpp
-    // @@@ example/cpp_standard/noexcept_ut.cpp #0:0 begin
+    // @@@ example/core_lang_spec/noexcept_ut.cpp #0:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/noexcept_ut.cpp #0:1 begin -1
+    // @@@ example/core_lang_spec/noexcept_ut.cpp #0:1 begin -1
 ```
 
 演算子としてのnoexceptはテンプレートで頻繁に使用されるため、以下にそのような例を示す。
 
 ```cpp
-    // @@@ example/cpp_standard/noexcept_ut.cpp #1:0 begin
+    // @@@ example/core_lang_spec/noexcept_ut.cpp #1:0 begin
 ```
 ```cpp
-    // @@@ example/cpp_standard/noexcept_ut.cpp #1:1 begin -1
+    // @@@ example/core_lang_spec/noexcept_ut.cpp #1:1 begin -1
 ```
 
 ### exception-unfriendly
@@ -3363,7 +3363,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 未定義動作を含むコードは、クラッシュやセキュリティの問題を引き起こす可能性がある。
 
 ```cpp
-    // @@@ example/cpp_standard/undefined_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/undefined_ut.cpp #0:0 begin -1
 ```
 
 ### 未規定動作
@@ -3373,7 +3373,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 つまり、動作が特定の範囲で予測可能だが、正確な挙動が処理系の実装に依存することになる。
 
 ```cpp
-    // @@@ example/cpp_standard/undefined_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/undefined_ut.cpp #1:0 begin -1
 ```
 
 ### 未定義動作と未規定動作
@@ -3404,7 +3404,7 @@ volatile など)やポインタやリファレンスなどの間接指定子を�
 引数(もしくは実引数、argument)、仮引数(parameter)とは下記のように定義される。
 
 ```cpp
-    // @@@ example/cpp_standard/argument.cpp #0:0 begin
+    // @@@ example/core_lang_spec/argument.cpp #0:0 begin
 ```
 
 ### 単純代入
@@ -3440,14 +3440,14 @@ C++03までの規約では、アライメントのコントロールは実装依
 C++11で導入されたキーワードで、型のアライメント要求を取得するために使用する。
 
 ```cpp
-    // @@@ example/cpp_standard/aliging_ut.cpp #0:0 begin -1
+    // @@@ example/core_lang_spec/aliging_ut.cpp #0:0 begin -1
 ```
 
 #### alignas
 C++11で導入されたキーワードで、メモリのアライメントを指定するために使用する。
 
 ```cpp
-    // @@@ example/cpp_standard/aliging_ut.cpp #1:0 begin -1
+    // @@@ example/core_lang_spec/aliging_ut.cpp #1:0 begin -1
 ```
 
 #### addressof
@@ -3460,10 +3460,10 @@ operator& がオーバーロードされている場合には、
 オーバーロードを無視して元のアドレスを確実に取得できる。
 
 ```cpp
-    // @@@ example/cpp_standard/aliging_ut.cpp #2:0 begin -1
+    // @@@ example/core_lang_spec/aliging_ut.cpp #2:0 begin -1
 ```
 ```cpp
-    // @@@ example/cpp_standard/aliging_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec/aliging_ut.cpp #2:1 begin -1
 ```
 
 ### 演算子のオペランドの評価順位
@@ -3486,7 +3486,7 @@ C++17で、演算子のオペランドに対する評価順序が明確に規定
 C++11以前では、以下のコードの評価順序は未規定であったが、上記の通り定義された。
 
 ```cpp
-    // @@@ example/cpp_standard/etc_ut.cpp #2:0 begin -1
+    // @@@ example/core_lang_spec/etc_ut.cpp #2:0 begin -1
 ```
 
 関数呼び出しにおける引数の式の評価順序は、上記の例a(b1, b2, b3)での評価順序は、
@@ -3501,7 +3501,7 @@ b2, b3, b1 で評価される可能性があることを意味する。
 conditionの評価結果に基づき、expr1または expr2 のどちらかが選択され、選択された側だけが評価される。  
 
 ```cpp
-    // @@@ example/cpp_standard/etc_ut.cpp #2:1 begin -1
+    // @@@ example/core_lang_spec/etc_ut.cpp #2:1 begin -1
 ```
 
 なお、単項演算子のオペランドは1つであるため、優先順位の定義は不要である。

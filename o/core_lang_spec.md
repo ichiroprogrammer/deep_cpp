@@ -296,7 +296,7 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 算術変換は、[汎整数型昇格](core_lang_spec.md#SS_6_1_7)と通常算術変換に分けられる。
 
 ```cpp
-    //  example/cpp_standard/integral_promotion_ut.cpp 11
+    //  example/core_lang_spec/integral_promotion_ut.cpp 11
 
     bool           bval{};
     char           cval{};
@@ -349,7 +349,7 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 変数定義時の算術変換による意図しない値の変換([縮小型変換](core_lang_spec.md#SS_6_1_11))を防ぐことができる。
 
 ```cpp
-    //  example/cpp_standard/integral_promotion_ut.cpp 62
+    //  example/core_lang_spec/integral_promotion_ut.cpp 62
 
     int i{-1};
     // int8_t i8 {i};  縮小型変換によりコンパイル不可
@@ -368,7 +368,7 @@ C++における算術変換とは、算術演算の1つのオペランドが他�
 以下に示すように、算術変換の結果は直感に反することがあるため、注意が必要である。
 
 ```cpp
-    //  example/cpp_standard/integral_promotion_ut.cpp 81
+    //  example/core_lang_spec/integral_promotion_ut.cpp 81
 
     int          i{-1};
     unsigned int ui{1};
@@ -396,7 +396,7 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 下記のようにintに変換される。
 
 ```cpp
-    //  example/cpp_standard/integral_promotion_ut.cpp 100
+    //  example/core_lang_spec/integral_promotion_ut.cpp 100
 
     bool bval;
     static_assert(std::is_same<int, decltype(bval + bval)>::value, "");
@@ -427,7 +427,7 @@ bool、char、signed char、unsigned char、short、unsigned short型の変数�
 float型オブジェクトがdoulbe型に変換されることを指す。
 
 ```cpp
-    //  example/cpp_standard/integral_promotion_ut.cpp 126
+    //  example/core_lang_spec/integral_promotion_ut.cpp 126
 
     double d = 0.05;  // 0.05は循環少数
     float  f = 0.05f;
@@ -454,7 +454,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 主に[整数型](core_lang_spec.md#SS_6_1_5)や[浮動小数点型](core_lang_spec.md#SS_6_1_12)などの値を小さな範囲の型に変換する際に起こる。
 
 ```cpp
-    //  example/cpp_standard/etc_ut.cpp 19
+    //  example/core_lang_spec/etc_ut.cpp 19
 
     int32_t large  = 300;
     int8_t  small  = large;  // 縮小型変換
@@ -499,7 +499,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 以下のコードにより誤差が容易に発生することを示す。
 
 ```cpp
-    //  example/cpp_standard/float_ut.cpp 12
+    //  example/core_lang_spec/float_ut.cpp 12
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -520,7 +520,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 イプシロンを使用した浮動小数点変数の同値判定のコード例を以下に示す。
 
 ```cpp
-    //  example/cpp_standard/float_ut.cpp 24
+    //  example/core_lang_spec/float_ut.cpp 24
 
     // 下記の0.01は2進数では循環小数となるため、実数の0.01とは異なる。
     constexpr auto a = 0.01F;  // 0.0000001010001111...
@@ -549,7 +549,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 浮動小数点の演算エラーの検出コード例を以下に示す。
 
 ```cpp
-    //  example/cpp_standard/float_ut.cpp 43
+    //  example/core_lang_spec/float_ut.cpp 43
 
     std::feclearexcept(FE_ALL_EXCEPT);  // エラーをクリア
 
@@ -594,7 +594,7 @@ float型オブジェクトがdoulbe型に変換されることを指す。
 C++11から導入された導入されたリテラル。
 
 ```cpp
-    //  example/cpp_standard/literal_ut.cpp 15
+    //  example/core_lang_spec/literal_ut.cpp 15
 
         std::regex raw_re{R"(\d+)"};     // 生文字リテラルで正規表現パターン。\のエスケープが不要
         std::regex normal_re{"(\\d+)"};  // 生文字リテラルで正規表現パターン。\のエスケープが必要
@@ -617,7 +617,7 @@ C++11から導入された導入されたリテラル。
 C++14以降では、0bまたは 0B をプレフィックスとして使うことで、2進数リテラルを表現できる。
 
 ```cpp
-    //  example/cpp_standard/literal_ut.cpp 36
+    //  example/core_lang_spec/literal_ut.cpp 36
 
     int bin_value = 0b1101;  // 2進数リテラル  2進数1101 は10進数で 13
     ASSERT_EQ(bin_value, 13);
@@ -627,7 +627,7 @@ C++14以降では、0bまたは 0B をプレフィックスとして使うこと
 C++14では区切り文字'を使用し、数値リテラルを記述できるようになった。
 
 ```cpp
-    //  example/cpp_standard/literal_ut.cpp 42
+    //  example/core_lang_spec/literal_ut.cpp 42
 
     // 区切り文字を使った数値リテラル
     int large_number = 1'000'000;  // 10進数は3桁で区切るとわかりやすい
@@ -648,7 +648,7 @@ C++14では区切り文字'を使用し、数値リテラルを記述できる�
 * char8_t: UTF-8エンコーディングのコード単位を扱う型。 u8"..." というリテラルでUTF-8文字列を表す。
 
 ```cpp
-    //  example/cpp_standard/literal_ut.cpp 59
+    //  example/core_lang_spec/literal_ut.cpp 59
 
         // UTF-16 文字列リテラル（uプレフィックスを使用）
         char16_t       utf16_str[]  = u"こんにちは";
@@ -698,7 +698,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ```
 
 ```cpp
-    //  example/cpp_standard/literal_ut.cpp 87
+    //  example/core_lang_spec/literal_ut.cpp 87
 
     // float型
     float hex_float = 0x1.2p3;
@@ -726,7 +726,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 ユーザ定義リテラル演算子とは以下のようなものである。
 
 ```cpp
-    //  example/cpp_standard/user_defined_literal_ut.cpp 4
+    //  example/core_lang_spec/user_defined_literal_ut.cpp 4
 
     constexpr int32_t one_km = 1000;
 
@@ -735,7 +735,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
     constexpr int32_t operator""_meter(unsigned long long num_by_m) { return num_by_m; }
 ```
 ```cpp
-    //  example/cpp_standard/user_defined_literal_ut.cpp 15
+    //  example/core_lang_spec/user_defined_literal_ut.cpp 15
 
     int32_t km = 3_kilo_meter;  // ユーザ定義リテラル演算子の利用
     int32_t m  = 3000_meter;    // ユーザ定義リテラル演算子の利用
@@ -747,7 +747,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 "xxx"sとすることで、std::string型のリテラルを作ることができる。
 
 ```cpp
-    //  example/cpp_standard/user_defined_literal_ut.cpp 26
+    //  example/core_lang_spec/user_defined_literal_ut.cpp 26
 
     using namespace std::literals::string_literals;
 
@@ -765,7 +765,7 @@ C++17から導入された浮動小数点数を16進数で表現する方法で�
 std::chronoのリテラルは以下のコードのように使用できる。
 
 ```cpp
-    //  example/cpp_standard/literal_ut.cpp 109
+    //  example/core_lang_spec/literal_ut.cpp 109
 
     using namespace std::chrono_literals;
 
@@ -782,7 +782,7 @@ std::chronoのリテラルは以下のコードのように使用できる。
 std::complexリテラル以下のコードのように使用できる。
 
 ```cpp
-    //  example/cpp_standard/literal_ut.cpp 124
+    //  example/core_lang_spec/literal_ut.cpp 124
 
     using namespace std::complex_literals;  // 複素数リテラルを使うための名前空間
 
@@ -807,7 +807,7 @@ C++03までのenumには、以下のような問題があった。
 * 名前空間の汚染: グローバルスコープに定義されたenumは、名前空間を汚染する。
 
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 14
+    //  example/core_lang_spec/enum_ut.cpp 14
 
     enum DayOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
@@ -822,7 +822,7 @@ C++03までのenumには、以下のような問題があった。
 enum classは通常の[enum](core_lang_spec.md#SS_6_3_1)の問題を解決するためにC++11から導入された。
 
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 29
+    //  example/core_lang_spec/enum_ut.cpp 29
 
     enum class DayOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
@@ -836,7 +836,7 @@ enum classは通常の[enum](core_lang_spec.md#SS_6_3_1)の問題を解決する
 ```
 
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 41
+    //  example/core_lang_spec/enum_ut.cpp 41
 
     // DayOfWeek d0 {0}; intからの暗黙の型変換は許可されないため、コンパイルエラー
     DayOfWeek d0{static_cast<DayOfWeek>(0)};
@@ -856,7 +856,7 @@ C++11で導入されたシンタックスである。enumのサイズをユー�
 特定のバイナリプロトコルとの互換性が必要な場合や、特定のハードウェアと連携する際に特に有効である。
 
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 54
+    //  example/core_lang_spec/enum_ut.cpp 54
 
     enum NormalEnum {  // underlying typeの指定しない従来のenum
     };
@@ -883,7 +883,7 @@ C++17から導入された[std::byte](core_lang_spec.md#SS_6_3_5)の利便性の
 underlying typeを指定したenumやenum class変数のunderlying typeインスタンスによる初期化が認められるようになった。
 
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 80
+    //  example/core_lang_spec/enum_ut.cpp 80
 
     enum class Color : int { Red, Green, Blue };
 
@@ -904,7 +904,7 @@ underlying typeを指定したenumやenum class変数のunderlying typeインス
 前方宣言できないが、underlying typeを指定したenum、enum classは前方宣言することができる。
 
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 97
+    //  example/core_lang_spec/enum_ut.cpp 97
 
     // in calender.h
     enum class DayOfWeek : int8_t;  // DayOfWeekの前方宣言
@@ -922,7 +922,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 可読性、保守性の向上が見込める。
 
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 113
+    //  example/core_lang_spec/enum_ut.cpp 113
 
     uint8_t u8_0     = 0x80;
     auto    result_0 = u8_0 << 1;  // 汎整数拡張のためresult_0の型はintになる
@@ -956,7 +956,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 とすることで、スコープによる修飾を省略するための記法である。
 
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 158
+    //  example/core_lang_spec/enum_ut.cpp 158
 
     enum class Color { Red, Green, Yellow };
 
@@ -989,7 +989,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
     }
 ```
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 194
+    //  example/core_lang_spec/enum_ut.cpp 194
 
     #if __cplusplus >= 202002L  // c++20
         using Color::Red;  // Redに関しては名前修飾なしで使用する
@@ -1004,7 +1004,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
 ```
 
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 213
+    //  example/core_lang_spec/enum_ut.cpp 213
 
     class Signal {
     public:
@@ -1018,7 +1018,7 @@ uint8_t型と似ているが、uint8_t型の演算による[汎整数型昇格](
     };
 ```
 ```cpp
-    //  example/cpp_standard/enum_ut.cpp 229
+    //  example/core_lang_spec/enum_ut.cpp 229
 
     Signal s{};
 
@@ -1053,7 +1053,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 下記のコードはその使用例である。
 
 ```cpp
-    //  example/cpp_standard/trivial_ut.cpp 63
+    //  example/core_lang_spec/trivial_ut.cpp 63
 
     static_assert(std::is_trivial_v<int>);
     static_assert(std::is_trivial_v<int*>);
@@ -1080,7 +1080,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 * 型に含まれるすべてのメンバ変数や基底クラスも「トリビアルに破壊可能」である。
 
 ```cpp
-    //  example/cpp_standard/trivial_ut.cpp 84
+    //  example/core_lang_spec/trivial_ut.cpp 84
 
     static_assert(std::is_trivially_destructible_v<int>);
     static_assert(std::is_trivially_destructible_v<int*>);
@@ -1110,7 +1110,7 @@ C++03までのenumが持っていた問題を再発生させてしまうため�
 下記のコードはその使用例である。
 
 ```cpp
-    //  example/cpp_standard/trivial_ut.cpp 42
+    //  example/core_lang_spec/trivial_ut.cpp 42
 
     static_assert(std::is_standard_layout_v<int>);
     static_assert(std::is_standard_layout_v<int*>);
@@ -1161,7 +1161,7 @@ PODとは、 Plain Old Dataの略語であり、
 従って、std::is_pod_vは以下のように置き換えられるべきである。
 
 ```cpp
-    //  example/cpp_standard/trivial_ut.cpp 9
+    //  example/core_lang_spec/trivial_ut.cpp 9
 
     template <typename T>  // std::is_povはC++20から非推奨
     constexpr bool is_pod_v = std::is_trivial_v<T>&& std::is_standard_layout_v<T>;
@@ -1170,7 +1170,7 @@ PODとは、 Plain Old Dataの略語であり、
 下記のコードは置き換えられたstd::is_pod_vの使用例である。
 
 ```cpp
-    //  example/cpp_standard/trivial_ut.cpp 18
+    //  example/core_lang_spec/trivial_ut.cpp 18
 
     static_assert(is_pod_v<int>);
     static_assert(is_pod_v<int const>);
@@ -1201,7 +1201,7 @@ PODとは、 Plain Old Dataの略語であり、
 以下のis_completeで示したテンプレート定数で、不完全型か否かを判定できる。
 
 ```cpp
-    //  example/cpp_standard/incomplete_type_ut.cpp 4
+    //  example/core_lang_spec/incomplete_type_ut.cpp 4
 
     template <typename T, typename = void>
     struct is_complete : std::false_type {
@@ -1215,7 +1215,7 @@ PODとは、 Plain Old Dataの略語であり、
     constexpr bool is_complete_v = is_complete<T>::value;
 ```
 ```cpp
-    //  example/cpp_standard/incomplete_type_ut.cpp 21
+    //  example/core_lang_spec/incomplete_type_ut.cpp 21
 
     class A;  // Aの前方宣言
               // これ以降、Aは不完全型となる
@@ -1224,7 +1224,7 @@ PODとは、 Plain Old Dataの略語であり、
     static_assert(!is_complete_v<A>);
 ```
 ```cpp
-    //  example/cpp_standard/incomplete_type_ut.cpp 31
+    //  example/core_lang_spec/incomplete_type_ut.cpp 31
 
     class A {  // この宣言により、この行以降はAは完全型になる
     public:
@@ -1259,7 +1259,7 @@ C言語の構造体のレイアウトと互換性を持つことが一般的で�
 それを示すために、まずは下記のようにクラスX、Y、Zを定義する。
 
 ```cpp
-    //  example/cpp_standard/class_layout_ut.cpp 4
+    //  example/core_lang_spec/class_layout_ut.cpp 4
 
     class X {
     public:
@@ -1305,7 +1305,7 @@ sizeof(X)は8ではなく16、sizeof(Y)は16ではなく24、sizeof(Z)は24で�
 g++の場合、以下のオプションを使用し、クラスのメモリレイアウトをファイルに出力することができる。
 
 ```cpp
-    //  example/cpp_standard/Makefile 23
+    //  example/core_lang_spec/Makefile 23
 
     CCFLAGS_ADD:=-fdump-lang-class
 ```
@@ -1368,7 +1368,7 @@ X、Y、Zのメモリレイアウトは以下の様に出力される。
 このようなメモリレイアウトは、
 
 ```cpp
-    //  example/cpp_standard/class_layout_ut.cpp 40
+    //  example/core_lang_spec/class_layout_ut.cpp 40
 
     auto z_ptr = new Z;
 ```
@@ -1418,7 +1418,7 @@ dynamic_castは、実行時の型チェックと安全なダウンキャスト�
 下記のような[ポリモーフィックなクラス](core_lang_spec.md#SS_6_4_8)に対しては、
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 8
+    //  example/core_lang_spec/rtti_ut.cpp 8
 
     class Polymorphic_Base {  // ポリモーフィックな基底クラス
     public:
@@ -1432,7 +1432,7 @@ dynamic_castは、実行時の型チェックと安全なダウンキャスト�
 dynamic_castは下記のように振舞う。
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 25
+    //  example/core_lang_spec/rtti_ut.cpp 25
 
     auto b = Polymorphic_Base{};
     auto d = Polymorphic_Derived{};
@@ -1459,7 +1459,7 @@ dynamic_castは下記のように振舞う。
 一方で、下記のような非[ポリモーフィックなクラス](core_lang_spec.md#SS_6_4_8)に対しては、
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 102
+    //  example/core_lang_spec/rtti_ut.cpp 102
 
     class NonPolymorphic_Base {  // 非ポリモーフィックな基底クラス
     };
@@ -1471,7 +1471,7 @@ dynamic_castは下記のように振舞う。
 dynamic_castは下記のように振舞う。
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 115
+    //  example/core_lang_spec/rtti_ut.cpp 115
 
     auto b = NonPolymorphic_Base{};
     auto d = NonPolymorphic_Derived{};
@@ -1497,7 +1497,7 @@ typeidのオペランドは[ポリモーフィックなクラス](core_lang_spec
 以下の例では[基本型](core_lang_spec.md#SS_6_1_1)に対するtypeidが返す[std::type_info](core_lang_spec.md#SS_6_4_9_3)の振る舞いを表す。
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 52
+    //  example/core_lang_spec/rtti_ut.cpp 52
 
     int   i{};
     long  j{};
@@ -1514,7 +1514,7 @@ typeidのオペランドは[ポリモーフィックなクラス](core_lang_spec
 下記のような[ポリモーフィックなクラス](core_lang_spec.md#SS_6_4_8)のインスタンスに関して、
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 8
+    //  example/core_lang_spec/rtti_ut.cpp 8
 
 class Polymorphic_Base {  // ポリモーフィックな基底クラス
 public:
@@ -1528,7 +1528,7 @@ class Polymorphic_Derived : public Polymorphic_Base {  // ポリモーフィッ�
 typeidが返す[std::type_info](core_lang_spec.md#SS_6_4_9_3)オブジェクトは下記のように振舞う。
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 65
+    //  example/core_lang_spec/rtti_ut.cpp 65
 
     auto b = Polymorphic_Base{};
     auto d = Polymorphic_Derived{};
@@ -1548,7 +1548,7 @@ typeidが返す[std::type_info](core_lang_spec.md#SS_6_4_9_3)オブジェクト�
 一方で、下記のような非[ポリモーフィックなクラス](core_lang_spec.md#SS_6_4_8)に対しては、
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 102
+    //  example/core_lang_spec/rtti_ut.cpp 102
 
     class NonPolymorphic_Base {  // 非ポリモーフィックな基底クラス
     };
@@ -1560,7 +1560,7 @@ typeidが返す[std::type_info](core_lang_spec.md#SS_6_4_9_3)オブジェクト�
 typeidが返す[std::type_info](core_lang_spec.md#SS_6_4_9_3)オブジェクトは下記のように振舞う。
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 139
+    //  example/core_lang_spec/rtti_ut.cpp 139
 
     auto b = NonPolymorphic_Base{};
     auto d = NonPolymorphic_Derived{};
@@ -1585,7 +1585,7 @@ typeidが返す[std::type_info](core_lang_spec.md#SS_6_4_9_3)オブジェクト�
 このような場合、オペランド式は実行時に評価される。以下のコードはそのことを表している。
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 87
+    //  example/core_lang_spec/rtti_ut.cpp 87
 
     Polymorphic_Base    base;
     Polymorphic_Derived derived;
@@ -1603,7 +1603,7 @@ typeidが返す[std::type_info](core_lang_spec.md#SS_6_4_9_3)オブジェクト�
 コンパイル時に処理されるため、その式は実行されない。以下のコードはそのことを表している。
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 161
+    //  example/core_lang_spec/rtti_ut.cpp 161
 
     NonPolymorphic_Base    base;
     NonPolymorphic_Derived derived;
@@ -1623,7 +1623,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 以下のコードで示したように`std::type_info::name()`によりその型名を取り出すことができる。
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 179
+    //  example/core_lang_spec/rtti_ut.cpp 179
 
     auto s = std::string{"str"};
     auto v = std::string_view{"str"};
@@ -1643,7 +1643,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 オブジェクトの[被修飾型](core_lang_spec.md#SS_6_14_6)名をstd::stringオブジェクトとして取り出す関数とその使用例を以下に示す。
 
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 191
+    //  example/core_lang_spec/rtti_ut.cpp 191
 
     #include <cxxabi.h>  // g++/clang++実装依存ヘッダ abi::__cxa_demangleの宣言
 
@@ -1663,7 +1663,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
     }
 ```
 ```cpp
-    //  example/cpp_standard/rtti_ut.cpp 213
+    //  example/core_lang_spec/rtti_ut.cpp 213
 
     int   i{};
     auto  s     = std::string{"str"};
@@ -1697,7 +1697,7 @@ std::type_infoはコンパイラの実装で定義された型名を含んでい
 多くの場合、抽象基底クラスとして使用される。
 
 ```cpp
-    //  example/cpp_standard/interface_class.cpp 8
+    //  example/core_lang_spec/interface_class.cpp 8
 
     class InterfaceClass {  // インターフェースクラス
     public:
@@ -1728,7 +1728,7 @@ C++03までのコンパイラに、
 
 
 ```cpp
-    //  example/cpp_standard/const_ut.cpp 12
+    //  example/core_lang_spec/const_ut.cpp 12
 
     using namespace std;
     auto const str = string{"str"};  // strはプログラムがこの行を通過するときに初期化
@@ -1775,7 +1775,7 @@ C++11以前で定数を定義する方法は、
 こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 11
+    //  example/core_lang_spec/constexpr_ut.cpp 11
 
     template <int N>
     struct Templ {
@@ -1783,7 +1783,7 @@ C++11以前で定数を定義する方法は、
     };
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 20
+    //  example/core_lang_spec/constexpr_ut.cpp 20
 
     constexpr int a = 5;  // aは定数であるためかきのような使い方ができる
     static_assert(a == 5);
@@ -1810,13 +1810,13 @@ constexpr関数の呼び出し式の値がコンパイル時に確定する場�
 通常の関数呼び出しと同じになる。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 39
+    //  example/core_lang_spec/constexpr_ut.cpp 39
 
     constexpr int f(int a) noexcept { return a * 3; }  // aがconstexprならばf(a)もconstexpr
     int g(int a) noexcept { return a * 3; }            // aがconstexprであってもg(a)は非constexpr
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 49
+    //  example/core_lang_spec/constexpr_ut.cpp 49
 
     auto x = int{0};
 
@@ -1832,7 +1832,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 下記のコード例で示した通り、条件演算子とリカーシブコールをうことが多かった。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 64
+    //  example/core_lang_spec/constexpr_ut.cpp 64
 
     constexpr uint64_t bit_mask(uint32_t max) { return max == 0 ? 0 : (1ULL << (max - 1)) | bit_mask(max - 1); }
     constexpr uint64_t bit_mask_0 = bit_mask(4);  // C++11ではコンパイルエラー
@@ -1842,7 +1842,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
 さらにC++17では for/if文などの一般的な制御構文も使えるようになった。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 70
+    //  example/core_lang_spec/constexpr_ut.cpp 70
 
     constexpr uint64_t bit_mask_for(uint32_t max)
     {
@@ -1902,7 +1902,7 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
 以下にリテラル型を例示する。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 87
+    //  example/core_lang_spec/constexpr_ut.cpp 87
 
     class Integer {
     public:
@@ -1916,7 +1916,7 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
     };
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 105
+    //  example/core_lang_spec/constexpr_ut.cpp 105
 
     constexpr auto i5 = 5;                // i5はconstexprインスタンス
     constexpr auto int_5 = Integer{i5};   // int_5はconstexprインスタンス
@@ -1937,7 +1937,7 @@ constexprインスタンスを生成できる。このリテラル型を使用�
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 122
+    //  example/core_lang_spec/constexpr_ut.cpp 122
 
     constexpr Integer operator"" _i(unsigned long long int value)  // ユーザ定義リテラルの定義
     {
@@ -1945,7 +1945,7 @@ constexprインスタンスを生成できる。このリテラル型を使用�
     }
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 132
+    //  example/core_lang_spec/constexpr_ut.cpp 132
 
     constexpr auto i = 123_i;
     static_assert(i == 123);
@@ -1964,7 +1964,7 @@ consteval関数は「必ずコンパイル時に評価されなければなら�
 consteval関数の呼び出しは、その結果が定数式でなければコンパイルエラーとなる。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 154
+    //  example/core_lang_spec/constexpr_ut.cpp 154
 
     #if __cplusplus >= 202002L  // c++20
     consteval uint64_t bit_mask(uint32_t max)  // コンパイル時、評価ができなければエラー
@@ -1982,7 +1982,7 @@ consteval関数の呼び出しは、その結果が定数式でなければコ�
     }
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 176
+    //  example/core_lang_spec/constexpr_ut.cpp 176
 
     static_assert(0b1111'1111 == bit_mask(8));
 
@@ -2005,7 +2005,7 @@ constinitはC++20から導入されたキーワードであり、
 また、constinitはローカル(自動変数)には意味を持たない。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 192
+    //  example/core_lang_spec/constexpr_ut.cpp 192
 
     #if __cplusplus >= 202002L  // c++20
 
@@ -2047,7 +2047,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
   これらの操作はコンパイル時には行えないため、constexprラムダでは使用できない。
 
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 217
+    //  example/core_lang_spec/constexpr_ut.cpp 217
 
     constexpr auto factorial = [](int n) {  // constexpr ラムダの定義
         int result = 1;
@@ -2061,7 +2061,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
     static_assert(fact_5 == 120);
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_ut.cpp 234
+    //  example/core_lang_spec/constexpr_ut.cpp 234
 
     constexpr auto factorial = [](auto self, int n) -> int {  // リカーシブconstexprラムダ
         return (n <= 1) ? 1 : n * self(self, n - 1);
@@ -2178,7 +2178,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 下記コードでは、 E::E(std::initializer_list\<uint32_t>)が初期化子リストコンストラクタである。
 
 ```cpp
-    //  example/cpp_standard/constructor_ut.cpp 6
+    //  example/core_lang_spec/constructor_ut.cpp 6
 
     class E {
     public:
@@ -2227,7 +2227,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 下記コードのように、継承コンストラクタは派生クラス内でusingを用いて宣言される。
 
 ```cpp
-    //  example/cpp_standard/constructor_ut.cpp 40
+    //  example/core_lang_spec/constructor_ut.cpp 40
 
     class Base {
     public:
@@ -2257,7 +2257,7 @@ constexprラムダはC++17から導入された機能であり、以下の条件
 A::A(uint32_t)の処理をA::A(std::string const&)へ委譲している。
 
 ```cpp
-    //  example/cpp_standard/constructor_ut.cpp 72
+    //  example/core_lang_spec/constructor_ut.cpp 72
 
     class A {
     public:
@@ -2296,7 +2296,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 [汎整数型昇格](core_lang_spec.md#SS_6_1_7)や[算術変換](core_lang_spec.md#SS_6_1_6)等を指さない。
 
 ```cpp
-    //  example/cpp_standard/implicit_conversion_ut.cpp 8
+    //  example/core_lang_spec/implicit_conversion_ut.cpp 8
 
     class Person {
     public:
@@ -2332,7 +2332,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 上記のクラスPersonを使用して、下記のようなコードをコンパイルできるようにする機能である。
 
 ```cpp
-    //  example/cpp_standard/implicit_conversion_ut.cpp 40
+    //  example/core_lang_spec/implicit_conversion_ut.cpp 40
 
     void f(Person const& person) noexcept
     {
@@ -2348,7 +2348,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 この記法は下記コードの短縮形であり、コードの見た目をシンプルに保つ効果がある。
 
 ```cpp
-    //  example/cpp_standard/implicit_conversion_ut.cpp 54
+    //  example/core_lang_spec/implicit_conversion_ut.cpp 54
 
     void not_using_implicit_coversion()
     {
@@ -2359,7 +2359,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 この記法は下記のようにstd::string等のSTLでも多用され、その効果は十分に発揮されているものの、
 
 ```cpp
-    //  example/cpp_standard/implicit_conversion_ut.cpp 66
+    //  example/core_lang_spec/implicit_conversion_ut.cpp 66
 
     auto otani = std::string{"Ohtani"};
 
@@ -2373,7 +2373,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 以下のようなコードがコンパイルできてしまうため、わかりづらいバグの元にもなる。
 
 ```cpp
-    //  example/cpp_standard/implicit_conversion_ut.cpp 80
+    //  example/core_lang_spec/implicit_conversion_ut.cpp 80
 
     auto otani = Person{"Ohtani", 26};
 
@@ -2391,7 +2391,7 @@ explicitキーワードを付けることで、意図しない型変換を防ぎ
 下記のようにコンストラクタにexplicitを付けて宣言することにより、この問題を防ぐことができる。
 
 ```cpp
-    //  example/cpp_standard/implicit_conversion_ut.cpp 112
+    //  example/core_lang_spec/implicit_conversion_ut.cpp 112
 
     class Person {
     public:
@@ -2442,7 +2442,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のコードのように[暗黙の型変換](core_lang_spec.md#SS_6_6_2_2)が起こる。
 
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 10
+    //  example/core_lang_spec/explicit_ut.cpp 10
 
     struct A {
         A(int a) : x{a} {}
@@ -2452,7 +2452,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
     A f(A a) { return a; };
 ```
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 21
+    //  example/core_lang_spec/explicit_ut.cpp 21
 
     A a = 1;  // A::Aがexplicitでないため、iはA{1}に変換される
     ASSERT_EQ(a.x, 1);
@@ -2465,7 +2465,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
 下記のように適切にexplicitを使うことで、このような変換を抑止することができる。
 
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 34
+    //  example/core_lang_spec/explicit_ut.cpp 34
 
     struct A {
         explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
@@ -2475,7 +2475,7 @@ explicit宣言されていないコンストラクタを持つクラスは、
     A f(A a) { return a; };
 ```
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 45
+    //  example/core_lang_spec/explicit_ut.cpp 45
 
     // A a = 1;    // A::Aがexplicitであるため、コンパイルエラー
     // auto b = f(2);  // A::Aがexplicitであるため、コンパイルエラー
@@ -2488,7 +2488,7 @@ C++11からサポートされた[一様初期化](core_lang_spec.md#SS_6_6_6)を
 暗黙の型変換を使用できる。
 
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 56
+    //  example/core_lang_spec/explicit_ut.cpp 56
 
     struct A {
         A(int a, int b) : x{a}, y{b} {}
@@ -2500,7 +2500,7 @@ C++11からサポートされた[一様初期化](core_lang_spec.md#SS_6_6_6)を
     bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
 ```
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 70
+    //  example/core_lang_spec/explicit_ut.cpp 70
 
     A a = {1, 2};  // A::Aがexplicitでないため、iはA{1, 2}に変換される
     ASSERT_EQ(a, (A{1, 2}));
@@ -2513,7 +2513,7 @@ C++11からサポートされた[一様初期化](core_lang_spec.md#SS_6_6_6)を
 C++11からは暗黙の型変換を抑止したい型のコンストラクタにはexplicit宣言することが一般的となっている。
 
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 82
+    //  example/core_lang_spec/explicit_ut.cpp 82
 
     struct A {
         explicit A(int a, int b) : x{a}, y{b} {}
@@ -2525,7 +2525,7 @@ C++11からは暗黙の型変換を抑止したい型のコンストラクタに
     bool operator==(A lhs, A rhs) { return std::tuple(lhs.x, lhs.x) == std::tuple(rhs.x, rhs.x); }
 ```
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 96
+    //  example/core_lang_spec/explicit_ut.cpp 96
 
     // A a = {1, 2};  // A::Aがexplicitであるため、コンパイルエラー
     // auto b = f({2, 1});  // A::Aがexplicitであるため、コンパイルエラー
@@ -2539,7 +2539,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 以下にこのシンタックスの単純な使用例を示す。
 
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 162
+    //  example/core_lang_spec/explicit_ut.cpp 162
 
     template <typename T>  // Tが整数型の場合、暗黙の型変換を許可
     struct S {
@@ -2564,7 +2564,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     S(T)->S<T>;
 ```
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 190
+    //  example/core_lang_spec/explicit_ut.cpp 190
 
     S s = 1;      // Tがintであるため、explicit宣言されていないため、暗黙の型変換は許可
     // S t = 1.0; // Tが整数型でないため暗黙の型変換は禁止であるため、コンパイルエラー
@@ -2576,7 +2576,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 テンプレートのパラメータの型による暗黙の型変換の可否をコントロールする例を以下に示す。
 
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 203
+    //  example/core_lang_spec/explicit_ut.cpp 203
 
     template <typename T>
     struct Optional {
@@ -2605,7 +2605,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     Optional(T)->Optional<T>;
 ```
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 235
+    //  example/core_lang_spec/explicit_ut.cpp 235
 
     Optional a = 2;   // T == intであるため、暗黙の型変換を許可
     ASSERT_TRUE(a);   // has_value_がtrueであるため
@@ -2625,7 +2625,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 この機能を使用すると型変換演算子のオーバーロードの型変換の抑止することができる。
 
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 110
+    //  example/core_lang_spec/explicit_ut.cpp 110
 
     struct A {
         explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
@@ -2634,7 +2634,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     };
 ```
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 123
+    //  example/core_lang_spec/explicit_ut.cpp 123
 
     auto a = A{2};
 
@@ -2649,7 +2649,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 以下に示すようにexplicitを使うことで、このような暗黙の型変換を抑止できる。
 
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 137
+    //  example/core_lang_spec/explicit_ut.cpp 137
 
     struct A {
         explicit A(int a) : x{a} {}  // 暗黙の型変換の抑止
@@ -2658,7 +2658,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
     };
 ```
 ```cpp
-    //  example/cpp_standard/explicit_ut.cpp 150
+    //  example/core_lang_spec/explicit_ut.cpp 150
 
     auto a = A{2};
 
@@ -2678,7 +2678,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 * インライン化し易い。
 
 ```cpp
-    //  example/cpp_standard/comparison_operator_old_ut.cpp 12
+    //  example/core_lang_spec/comparison_operator_old_ut.cpp 12
 
     class Integer {
     public:
@@ -2700,7 +2700,7 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 11
+    //  example/core_lang_spec20/comparison_operator_ut.cpp 11
 
     class Integer {
     public:
@@ -2720,7 +2720,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
   アクセッサやfriend宣言が必要になることがある。
 
 ```cpp
-    //  example/cpp_standard/comparison_operator_old_ut.cpp 53
+    //  example/core_lang_spec/comparison_operator_old_ut.cpp 53
 
     class Integer {
     public:
@@ -2742,7 +2742,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 * [暗黙の型変換](core_lang_spec.md#SS_6_6_2_2)を利用した以下に示すようなシンプルな記述ができる場合がある。
 
 ```cpp
-    //  example/cpp_standard/comparison_operator_old_ut.cpp 75
+    //  example/core_lang_spec/comparison_operator_old_ut.cpp 75
 
     auto a = Integer{5};
 
@@ -2753,7 +2753,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
 C++20以降より、`=default`により==演算子を自動生成させることができるようになった。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 35
+    //  example/core_lang_spec20/comparison_operator_ut.cpp 35
 
     class Integer {
     public:
@@ -2778,7 +2778,7 @@ C++20から導入された[<=>演算子](core_lang_spec.md#SS_6_6_4_1)の定義�
 このためC++20から導入されたのが<=>演算子`<=>`である。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 61
+    //  example/core_lang_spec20/comparison_operator_ut.cpp 61
 
     struct Point {
         int x;
@@ -2789,7 +2789,7 @@ C++20から導入された[<=>演算子](core_lang_spec.md#SS_6_6_4_1)の定義�
     };
 ```
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 74
+    //  example/core_lang_spec20/comparison_operator_ut.cpp 74
 
     auto p1 = Point{1, 2};
     auto p2 = Point{1, 2};
@@ -2821,7 +2821,7 @@ C++20から導入された[<=>演算子](core_lang_spec.md#SS_6_6_4_1)の定義�
 そのような場合に備えて、上記の自動生成コードの内容を敢えて実装して、以下に示す。
 
 ```cpp
-    //  example/cpp_standard20/comparison_operator_ut.cpp 105
+    //  example/core_lang_spec20/comparison_operator_ut.cpp 105
 
     struct Point {
         int x;
@@ -2849,7 +2849,7 @@ spaceship operatorとは[<=>演算子](core_lang_spec.md#SS_6_6_4_1)を指す。
 以下にコード例を示す。
 
 ```cpp
-    //  example/cpp_standard/uniform_initialization_ut.cpp 12
+    //  example/core_lang_spec/uniform_initialization_ut.cpp 12
 
     struct X {
         X(int) {}
@@ -2875,7 +2875,7 @@ spaceship operatorとは[<=>演算子](core_lang_spec.md#SS_6_6_4_1)を指す。
 この機能を積極的に使用することで、縮小型変換による初期化のバグを未然に防ぐことができる。
 
 ```cpp
-    //  example/cpp_standard/uniform_initialization_ut.cpp 34
+    //  example/core_lang_spec/uniform_initialization_ut.cpp 34
 
     int i{0};  // リスト初期化
 
@@ -2926,7 +2926,7 @@ NSDMIとは、non-static data member initializerの略語であり、
 下記のような非静的なメンバ変数の初期化子を指す。
 
 ```cpp
-    //  example/cpp_standard/nsdmi.cpp 11
+    //  example/core_lang_spec/nsdmi.cpp 11
 
     class A {
     public:
@@ -2950,7 +2950,7 @@ NSDMIとは、non-static data member initializerの略語であり、
 constメンバ変数は、初期化子リストでの初期化か[NSDMI](core_lang_spec.md#SS_6_6_7_1)でしか初期化できない。
 
 ```cpp
-    //  example/cpp_standard/nsdmi.cpp 27
+    //  example/core_lang_spec/nsdmi.cpp 27
 
     class A {
     public:
@@ -2974,7 +2974,7 @@ constメンバ変数は、初期化子リストでの初期化か[NSDMI](core_la
 [初期化子リストでの初期化](core_lang_spec.md#SS_6_6_7_2)で初期化できない変数を未初期化でない状態にするための唯一の方法である。
 
 ```cpp
-    //  example/cpp_standard/nsdmi.cpp 45
+    //  example/core_lang_spec/nsdmi.cpp 45
 
     class A {
     public:
@@ -3092,7 +3092,7 @@ C++17以降は[RVO(Return Value Optimization)](core_lang_spec.md#SS_6_15_1)に�
 このドキュメントでも、そうなっていることもある。
 
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 10
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 10
     // str0を初期化するためにstd::string{}により生成されるオブジェクトはprvalue、 str0はlvalue
     //   ↓lvalue
     auto str0 = std::string{};  // この式の左辺はテンポラリオブジェクト(つまりprvalue)
@@ -3144,7 +3144,7 @@ decltypeの算出結果は下表のようになる。
 に有効に活用できる。
 
 ```cpp
-    //  example/cpp_standard/decltype_expression_ut.cpp 7
+    //  example/core_lang_spec/decltype_expression_ut.cpp 7
 
     #define IS_LVALUE(EXPR_) std::is_lvalue_reference_v<decltype((EXPR_))>
     #define IS_XVALUE(EXPR_) std::is_rvalue_reference_v<decltype((EXPR_))>
@@ -3191,7 +3191,7 @@ lvalueリファレンスとは、
     * const lvalueリファレンスは[rvalue](core_lang_spec.md#SS_6_7_1_2)をバインドできる。
 
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 40
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 40
 
     int  a     = 0;
     int& a_ref = a;  // a_refはaのリファレンス
@@ -3213,14 +3213,14 @@ lvalueリファレンスとは、
 
 
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 60
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 60
 
     int f(int& )        { return 1; }   // f-1
     int f(int const & ) { return 2; }   // f-2
 ```
 
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 69
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 69
 
     int       a = 0;
     int const b = 0;
@@ -3241,7 +3241,7 @@ rvalueリファレンスは、
 * **注意2** 型が`T&&`である変数は、`T&`でバインドできる。
 
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 87
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 87
 
     int        a      = 0;
     int const& a_ref0 = a;        // const lvalueリファレンスはlvalueをバインドできる
@@ -3258,7 +3258,7 @@ rvalueリファレンスは、
 
 
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 118
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 118
 
     int f(int&)       { return 1; } // f-1
     int f(int const&) { return 2; } // f-2
@@ -3266,7 +3266,7 @@ rvalueリファレンスは、
 ```
 
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 129
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 129
 
     int       a = 0;
     int const b = 0;
@@ -3286,7 +3286,7 @@ rvalueリファレンスは、
 上記コードの最後の部分の抜粋である以下のコードについては、少々解説が必要だろう。
 
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 141
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 141
 
     int&& ref_ref = int{};
 
@@ -3302,13 +3302,13 @@ rvalueリファレンス型の仮引数（`T&&`）を持つ関数は、ムーブ
 [moveセマンティクス](cpp_idioms.md#SS_8_3_3)や[perfect forwarding](core_lang_spec.md#SS_6_8_5)を正しく実装/使用するために極めて重要である。
 
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 150
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 150
 
     int g(int&& a) { return f(a); }            // g-1    仮引数aはlvalue -> f-1が呼ばれる
     int g(int& a) { return f(std::move(a)); }  // g-2    std::moveでrvalueに変換 -> f-3が呼ばれる
 ```
 ```cpp
-    //  example/cpp_standard/rvalue_lvalue_ut.cpp 158
+    //  example/core_lang_spec/rvalue_lvalue_ut.cpp 158
 
     ASSERT_EQ(1, g(int{}));  // int{}はrvalue -> g-1が呼ばれ、内部でf-1が呼ばれる
 
@@ -3331,7 +3331,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 下記コードにより「[lvalue](core_lang_spec.md#SS_6_7_1_1)からの代入」を説明する。
 
 ```.cpp
-    //  example/cpp_standard/rvalue_move_ut.cpp 10
+    //  example/core_lang_spec/rvalue_move_ut.cpp 10
 
     auto str0 = std::string{};        // 行１   str0はlvalue
     auto str1 = std::string{"hehe"};  // 行２   str1もlvalue
@@ -3353,7 +3353,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 下記コードにより「[rvalue](core_lang_spec.md#SS_6_7_1_2)からの代入」を説明する。
 
 ```.cpp
-    //  example/cpp_standard/rvalue_move_ut.cpp 23
+    //  example/core_lang_spec/rvalue_move_ut.cpp 23
 
     auto str0 = std::string{};        // 行１   str0はlvalue
     str0      = std::string{"hehe"};  // 行２   rvalueからの代入
@@ -3381,7 +3381,7 @@ std::move()の導入が行われた目的はプログラム実行速度の向上
 下記コードにより「std::move(lvalue)からの代入」を説明する。
 
 ```.cpp
-    //  example/cpp_standard/rvalue_move_ut.cpp 36
+    //  example/core_lang_spec/rvalue_move_ut.cpp 36
 
     auto str0 = std::string{};        // 行１   str0はlvalue
     auto str1 = std::string{"hehe"};  // 行２   str1もlvalue
@@ -3415,7 +3415,7 @@ forwardingリファレンスは一見rvalueリファレンスのように見え�
 ([リファレンスcollapsing](core_lang_spec.md#SS_6_8_6)により、このようなバインドが可能になる)。
 
 ```cpp
-    //  example/cpp_standard/universal_ref_ut.cpp 8
+    //  example/core_lang_spec/universal_ref_ut.cpp 8
 
     template <typename T>
     void f(T&& t) noexcept  // tはforwardingリファレンス
@@ -3430,7 +3430,7 @@ forwardingリファレンスは一見rvalueリファレンスのように見え�
     }
 ```
 ```cpp
-    //  example/cpp_standard/universal_ref_ut.cpp 29
+    //  example/core_lang_spec/universal_ref_ut.cpp 29
 
     auto       vec  = std::vector<std::string>{"lvalue"};   // vecはlvalue
     auto const cvec = std::vector<std::string>{"clvalue"};  // cvecはconstなlvalue
@@ -3447,7 +3447,7 @@ forwardingリファレンスは一見rvalueリファレンスのように見え�
 下記のコードは[ジェネリックラムダ](core_lang_spec.md#SS_6_11_6)の引数をforwardingリファレンスにした例である。
 
 ```cpp
-    //  example/cpp_standard/universal_ref_ut.cpp 47
+    //  example/core_lang_spec/universal_ref_ut.cpp 47
 
     // sはforwardingリファレンス
     auto value_type = [](auto&& s) noexcept {
@@ -3487,7 +3487,7 @@ perfect forwarding(完全転送)とは、引数の[rvalue](core_lang_spec.md#SS_
 perfect forwardingの使用例を以下に示す。
 
 ```cpp
-    //  example/cpp_standard/perfect_forwarding_ut.cpp 7
+    //  example/core_lang_spec/perfect_forwarding_ut.cpp 7
 
     class Widget {
     public:
@@ -3506,7 +3506,7 @@ perfect forwardingの使用例を以下に示す。
     }
 ```
 ```cpp
-    //  example/cpp_standard/perfect_forwarding_ut.cpp 28
+    //  example/core_lang_spec/perfect_forwarding_ut.cpp 28
 
     std::string       str{"lvalue ref"};
     std::string const cstr{"lvalue const ref"};
@@ -3543,7 +3543,7 @@ C++11からはエラーとならず、TRRはT&となる。
 下記はTをintとした場合のリファレンスcollapsingの動きを示している。
 
 ```cpp
-    //  example/cpp_standard/ref_collapsing_ut.cpp 7
+    //  example/core_lang_spec/ref_collapsing_ut.cpp 7
 
     int i;
 
@@ -3570,7 +3570,7 @@ C++11からはエラーとならず、TRRはT&となる。
 下記のようなクラステンプレートを定義した場合、
 
 ```cpp
-    //  example/cpp_standard/ref_collapsing_ut.cpp 26
+    //  example/core_lang_spec/ref_collapsing_ut.cpp 26
 
     template <typename T>
     struct Ref {
@@ -3582,7 +3582,7 @@ C++11からはエラーとならず、TRRはT&となる。
 下記のコードにより、テンプレートパラメータに対するこの変換則を確かめることができる。
 
 ```cpp
-    //  example/cpp_standard/ref_collapsing_ut.cpp 38
+    //  example/core_lang_spec/ref_collapsing_ut.cpp 38
 
     static_assert(std::is_same_v<int&, decltype(Ref<int>::t)>);    // lvalueリファレンス
     static_assert(std::is_same_v<int&&, decltype(Ref<int>::u)>);   // rvalueリファレンス
@@ -3597,7 +3597,7 @@ C++11からはエラーとならず、TRRはT&となる。
 この機能がないC++03では、
 
 ```cpp
-    //  example/cpp_standard/ref_collapsing_ut.cpp 52
+    //  example/core_lang_spec/ref_collapsing_ut.cpp 52
 
     template <typename T>
     struct AddRef {
@@ -3608,7 +3608,7 @@ C++11からはエラーとならず、TRRはT&となる。
 ようなクラステンプレートに下記コードのようにリファレンス型を渡すとコンパイルエラーとなる。
 
 ```cpp
-    //  example/cpp_standard/ref_collapsing_ut.cpp 69
+    //  example/core_lang_spec/ref_collapsing_ut.cpp 69
 
     static_assert(std::is_same_v<int&, AddRef<int&>::type>);
 ```
@@ -3616,7 +3616,7 @@ C++11からはエラーとならず、TRRはT&となる。
 この問題を回避するためには下記のようなテンプレートの特殊化が必要になる。
 
 ```cpp
-    //  example/cpp_standard/ref_collapsing_ut.cpp 59
+    //  example/core_lang_spec/ref_collapsing_ut.cpp 59
 
     template <typename T>
     struct AddRef<T&> {
@@ -3648,7 +3648,7 @@ C++11からはエラーとならず、TRRはT&となる。
 rvalueの内部ハンドルを返さないようにすることが可能となり、上記の危険性を緩和することができる。
 
 ```cpp
-    //  example/cpp_standard/ref_qualifiers_ut.cpp 8
+    //  example/core_lang_spec/ref_qualifiers_ut.cpp 8
 
     class C {
     public:
@@ -3687,7 +3687,7 @@ rvalueの内部ハンドルを返さないようにすることが可能とな�
     };
 ```
 ```cpp
-    //  example/cpp_standard/ref_qualifiers_ut.cpp 49
+    //  example/core_lang_spec/ref_qualifiers_ut.cpp 49
 
     auto        c    = C{"c0"};
     auto const& s0_0 = c.GetString0();        // OK cが解放されるまでs0_0は有効
@@ -3729,7 +3729,7 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
 |[[no_unique_address]]|C++20 |クラスや構造体のメンバに対して、メモリの最適化促進 |
 
 ```cpp
-    //  example/cpp_standard/attr_ut.cpp 10
+    //  example/core_lang_spec/attr_ut.cpp 10
 
     // 非推奨の関数
     [[deprecated("この関数は非推奨です。代わりに newFunction を使用してください。")]]  // 
@@ -3737,7 +3737,7 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
     void newFunction();
 ```
 ```cpp
-    //  example/cpp_standard/attr_ut.cpp 20
+    //  example/core_lang_spec/attr_ut.cpp 20
     void processValues()
     {
         [[maybe_unused]] int unusedValue = 42;  // 使用しない変数でも警告が出ない
@@ -3746,17 +3746,17 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
     }
 ```
 ```cpp
-    //  example/cpp_standard/attr_ut.cpp 28
+    //  example/core_lang_spec/attr_ut.cpp 28
 
     [[nodiscard]] int computeResult() { return 42; }
 
-    //  example/cpp_standard/attr_ut.cpp 38
+    //  example/core_lang_spec/attr_ut.cpp 38
 
     computeResult();               // 警告が出る：戻り値が無視されている
     int result = computeResult();  // これはOK
 ```
 ```cpp
-    //  example/cpp_standard/attr_ut.cpp 54
+    //  example/core_lang_spec/attr_ut.cpp 54
 
     switch (value) {
     case 1:
@@ -3774,7 +3774,7 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
 関数tryブロックとはtry-catchを本体とした下記のような関数のブロックを指す。
 
 ```cpp
-    //  example/cpp_standard/func_try_block.cpp 8
+    //  example/core_lang_spec/func_try_block.cpp 8
 
     void function_try_block()
     try {  // 関数tryブロック
@@ -3811,7 +3811,7 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
 単純な範囲for文の使用例は下記の通りである。
 
 ```cpp
-    //  example/cpp_standard/range_for_ut.cpp 14
+    //  example/core_lang_spec/range_for_ut.cpp 14
 
     auto list = std::list{1, 2, 3};
     auto oss  = std::stringstream{};
@@ -3825,7 +3825,7 @@ C++14から導入されたの属性構文は、[[属性名]]の形式で記述�
 上記のコードは下記のように展開される。
 
 ```cpp
-    //  example/cpp_standard/range_for_ut.cpp 26
+    //  example/core_lang_spec/range_for_ut.cpp 26
 
     auto list = std::list{1, 2, 3};
     auto oss  = std::stringstream{};
@@ -3861,7 +3861,7 @@ C++17以降は、この規制が緩和されたため、以下のように展開
 下記のコードはこの緩和ルールの応用例である。
 
 ```cpp
-    //  example/cpp_standard/range_for_ut.cpp 73
+    //  example/core_lang_spec/range_for_ut.cpp 73
 
     delimited_string<','> delimited_str{"Hello,World"};
     std::ostringstream    oss;
@@ -3876,7 +3876,7 @@ C++17以降は、この規制が緩和されたため、以下のように展開
 上記のコードは下記のように展開される。
 
 ```cpp
-    //  example/cpp_standard/range_for_ut.cpp 87
+    //  example/core_lang_spec/range_for_ut.cpp 87
 
     delimited_string<','> delimited_str{"Hello,World"};
     std::ostringstream    oss;
@@ -3894,7 +3894,7 @@ C++17以降は、この規制が緩和されたため、以下のように展開
 構造体のメンバーを個別の変数に分解して簡潔に扱うことをできるようにするための機能である。
 
 ```cpp
-    //  example/cpp_standard/structured_binding_ut.cpp 13
+    //  example/core_lang_spec/structured_binding_ut.cpp 13
 
         // tupleでの構造化束縛の例
         std::tuple<int, double, std::string> tobj(1, 2.5, "Hello");
@@ -3906,7 +3906,7 @@ C++17以降は、この規制が緩和されたため、以下のように展開
         ASSERT_EQ("Hello", s);
 ```
 ```cpp
-    //  example/cpp_standard/structured_binding_ut.cpp 28
+    //  example/core_lang_spec/structured_binding_ut.cpp 28
 
         // pairでの構造化束縛の例
         std::pair<int, std::string> pobj(42, "example");
@@ -3917,7 +3917,7 @@ C++17以降は、この規制が緩和されたため、以下のように展開
         ASSERT_EQ("example", s);
 ```
 ```cpp
-    //  example/cpp_standard/structured_binding_ut.cpp 42
+    //  example/core_lang_spec/structured_binding_ut.cpp 42
 
         struct Person {
             std::string name;
@@ -3944,7 +3944,7 @@ C++17以降は、この規制が緩和されたため、以下のように展開
         ASSERT_EQ(person.age, 56);
 ```
 ```cpp
-    //  example/cpp_standard/structured_binding_ut.cpp 72
+    //  example/core_lang_spec/structured_binding_ut.cpp 72
 
         auto array = std::array<int, 3>{1, 2, 3};
 
@@ -3981,7 +3981,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 上記のと同様の実際のfor文のコードを以下に示す。
 
 ```cpp
-    //  example/cpp_standard/if_switch_init_ut.cpp 8
+    //  example/core_lang_spec/if_switch_init_ut.cpp 8
 
     class OperationResult {
     public:
@@ -3998,7 +3998,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 ```
 ```cpp
-    //  example/cpp_standard/if_switch_init_ut.cpp 33
+    //  example/core_lang_spec/if_switch_init_ut.cpp 33
 
     for (auto result = DoOperation(); result.IsError(); result = DoOperation()) {
         RecoverOperation(result.Get());  // エラー処理
@@ -4022,7 +4022,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 以下のコード例のように従来の記法は広く知られているため、念とため紹介する。
 
 ```cpp
-    //  example/cpp_standard/if_switch_init_ut.cpp 46
+    //  example/core_lang_spec/if_switch_init_ut.cpp 46
 
     while (auto result = DoOperation()) {  // resultはboolへの暗黙の型変換が行われる
         // エラー処理
@@ -4042,7 +4042,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 上記と同様の構造を持つ実際のif文のコードを以下に示す。
 
 ```cpp
-    //  example/cpp_standard/if_switch_init_ut.cpp 8
+    //  example/core_lang_spec/if_switch_init_ut.cpp 8
 
     class OperationResult {
     public:
@@ -4059,7 +4059,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 ```
 ```cpp
-    //  example/cpp_standard/if_switch_init_ut.cpp 57
+    //  example/core_lang_spec/if_switch_init_ut.cpp 57
 
     if (auto result = DoOperation(); !result.IsError()) {
         // 成功処理
@@ -4073,7 +4073,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 クラスの独自の[<=>演算子](core_lang_spec.md#SS_6_6_4_1)を定義する場合、下記のように使用することができる。
 
 ```cpp
-    //  example/cpp_standard/if_switch_init_ut.cpp 70
+    //  example/core_lang_spec/if_switch_init_ut.cpp 70
 
     struct DoubleName {
         std::string name0;
@@ -4110,7 +4110,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
 上記と同様の構造を持つ実際のswitch文のコードを以下に示す。
 
 ```cpp
-    //  example/cpp_standard/if_switch_init_ut.cpp 8
+    //  example/core_lang_spec/if_switch_init_ut.cpp 8
 
     class OperationResult {
     public:
@@ -4127,7 +4127,7 @@ C++17で、if文とswitc文に初期化を行う構文が導入された。
     void            RecoverOperation(OperationResult::ErrorCode);  // リカバリ処理
 ```
 ```cpp
-    //  example/cpp_standard/if_switch_init_ut.cpp 101
+    //  example/core_lang_spec/if_switch_init_ut.cpp 101
 
     switch (auto result = DoOperation(); result.Get()) {
     case OperationResult::ErrorCode::ErrorPattern1:
@@ -4155,7 +4155,7 @@ co_awaitはコルーチンの非同期操作の一時停止と再開に使用さ
 co_waitとco_returnを使用したコードを以下に示す。
 
 ```cpp
-    //  example/cpp_standard20/co_await_ut.cpp 12
+    //  example/core_lang_spec20/co_await_ut.cpp 12
 
     class Task {  // コルーチンが返す型
     public:
@@ -4228,7 +4228,7 @@ co_waitとco_returnを使用したコードを以下に示す。
 以下単体テストコードによりに上記コルーチンの動作を示す。
 
 ```cpp
-    //  example/cpp_standard20/co_await_ut.cpp 85
+    //  example/core_lang_spec20/co_await_ut.cpp 85
 
     Task    task  = gen_coroutine();  // gen_coroutine から Task オブジェクトを生成
     int32_t calls = 0;
@@ -4259,7 +4259,7 @@ co_waitとco_returnを使用したコードを以下に示す。
 上記のコルーチンと同じ機能を持つクラスのco_await/co_returnを使わない実装を以下に示す。
 
 ```cpp
-    //  example/cpp_standard20/co_await_ut.cpp 115
+    //  example/core_lang_spec20/co_await_ut.cpp 115
 
     /// @enum CoroutineState
     /// @brief ManualCoroutine の状態を表す enum 型
@@ -4312,7 +4312,7 @@ co_waitとco_returnを使用したコードを以下に示す。
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    //  example/cpp_standard20/co_await_ut.cpp 167
+    //  example/core_lang_spec20/co_await_ut.cpp 167
 
     auto    manual_coroutine = ManualCoroutine{};
     int32_t calls            = 0;
@@ -4351,7 +4351,7 @@ co_yieldはコルーチンから値を返しつつ、
 次の再開ポイントまで処理を中断する。これはジェネレーターの実装に便利である。
 
 ```cpp
-    //  example/cpp_standard20/co_yield_ut.cpp 12
+    //  example/core_lang_spec20/co_yield_ut.cpp 12
 
     template <typename T>
     class Generator {
@@ -4466,7 +4466,7 @@ co_yieldはコルーチンから値を返しつつ、
 このテストを以下に示す。
 
 ```cpp
-    //  example/cpp_standard20/co_yield_ut.cpp 127
+    //  example/core_lang_spec20/co_yield_ut.cpp 127
 
     // 数値を生成し、それをパイプライン処理に通す
     auto numbers         = generate_numbers(1, 10);
@@ -4492,7 +4492,7 @@ co_yieldはコルーチンから値を返しつつ、
 co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yieldを使わない実装を以下に示す。
 
 ```cpp
-    //  example/cpp_standard20/co_yield_ut.cpp 152
+    //  example/core_lang_spec20/co_yield_ut.cpp 152
 
     /// @brief コルーチンを使わずにデータを逐次的に提供するジェネレータークラス
     template <typename T>
@@ -4575,7 +4575,7 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
 このクラスは当然ながら、前記のコルーチンの単体テストコードとほぼ同じになる。
 
 ```cpp
-    //  example/cpp_standard20/co_yield_ut.cpp 234
+    //  example/core_lang_spec20/co_yield_ut.cpp 234
 
     // 数値を生成し、それをパイプライン処理に通す
     auto numbers         = generate_numbers(1, 10);
@@ -4688,7 +4688,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
   パラメータにautoを使用(型推測)できるようにした機能。
 
 ```cpp
-    //  example/cpp_standard/lambda.cpp 10
+    //  example/core_lang_spec/lambda.cpp 10
 
     auto a = 0;
 
@@ -4719,7 +4719,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 複雑な初期化を必要とするconstオブジェクトの生成をするような場合に有用なテクニックである。
 
 ```cpp
-    //  example/cpp_standard/transient_lambda_ut.cpp 9
+    //  example/core_lang_spec/transient_lambda_ut.cpp 9
 
     std::vector<int> vec{1, 2, 3};
 
@@ -4750,7 +4750,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 まずは、この機能を有効に使えるクラス例を以下に示す。
 
 ```cpp
-    //  example/cpp_standard20/designated_init_ut.cpp 11
+    //  example/core_lang_spec20/designated_init_ut.cpp 11
 
     struct Point {
         int  x;
@@ -4778,7 +4778,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
     };
 ```
 ```cpp
-    //  example/cpp_standard20/designated_init_ut.cpp 41
+    //  example/core_lang_spec20/designated_init_ut.cpp 41
 
     struct Point p0 {
         10, 20
@@ -4805,7 +4805,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 この機能を使うと可読性の改善が期待できる。
 
 ```cpp
-    //  example/cpp_standard20/designated_init_ut.cpp 68
+    //  example/core_lang_spec20/designated_init_ut.cpp 68
 
     std::pmr::unsynchronized_pool_resource pool_resource(
         std::pmr::pool_options{
@@ -4821,7 +4821,7 @@ C++20から導入されたco_await、co_return、TaskとC++17以前の機能の�
 指示付き初期化を使わない以下のコード例と上記を比べれば可読性の改善に議論の余地はないだろう。
 
 ```cpp
-    //  example/cpp_standard20/designated_init_ut.cpp 83
+    //  example/core_lang_spec20/designated_init_ut.cpp 83
 
     // 指示付き初期化を使わずにstd::pmr::unsynchronized_pool_resourceの初期化
     std::pmr::unsynchronized_pool_resource pool_resource(
@@ -4880,7 +4880,7 @@ C++20から導入された「コンセプト(concepts)」は、
   テンプレート関数やクラスのインターフェースが明確になり、可読性が向上する。
 
 ```cpp
-    //  example/cpp_standard/concept_ut.cpp 12
+    //  example/core_lang_spec/concept_ut.cpp 12
 
     // SFINAEを使用したc++17スタイル
     template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value>::type>
@@ -4889,7 +4889,7 @@ C++20から導入された「コンセプト(concepts)」は、
         return a + b;
     }
 
-    //  example/cpp_standard/concept_ut.cpp 24
+    //  example/core_lang_spec/concept_ut.cpp 24
 
     ASSERT_EQ(add(10, 20), 30);     // int型
     ASSERT_EQ(add(1.5, 2.5), 4.0);  // double型
@@ -4910,7 +4910,7 @@ C++20から導入された「コンセプト(concepts)」は、
 ```
 
 ```cpp
-    //  example/cpp_standard/concept_ut.cpp 49
+    //  example/core_lang_spec/concept_ut.cpp 49
 
     // コンセプトを使用したC++20スタイル
     template <typename T>
@@ -4922,7 +4922,7 @@ C++20から導入された「コンセプト(concepts)」は、
         return a + b;
     }
 
-    //  example/cpp_standard/concept_ut.cpp 64
+    //  example/core_lang_spec/concept_ut.cpp 64
 
     ASSERT_EQ(add(10, 20), 30);     // int型
     ASSERT_EQ(add(1.5, 2.5), 4.0);  // double型
@@ -4941,7 +4941,7 @@ C++20から導入された「コンセプト(concepts)」は、
 以下はテンプレートパラメータの制約にstatic_assertを使用した例である。
 
 ```cpp
-    //  example/cpp_standard/concept_ut.cpp 85
+    //  example/core_lang_spec/concept_ut.cpp 85
 
     // 制約のためにstatic_assertを使用したC++17スタイル
     template <typename FLOAT_0, typename FLOAT_1>
@@ -4957,7 +4957,7 @@ C++20から導入された「コンセプト(concepts)」は、
 以上の関数テンプレートをコンセプトを使用して改善した例である。
 
 ```cpp
-    //  example/cpp_standard/concept_ut.cpp 113
+    //  example/core_lang_spec/concept_ut.cpp 113
 
     // 標準コンセプト std::floating_point と std::same_as を使用
     template <std::floating_point FLOAT_0, std::same_as<FLOAT_0> FLOAT_1>
@@ -4970,7 +4970,7 @@ C++20から導入された「コンセプト(concepts)」は、
 フレキシブルに制約を記述するためにrequiresを使用したコード例を下記する。
 
 ```cpp
-    //  example/cpp_standard/concept_ut.cpp 138
+    //  example/core_lang_spec/concept_ut.cpp 138
 
     #if __cplusplus >= 202002L  // c++20
 
@@ -5007,7 +5007,7 @@ C++20から導入された「コンセプト(concepts)」は、
 パラメータパックを使用した関数テンプレートは以下のように定義する。
 
 ```cpp
-    //  example/cpp_standard/template_ut.cpp 70
+    //  example/core_lang_spec/template_ut.cpp 70
 
     void print(std::ostream& os) { os << std::endl; }
 
@@ -5025,7 +5025,7 @@ C++20から導入された「コンセプト(concepts)」は、
 以下の単体テストは上記の関数の使い方を示している。
 
 ```cpp
-    //  example/cpp_standard/template_ut.cpp 87
+    //  example/core_lang_spec/template_ut.cpp 87
 
     std::stringstream os;
 
@@ -5049,7 +5049,7 @@ C++20から導入された「コンセプト(concepts)」は、
 
 1. 単項右畳み込み
 ```cpp
-    //  example/cpp_standard/flold_expression_ut.cpp 9
+    //  example/core_lang_spec/flold_expression_ut.cpp 9
 
     namespace cpp14_style {  // c++14までのスタイル
     template <typename T>
@@ -5077,7 +5077,7 @@ C++20から導入された「コンセプト(concepts)」は、
 ```
 2. 単項左畳み込み
 ```cpp
-    //  example/cpp_standard/flold_expression_ut.cpp 36
+    //  example/core_lang_spec/flold_expression_ut.cpp 36
     namespace cpp14_style {  // c++14までのスタイル
     template <typename T>
     constexpr bool any_true(T arg)
@@ -5103,7 +5103,7 @@ C++20から導入された「コンセプト(concepts)」は、
 ```
 3. 二項右畳み込み
 ```cpp
-    //  example/cpp_standard/flold_expression_ut.cpp 61
+    //  example/core_lang_spec/flold_expression_ut.cpp 61
 
     namespace cpp14_style {  // c++14までのスタイル
     template <typename T>
@@ -5132,7 +5132,7 @@ C++20から導入された「コンセプト(concepts)」は、
 ```
 4. 二項左畳み込み
 ```cpp
-    //  example/cpp_standard/flold_expression_ut.cpp 89
+    //  example/core_lang_spec/flold_expression_ut.cpp 89
 
     namespace cpp14_style {  // c++14までのスタイル
     template <typename T>
@@ -5163,7 +5163,7 @@ C++20から導入された「コンセプト(concepts)」は、
 もっと複雑なで読解が困難な再帰構造を持ったコードを以下に示す。
 
 ```cpp
-    //  example/cpp_standard/flold_expression_ut.cpp 117
+    //  example/core_lang_spec/flold_expression_ut.cpp 117
     template <typename T, typename U, typename... Us>
     struct is_same_some_of {
         static constexpr bool value{std::is_same_v<T, U> ? true : is_same_some_of<T, Us...>::value};
@@ -5175,7 +5175,7 @@ C++20から導入された「コンセプト(concepts)」は、
     };
 ```
 ```cpp
-    //  example/cpp_standard/flold_expression_ut.cpp 128
+    //  example/core_lang_spec/flold_expression_ut.cpp 128
 
     static_assert(is_same_some_of<int, int, double, char>::value);
     static_assert(!is_same_some_of<int, double, char>::value);
@@ -5185,14 +5185,14 @@ C++20から導入された「コンセプト(concepts)」は、
 畳み込み式を使うことで、この問題をある程度緩和したコードを下記する。
 
 ```cpp
-    //  example/cpp_standard/flold_expression_ut.cpp 140
+    //  example/core_lang_spec/flold_expression_ut.cpp 140
     template <typename T, typename U, typename... Us>
     struct is_same_some_of {
         static constexpr bool value = (std::is_same_v<T, U> || ... || std::is_same_v<T, Us>);
     };
 ```
 ```cpp
-    //  example/cpp_standard/flold_expression_ut.cpp 146
+    //  example/core_lang_spec/flold_expression_ut.cpp 146
 
     static_assert(is_same_some_of<int, int, double, char>::value);
     static_assert(!is_same_some_of<int, double, char>::value);
@@ -5209,7 +5209,7 @@ C++14で導入された。
 下記のように使用することもできる便利な記法である。
 
 ```cpp
-    //  example/cpp_standard/generic_lambda_ut.cpp 4
+    //  example/core_lang_spec/generic_lambda_ut.cpp 4
 
     template <typename PUTTO>
     void f(PUTTO&& p)
@@ -5232,7 +5232,7 @@ C++14で導入された。
 なお、上記のジェネリックラムダは下記クラスのインスタンスの動きと同じである。
 
 ```cpp
-    //  example/cpp_standard/generic_lambda_ut.cpp 23
+    //  example/core_lang_spec/generic_lambda_ut.cpp 23
 
     class Closure {
     public:
@@ -5267,7 +5267,7 @@ C++17から、
 この機能がないC++14までは以下のように記述する必要があった。
 
 ```cpp
-    //  example/cpp_standard/template_ut.cpp 14
+    //  example/core_lang_spec/template_ut.cpp 14
 
     auto a = std::vector<int>{1, 2, 3};
 
@@ -5277,7 +5277,7 @@ C++17から、
 これに対して、この機能により、以下のようにシンプルに記述できるようになった。
 
 ```cpp
-    //  example/cpp_standard/template_ut.cpp 25
+    //  example/core_lang_spec/template_ut.cpp 25
 
     auto a = std::vector{1, 2, 3};
 
@@ -5297,7 +5297,7 @@ CTAD（Class Template Argument Deduction、クラステンプレート実引数�
 特にコンストラクタがテンプレートである場合など、暗黙の型推論では不十分な場合に有用である。
 
 ```cpp
-    //  example/cpp_standard/deduction_guide_ut.cpp 8
+    //  example/core_lang_spec/deduction_guide_ut.cpp 8
 
     template <typename T>  // Tが整数型の場合、暗黙の型変換を許可
     struct S {
@@ -5323,7 +5323,7 @@ CTAD（Class Template Argument Deduction、クラステンプレート実引数�
 そのため、以下のように明示的にテンプレート引数を指定する必要がある。
 
 ```cpp
-    //  example/cpp_standard/deduction_guide_ut.cpp 31
+    //  example/core_lang_spec/deduction_guide_ut.cpp 31
 
     // 型推論ガイドがないため、下記はコンパイルできない
     // S s1{42};   // エラー: テンプレート引数を推論できない
@@ -5338,13 +5338,13 @@ CTAD（Class Template Argument Deduction、クラステンプレート実引数�
 テンプレート引数を型推論できるようになる。
 
 ```cpp
-    //  example/cpp_standard/deduction_guide_ut.cpp 44
+    //  example/core_lang_spec/deduction_guide_ut.cpp 44
 
     template <typename T>
     S(T) -> S<T>;
 ```
 ```cpp
-    //  example/cpp_standard/deduction_guide_ut.cpp 52
+    //  example/core_lang_spec/deduction_guide_ut.cpp 52
 
     S s1{42};   // 推論ガイドの効果
     S s2{1.0};  // 推論ガイドの効果
@@ -5360,7 +5360,7 @@ CTAD（Class Template Argument Deduction、クラステンプレート実引数�
 変数テンプレートとは、下記のコード示したような機能である。
 
 ```cpp
-    //  example/cpp_standard/template_ut.cpp 33
+    //  example/core_lang_spec/template_ut.cpp 33
 
     template <typename T>
     struct is_void {
@@ -5393,7 +5393,7 @@ CTAD（Class Template Argument Deduction、クラステンプレート実引数�
 下記のコード例で示したようにテンプレートによって型の別名を定義する機能である。
 
 ```cpp
-    //  example/cpp_standard/template_ut.cpp 57
+    //  example/core_lang_spec/template_ut.cpp 57
 
     using IntVector = std::vector<int>;  // std::vector<int> のエイリアスを定義
 
@@ -5410,7 +5410,7 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
 まずは、この構文を使用しない例を示す。
 
 ```cpp
-    //  example/cpp_standard/constexpr_if_ut.cpp 9
+    //  example/core_lang_spec/constexpr_if_ut.cpp 9
 
     // 配列のサイズ
     template <typename T>
@@ -5430,7 +5430,7 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
     size_t Length(...) { return 0; }
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_if_ut.cpp 31
+    //  example/core_lang_spec/constexpr_if_ut.cpp 31
 
     uint32_t a[5];
     auto     v = std::vector{0, 1, 2};
@@ -5451,7 +5451,7 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
 条件分岐の可読性の向上が見込める。
 
 ```cpp
-    //  example/cpp_standard/constexpr_if_ut.cpp 52
+    //  example/core_lang_spec/constexpr_if_ut.cpp 52
 
     struct helper {
         template <typename T>
@@ -5479,7 +5479,7 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
 この構文は[パラメータパック](core_lang_spec.md#SS_6_11_4)の展開においても有用な場合がある。
 
 ```cpp
-    //  example/cpp_standard/constexpr_if_ut.cpp 93
+    //  example/core_lang_spec/constexpr_if_ut.cpp 93
 
     // テンプレートパラメータで与えられた型のsizeofの値が最も大きな値を返す。
     template <typename HEAD>
@@ -5495,7 +5495,7 @@ C++17で導入された[constexpr if文](https://cpprefjp.github.io/lang/cpp17/i
     }
 ```
 ```cpp
-    //  example/cpp_standard/constexpr_if_ut.cpp 111
+    //  example/core_lang_spec/constexpr_if_ut.cpp 111
 
     static_assert(4 == (MaxSizeof<int8_t, int16_t, int32_t>()));
     static_assert(4 == (MaxSizeof<int32_t, int16_t, int8_t>()));
@@ -5507,7 +5507,7 @@ C++14までの構文を使用する場合、
 constexpr ifを使用することで、やや単純に記述できる。
 
 ```cpp
-    //  example/cpp_standard/constexpr_if_ut.cpp 123
+    //  example/core_lang_spec/constexpr_if_ut.cpp 123
 
     // テンプレートパラメータで与えられた型のsizeofの値が最も大きな値を返す。
     template <typename HEAD, typename... TAILS>
@@ -5527,7 +5527,7 @@ constexpr ifを使用することで、やや単純に記述できる。
 下記のコードで示すように簡易的に関数テンプレートを定義するための機能である。
 
 ```cpp
-    //  example/cpp_standard20/abbreviated_func_template_ut.cpp 11
+    //  example/core_lang_spec20/abbreviated_func_template_ut.cpp 11
 
     auto add(auto lhs, auto rhs)  // c++20で導入された記法
     {
@@ -5535,7 +5535,7 @@ constexpr ifを使用することで、やや単純に記述できる。
     }
 ```
 ```cpp
-    //  example/cpp_standard20/abbreviated_func_template_ut.cpp 21
+    //  example/core_lang_spec20/abbreviated_func_template_ut.cpp 21
 
     ASSERT_EQ(add(1, 2), 3);
 
@@ -5557,7 +5557,7 @@ decltypeはオペランドに[expression](core_lang_spec.md#SS_6_7_1)を取り�
 下記のコードにあるようなautoの機能との微妙な差に気を付ける必要がある。
 
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 13
+    //  example/core_lang_spec/decltype_ut.cpp 13
 
     int32_t  x{3};
     int32_t& r{x};
@@ -5576,7 +5576,7 @@ decltypeは、テンプレートプログラミングに多用されるが、
 下記例のような場合にも有用である。
 
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 28
+    //  example/core_lang_spec/decltype_ut.cpp 28
 
     //  本来ならばA::dataは、
     //      * A::Aでメモリ割り当て
@@ -5613,7 +5613,7 @@ decltype(auto)はC++14から導入されたdecltypeの類似機能である。
 auto、decltype、decltype(auto)では、以下に示す通りリファレンスの扱いが異なることに注意する必要がある。
 
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 63
+    //  example/core_lang_spec/decltype_ut.cpp 63
 
     int32_t  x{3};
     int32_t& r{x};
@@ -5635,7 +5635,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 コード例を以下に示す。
 
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 82
+    //  example/core_lang_spec/decltype_ut.cpp 82
 
     template <typename T, typename U>
     auto add(T a, U b) -> decltype(a + b)
@@ -5652,7 +5652,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 この構文をC++11から導入された理由は以下のコードを見れば明らかだろう。
 
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 97
+    //  example/core_lang_spec/decltype_ut.cpp 97
 
     template <typename T, typename U>  // 戻り値型を後置する関数宣言
     decltype(std::declval<T>() + std::declval<T>()) add(T a, U b)
@@ -5673,7 +5673,7 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
 (「[autoパラメータによる関数テンプレートの簡易定義](core_lang_spec.md#SS_6_11_13)」を参照)。
 
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 114
+    //  example/core_lang_spec/decltype_ut.cpp 114
 
     // 戻り値型autoが使えないと下記のような宣言が必要
     // std::vector<std::string> split(std::string_view str, char delimiter)
@@ -5701,7 +5701,7 @@ C++14から導入された機能で、関数の戻り値の型をautoキーワ�
     }
 ```
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 144
+    //  example/core_lang_spec/decltype_ut.cpp 144
 
     auto result = split("hello,world", ',');
 
@@ -5716,14 +5716,14 @@ C++14から導入された[関数の戻り値型auto](core_lang_spec.md#SS_6_11_
 autoプレースホルダーとし、そのプレースホルダーを修飾することで、戻り値型の推論を補助できる。
 
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 154
+    //  example/core_lang_spec/decltype_ut.cpp 154
 
     int16_t gvalue = 1;
 
     auto getValue(int16_t a) -> auto& { return gvalue += a; }
 ```
 ```cpp
-    //  example/cpp_standard/decltype_ut.cpp 163
+    //  example/core_lang_spec/decltype_ut.cpp 163
 
     auto           ret1 = getValue(10);
     decltype(auto) ret2 = getValue(0);
@@ -5753,7 +5753,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記のようなコードがあった場合、
 
 ```cpp
-    //  example/cpp_standard/name_lookup_ut.cpp 5
+    //  example/core_lang_spec/name_lookup_ut.cpp 5
 
     namespace NS_LU {
     int f() noexcept { return 0; }
@@ -5764,7 +5764,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 
 
 ```cpp
-    //  example/cpp_standard/name_lookup_ut.cpp 29
+    //  example/core_lang_spec/name_lookup_ut.cpp 29
 
     NS_LU::f();
 ```
@@ -5777,7 +5777,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記のようなコードがあった場合、
 
 ```cpp
-    //  example/cpp_standard/name_lookup_ut.cpp 11
+    //  example/core_lang_spec/name_lookup_ut.cpp 11
 
     namespace NS_LU {
     bool g(int i) noexcept { return i < 0; }
@@ -5795,7 +5795,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 
 
 ```cpp
-    //  example/cpp_standard/name_lookup_ut.cpp 37
+    //  example/core_lang_spec/name_lookup_ut.cpp 37
     int a[3]{1, 2, 3};
     NS_LU::g(a);
 ```
@@ -5810,7 +5810,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記記のようなコードがあった場合、
 
 ```cpp
-    //  example/cpp_standard/name_lookup_ut.cpp 44
+    //  example/core_lang_spec/name_lookup_ut.cpp 44
 
     // グローバル名前空間
     std::string ToString(int i) { return std::to_string(i) + " in Global"; }
@@ -5831,7 +5831,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 以下のコードでの関数呼び出しToString()のname lookupは、
 
 ```cpp
-    //  example/cpp_standard/name_lookup_ut.cpp 65
+    //  example/core_lang_spec/name_lookup_ut.cpp 65
 
     auto x = NS_LU::X{1};
 
@@ -5869,7 +5869,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 下記のようなコードがあった場合、
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 5
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 5
 
     namespace NS_TPLU {
     struct X {
@@ -5908,7 +5908,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 以下のコードでのTypeNameのインスタンス化に伴うname lookupは、
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 44
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 44
 
     auto x = NS_TPLU::X{1};
 
@@ -5936,7 +5936,7 @@ autoプレースホルダーとし、そのプレースホルダーを修飾す�
 上と同じ定義、宣言がある場合の以下のコードでのTypeNameのインスタンス化に伴うname lookupは、
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 50
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 50
 
     ASSERT_EQ("type:unknown", NS_TPLU::TypeName(int{}));
 ```
@@ -5971,7 +5971,7 @@ two phase lookupが実装されていないコンパイラ(こういったコン
 上と同じ定義、宣言がある場合の以下のコードの動作を考える。
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 54
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 54
 
     ASSERT_EQ("type:long", NS_TPLU::TypeName(long{}));
 ```
@@ -5982,7 +5982,7 @@ NS_TPLU::TypeName(int{})のintをlongにしただけなので、この単体テ�
 に以下のコードを追加するとパスしてしまう。
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 61
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 61
 
     namespace NS_TPLU {
     template <>
@@ -6022,7 +6022,7 @@ name lookupでバインドされる関数を変更することができるため
 実際には関連付けされないコードである。
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 71
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 71
 
     namespace NS_TPLU2 {
     struct Y {
@@ -6031,7 +6031,7 @@ name lookupでバインドされる関数を変更することができるため
     }  // namespace NS_TPLU2
 ```
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 79
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 79
 
     // global名前空間
     template <typename T>
@@ -6055,7 +6055,7 @@ TypeNameやToTypeがグローバル名前空間で宣言されていることの
 TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y const&)が選択されないのである。
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 100
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 100
 
     auto y = NS_TPLU2::Y{1};
 
@@ -6091,7 +6091,7 @@ TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y con
 次のコードは、この難解さに翻弄されるのが現場のプログラマのみではないことを示す。
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 71
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 71
 
     namespace NS_TPLU2 {
     struct Y {
@@ -6100,7 +6100,7 @@ TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y con
     }  // namespace NS_TPLU2
 ```
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 110
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 110
 
     // global名前空間
     template <typename T>
@@ -6121,7 +6121,7 @@ TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y con
 上記の宣言、定義があった場合、operator+の単体テストは以下のようになる。
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 132
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 132
 
     auto y = NS_TPLU2::Y{1};
 
@@ -6131,7 +6131,7 @@ TypeName内でのname lookupで関数オーバーライドToType(NS_TPLU2::Y con
 このテストは当然パスするが、次はどうだろう？
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 142
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 142
 
     auto y = NS_TPLU2::Y{1};
 
@@ -6147,7 +6147,7 @@ operator+(NS_TPLU2::Y const& y, int i)はTypeNum内でのname lookupの対象に
 当然ながら以下のテストはパスする(つまり、g++ではエラーする)。
 
 ```cpp
-    //  example/cpp_standard/two_phase_name_lookup_ut.cpp 151
+    //  example/core_lang_spec/two_phase_name_lookup_ut.cpp 151
 
     auto y = NS_TPLU2::Y{1};
 
@@ -6191,7 +6191,7 @@ ADLとは、関数の実引数の型が宣言されている名前空間(これ�
 下記のようなコードがあった場合、
 
 ```cpp
-    //  example/cpp_standard/name_lookup_adl_ut.cpp 5
+    //  example/core_lang_spec/name_lookup_adl_ut.cpp 5
     namespace NS_ADL {
     struct A {
         int i;
@@ -6204,7 +6204,7 @@ ADLとは、関数の実引数の型が宣言されている名前空間(これ�
 以下のコードでのToStringの呼び出しに対するのname lookupは、
 
 ```cpp
-    //  example/cpp_standard/name_lookup_adl_ut.cpp 18
+    //  example/core_lang_spec/name_lookup_adl_ut.cpp 18
 
     auto a = NS_ADL::A{0};
 
@@ -6225,7 +6225,7 @@ ADLは思わぬname lookupによるバグを誘発することもあるが、
 コードをより自然に、より簡潔に記述するための重要な機能となっている。
 
 ```cpp
-    //  example/cpp_standard/name_lookup_adl_ut.cpp 28
+    //  example/core_lang_spec/name_lookup_adl_ut.cpp 28
 
     // 下記operator <<は、std::operator<<(ostream&, string const&)であり、
     // namespace stdで定義されている。
@@ -6250,7 +6250,7 @@ C++で関数やメンバ関数を明示的にスコープやクラス名で修�
 一方で、[ADL](core_lang_spec.md#SS_6_12_5)が働かなくなるため、フレキシブルな[name lookup](core_lang_spec.md#SS_6_12_2)ができなくなる。
 
 ```cpp
-    //  example/cpp_standard/etc_ut.cpp 40
+    //  example/core_lang_spec/etc_ut.cpp 40
 
     extern void func();  // グローバル名前空間での宣言
 
@@ -6298,7 +6298,7 @@ hidden-friend関数(隠れたフレンド関数)の目的は、
   コンパイラによる最適化を妨げることなく、特定の機能を提供する。
 
 ```cpp
-    //  example/cpp_standard/hidden_friend_ut.cpp 7
+    //  example/core_lang_spec/hidden_friend_ut.cpp 7
 
     namespace NS {
     class Person {
@@ -6319,7 +6319,7 @@ hidden-friend関数(隠れたフレンド関数)の目的は、
     }  // namespace NS
 ```
 ```cpp
-    //  example/cpp_standard/hidden_friend_ut.cpp 31
+    //  example/core_lang_spec/hidden_friend_ut.cpp 31
 
     NS::Person         alice("Alice", 30);
     std::ostringstream oss;
@@ -6343,7 +6343,7 @@ name-hidingとは
 まずは、クラスとその派生クラスでのname-hidingの例を示す。
 
 ```cpp
-    //  example/cpp_standard/name_hiding.cpp 4
+    //  example/core_lang_spec/name_hiding.cpp 4
 
     struct Base {
         void f() noexcept {}
@@ -6359,7 +6359,7 @@ name-hidingとは
 Base::f()には、修飾しない形式でのDerivedクラス経由のアクセスはできない。
 
 ```cpp
-    //  example/cpp_standard/name_hiding.cpp 18
+    //  example/core_lang_spec/name_hiding.cpp 18
 
     {
         auto d = Derived{};
@@ -6379,7 +6379,7 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 修飾しない形式でのDerivedクラス経由のBase::f()へのアクセスが可能となる。
 
 ```cpp
-    //  example/cpp_standard/name_hiding.cpp 34
+    //  example/core_lang_spec/name_hiding.cpp 34
 
     struct Derived : Base {
         using Base::f;  // using宣言によりDerivedにBase::fを導入
@@ -6387,7 +6387,7 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
     };
 ```
 ```cpp
-    //  example/cpp_standard/name_hiding.cpp 45
+    //  example/core_lang_spec/name_hiding.cpp 45
 
     auto d = Derived{};
     d.f();  // using宣言によりコンパイルできる
@@ -6396,7 +6396,7 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 下記コードは、名前空間でも似たような現象が起こることを示している。
 
 ```cpp
-    //  example/cpp_standard/name_hiding.cpp 54
+    //  example/core_lang_spec/name_hiding.cpp 54
 
     // global名前空間
     void f() noexcept {}
@@ -6416,7 +6416,7 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 この問題に対しては、下記のようにf(int)の定義位置を後方に移動することで回避できる。
 
 ```cpp
-    //  example/cpp_standard/name_hiding.cpp 70
+    //  example/core_lang_spec/name_hiding.cpp 70
 
     namespace NS_A_fixed_0 {
     void g() noexcept
@@ -6432,7 +6432,7 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 また、先述のクラスでの方法と同様にusing宣言を使い、下記のようにすることもできる。
 
 ```cpp
-    //  example/cpp_standard/name_hiding.cpp 82
+    //  example/core_lang_spec/name_hiding.cpp 82
 
     namespace NS_A_fixed_1 {
     void f(int) noexcept {}
@@ -6450,7 +6450,7 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 当然ながら、下記のようにf()の呼び出しを::で修飾することもできる。
 
 ```cpp
-    //  example/cpp_standard/name_hiding.cpp 96
+    //  example/core_lang_spec/name_hiding.cpp 96
 
     namespace NS_A_fixed_2 {
     void f(int) noexcept {}
@@ -6472,7 +6472,7 @@ Base::fがその後方にあるDerived::f(int)によりname-hidingされたた�
 次に、そういった混乱を引き起こすであろうコードを示す。
 
 ```cpp
-    //  example/cpp_standard/name_hiding.cpp 108
+    //  example/core_lang_spec/name_hiding.cpp 108
 
     namespace NS_B {
     struct S_in_B {};
@@ -6525,7 +6525,7 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 [仮想継承](core_lang_spec.md#SS_6_12_11)を使わないダイヤモンド継承のコードを以下に示す。
 
 ```cpp
-    //  example/cpp_standard/diamond_inheritance_ut.cpp 6
+    //  example/core_lang_spec/diamond_inheritance_ut.cpp 6
 
     class Base {
     public:
@@ -6543,7 +6543,7 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
     class DerivedDerived : public Derived_0, public Derived_1 {};
 ```
 ```cpp
-    //  example/cpp_standard/diamond_inheritance_ut.cpp 26
+    //  example/core_lang_spec/diamond_inheritance_ut.cpp 26
 
     auto dd = DerivedDerived{};
 
@@ -6561,7 +6561,7 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 下記コードは、それが原因で名前解決が曖昧になりコンパイルできない。
 
 ```cpp
-    //  example/cpp_standard/diamond_inheritance_ut.cpp 36
+    //  example/core_lang_spec/diamond_inheritance_ut.cpp 36
 
     Base& b = dd;  // Derived_0::Base or Derived_1::Base ?
 
@@ -6580,7 +6580,7 @@ name-hidingが原因で、NS_B_Inner::h()内のf(int)の呼び出しはコンパ
 Baseインスタンスが2つ存在するため、下記に示すようなわかりづらいバグの温床となる。
 
 ```cpp
-    //  example/cpp_standard/diamond_inheritance_ut.cpp 53
+    //  example/core_lang_spec/diamond_inheritance_ut.cpp 53
 
     ASSERT_EQ(0, dd.Derived_0::get());  // クラス名による名前修飾
     ASSERT_EQ(0, dd.Derived_1::get());
@@ -6597,7 +6597,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 次に示すのは、[仮想継承](core_lang_spec.md#SS_6_12_11)を使用したダイヤモンド継承の例である。
 
 ```cpp
-    //  example/cpp_standard/diamond_inheritance_ut.cpp 70
+    //  example/core_lang_spec/diamond_inheritance_ut.cpp 70
 
     class Base {
     public:
@@ -6615,7 +6615,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
     class DerivedDerived : public Derived_0, public Derived_1 {};
 ```
 ```cpp
-    //  example/cpp_standard/diamond_inheritance_ut.cpp 90
+    //  example/core_lang_spec/diamond_inheritance_ut.cpp 90
 
     auto dd = DerivedDerived{};
 
@@ -6630,7 +6630,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 (が、[仮想継承](core_lang_spec.md#SS_6_12_11)による別の問題が発生する)。
 
 ```cpp
-    //  example/cpp_standard/diamond_inheritance_ut.cpp 99
+    //  example/core_lang_spec/diamond_inheritance_ut.cpp 99
 
     Base& b = dd;  // Baseインスタンスは1つであるため、コンパイルできる
 
@@ -6651,7 +6651,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 下記に示した継承方法を仮想継承、仮想継承の基底クラスを仮想基底クラスと呼ぶ。
 
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 9
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 9
 
     class Base {
     public:
@@ -6676,7 +6676,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 それぞれを通常の継承したクラスを下記のように定義する。
 
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 25
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 25
 
     class DerivedDerivedVirtual : public DerivedVirtual {  // 仮想継承を通常の継承
     public:
@@ -6699,7 +6699,7 @@ Baseインスタンスが2つ存在するため、下記に示すようなわか
 以下に示したような違いが発生する。
 
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 46
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 46
 
     auto dv = DerivedVirtual{1};  // 仮想継承クラス
     auto dn = DerivedNormal{1};   // 通常の継承クラス
@@ -6728,7 +6728,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 これを通常の継承クラスと同様な動作にするには、下記のようにしなければならない。
 
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 62
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 62
 
     class DerivedDerivedVirtualFixed : public DerivedVirtual {  // DerivedDerivedNormalと同じように動作
     public:
@@ -6737,7 +6737,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
     };
 ```
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 73
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 73
 
     DerivedDerivedVirtual      ddv{1};   // 仮想継承クラスを継承したクラス
     DerivedDerivedVirtualFixed ddvf{1};  // 上記クラスのコンストラクタを修正したクラス
@@ -6754,7 +6754,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 デバッグ困難なバグが発生してしまうことは容易に想像できるだろう。
 
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 88
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 88
 
     int32_t base_called;
 
@@ -6788,7 +6788,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
     };
 ```
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 124
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 124
 
     ASSERT_EQ(0, base_called);
 
@@ -6802,7 +6802,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 単体テストが示すように、一番最初に行われる。
 
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 139
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 139
 
     class DerivedDerived : public Derived_0, public Derived_1 {
     public:
@@ -6810,7 +6810,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
     };
 ```
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 151
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 151
 
     ASSERT_EQ(0, base_called);
 
@@ -6823,7 +6823,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 このため、基底クラスのコンストラクタ呼び出しは下記のような順番で行うべきである。
 
 ```cpp
-    //  example/cpp_standard/virtual_inheritance_ut.cpp 164
+    //  example/core_lang_spec/virtual_inheritance_ut.cpp 164
 
     class DerivedDerived : public Derived_0, public Derived_1 {
     public:
@@ -6853,7 +6853,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 #### ダイヤモンド継承を含まない場合 <a id="SS_6_12_13_1"></a>
 
 ```cpp
-    //  example/cpp_standard/dominance_ut.cpp 9
+    //  example/core_lang_spec/dominance_ut.cpp 9
 
     int32_t f(double) noexcept { return 0; }
 
@@ -6871,7 +6871,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
     };
 ```
 ```cpp
-    //  example/cpp_standard/dominance_ut.cpp 29
+    //  example/core_lang_spec/dominance_ut.cpp 29
 
     Base b;
 
@@ -6889,7 +6889,7 @@ __「仮想継承クラスを継承したクラスが、仮想継承クラスの
 #### ダイヤモンド継承かつそれが仮想継承でない場合 <a id="SS_6_12_13_2"></a>
 
 ```cpp
-    //  example/cpp_standard/dominance_ut.cpp 45
+    //  example/core_lang_spec/dominance_ut.cpp 45
 
     struct Base {
         int32_t f(int32_t) const noexcept { return 1; }
@@ -6921,7 +6921,7 @@ Derived_1によるドミナンスも働き、その結果として、呼び出�
 #### ダイヤモンド継承かつそれが仮想継承である場合 <a id="SS_6_12_13_3"></a>
 
 ```cpp
-    //  example/cpp_standard/dominance_ut.cpp 71
+    //  example/core_lang_spec/dominance_ut.cpp 71
 
     struct Base {
         int32_t f(int32_t) const noexcept { return 1; }
@@ -6939,7 +6939,7 @@ Derived_1によるドミナンスも働き、その結果として、呼び出�
     };
 ```
 ```cpp
-    //  example/cpp_standard/dominance_ut.cpp 92
+    //  example/core_lang_spec/dominance_ut.cpp 92
 
     DerivedDerived dd;
 
@@ -6961,14 +6961,14 @@ using宣言とは、"using XXX::func"のような記述である。
 funcが使用できる。
 
 ```cpp
-    //  example/cpp_standard/namespace_ut.cpp 6
+    //  example/core_lang_spec/namespace_ut.cpp 6
     namespace XXX {
     void func() noexcept {}
     void gunc() noexcept {}
     }  // namespace XXX
 ```
 ```cpp
-    //  example/cpp_standard/namespace_ut.cpp 12
+    //  example/core_lang_spec/namespace_ut.cpp 12
 
     // global namespace
     void using_declaration() noexcept
@@ -6987,14 +6987,14 @@ usingディレクティブとは、"using namespace XXX"のような記述であ
 XXXの識別子が使用できる。
 
 ```cpp
-    //  example/cpp_standard/namespace_ut.cpp 6
+    //  example/core_lang_spec/namespace_ut.cpp 6
     namespace XXX {
     void func() noexcept {}
     void gunc() noexcept {}
     }  // namespace XXX
 ```
 ```cpp
-    //  example/cpp_standard/namespace_ut.cpp 24
+    //  example/core_lang_spec/namespace_ut.cpp 24
 
     // global namespace
     void using_directive() noexcept
@@ -7011,14 +7011,14 @@ XXXの識別子が使用できる。
 下記のように[name-hiding](core_lang_spec.md#SS_6_12_9)された識別子の導入には効果がない。
 
 ```cpp
-    //  example/cpp_standard/namespace_ut.cpp 6
+    //  example/core_lang_spec/namespace_ut.cpp 6
     namespace XXX {
     void func() noexcept {}
     void gunc() noexcept {}
     }  // namespace XXX
 ```
 ```cpp
-    //  example/cpp_standard/namespace_ut.cpp 35
+    //  example/core_lang_spec/namespace_ut.cpp 35
 
     namespace XXX_Inner {
     void func(int) noexcept {}
@@ -7078,7 +7078,7 @@ C++11で導入されたnoexceptキーワードには、以下の2つの意味が
 以下に上記のコード例を示す。
 
 ```cpp
-    //  example/cpp_standard/noexcept_ut.cpp 11
+    //  example/core_lang_spec/noexcept_ut.cpp 11
 
     std::string f_noexcept() noexcept  // エクセプションを発生させない
     {
@@ -7101,7 +7101,7 @@ C++11で導入されたnoexceptキーワードには、以下の2つの意味が
     }
 ```
 ```cpp
-    //  example/cpp_standard/noexcept_ut.cpp 37
+    //  example/core_lang_spec/noexcept_ut.cpp 37
 
     static_assert(noexcept(f_noexcept()));  // エクセプションを発生させる可能性の確認
     static_assert(!noexcept(f_except()));   // エクセプションを発生させない可能性の確認
@@ -7115,7 +7115,7 @@ C++11で導入されたnoexceptキーワードには、以下の2つの意味が
 演算子としてのnoexceptはテンプレートで頻繁に使用されるため、以下にそのような例を示す。
 
 ```cpp
-    //  example/cpp_standard/noexcept_ut.cpp 50
+    //  example/core_lang_spec/noexcept_ut.cpp 50
 
     class PossiblyThrow {  // オブジェクト生成でエクセプションの発生可能性あり
     public:
@@ -7130,7 +7130,7 @@ C++11で導入されたnoexceptキーワードには、以下の2つの意味が
     }
 ```
 ```cpp
-    //  example/cpp_standard/noexcept_ut.cpp 67
+    //  example/core_lang_spec/noexcept_ut.cpp 67
 
     auto i = int{};
     auto p = PossiblyThrow{};
@@ -7184,7 +7184,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 未定義動作を含むコードは、クラッシュやセキュリティの問題を引き起こす可能性がある。
 
 ```cpp
-    //  example/cpp_standard/undefined_ut.cpp 14
+    //  example/core_lang_spec/undefined_ut.cpp 14
 
     int a = 42;
     int b = 0;
@@ -7202,7 +7202,7 @@ C++標準が特定の操作や状況に対して一切の制約を設けない�
 つまり、動作が特定の範囲で予測可能だが、正確な挙動が処理系の実装に依存することになる。
 
 ```cpp
-    //  example/cpp_standard/undefined_ut.cpp 35
+    //  example/core_lang_spec/undefined_ut.cpp 35
 
     enum class MyEnum : int { Value1 = 1, Value2 = 256 };
     int value = static_cast<int8_t>(MyEnum::Value2);  // 未規定 - 256はint8_tとして表現できない
@@ -7240,7 +7240,7 @@ volatile など)やポインタやリファレンスなどの間接指定子を�
 引数(もしくは実引数、argument)、仮引数(parameter)とは下記のように定義される。
 
 ```cpp
-    //  example/cpp_standard/argument.cpp 2
+    //  example/core_lang_spec/argument.cpp 2
 
     int f0(int a, int& b) noexcept  // a, bは仮引数
     {
@@ -7288,7 +7288,7 @@ C++03までの規約では、アライメントのコントロールは実装依
 C++11で導入されたキーワードで、型のアライメント要求を取得するために使用する。
 
 ```cpp
-    //  example/cpp_standard/aliging_ut.cpp 12
+    //  example/core_lang_spec/aliging_ut.cpp 12
 
     struct alignas(16) AlignedStruct {  // メモリ上で16バイト境界にアライメントされる
         char   a;
@@ -7308,7 +7308,7 @@ C++11で導入されたキーワードで、型のアライメント要求を取
 C++11で導入されたキーワードで、メモリのアライメントを指定するために使用する。
 
 ```cpp
-    //  example/cpp_standard/aliging_ut.cpp 27
+    //  example/core_lang_spec/aliging_ut.cpp 27
 
     ASSERT_EQ(alignof(long double), 16);  // アライメントが正しいか確認
     ASSERT_EQ(alignof(long long), 8);     // アライメントが正しいか確認
@@ -7326,7 +7326,7 @@ operator& がオーバーロードされている場合には、
 オーバーロードを無視して元のアドレスを確実に取得できる。
 
 ```cpp
-    //  example/cpp_standard/aliging_ut.cpp 38
+    //  example/core_lang_spec/aliging_ut.cpp 38
 
     class X {
     public:
@@ -7343,7 +7343,7 @@ operator& がオーバーロードされている場合には、
     };
 ```
 ```cpp
-    //  example/cpp_standard/aliging_ut.cpp 54
+    //  example/core_lang_spec/aliging_ut.cpp 54
 
     X obj{42};
 
@@ -7387,7 +7387,7 @@ C++17で、演算子のオペランドに対する評価順序が明確に規定
 C++11以前では、以下のコードの評価順序は未規定であったが、上記の通り定義された。
 
 ```cpp
-    //  example/cpp_standard/etc_ut.cpp 74
+    //  example/core_lang_spec/etc_ut.cpp 74
 
     int i = 0;
     int y = (i = 1) * x + (i = 2);
@@ -7407,7 +7407,7 @@ b2, b3, b1 で評価される可能性があることを意味する。
 conditionの評価結果に基づき、expr1または expr2 のどちらかが選択され、選択された側だけが評価される。  
 
 ```cpp
-    //  example/cpp_standard/etc_ut.cpp 83
+    //  example/core_lang_spec/etc_ut.cpp 83
 
     int a      = 1;
     int b      = 2;
