@@ -7,3 +7,6 @@
 [submodule "docs"]
 	path = docs
 	url = git@github.com:ichiroprogrammer/deep_cpp_docs.git
+[submodule "essential"]
+	path = essential
+	url = git@github.com:ichiroprogrammer/essential_cpp.git

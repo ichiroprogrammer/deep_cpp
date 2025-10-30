@@ -236,7 +236,7 @@ setupで行っているような方法以外では、
 
 mpool_tableはMPoolポインタを保持するが、そのポインタが指すオブジェクトの実態は、
 gen_mpool<>が生成したMPoolFixed<>オブジェクトである。
-gen_mpool<>については、「[プレースメントnew](---)」で説明する。
+gen_mpool<>については、「[プレースメントnew](---)を使用したメモリプールの生成」で説明する。
 
 size2indexは、要求されたサイズから、
 それに対応するMPoolポインタを保持するmpool_tableのインデックスを導出する関数である。
@@ -264,7 +264,7 @@ operator delete(void\* mem)は、それ以外のメモリ解放に使用され�
 そのトレードオフとしてメモリコストが増えるため、ここでは例示した仕様にした。
 
 
-### プレースメントnew
+### プレースメントnewを使用したメモリプールの生成
 「[グローバルnew/deleteのオーバーロードの実装](---)」で使用したgen_mpool<>は、
 下記のように定義されている。
 
@@ -577,7 +577,7 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 デバッグ用入出力機能からこのような出力を得られるようにしておくべきである。
 
 
-### エクセプション処理機構の変更
+## エクセプション処理機構の変更
 多くのコンパイラのエクセプション処理機構にはnew/deleteやmalloc/freeが使われているため、
 リアルタイム性が必要な個所でエクセプション処理を行ってはならない。
 そういった規制でプログラミングを行っていると、
@@ -610,79 +610,6 @@ newをオーバーロードしたクラスをstd::shared_ptrで管理する場�
 これを適用できるコンパイラは限られている。
 しかし、多くのコンパイラはこれと同様の拡張方法を備えているため、
 安易にエクセプションやSTLコンテナを使用禁止することなく、安全に使用する方法を探るべきだろう。
-
-## Polymorphic Memory Resource(pmr)
-Polymorphic Memory Resource(pmr)は、
-動的メモリ管理の柔軟性と効率性を向上させるための、C++17から導入された仕組みである。
-
-C++17で導入されたstd::pmr名前空間は、カスタマイズ可能なメモリ管理を提供し、
-特にSTLコンテナと連携して効率化を図るための統一フレームワークを提供する。
-std::pmrは、
-カスタマイズ可能なメモリ管理を標準ライブラリのデータ構造に統合するための統一的なフレームワークであり、
-特にSTLコンテナと連携して、動的メモリ管理を効率化することができる。
-
-std::pmrは以下のようなメモリ管理のカスタマイズを可能にする。
-
-* メモリアロケータをポリモーフィック(動的に選択可能)にする。
-* メモリ管理ポリシーをstd::pmr::memory_resourceで定義する。
-* メモリリソースを再利用して効率的な動的メモリ管理を実現する。
-
-std::pmrの主要なコンポーネントは以下の通りである。
-
-* [std::pmr::memory_resource](---)  
-* [std::pmr::polymorphic_allocator](---)  
-* [pool_resource](---)
-
-### std::pmr::memory_resource
-std::pmr::memory_resourceは、
-ユーザー定義のメモリリソースをカスタマイズし、
-[std::pmr::polymorphic_allocator](---)を通じて利用可能にする[インターフェースクラス](---)である。
-
-[可変長メモリプール](---)の実装で示したコードとほぼ同様の、
-std::pmr::memory_resourceから派生した具象クラスの実装を以下に示す。
-
-```cpp
-    // @@@ example/dynamic_memory_allocation/pmr_memory_resource_ut.cpp #0:0 begin
-```
-
-### std::pmr::polymorphic_allocator
-std::pmr::polymorphic_allocatorはC++17で導入された標準ライブラリのクラスで、
-C++のメモリリソース管理を抽象化するための機能を提供する。
-[std::pmr::memory_resource](---)を基盤とし、
-コンテナやアルゴリズムにカスタムメモリアロケーション戦略を容易に適用可能にする。
-std::allocatorと異なり、型に依存せず、
-ポリモーフィズムを活用してメモリリソースを切り替えられる点が特徴である。
-
-すでに示したmemory_resource_variable([std::pmr::memory_resource](---))の単体テストを以下に示すことにより、
-polymorphic_allocatorの使用例とする。
-
-```cpp
-    // @@@ example/dynamic_memory_allocation/pmr_memory_resource_ut.cpp #1:0 begin -1
-```
-
-### pool_resource
-pool_resourceは[std::pmr::memory_resource](---)を基底とする下記の2つの具象クラスである。
-
-* std::pmr::synchronized_pool_resourceは下記のような特徴を持つメモリプールである。
-    * 非同期のメモリプールリソース
-    * シングルスレッド環境での高速なメモリ割り当てに適する
-    * 排他制御のオーバーヘッドがない
-    * 以下に使用例を示す。
-
-```cpp
-    // @@@ example/dynamic_memory_allocation/pool_resource_ut.cpp #0:0 begin -1
-```
-
-* std::pmr::unsynchronized_pool_resource は下記のような特徴を持つメモリプールである。
-    * スレッドセーフなメモリプールリソース
-    * 複数のスレッドから同時にアクセス可能
-    * 内部で排他制御を行う
-    * 以下に使用例を示す。
-
-```cpp
-    // @@@ example/dynamic_memory_allocation/pool_resource_ut.cpp #0:1 begin -1
-```
-
 
 
 
