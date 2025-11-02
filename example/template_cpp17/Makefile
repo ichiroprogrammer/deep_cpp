@@ -12,7 +12,7 @@ SRCS:=\
 
 OBJDIR:= obj17/
 CPP_VER = c++17
-SHARED:=../../
+SHARED:=../../essential/
 include $(SHARED)make/env.mk
 include $(SHARED)make/example.mk
 include $(SHARED)make/gtest.mk

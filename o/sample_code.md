@@ -273,7 +273,7 @@
          52 
          53 template <uint32_t MEM_SIZE>
          54 struct buffer_t {
-         55     alignas(alignof(std::max_align_t)) uint8_t buffer[Roundup(sizeof(header_t), MEM_SIZE)];
+         55     alignas(std::max_align_t) uint8_t buffer[Roundup(sizeof(header_t), MEM_SIZE)];
          56 };
          57 }  // namespace Inner_
          58 

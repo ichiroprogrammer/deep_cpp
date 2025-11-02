@@ -137,13 +137,16 @@ TEST(NewDelete_Opt, class_new_delete_fixed_derived)
 struct Large : A {
     uint8_t buff[1024];  // mpf_ABCDのメモリブロックのサイズを超える
 };
+// @@@ sample end
 
 TEST(NewDelete_Opt, class_new_delete_fixed_derived_large)
 {
+    // @@@ sample begin 2:2
+
     ASSERT_EQ(10, mpf_ABCD.GetCount());
     ASSERT_THROW(auto large = std::make_unique<Large>(), MPoolBadAlloc);  // サイズが大きすぎる
+    // @@@ sample end
 }
-// @@@ sample end
 }  // namespace
 
 namespace Usage_OpNewDeleted {

@@ -210,12 +210,9 @@ TEST(NewDelete_Opt, allocator_itor)
         }
 
         std::cout << "mpv_allocator:" << __LINE__ << std::endl;
-        // @@@ sample begin 4:0
-
         for (auto mem : mpv_allocator) {
             std::cout << std::setw(16) << mem->next << ":" << mem->n_nuits << std::endl;
         }
-        // @@@ sample end
     }
 
     std::cout << "mpv_allocator:" << __LINE__ << std::endl;
@@ -223,4 +220,5 @@ TEST(NewDelete_Opt, allocator_itor)
         std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
     }
 }
+
 }  // namespace

@@ -4,7 +4,7 @@ SRCS:=\
 	exception_allocator_ut.cpp pmr_memory_resource_ut.cpp pool_resource_ut.cpp
 
 CPP_VER:=c++17
-SHARED:=../../
+SHARED:=../../essential/
 include $(SHARED)make/env.mk
 include $(SHARED)make/example.mk
 include $(SHARED)make/gtest.mk

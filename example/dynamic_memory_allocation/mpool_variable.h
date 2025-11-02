@@ -52,7 +52,7 @@ static_assert(sizeof(header_t) == alignof(std::max_align_t));
 
 template <uint32_t MEM_SIZE>
 struct buffer_t {
-    alignas(alignof(std::max_align_t)) uint8_t buffer[Roundup(sizeof(header_t), MEM_SIZE)];
+    alignas(std::max_align_t) uint8_t buffer[Roundup(sizeof(header_t), MEM_SIZE)];
 };
 }  // namespace Inner_
 

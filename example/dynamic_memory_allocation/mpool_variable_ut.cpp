@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <iostream>
+
 #include "gtest_wrapper.h"
 
 #include "dynamic_memory_allocation_ut.h"
@@ -311,6 +314,52 @@ TEST(NewDelete_Opt, itor)
         ASSERT_NE(nullptr, ints[i]);
         count -= sizeof(Inner_::header_t) * n_nuits;
         ASSERT_EQ(mpv.GetCount(), count);
+    }
+}
+
+TEST(NewDelete_Opt, allocator_itor2)
+{
+    // @@@ sample begin 4:0
+
+    MPoolVariable<1024 * 64> mpv;  // 可変長メモリプール
+
+    constexpr size_t alloc_cout = 100U;
+    void*            mem[alloc_cout]{};
+
+    for (size_t i = 0; i < alloc_cout; ++i) {
+        mem[i] = mpv.Alloc(i + 100);
+    }
+    // @@@ sample end
+    // @@@ sample begin 4:1
+
+    std::cout << "mpv:" << __LINE__ << std::endl;
+    for (auto itor = mpv.cbegin(); itor != mpv.cend(); ++itor) {
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+    }
+    // @@@ sample end
+    // @@@ sample begin 4:2
+
+    for (size_t i = 0; i < alloc_cout; ++i) {
+        if (i % 2 == 0) {  // 偶数だけ解放
+            mpv.Free(mem[i]);
+        }
+    }
+
+    std::cout << "mpv:" << __LINE__ << std::endl;
+    for (auto itor = mpv.cbegin(); itor != mpv.cend(); ++itor) {
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+    }
+    // @@@ sample end
+
+    for (size_t i = 0; i < alloc_cout; ++i) {
+        if (i % 2 != 0) {  // 奇数も解放
+            mpv.Free(mem[i]);
+        }
+    }
+
+    std::cout << "mpv:" << __LINE__ << std::endl;
+    for (auto itor = mpv.cbegin(); itor != mpv.cend(); ++itor) {
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
     }
 }
 }  // namespace

@@ -19,24 +19,18 @@ new/deleteは通常malloc/freeを使って実装されているため同じ問�
 
 本章では、この問題を回避するための技法を紹介する。
 
-___
-
 __この章の構成__
 
 &emsp;&emsp; [malloc/freeの問題点](dynamic_memory_allocation.md#SS_5_1)  
-&emsp;&emsp; [グローバルnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_2)  
+&emsp;&emsp; [メモリプール](dynamic_memory_allocation.md#SS_5_2)  
 &emsp;&emsp;&emsp; [固定長メモリプール](dynamic_memory_allocation.md#SS_5_2_1)  
-&emsp;&emsp;&emsp; [グローバルnew/deleteのオーバーロードの実装](dynamic_memory_allocation.md#SS_5_2_2)  
-&emsp;&emsp;&emsp; [プレースメントnewを使用したメモリプールの生成](dynamic_memory_allocation.md#SS_5_2_3)  
-&emsp;&emsp;&emsp; [デバッグ用イテレータ](dynamic_memory_allocation.md#SS_5_2_4)  
+&emsp;&emsp;&emsp; [可変長メモリプール](dynamic_memory_allocation.md#SS_5_2_2)  
 
-&emsp;&emsp; [クラスnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_3)  
-&emsp;&emsp; [STLコンテナのアロケーター](dynamic_memory_allocation.md#SS_5_4)  
-&emsp;&emsp;&emsp; [STLコンテナ用アロケータ](dynamic_memory_allocation.md#SS_5_4_1)  
-&emsp;&emsp;&emsp; [可変長メモリプール](dynamic_memory_allocation.md#SS_5_4_2)  
-&emsp;&emsp;&emsp; [デバッグ用イテレータ](dynamic_memory_allocation.md#SS_5_4_3)  
-
-&emsp;&emsp; [エクセプション処理機構の変更](dynamic_memory_allocation.md#SS_5_5)  
+&emsp;&emsp; [new/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_3)  
+&emsp;&emsp;&emsp; [グローバルnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_3_1)  
+&emsp;&emsp;&emsp; [クラスnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_3_2)  
+&emsp;&emsp;&emsp; [SpinLock](dynamic_memory_allocation.md#SS_5_3_3)  
+&emsp;&emsp;&emsp; [tako](dynamic_memory_allocation.md#SS_5_3_4)  
   
   
 
@@ -241,12 +235,13 @@ freeはこのリストを辿りメモリを最適な場所に戻す必要があ�
 (繰り返しになるが、windows/linuxのような通常のOS上のアプリケーションでは、
 このような仕様が問題になることはほとんどない)。
 
+## メモリプール <a id="SS_5_2"></a>
+このドキュメントでは、メモリの確保/解放をサポートするサブシステムをメモリプールと呼ぶ。
 
-## グローバルnew/deleteのオーバーロード <a id="SS_5_2"></a>
-すでに述べたように、組み込みソフトにはmalloc/freeを使用したnew/deleteは使えない可能性が高い。
-そのような場合に備えC++11ではグローバルなnew/deleteのオーバーロードをサポートする。
-ここでは、そのようなnew/deleteの実装例を示すが、
-その前にnew/deleteの内部実装用メモリ管理用ライブラリを実装する。
+[malloc/freeの問題点](dynamic_memory_allocation.md#SS_5_1)の問題を回避するすために２種類のメモリプールの実装を示す。
+
+* リアルタイム性が保証されれた[固定長メモリプール](dynamic_memory_allocation.md#SS_5_2_1)
+* フラグメントの状態を確認することができる[可変長メモリプール](dynamic_memory_allocation.md#SS_5_2_2)
 
 
 ### 固定長メモリプール <a id="SS_5_2_1"></a>
@@ -258,11 +253,10 @@ malloc/freeにリアルタイム性がない原因は、
 ためである。従って、この問題に対処するためのメモリ管理システムは、
 
 * 初期に静的なメモリを確保
-* メモリを固定長で管理
+* メモリを固定長で管理(リスト構造でメモリ管理できないため)
 
-する必要がある。これを含めこの章で開発するメモリ管理システムをメモリプールと呼ぶことにする。
+する必要がある。
 
-「[グローバルnew/deleteのオーバーロードの実装](dynamic_memory_allocation.md#SS_5_2_2)」で示すように、
 このメモリプールは管理する固定長のメモリブロックのサイズごとに複数必要になる一方で、
 これらを統合的に扱う必要も出てくる。
 
@@ -273,8 +267,7 @@ malloc/freeにリアルタイム性がない原因は、
 
 によって実装することにする。
 
-まずは、MPoolを下記に示す
-(「[ファイル位置を静的に保持したエクセプションクラスの開発](template_meta_programming.md#SS_4_7_6_4)」参照)。
+まずは、MPoolを下記に示す。
 
 ```cpp
     //  example/dynamic_memory_allocation/mpool.h 12
@@ -394,7 +387,7 @@ malloc/freeにリアルタイム性がない原因は、
 
 上記コードからわかる通り、MPoolFixedは初期化直後、
 サイズMEM_SIZのメモリブロックをMEM_COUNT個、保持する。
-個々のメモリブロックは、下記のコードのalignas/alignofでアライメントされた領域となる。
+個々のメモリブロックは、下記のコードのalignasでアライメントされた領域となる。
 
 ```cpp
     //  example/dynamic_memory_allocation/mpool_fixed.h 11
@@ -407,7 +400,7 @@ malloc/freeにリアルタイム性がない原因は、
         mem_chunk* next;
 
         // MPoolFixed_MinSizeの整数倍のエリアを、最大アラインメントが必要な基本型にアライン
-        alignas(alignof(std::max_align_t)) uint8_t mem[Roundup(MPoolFixed_MinSize, MEM_SIZE)];
+        alignas(std::max_align_t) uint8_t mem[Roundup(MPoolFixed_MinSize, MEM_SIZE)];
     };
     }  // namespace Inner_
 ```
@@ -418,7 +411,7 @@ MPoolFixedに限らずメモリアロケータが返すメモリは、
 MPoolFixed::alloc/MPoolFixed::freeを見ればわかる通り、malloc/freeの実装に比べ格段にシンプルであり、
 これによりリアルタイム性の保障は容易である。
 
-なお、この実装ではmalloc/freeと同様に下記のSpinLockを使用したが、
+なお、この実装ではmalloc/freeと同様に下記の[SpinLock](dynamic_memory_allocation.md#SS_5_3_3)を使用したが、
 このロックは、ラウンドロビンでスケジューリングされるスレッドの競合を防ぐためのものであり、
 固定プライオリティでのスケジューリングが前提となるような組み込みソフトで使用した場合、
 デッドロックを引き起こす可能性がある。
@@ -497,51 +490,201 @@ MPoolFixedの単体テストは、下記のようになる。
     ASSERT_THROW(mpf.Alloc(65), MPoolBadAlloc);  // MPoolBadAlloc例外が発生するはず
 ```
 
-上記テストで使用したMPoolBadAllocは下記のように定義されたクラスであり
-(「[ファイル位置を静的に保持したエクセプションクラスの開発](template_meta_programming.md#SS_4_7_6_4)」参照)、
+### 可変長メモリプール <a id="SS_5_2_2"></a>
+可変長メモリプールを生成するMPoolVariableの実装は下記のようになる
+(全体は巻末の「[example/dynamic_memory_allocation/mpool_variable.h](sample_code.md#SS_9_1_2)」に掲載する)。
 
 ```cpp
-    //  example/h/nstd_exception.h 11
+    //  example/dynamic_memory_allocation/mpool_variable.h 59
 
-    /// @class Exception
-    /// @brief StaticString<>を使ったエクセプションクラス
-    ///        下記のMAKE_EXCEPTIONを使い生成
-    /// @tparam E   std::exceptionから派生したエクセプションクラス
-    /// @tparam N   StaticString<N>
-    template <typename E, size_t N>
-    #if __cplusplus >= 202002L  // c++20
-    requires std::derived_from<E, std::exception>
-    #endif
-    class Exception : public E {
+    template <uint32_t MEM_SIZE>
+    class MPoolVariable final : public MPool {
     public:
-        static_assert(std::is_base_of_v<std::exception, E>);
+        MPoolVariable() noexcept : MPool{MEM_SIZE}
+        {
+            header_->next    = nullptr;
+            header_->n_nuits = sizeof(buff_) / Inner_::unit_size;
+        }
 
-        Exception(StaticString<N> const& what_str) noexcept : what_str_{what_str} {}
-        char const* what() const noexcept override { return what_str_.String(); }
+        class const_iterator {
+        public:
+            explicit const_iterator(Inner_::header_t const* header) noexcept : header_{header} {}
+            const_iterator(const_iterator const&) = default;
+            const_iterator(const_iterator&&)      = default;
+
+            const_iterator& operator++() noexcept  // 前置++のみ実装
+            {
+                assert(header_ != nullptr);
+                header_ = header_->next;
+
+                return *this;
+            }
+
+            Inner_::header_t const* operator*() noexcept { return header_; }
+
+
+        #if __cplusplus <= 201703L  // c++17
+            bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
+            bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
+        #else  // c++20
+
+            auto operator<=>(const const_iterator&) const = default;
+        #endif
+
+        private:
+            Inner_::header_t const* header_;
+        };
+
+        const_iterator begin() const noexcept { return const_iterator{header_}; }
+        const_iterator end() const noexcept { return const_iterator{nullptr}; }
+        const_iterator cbegin() const noexcept { return const_iterator{header_}; }
+        const_iterator cend() const noexcept { return const_iterator{nullptr}; }
 
     private:
-        StaticString<N> const what_str_;
-    };
+        using header_t = Inner_::header_t;
 
-    #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
+        Inner_::buffer_t<MEM_SIZE> buff_{};
+        header_t*                  header_{reinterpret_cast<header_t*>(buff_.buffer)};
+        mutable SpinLock           spin_lock_{};
+        size_t                     unit_count_{sizeof(buff_) / Inner_::unit_size};
+        size_t                     unit_count_min_{sizeof(buff_) / Inner_::unit_size};
+
+        virtual void* alloc(size_t size) noexcept override
+        {
+            // ...
+        }
+
+        virtual void free(void* mem) noexcept override
+        {
+            // ...
+        }
+
+        virtual size_t get_size() const noexcept override { return 1; }
+        virtual size_t get_count() const noexcept override { return unit_count_ * Inner_::unit_size; }
+        virtual size_t get_count_min() const noexcept override { return unit_count_min_ * Inner_::unit_size; }
+
+        virtual bool is_valid(void const* mem) const noexcept override
+        {
+            return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
+        }
+    };
 ```
+
+上記の抜粋である下記のイテレータにより、このメモリプールの状態を見ることができる。
+
 ```cpp
-    //  example/dynamic_memory_allocation/mpool.h 7
+    //  example/dynamic_memory_allocation/mpool_variable.h 72
 
-    class MPoolBadAlloc : public std::bad_alloc {  // Nstd::Exceptionの基底クラス
+    class const_iterator {
+    public:
+        explicit const_iterator(Inner_::header_t const* header) noexcept : header_{header} {}
+        const_iterator(const_iterator const&) = default;
+        const_iterator(const_iterator&&)      = default;
+
+        const_iterator& operator++() noexcept  // 前置++のみ実装
+        {
+            assert(header_ != nullptr);
+            header_ = header_->next;
+
+            return *this;
+        }
+
+        Inner_::header_t const* operator*() noexcept { return header_; }
+
+
+    #if __cplusplus <= 201703L  // c++17
+        bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
+        bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
+    #else  // c++20
+
+        auto operator<=>(const const_iterator&) const = default;
+    #endif
+
+    private:
+        Inner_::header_t const* header_;
     };
+
+    const_iterator begin() const noexcept { return const_iterator{header_}; }
+    const_iterator end() const noexcept { return const_iterator{nullptr}; }
+    const_iterator cbegin() const noexcept { return const_iterator{header_}; }
+    const_iterator cend() const noexcept { return const_iterator{nullptr}; }
 ```
 
-MPoolから派生したクラスが、
+可変長メモリプールとイテレータの使用例を下記に示す。
 
-* メモリブロックを保持していない状態でのMPool::alloc(size, true)の呼び出し
-* MEM_SIZEを超えたsizeでのMPool::alloc(size, true)の呼び出し
+```cpp
+    //  example/dynamic_memory_allocation/mpool_variable_ut.cpp 322
 
-のような処理の継続ができない場合に用いるエクセプション用クラスである。
+    MPoolVariable<1024 * 64> mpv;  // 可変長メモリプール
+
+    constexpr size_t alloc_cout = 100U;
+    void*            mem[alloc_cout]{};
+
+    for (size_t i = 0; i < alloc_cout; ++i) {
+        mem[i] = mpv.Alloc(i + 100);
+    }
+```
+上記のような使用ではフラグメントは発生しないが、下記によりそのことを見てみよう。
+
+```cpp
+    //  example/dynamic_memory_allocation/mpool_variable_ut.cpp 333
+
+    std::cout << "mpv:" << __LINE__ << std::endl;
+    for (auto itor = mpv.cbegin(); itor != mpv.cend(); ++itor) {
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+    }
+```
+
+この結果は、下記のように出力される(後に示すが、mpvが保持しているメモリが１つの塊のままであり、
+フラグメントを起こしていないことを示している)。
+
+```
+mpv:238
+               0:3014
+```
+
+敢えてフラグメントを起こすために、以下のようなコードを実行する。
+
+```cpp
+    //  example/dynamic_memory_allocation/mpool_variable_ut.cpp 340
+
+    for (size_t i = 0; i < alloc_cout; ++i) {
+        if (i % 2 == 0) {  // 偶数だけ解放
+            mpv.Free(mem[i]);
+        }
+    }
+
+    std::cout << "mpv:" << __LINE__ << std::endl;
+    for (auto itor = mpv.cbegin(); itor != mpv.cend(); ++itor) {
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+    }
+```
+
+この結果、以下のような出力が得られる。これはmpvにはまだメモリが残されているものの、
+mpvが保持しているメモリの先頭付近がフラグメントを起こしていることを示している。
+
+```
+mpv:249
+  0x7ffdeca0b4a0:8            
+  0x7ffdeca0b5a0:8
+  0x7ffdeca0b6a0:8
+  0x7ffdeca0b7a0:8
+  0x7ffdeca0b8a0:8
+  ... 省略
+               0:3014     <- アロケーションされていないメモリの塊
+```
+
+## new/deleteのオーバーロード <a id="SS_5_3"></a>
+前述したように、組み込みソフトにはmalloc/freeを使用したnew/deleteではシステムの制限を満たせないことが多い。
+C++11では、以下のような方法により、このような問題を回避することができる。
+
+* [グローバルnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_3_1)
+* [クラスnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_3_2)
 
 
-### グローバルnew/deleteのオーバーロードの実装 <a id="SS_5_2_2"></a>
-[固定長メモリプール](dynamic_memory_allocation.md#SS_5_2_1)を使用したoperator newのオーバーロードの実装例を以下に示す。
+
+### グローバルnew/deleteのオーバーロード <a id="SS_5_3_1"></a>
+[固定長メモリプール](dynamic_memory_allocation.md#SS_5_2_1)を使用した`operator new`のオーバーロードの実装例を以下に示す。
 
 ```cpp
     //  example/dynamic_memory_allocation/global_new_delete.cpp 31
@@ -591,7 +734,7 @@ MPoolから派生したクラスが、
     }
 ```
 
-上記で定義されたoperator newは、
+上記で定義された`operator new`は、
 
 * 32の整数倍のサイズを持つ32個のメモリプールを持つ
 * 各メモリープールは128個のメモリブロックを持つ
@@ -607,7 +750,7 @@ MPoolから派生したクラスが、
 例で用いたアプリケーションにはnewを行う静的オブジェクトが存在するため
 (google testは静的オブジェクトを利用する)、
 setupで行っているような方法以外では、
-最初のoperator newの呼び出しより前にmpool_tableの初期化をすることはできない。
+最初の`operator new`の呼び出しより前にmpool_tableの初期化をすることはできない。
 
 mpool_tableはMPoolポインタを保持するが、そのポインタが指すオブジェクトの実態は、
 gen_mpool<>が生成したMPoolFixed<>オブジェクトである。
@@ -623,7 +766,7 @@ size2indexは、要求されたサイズから、
 MEM_COUNTの値を見直した方が、
 より少ないメモリで動作する組み込みソフトを作りやすいだろう。
 
-operator deleteについては、下記の2種類が必要となる。
+`operator delete`については、下記の2種類が必要となる。
 
 ```cpp
     //  example/dynamic_memory_allocation/global_new_delete.cpp 106
@@ -651,130 +794,17 @@ operator deleteについては、下記の2種類が必要となる。
     }
 ```
 
-operator delete(void\* mem, std::size_t size)は、完全型のオブジェクトのメモリ解放に使用され、
-operator delete(void\* mem)は、それ以外のメモリ解放に使用される。
+`operator delete(void* mem, std::size_t size)`は、完全型のオブジェクトのメモリ解放に使用され、
+`operator delete(void* mem)`は、それ以外のメモリ解放に使用される。
 
-コードから明らかな通り、size付きのoperator deleteの方がループの回転数が少なくなるため、
+コードから明らかな通り、size付きの`operator delete`の方がループの回転数が少なくなるため、
 高速に動作するが、malloc/freeの実装(「[malloc/freeの問題点](dynamic_memory_allocation.md#SS_5_1)」参照)で使用したHeader_t
 を導入することでこの実行コストはほとんど排除できる。
 そのトレードオフとしてメモリコストが増えるため、ここでは例示した仕様にした。
 
 
-### プレースメントnewを使用したメモリプールの生成 <a id="SS_5_2_3"></a>
-「[グローバルnew/deleteのオーバーロードの実装](dynamic_memory_allocation.md#SS_5_2_2)」で使用したgen_mpool<>は、
-下記のように定義されている。
-
-```cpp
-    //  example/dynamic_memory_allocation/global_new_delete.cpp 8
-
-    namespace {
-
-    constexpr size_t min_unit{MPoolFixed_MinSize};
-
-    template <uint32_t N_UNITS, uint32_t MEM_COUNT>
-    [[nodiscard]] MPool* gen_mpool() noexcept
-    {
-        using mp_t = MPoolFixed<min_unit * N_UNITS, MEM_COUNT>;
-
-        static union {
-            std::max_align_t max_align;
-            uint8_t          mem[sizeof(mp_t)];
-        } mem;
-
-        static_assert(static_cast<void*>(&mem.max_align) == static_cast<void*>(mem.mem));
-        static_assert(sizeof(mem) >= sizeof(mp_t));
-
-        return new (mem.mem) mp_t;  // プレースメントnew
-    }
-    }  // namespace
-```
-
-この関数テンプレートは、MPoolFixed<>オブジェクトを生成し、それをMPool型のポインタとして返す。
-MPoolFixedの生成は、上記で示したようにプレースメントnewを使用して行っている。
-
-gen_mpool<>内でMPoolFixedのstaticなインスタンスを定義した方がシンプルに実装できるが、
-その場合、main()終了後、そのインスタンスは解放され(デストラクタが呼び出され)、その後、
-他の静的オブジェクトの解放が行われると、その延長でoperator deleteが呼び出され、
-ライフタイム終了後のMPoolFixedのstaticなインスタンスが使われてしまう。
-
-現在のMPoolFixedの実装ではこの操作で不具合は発生しないが、
-解放済のオブジェクトを操作することは避けるべきであるため、
-MPoolFixedの生成にプレースメントnewを用いている。
-
-プレースメントnewで生成したオブジェクトをdeleteすることはできず、
-デストラクタはユーザが明示的に呼び出さない限り、呼び出されない。
-ここでは、プレースメントnewのこの特性を利用したが、
-逆に、この特性があるため、
-ここでの実装のような特殊な事情がある場合を除き、プレースメントnewを使うべきではない
-(デストラクタの明示的な呼び出しを忘れるとリソースリークしてしまう)。
-
-
-### デバッグ用イテレータ <a id="SS_5_2_4"></a>
-この章で例示したグローバルnew/deleteは、すでに述べたように適切なメモリの量を調整する必要がある。
-そのためには、これを使用するアプリケーションをある程度動作させた後、
-グローバルnew/deleteのメモリの消費量を計測しなければならない。
-
-下記のコードは、そのためのインターフェースを提供する。
-
-```cpp
-    //  example/dynamic_memory_allocation/global_new_delete.h 4
-
-    class GlobalNewDeleteMonitor {
-    public:
-        MPool const* const* cbegin() const noexcept;
-        MPool const* const* cend() const noexcept;
-        MPool const* const* begin() const noexcept;
-        MPool const* const* end() const noexcept;
-    };
-```
-```cpp
-    //  example/dynamic_memory_allocation/global_new_delete.cpp 132
-
-    MPool const* const* GlobalNewDeleteMonitor::begin() const noexcept { return &mpool_table[0]; }
-    MPool const* const* GlobalNewDeleteMonitor::end() const noexcept { return &mpool_table[ArrayLength(mpool_table)]; }
-
-    MPool const* const* GlobalNewDeleteMonitor::cbegin() const noexcept { return begin(); }
-    MPool const* const* GlobalNewDeleteMonitor::cend() const noexcept { return end(); }
-```
-
-このインターフェースを下記のように使用することで、
-
-```cpp
-    //  example/dynamic_memory_allocation/global_new_delete_ut.cpp 119
-
-    auto gm = GlobalNewDeleteMonitor{};
-
-    std::cout << "  size current   min" << std::endl;
-    std::cout << "  ------------------" << std::endl;
-
-    for (MPool const* mp : gm) {
-        std::cout << std::setw(6) << mp->GetSize() << std::setw(8) << mp->GetCount() << std::setw(6)
-                  << mp->GetCountMin() << std::endl;
-    }
-```
-
-下記のようにメモリの現在の状態や使用履歴を見ることができる。
-
-```
-          size current   min
-          ------------------
-            32      90     0
-            64      78    74
-            96     127   125
-
-           ...
-
-           992     128   128
-          1024     128     0
-```
-
-実際の組み込みソフトの開発では、
-デバッグ用入出力機能からこのようなコードを実行できるようにすることで、
-グローバルnew/deleteが使用するそれぞれのMPoolFixedインスタンスのメモリの調整ができるだろう。
-
-
-## クラスnew/deleteのオーバーロード <a id="SS_5_3"></a>
-「[グローバルnew/deleteのオーバーロードの実装](dynamic_memory_allocation.md#SS_5_2_2)」で示したコードのロックを、
+### クラスnew/deleteのオーバーロード <a id="SS_5_3_2"></a>
+「[グローバルnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_3_1)」で示したコードのロックを、
 「割り込みディセーブル/イネーブル」に置き換えることで、リアルタイム性を保障することができるが、
 この機構はある程度多くのメモリを必要とするため、
 極めてメモリ制限の厳しいシステムでは使用が困難である場合もあるだろう。
@@ -788,10 +818,10 @@ MPoolFixedの生成にプレースメントnewを用いている。
 
 グローバルnewを使わずに動的にオブジェクトを生成するためには、
 
-* プレースメントnewを使う
+* [プレースメントnew](core_lang_spec.md#SS_6_6_9)を使う
 * クラス毎にnew/deleteをオーバーロードする
 
-という2つの選択肢が考えられるが、すでに述べた理由によりプレースメントnewの使用は避けるべきである。
+という2つの選択肢が考えられるが、プレースメントnewは見慣れないシンタックスを用いるため、これの使用は避けるべきである。
 従って、その方法はクラス毎のnew/deleteのオーバーロードになる。
 
 メモリ管理に「[固定長メモリプール](dynamic_memory_allocation.md#SS_5_2_1)」で示したMPoolFixedを利用した実装例を以下に示す。
@@ -927,7 +957,7 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
 別のクラスからはOpNewの別インスタンスを使用できるようにするためである。
 
 この方法は、コードが若干複雑にることを除けば、
-「[グローバルnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_2)」に比べ、優れているように見えてしまうかもしれないが、
+「[グローバルnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_3_1)」に比べ、優れているように見えてしまうかもしれないが、
 下記のように、さらに派生クラスを定義してしまうとnewが失敗してしまうことがあるので注意が必要である。
 
 ```cpp
@@ -936,12 +966,12 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
     struct Large : A {
         uint8_t buff[1024];  // mpf_ABCDのメモリブロックのサイズを超える
     };
+```
+```cpp
+    //  example/dynamic_memory_allocation/class_new_delete_ut.cpp 144
 
-    TEST(NewDelete_Opt, class_new_delete_fixed_derived_large)
-    {
-        ASSERT_EQ(10, mpf_ABCD.GetCount());
-        ASSERT_THROW(auto large = std::make_unique<Large>(), MPoolBadAlloc);  // サイズが大きすぎる
-    }
+    ASSERT_EQ(10, mpf_ABCD.GetCount());
+    ASSERT_THROW(auto large = std::make_unique<Large>(), MPoolBadAlloc);  // サイズが大きすぎる
 ```
 
 なお、 下記のようなクラスをnew/deleteをオーバーロードしないすべのクラスの基底クラスとすることで、
@@ -957,7 +987,7 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
     };
 ```
 ```cpp
-    //  example/dynamic_memory_allocation/class_new_delete_ut.cpp 150
+    //  example/dynamic_memory_allocation/class_new_delete_ut.cpp 153
 
     class DeletedNew : OpNewDeleted {  // プライベート継承
     };
@@ -973,450 +1003,57 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
 OpNewを使うプロジェクトには導入するべきだろう。
 
 
-## STLコンテナのアロケーター <a id="SS_5_4"></a>
-ここまで前提として来たような組み込みソフトにおいても、
-その大部分のコードにリアルタイム性は不要であり、このような部分のコードにSTLコンテナが使用できれば、
 
-* 開発効率が向上する
-* 開発コード量が少なくなる
 
-等のポジティブな影響を期待できることは多い。
-STLコンテナはこういった状況に備えて、ユーザ定義のアロケータを使用できるように定義されている。
-ここでは、アロケータの定義例や、その使い方を示す。
 
-### STLコンテナ用アロケータ <a id="SS_5_4_1"></a>
-アロケータの定義例を以下に示す。
+### SpinLock <a id="SS_5_3_3"></a>
+
+
+### tako <a id="SS_5_3_4"></a>
+
+class MPoolBadAlloc : public std::bad_alloc {  // Nstd::Exceptionの基底クラス
+mpoolの"nstd_exception.h"への依存をなくす。
+
+上記テストで使用したMPoolBadAllocは下記のように定義されたクラスであり、
 
 ```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator.h 7
+    //  example/h/nstd_exception.h 11
 
-    template <typename T>
-    class MPoolBasedAllocator {
+    /// @class Exception
+    /// @brief StaticString<>を使ったエクセプションクラス
+    ///        下記のMAKE_EXCEPTIONを使い生成
+    /// @tparam E   std::exceptionから派生したエクセプションクラス
+    /// @tparam N   StaticString<N>
+    template <typename E, size_t N>
+    #if __cplusplus >= 202002L  // c++20
+    requires std::derived_from<E, std::exception>
+    #endif
+    class Exception : public E {
     public:
-        using pointer                                = T*;
-        using const_pointer                          = T const*;
-        using value_type                             = T;
-        using propagate_on_container_move_assignment = std::true_type;
-        using is_always_equal                        = std::true_type;
-        using size_type                              = size_t;
-        using difference_type                        = size_t;
+        static_assert(std::is_base_of_v<std::exception, E>);
 
-        template <class U>
-        struct rebind {
-            using other = MPoolBasedAllocator<U>;
-        };
-
-        T*   allocate(size_type count) { return static_cast<pointer>(mpool_.Alloc(count * sizeof(T))); }
-        void deallocate(T* mem, size_type) noexcept { mpool_.Free(mem); }
+        Exception(StaticString<N> const& what_str) noexcept : what_str_{what_str} {}
+        char const* what() const noexcept override { return what_str_.String(); }
 
     private:
-        static MPool& mpool_;
+        StaticString<N> const what_str_;
     };
 
-    template <class T>  // T型のMPoolBasedAllocatorはシステムに唯一
-    bool operator==(MPoolBasedAllocator<T> const&, MPoolBasedAllocator<T> const&) noexcept
-    {
-        return true;
-    }
-
-    template <class T, class U>
-    bool operator==(MPoolBasedAllocator<T> const&, MPoolBasedAllocator<U> const&) noexcept
-    {
-        return false;
-    }
-
-    template <class T, class U>
-    bool operator!=(MPoolBasedAllocator<T> const& lhs, MPoolBasedAllocator<U> const& rhs) noexcept
-    {
-        return !(lhs == rhs);
-    }
+    #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
 ```
-
-アロケータのパブリックなメンバやoperator ==、operator !=は、STLに従い定義している
-([STL allocator](https://cpprefjp.github.io/reference/memory/allocator.html)参照)。
-
-上記コードからわかるようにメモリの実際のアロケーションには、
-これまでと同様にMPoolから派生したクラスを使用するが、
-リアルタイム性は不要であるためメモリ効率が悪いMPoolFixedは使わない。
-代わりに、可変長メモリを扱うためメモリ効率がよいMPoolVariabl
-(「[可変長メモリプール](dynamic_memory_allocation.md#SS_5_4_2)」参照)を使う。
-
-### 可変長メモリプール <a id="SS_5_4_2"></a>
-可変長メモリプールを生成するMPoolVariableの実装は下記のようになる
-(全体は巻末の「[example/dynamic_memory_allocation/mpool_variable.h](sample_code.md#SS_9_1_2)」に掲載する)。
-
 ```cpp
-    //  example/dynamic_memory_allocation/mpool_variable.h 59
+    //  example/dynamic_memory_allocation/mpool.h 7
 
-    template <uint32_t MEM_SIZE>
-    class MPoolVariable final : public MPool {
-    public:
-        MPoolVariable() noexcept : MPool{MEM_SIZE}
-        {
-            header_->next    = nullptr;
-            header_->n_nuits = sizeof(buff_) / Inner_::unit_size;
-        }
-
-        // 中略
-        ...
-
-    private:
-        using header_t = Inner_::header_t;
-
-        Inner_::buffer_t<MEM_SIZE> buff_{};
-        header_t*                  header_{reinterpret_cast<header_t*>(buff_.buffer)};
-        mutable SpinLock           spin_lock_{};
-        size_t                     unit_count_{sizeof(buff_) / Inner_::unit_size};
-        size_t                     unit_count_min_{sizeof(buff_) / Inner_::unit_size};
-
-        virtual void* alloc(size_t size) noexcept override
-        {
-            // ...
-        }
-
-        virtual void free(void* mem) noexcept override
-        {
-            // ...
-        }
-
-        virtual size_t get_size() const noexcept override { return 1; }
-        virtual size_t get_count() const noexcept override { return unit_count_ * Inner_::unit_size; }
-        virtual size_t get_count_min() const noexcept override { return unit_count_min_ * Inner_::unit_size; }
-
-        virtual bool is_valid(void const* mem) const noexcept override
-        {
-            return (&buff_ < mem) && (mem < &buff_.buffer[ArrayLength(buff_.buffer)]);
-        }
+    class MPoolBadAlloc : public std::bad_alloc {  // Nstd::Exceptionの基底クラス
     };
 ```
 
-下記のようにMPoolVariable、
-MPoolBasedAllocatorを使うことでnew char[]に対応するアロケータが定義できる。
+MPoolから派生したクラスが、
 
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 11
+* メモリブロックを保持していない状態でのMPool::alloc(size, true)の呼び出し
+* MEM_SIZEを超えたsizeでのMPool::alloc(size, true)の呼び出し
 
-    namespace {
-    MPoolVariable<1024 * 64> mpv_allocator;
-    }
-
-    template <>
-    MPool& MPoolBasedAllocator<char>::mpool_ = mpv_allocator;
-```
-
-下記の単体テストは、このアロケータを使うstd::stringオブジェクトの宣言方法と、
-その振る舞いを示している。
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 24
-
-    auto rest = mpv_allocator.GetCount();
-    auto str  = std::basic_string<char, std::char_traits<char>, MPoolBasedAllocator<char>>{"hehe"};
-
-    ASSERT_TRUE(mpv_allocator.IsValid(str.c_str()));  // mpv_allocatorを使用してメモリ確保
-    ASSERT_GT(rest, mpv_allocator.GetCount());        // mpv_allocatorのメモリが減っていることの確認
-```
-
-この長い宣言は、下記のようにすることで簡潔に記述できるようになる。
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 34
-
-    using mpv_string = std::basic_string<char, std::char_traits<char>, MPoolBasedAllocator<char>>;
-```
-
-下記のように宣言、定義することで、
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 50
-
-    template <>
-    MPool& MPoolBasedAllocator<int>::mpool_ = mpv_allocator;
-
-    using mpv_vector_int = std::vector<int, MPoolBasedAllocator<int>>;
-```
-
-下記の単体テストが示す通り、std::vector\<int>にこのアロケータを使わせることもできる。
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 61
-
-    auto rest = mpv_allocator.GetCount();
-    auto ints = mpv_vector_int{1, 2, 3};
-
-    ASSERT_TRUE(mpv_allocator.IsValid(&ints[0]));  // mpv_allocatorのメモリであることの確認
-    ASSERT_GT(rest, mpv_allocator.GetCount());     // mpv_allocatorのメモリが減っていることの確認
-```
-
-これまでの手法を組み合わせ下記のようにすることで、
-std::stringと同等のオブジェクトを保持するstd::vectorを宣言することもできる。
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 72
-
-    using mpv_vector_str = std::vector<mpv_string, MPoolBasedAllocator<mpv_string>>;
-
-    template <>
-    MPool& MPoolBasedAllocator<mpv_string>::mpool_ = mpv_allocator;
-```
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 94
-
-    auto strs = mpv_vector_str{"1", "2", "3"};
-
-    ASSERT_GT(rest, mpv_allocator.GetCount());
-
-    for (auto const& s : strs) {
-        ASSERT_TRUE(mpv_allocator.IsValid(&s));         // mpv_allocatorのメモリであることの確認
-        ASSERT_TRUE(mpv_allocator.IsValid(s.c_str()));  // mpv_allocatorのメモリであることの確認
-    }
-```
-
-しかし、下記に示すように、これまでの定義、
-宣言のみではmpv_stringのnewにこのアロケータを使わせることはできない。
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 121
-
-    auto rest = mpv_allocator.GetCount();
-
-    auto str0 = std::make_unique<mpv_string>();  // グローバルnewが使われる
-
-    // mpv_stringのnewにはmpv_allocatorは使われない
-    ASSERT_FALSE(mpv_allocator.IsValid(str0.get()));
-    ASSERT_EQ(rest, mpv_allocator.GetCount());
-```
-
-そうするためには、さらに下記のような定義が必要になる。
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 108
-
-    struct mpv_string_op_new : OpNew<mpv_string_op_new>, mpv_string {
-        using mpv_string::basic_string;
-    };
-
-    template <>
-    MPool& OpNew<mpv_string_op_new>::mpool_ = mpv_allocator;
-```
-
-このようにすることで、下記に示すように期待した動きになる。
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 133
-
-    rest = mpv_allocator.GetCount();
-
-    auto str1 = std::make_unique<mpv_string_op_new>();
-
-    // mpv_string_op_newのnewにmpv_allocatorが使われる
-    ASSERT_TRUE(mpv_allocator.IsValid(str1.get()));
-    ASSERT_GT(rest, mpv_allocator.GetCount());
-```
-
-ただし、std::make_sharedを使用した場合、この関数のメモリアロケーションの最適化により、
-下記に示すように期待した結果にならないため、注意が必要である。
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 145
-
-    rest = mpv_allocator.GetCount();
-
-    auto str2 = std::make_shared<mpv_string_op_new>();
-
-    // mpv_string_op_newのnewにmpv_allocatorが使われない!!!
-    ASSERT_FALSE(mpv_allocator.IsValid(str2.get()));
-    ASSERT_EQ(rest, mpv_allocator.GetCount());
-```
-
-newをオーバーロードしたクラスをstd::shared_ptrで管理する場合、下記のようにしなければならない。
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 157
-
-    rest = mpv_allocator.GetCount();
-
-    auto str3 = std::shared_ptr<mpv_string_op_new>{new mpv_string_op_new};
-
-    // mpv_string_op_newのnewにmpv_allocatorが使われる
-    ASSERT_TRUE(mpv_allocator.IsValid(str3.get()));
-    ASSERT_GT(rest, mpv_allocator.GetCount());
-```
-
-### デバッグ用イテレータ <a id="SS_5_4_3"></a>
-[可変長メモリプール](dynamic_memory_allocation.md#SS_5_4_2)を使用すると、
-メモリのフラグメントによりアロケーションが失敗することがあり得る。
-このような事態が発生している可能性がある場合、
-アロケータが保持しているメモリの状態を表示させることがデバッグの第一歩となる。
-
-下記のコードは、そのためのインターフェースを提供する。
-
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_variable.h 59
-
-    template <uint32_t MEM_SIZE>
-    class MPoolVariable final : public MPool {
-    public:
-
-        // 中略
-        ...
-
-        class const_iterator {
-        public:
-            explicit const_iterator(Inner_::header_t const* header) noexcept : header_{header} {}
-            const_iterator(const_iterator const&) = default;
-            const_iterator(const_iterator&&)      = default;
-
-            const_iterator& operator++() noexcept  // 前置++のみ実装
-            {
-                assert(header_ != nullptr);
-                header_ = header_->next;
-
-                return *this;
-            }
-
-            Inner_::header_t const* operator*() noexcept { return header_; }
-
-
-        #if __cplusplus <= 201703L  // c++17
-            bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
-            bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
-        #else  // c++20
-
-            auto operator<=>(const const_iterator&) const = default;
-        #endif
-
-        private:
-            Inner_::header_t const* header_;
-        };
-
-        const_iterator begin() const noexcept { return const_iterator{header_}; }
-        const_iterator end() const noexcept { return const_iterator{nullptr}; }
-        const_iterator cbegin() const noexcept { return const_iterator{header_}; }
-        const_iterator cend() const noexcept { return const_iterator{nullptr}; }
-
-        // 中略
-        ...
-    };
-```
-
-このインターフェースを下記のように使用することで、
-
-```cpp
-    //  example/dynamic_memory_allocation/mpool_allocator_ut.cpp 213
-
-    for (auto mem : mpv_allocator) {
-        std::cout << std::setw(16) << mem->next << ":" << mem->n_nuits << std::endl;
-    }
-```
-
-下記のようにmpv_allocator.header\_が保持するメモリの現在の状態を見ることができる
-(これによるとmpv_allocatorが保持するメモリの先頭付近では多少フラグメントを起こしているが、
-最後に大きなメモリブロックがあるため、全体としては問題ないレベルである)。
-
-```
-        0x7f073afe59d0:3
-        0x7f073afe5a60:3
-        0x7f073afe5ac0:3
-        0x7f073afe5b70:3
-        0x7f073afe5c50:11
-        0x7f073afe5cb0:3
-        0x7f073afe5e50:13
-                     0:4018
-```
-
-「[グローバルnew/deleteのオーバーロードの実装](dynamic_memory_allocation.md#SS_5_2_2)」でも述べたように、
-デバッグ用入出力機能からこのような出力を得られるようにしておくべきである。
-
-
-## エクセプション処理機構の変更 <a id="SS_5_5"></a>
-多くのコンパイラのエクセプション処理機構にはnew/deleteやmalloc/freeが使われているため、
-リアルタイム性が必要な個所でエクセプション処理を行ってはならない。
-そういった規制でプログラミングを行っていると、
-リアルタイム性が不要な処理であるため使用しているSTLコンテナにすら、
-既存のエクセプション処理機構を使わせたく無くなるものである。
-
-コンパイラに[g++](cpp_idioms.md#SS_8_9_1)や[clang++](cpp_idioms.md#SS_8_9_2)を使っている場合、
-下記関数を置き換えることでそういった要望を叶えることができる。
-
-|関数                                           |機能                            |
-|-----------------------------------------------|--------------------------------|
-|`__cxa_allocate_exception(size_t thrown_size)` |エクセプション処理用のメモリ確保|
-|`__cxa_free_exception(void\* thrown_exception)`|上記で確保したメモリの解放      |
-
-オープンソースである[static exception](https://github.com/ApexAI/static_exception)を使うことで、
-上記2関数を置き換えることもできるが、この実装が複雑すぎると思うのであれば、
-下記に示すような、これまで使用したMPoolFixedによる単純な実装を使うこともできる。
-
-```cpp
-    //  example/dynamic_memory_allocation/exception_allocator_ut.cpp 15
-
-    // https://github.com/hjl-tools/gcc/blob/master/libstdc%2B%2B-v3/libsupc%2B%2B/unwind-cxx.h
-    // の抜粋
-    namespace __cxxabiv1 {
-    struct __cxa_exception {
-        // ...
-    };
-    SUPPRESS_WARN_END;
-    }  // namespace __cxxabiv1
-
-    namespace {
-
-    constexpr size_t             offset{sizeof(__cxxabiv1::__cxa_exception)};
-    MPoolFixed<offset + 128, 50> mpf_exception;
-    }  // namespace
-
-    extern "C" {
-
-    void* __cxa_allocate_exception(size_t thrown_size)
-    {
-        auto alloc_size = thrown_size + offset;  // メモリの実際の必要量はthrown_size+offset
-        auto mem        = mpf_exception.AllocNoExcept(alloc_size);
-
-        assert(mem != nullptr);
-
-        memset(mem, 0, alloc_size);
-        auto* ret = static_cast<uint8_t*>(mem);
-
-        ret += offset;
-
-        return ret;
-    }
-
-    void __cxa_free_exception(void* thrown_exception)
-    {
-        auto* ret = static_cast<uint8_t*>(thrown_exception);
-
-        ret -= offset;
-        mpf_exception.Free(ret);
-    }
-```
-
-以下に単体テストを示す。
-
-```cpp
-    //  example/dynamic_memory_allocation/exception_allocator_ut.cpp 104
-
-    auto count             = mpf_exception.GetCount();
-    auto exception_occured = false;
-
-    try {
-        throw std::exception{};
-    }
-    catch (std::exception const& e) {
-        ASSERT_EQ(count - 1, mpf_exception.GetCount());  // 1個消費
-        exception_occured = true;
-    }
-
-    ASSERT_TRUE(exception_occured);
-    ASSERT_EQ(count, mpf_exception.GetCount());  // 1個解放
-```
-
-すでに述べたが、残念なことに、この方法はC++の標準外であるため、
-これを適用できるコンパイラは限られている。
-しかし、多くのコンパイラはこれと同様の拡張方法を備えているため、
-安易にエクセプションやSTLコンテナを使用禁止することなく、安全に使用する方法を探るべきだろう。
+のような処理の継続ができない場合に用いるエクセプション用クラスである。
 
 
 

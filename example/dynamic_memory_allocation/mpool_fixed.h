@@ -18,7 +18,7 @@ union mem_chunk {
     mem_chunk* next;
 
     // MPoolFixed_MinSizeの整数倍のエリアを、最大アラインメントが必要な基本型にアライン
-    alignas(alignof(std::max_align_t)) uint8_t mem[Roundup(MPoolFixed_MinSize, MEM_SIZE)];
+    alignas(std::max_align_t) uint8_t mem[Roundup(MPoolFixed_MinSize, MEM_SIZE)];
 };
 }  // namespace Inner_
 // @@@ sample end
