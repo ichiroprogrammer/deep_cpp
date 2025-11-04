@@ -31,7 +31,12 @@ template <uint32_t N_UNITS, uint32_t MEM_COUNT>
 // @@@ sample begin 1:0
 
 namespace {
+// @@@ sample end
+// @@@ sample begin 1:1
+
 MPool* mpool_table[32];
+// @@@ sample end
+// @@@ sample begin 1:2
 
 // mainの前に呼ばれるため、mpool_tableを初期化するには下記のような方法が必要
 bool is_setup{false};

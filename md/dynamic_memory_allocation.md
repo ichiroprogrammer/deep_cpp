@@ -1,5 +1,5 @@
 # ダイナミックメモリアロケーション
-本章で扱うダイナミックメモリアロケーションとは、new/delete、malloc/free
+本章で扱うダイナミックメモリアロケーション([ヒープ](---)の使用)とは、new/delete、malloc/free
 によるメモリ確保/解放のことである。
 
 malloc/freeは、
@@ -44,7 +44,7 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 ```
 
 上記で示したようにmalloc/freeで使用されるメモリはHeader_t型のheaderで管理され、
-このアクセスの競合はspin_lockによって回避される。
+このアクセスの競合は[スピンロック](---)(SpinLock)によって回避される。
 headerが管理するメモリ用域からのメモリの切り出しはmalloc_innerによって行われるが、
 下のフラグメントの説明でも示す通り、
 headerで管理されたメモリは長さの上限が単純には決まらないリスト構造になるため、
@@ -122,7 +122,7 @@ freeはこのリストを辿りメモリを最適な場所に戻す必要があ�
 malloc/freeにリアルタイム性がない原因は、
 
 * リアルタイム性がないOSのシステムコールを使用している
-* メモリを可変長で管理しているため処理が重いにもかかわらず、この処理中にグローバルロックを行う。
+* メモリを可変長で管理しているため処理が重いにもかかわらず、この処理中にグローバルロックを行う
 
 ためである。従って、この問題に対処するためのメモリ管理システムは、
 
@@ -141,7 +141,7 @@ malloc/freeにリアルタイム性がない原因は、
 
 によって実装することにする。
 
-まずは、MPoolを下記に示す。
+まずは、MPoolを下記に示す。なお、throwするオブジェクトの型は[MPoolBadAlloc](---)を使用している。
 
 ```cpp
     // @@@ example/dynamic_memory_allocation/mpool.h #1:0 begin
@@ -167,15 +167,11 @@ MPoolFixedに限らずメモリアロケータが返すメモリは、
 MPoolFixed::alloc/MPoolFixed::freeを見ればわかる通り、malloc/freeの実装に比べ格段にシンプルであり、
 これによりリアルタイム性の保障は容易である。
 
-なお、この実装ではmalloc/freeと同様に下記の[SpinLock](---)を使用したが、
+なお、この実装ではmalloc/freeと同様に使用制限の少ない[スピンロック](---)(SpinLock)を使用したが、
 このロックは、ラウンドロビンでスケジューリングされるスレッドの競合を防ぐためのものであり、
 固定プライオリティでのスケジューリングが前提となるような組み込みソフトで使用した場合、
 デッドロックを引き起こす可能性がある。
 組み込みソフトでは、割り込みディセーブル/イネーブルを使ってロックすることを推奨する。
-
-```cpp
-    // @@@ example/dynamic_memory_allocation/spin_lock.h #0:0 begin
-```
 
 MPoolFixedの単体テストは、下記のようになる。
 
@@ -243,6 +239,77 @@ mpv:249
                0:3014     <- アロケーションされていないメモリの塊
 ```
 
+## メモリプールのエクセプション
+メモリプール内で回復不可能なエラーが発生した場合、
+エクセプションの送出によりそのことを使用側にそれを伝えなければならない。
+
+多くのコンパイラのエクセプション処理機構にはmalloc/freeが使われているため、
+メモリプールの実装に通常の例外を使用した場合、メモリプールの開発趣旨に反する。
+
+
+ここでは、
+
+- エクセプション用の型[MPoolBadAlloc](---)の開発
+- [エクセプション処理機構の変更](---)
+
+を通じて、メモリプールのエクセプション機構を紹介する。
+
+### MPoolBadAlloc
+MPoolBadAllocは下記のように定義されたクラスであり、
+「[ファイル位置を静的に保持したエクセプションクラスの開発](---)」
+で示したのクラスライブラリ基づいたメモリプール専用のエクセプション型である。
+
+```cpp
+    // @@@ example/h/nstd_exception.h #0:0 begin
+    // @@@ example/h/nstd_exception.h #0:2 begin 0 -1
+```
+```cpp
+    // @@@ example/dynamic_memory_allocation/mpool.h #0:0 begin
+```
+
+MPoolから派生したクラスが、
+
+* メモリブロックを保持していない状態でのMPool::alloc(size, true)の呼び出し
+* MEM_SIZEを超えたsizeでのMPool::alloc(size, true)の呼び出し
+
+のような処理の継続ができない場合に用いるエクセプション専用クラスである。
+
+
+### エクセプション処理機構の変更
+多くのコンパイラのエクセプション処理機構にはnew/deleteやmalloc/freeが使われているため、
+リアルタイム性が必要な個所でエクセプション処理を行ってはならない。
+そういった規制でプログラミングを行っていると、
+リアルタイム性が不要な処理であるため使用しているstdコンテナにすら、
+既存のエクセプション処理機構を使わせたく無くなるものである。
+
+コンパイラに[g++](---)や[clang++](---)を使っている場合、
+下記関数を置き換えることでそういった要望を叶えることができる。
+
+|関数                                           |機能                            |
+|-----------------------------------------------|--------------------------------|
+|`__cxa_allocate_exception(size_t thrown_size)` |エクセプション処理用のメモリ確保|
+|`__cxa_free_exception(void\* thrown_exception)`|上記で確保したメモリの解放      |
+
+オープンソースである[static exception](https://github.com/ApexAI/static_exception)を使うことで、
+上記2関数を置き換えることもできるが、この実装が複雑すぎると思うのであれば、
+下記に示すような、これまで使用したMPoolFixedによる単純な実装を使うこともできる。
+
+```cpp
+    // @@@ example/dynamic_memory_allocation/exception_allocator_ut.cpp #0:0 begin
+```
+
+以下に単体テストを示す。
+
+```cpp
+    // @@@ example/dynamic_memory_allocation/exception_allocator_ut.cpp #1:0 begin -1
+```
+
+すでに述べたが、残念なことに、この方法はC++の標準外であるため、
+これを適用できるコンパイラは限られている。
+しかし、多くのコンパイラはこれと同様の拡張方法を備えているため、
+安易にエクセプションやSTLコンテナを使用禁止することなく、安全に使用する方法を探るべきだろう。
+
+
 ## new/deleteのオーバーロード
 前述したように、組み込みソフトにはmalloc/freeを使用したnew/deleteではシステムの制限を満たせないことが多い。
 C++11では、以下のような方法により、このような問題を回避することができる。
@@ -257,6 +324,8 @@ C++11では、以下のような方法により、このような問題を回避
 
 ```cpp
     // @@@ example/dynamic_memory_allocation/global_new_delete.cpp #1:0 begin
+    // @@@ example/dynamic_memory_allocation/global_new_delete.cpp #1:1 begin
+    // @@@ example/dynamic_memory_allocation/global_new_delete.cpp #1:2 begin
     // @@@ example/dynamic_memory_allocation/global_new_delete.cpp #2:0 begin
 ```
 
@@ -280,10 +349,13 @@ setupで行っているような方法以外では、
 
 mpool_tableはMPoolポインタを保持するが、そのポインタが指すオブジェクトの実態は、
 gen_mpool<>が生成したMPoolFixed<>オブジェクトである。
-gen_mpool<>については、「[プレースメントnew](---)を使用したメモリプールの生成」で説明する。
+gen_mpool<>については、その内部に静的に確保したメモリを使用して、
+[プレースメントnew](---)によりMPoolオブジェクトを生成する下記の関数テンプレートである。
 
-size2indexは、要求されたサイズから、
-それに対応するMPoolポインタを保持するmpool_tableのインデックスを導出する関数である。
+```cpp
+    // @@@ example/dynamic_memory_allocation/global_new_delete.cpp #0:0 begin
+```
+
 
 この実装では対応するMPoolが空であった場合、
 それよりも大きいメモリブロックを持つMPoolからメモリを返す仕様としたが、
@@ -293,6 +365,9 @@ MEM_COUNTの値を見直した方が、
 より少ないメモリで動作する組み込みソフトを作りやすいだろう。
 
 `operator delete`については、下記の2種類が必要となる。
+
+size2indexは要求されたサイズから、
+それに対応するMPoolポインタを保持するmpool_tableのインデックスを導出する関数である。
 
 ```cpp
     // @@@ example/dynamic_memory_allocation/global_new_delete.cpp #3:0 begin
@@ -306,6 +381,49 @@ MEM_COUNTの値を見直した方が、
 高速に動作するが、malloc/freeの実装(「[malloc/freeの問題点](---)」参照)で使用したHeader_t
 を導入することでこの実行コストはほとんど排除できる。
 そのトレードオフとしてメモリコストが増えるため、ここでは例示した仕様にした。
+
+### デバッグ用イテレータ
+[グローバルnew/deleteのオーバーロード](---)で示したグローバルnew/deleteの実装は、適切なメモリの量を調整する必要がある。
+そのためには、これを使用するアプリケーションをある程度動作させた後、
+グローバルnew/deleteのメモリの消費量を計測しなければならない。
+
+下記のコードは、そのためのインターフェースを提供する。
+
+```cpp
+    // @@@ example/dynamic_memory_allocation/global_new_delete.h #0:0 begin
+```
+```cpp
+    // @@@ example/dynamic_memory_allocation/global_new_delete.cpp #1:1 begin
+```
+```cpp
+    // @@@ example/dynamic_memory_allocation/global_new_delete.cpp #5:0 begin
+```
+
+このインターフェースを下記のように使用することで、
+
+```cpp
+    // @@@ example/dynamic_memory_allocation/global_new_delete_ut.cpp #0:0 begin -1
+```
+
+下記のようにメモリの現在の状態や使用履歴を見ることができる。
+
+```
+          size current   min
+          ------------------
+            32      90     0
+            64      78    74
+            96     127   125
+
+           ...
+
+           992     128   128
+          1024     128     0
+```
+
+実際の組み込みソフトの開発では、
+デバッグ用入出力機能からこのようなコードを実行できるようにすることで、
+グローバルnew/deleteが使用するそれぞれのMPoolFixedインスタンスのメモリの調整ができるだろう。
+
 
 
 ### クラスnew/deleteのオーバーロード
@@ -395,33 +513,80 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
 OpNewを使うプロジェクトには導入するべきだろう。
 
 
+### new/deleteのオーバーロードのまとめ
+ここまで、malloc/freeの問題の様々な回避方法を示したのでその組み合わせをまとめる。
+
+1. リアルタイムパスでのオブジェクトの生成/解放を行う必要があるクラスのnew/deleteのオーバーロードを
+  [固定長メモリプール](---)により実装する。
+2. グローバルnew/deleteのオーバーロードを[可変長メモリプール](---)により実装する。
+
+上記1によりリアルタイム性の問題は発生しない。
+2により、フラグメントの状態を調査できるようになる。
+ここではデバッグイテレータの実装を行っていないが、
+[STLコンテナ用アロケータ|デバッグ用イテレータ](---)の実装例が参考になるだろう。
 
 
-
-### SpinLock
-
-
-### tako
-
-class MPoolBadAlloc : public std::bad_alloc {  // Nstd::Exceptionの基底クラス
-mpoolの"nstd_exception.h"への依存をなくす。
-
-上記テストで使用したMPoolBadAllocは下記のように定義されたクラスであり、
+## STLコンテナ用アロケータ
+アロケータの定義例を以下に示す。
 
 ```cpp
-    // @@@ example/h/nstd_exception.h #0:0 begin
-    // @@@ example/h/nstd_exception.h #0:2 begin 0 -1
+    // @@@ example/dynamic_memory_allocation/mpool_allocator.h #0:0 begin
 ```
+
+アロケータのパブリックなメンバやoperator ==、operator !=は、STLに従い定義している
+([STL allocator](https://cpprefjp.github.io/reference/memory/allocator.html)参照)。
+
+上記コードからわかるようにメモリの実際のアロケーションには、
+これまでと同様にMPoolから派生したクラスを使用するが、
+リアルタイム性は不要であるためメモリ効率が悪いMPoolFixedは使わない。
+代わりに、可変長メモリを扱うためメモリ効率がよいMPoolVariabl
+(「[可変長メモリプール](---)」参照)を使う。
+
+### デバッグ用イテレータ
+[可変長メモリプール](---)を使用すると、
+メモリのフラグメントによりアロケーションが失敗することがあり得る。
+このような事態が発生している可能性がある場合、
+アロケータが保持しているメモリの状態を表示させることがデバッグの第一歩となる。
+
+下記のコードは、そのためのインターフェースを提供する。
+
+
 ```cpp
-    // @@@ example/dynamic_memory_allocation/mpool.h #0:0 begin
+    // @@@ example/dynamic_memory_allocation/mpool_variable.h #0:0 begin
+
+        // 中略
+        ...
+    // @@@ example/dynamic_memory_allocation/mpool_variable.h #0:2 begin 0 -1
+
+        // 中略
+        ...
+    // @@@ example/dynamic_memory_allocation/mpool_variable.h #0:4 begin 0 -1
 ```
 
-MPoolから派生したクラスが、
+このインターフェースを下記のように使用することで、
 
-* メモリブロックを保持していない状態でのMPool::alloc(size, true)の呼び出し
-* MEM_SIZEを超えたsizeでのMPool::alloc(size, true)の呼び出し
+```cpp
+    // @@@ example/dynamic_memory_allocation/mpool_variable_ut.cpp #4:0 begin -2
+```
 
-のような処理の継続ができない場合に用いるエクセプション用クラスである。
+下記のようにmpv_allocator.header\_が保持するメモリの現在の状態を見ることができる
+(これによるとmpv_allocatorが保持するメモリの先頭付近では多少フラグメントを起こしているが、
+最後に大きなメモリブロックがあるため、全体としては問題ないレベルである)。
+
+```
+        0x7f073afe59d0:3
+        0x7f073afe5a60:3
+        0x7f073afe5ac0:3
+        0x7f073afe5b70:3
+        0x7f073afe5c50:11
+        0x7f073afe5cb0:3
+        0x7f073afe5e50:13
+                     0:4018
+```
+
+「[グローバルnew/deleteのオーバーロード](---)」でも述べたように、
+デバッグ用入出力機能からこのような出力を得られるようにしておくべきである。
+
 
 
 

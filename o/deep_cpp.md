@@ -13388,7 +13388,7 @@ C++17からサポートされた「クラステンプレートのテンプレー
 
 <!-- ./md/dynamic_memory_allocation.md -->
 # ダイナミックメモリアロケーション <a id="SS_5"></a>
-本章で扱うダイナミックメモリアロケーションとは、new/delete、malloc/free
+本章で扱うダイナミックメモリアロケーション([ヒープ](#SS_8_8_1)の使用)とは、new/delete、malloc/free
 によるメモリ確保/解放のことである。
 
 malloc/freeは、
@@ -13414,11 +13414,18 @@ __この章の構成__
 &emsp;&emsp;&emsp; [固定長メモリプール](#SS_5_2_1)  
 &emsp;&emsp;&emsp; [可変長メモリプール](#SS_5_2_2)  
 
-&emsp;&emsp; [new/deleteのオーバーロード](#SS_5_3)  
-&emsp;&emsp;&emsp; [グローバルnew/deleteのオーバーロード](#SS_5_3_1)  
-&emsp;&emsp;&emsp; [クラスnew/deleteのオーバーロード](#SS_5_3_2)  
-&emsp;&emsp;&emsp; [SpinLock](#SS_5_3_3)  
-&emsp;&emsp;&emsp; [tako](#SS_5_3_4)  
+&emsp;&emsp; [メモリプールのエクセプション](#SS_5_3)  
+&emsp;&emsp;&emsp; [MPoolBadAlloc](#SS_5_3_1)  
+&emsp;&emsp;&emsp; [エクセプション処理機構の変更](#SS_5_3_2)  
+
+&emsp;&emsp; [new/deleteのオーバーロード](#SS_5_4)  
+&emsp;&emsp;&emsp; [グローバルnew/deleteのオーバーロード](#SS_5_4_1)  
+&emsp;&emsp;&emsp; [デバッグ用イテレータ](#SS_5_4_2)  
+&emsp;&emsp;&emsp; [クラスnew/deleteのオーバーロード](#SS_5_4_3)  
+&emsp;&emsp;&emsp; [new/deleteのオーバーロードのまとめ](#SS_5_4_4)  
+
+&emsp;&emsp; [STLコンテナ用アロケータ](#SS_5_5)  
+&emsp;&emsp;&emsp; [デバッグ用イテレータ](#SS_5_5_1)  
   
   
 
@@ -13517,7 +13524,7 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 ```
 
 上記で示したようにmalloc/freeで使用されるメモリはHeader_t型のheaderで管理され、
-このアクセスの競合はspin_lockによって回避される。
+このアクセスの競合は[スピンロック](#SS_8_8_2)(SpinLock)によって回避される。
 headerが管理するメモリ用域からのメモリの切り出しはmalloc_innerによって行われるが、
 下のフラグメントの説明でも示す通り、
 headerで管理されたメモリは長さの上限が単純には決まらないリスト構造になるため、
@@ -13555,7 +13562,7 @@ sbrkは
 によるメモリ確保のトリガーとなる。
 これはOSのファイルシステムの動作を含む処理であるため、やはりリアルタイム性の保証は困難である。
 
-[フリースタンディング環境](#SS_8_8_2)では、sbrkのようなシステムコールは存在しないため、
+[フリースタンディング環境](#SS_8_8_4)では、sbrkのようなシステムコールは存在しないため、
 アプリケーションの未使用領域や静的に確保した領域を上記コードで示したようなリスト構造で管理し、
 mallocで使用することになる。
 このような環境では、sbrkによるリアルタイム性の阻害は発生しないものの、
@@ -13636,7 +13643,7 @@ freeはこのリストを辿りメモリを最適な場所に戻す必要があ�
 malloc/freeにリアルタイム性がない原因は、
 
 * リアルタイム性がないOSのシステムコールを使用している
-* メモリを可変長で管理しているため処理が重いにもかかわらず、この処理中にグローバルロックを行う。
+* メモリを可変長で管理しているため処理が重いにもかかわらず、この処理中にグローバルロックを行う
 
 ためである。従って、この問題に対処するためのメモリ管理システムは、
 
@@ -13655,7 +13662,7 @@ malloc/freeにリアルタイム性がない原因は、
 
 によって実装することにする。
 
-まずは、MPoolを下記に示す。
+まずは、MPoolを下記に示す。なお、throwするオブジェクトの型は[MPoolBadAlloc](#SS_5_3_1)を使用している。
 
 ```cpp
     //  example/dynamic_memory_allocation/mpool.h 12
@@ -13799,33 +13806,11 @@ MPoolFixedに限らずメモリアロケータが返すメモリは、
 MPoolFixed::alloc/MPoolFixed::freeを見ればわかる通り、malloc/freeの実装に比べ格段にシンプルであり、
 これによりリアルタイム性の保障は容易である。
 
-なお、この実装ではmalloc/freeと同様に下記の[SpinLock](#SS_5_3_3)を使用したが、
+なお、この実装ではmalloc/freeと同様に使用制限の少ない[スピンロック](#SS_8_8_2)(SpinLock)を使用したが、
 このロックは、ラウンドロビンでスケジューリングされるスレッドの競合を防ぐためのものであり、
 固定プライオリティでのスケジューリングが前提となるような組み込みソフトで使用した場合、
 デッドロックを引き起こす可能性がある。
 組み込みソフトでは、割り込みディセーブル/イネーブルを使ってロックすることを推奨する。
-
-```cpp
-    //  example/dynamic_memory_allocation/spin_lock.h 3
-
-    #include <atomic>
-
-    class SpinLock {
-    public:
-        void lock() noexcept
-        {
-            while (state_.exchange(state::locked, std::memory_order_acquire) == state::locked) {
-                ;  // busy wait
-            }
-        }
-
-        void unlock() noexcept { state_.store(state::unlocked, std::memory_order_release); }
-
-    private:
-        enum class state { locked, unlocked };
-        std::atomic<state> state_{state::unlocked};
-    };
-```
 
 MPoolFixedの単体テストは、下記のようになる。
 
@@ -14062,22 +14047,172 @@ mpv:249
                0:3014     <- アロケーションされていないメモリの塊
 ```
 
-## new/deleteのオーバーロード <a id="SS_5_3"></a>
+## メモリプールのエクセプション <a id="SS_5_3"></a>
+メモリプール内で回復不可能なエラーが発生した場合、
+エクセプションの送出によりそのことを使用側にそれを伝えなければならない。
+
+多くのコンパイラのエクセプション処理機構にはmalloc/freeが使われているため、
+メモリプールの実装に通常の例外を使用した場合、メモリプールの開発趣旨に反する。
+
+
+ここでは、
+
+- エクセプション用の型[MPoolBadAlloc](#SS_5_3_1)の開発
+- [エクセプション処理機構の変更](#SS_5_3_2)
+
+を通じて、メモリプールのエクセプション機構を紹介する。
+
+### MPoolBadAlloc <a id="SS_5_3_1"></a>
+MPoolBadAllocは下記のように定義されたクラスであり、
+「[ファイル位置を静的に保持したエクセプションクラスの開発](#SS_4_7_6_4)」
+で示したのクラスライブラリ基づいたメモリプール専用のエクセプション型である。
+
+```cpp
+    //  example/h/nstd_exception.h 11
+
+    /// @class Exception
+    /// @brief StaticString<>を使ったエクセプションクラス
+    ///        下記のMAKE_EXCEPTIONを使い生成
+    /// @tparam E   std::exceptionから派生したエクセプションクラス
+    /// @tparam N   StaticString<N>
+    template <typename E, size_t N>
+    #if __cplusplus >= 202002L  // c++20
+    requires std::derived_from<E, std::exception>
+    #endif
+    class Exception : public E {
+    public:
+        static_assert(std::is_base_of_v<std::exception, E>);
+
+        Exception(StaticString<N> const& what_str) noexcept : what_str_{what_str} {}
+        char const* what() const noexcept override { return what_str_.String(); }
+
+    private:
+        StaticString<N> const what_str_;
+    };
+
+    #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
+```
+```cpp
+    //  example/dynamic_memory_allocation/mpool.h 7
+
+    class MPoolBadAlloc : public std::bad_alloc {  // Nstd::Exceptionの基底クラス
+    };
+```
+
+MPoolから派生したクラスが、
+
+* メモリブロックを保持していない状態でのMPool::alloc(size, true)の呼び出し
+* MEM_SIZEを超えたsizeでのMPool::alloc(size, true)の呼び出し
+
+のような処理の継続ができない場合に用いるエクセプション専用クラスである。
+
+
+### エクセプション処理機構の変更 <a id="SS_5_3_2"></a>
+多くのコンパイラのエクセプション処理機構にはnew/deleteやmalloc/freeが使われているため、
+リアルタイム性が必要な個所でエクセプション処理を行ってはならない。
+そういった規制でプログラミングを行っていると、
+リアルタイム性が不要な処理であるため使用しているstdコンテナにすら、
+既存のエクセプション処理機構を使わせたく無くなるものである。
+
+コンパイラに[g++](#SS_8_9_1)や[clang++](#SS_8_9_2)を使っている場合、
+下記関数を置き換えることでそういった要望を叶えることができる。
+
+|関数                                           |機能                            |
+|-----------------------------------------------|--------------------------------|
+|`__cxa_allocate_exception(size_t thrown_size)` |エクセプション処理用のメモリ確保|
+|`__cxa_free_exception(void\* thrown_exception)`|上記で確保したメモリの解放      |
+
+オープンソースである[static exception](https://github.com/ApexAI/static_exception)を使うことで、
+上記2関数を置き換えることもできるが、この実装が複雑すぎると思うのであれば、
+下記に示すような、これまで使用したMPoolFixedによる単純な実装を使うこともできる。
+
+```cpp
+    //  example/dynamic_memory_allocation/exception_allocator_ut.cpp 15
+
+    // https://github.com/hjl-tools/gcc/blob/master/libstdc%2B%2B-v3/libsupc%2B%2B/unwind-cxx.h
+    // の抜粋
+    namespace __cxxabiv1 {
+    struct __cxa_exception {
+        // ...
+    };
+    SUPPRESS_WARN_END;
+    }  // namespace __cxxabiv1
+
+    namespace {
+
+    constexpr size_t             offset{sizeof(__cxxabiv1::__cxa_exception)};
+    MPoolFixed<offset + 128, 50> mpf_exception;
+    }  // namespace
+
+    extern "C" {
+
+    void* __cxa_allocate_exception(size_t thrown_size)
+    {
+        auto alloc_size = thrown_size + offset;  // メモリの実際の必要量はthrown_size+offset
+        auto mem        = mpf_exception.AllocNoExcept(alloc_size);
+
+        assert(mem != nullptr);
+
+        memset(mem, 0, alloc_size);
+        auto* ret = static_cast<uint8_t*>(mem);
+
+        ret += offset;
+
+        return ret;
+    }
+
+    void __cxa_free_exception(void* thrown_exception)
+    {
+        auto* ret = static_cast<uint8_t*>(thrown_exception);
+
+        ret -= offset;
+        mpf_exception.Free(ret);
+    }
+```
+
+以下に単体テストを示す。
+
+```cpp
+    //  example/dynamic_memory_allocation/exception_allocator_ut.cpp 104
+
+    auto count             = mpf_exception.GetCount();
+    auto exception_occured = false;
+
+    try {
+        throw std::exception{};
+    }
+    catch (std::exception const& e) {
+        ASSERT_EQ(count - 1, mpf_exception.GetCount());  // 1個消費
+        exception_occured = true;
+    }
+
+    ASSERT_TRUE(exception_occured);
+    ASSERT_EQ(count, mpf_exception.GetCount());  // 1個解放
+```
+
+すでに述べたが、残念なことに、この方法はC++の標準外であるため、
+これを適用できるコンパイラは限られている。
+しかし、多くのコンパイラはこれと同様の拡張方法を備えているため、
+安易にエクセプションやSTLコンテナを使用禁止することなく、安全に使用する方法を探るべきだろう。
+
+
+## new/deleteのオーバーロード <a id="SS_5_4"></a>
 前述したように、組み込みソフトにはmalloc/freeを使用したnew/deleteではシステムの制限を満たせないことが多い。
 C++11では、以下のような方法により、このような問題を回避することができる。
 
-* [グローバルnew/deleteのオーバーロード](#SS_5_3_1)
-* [クラスnew/deleteのオーバーロード](#SS_5_3_2)
+* [グローバルnew/deleteのオーバーロード](#SS_5_4_1)
+* [クラスnew/deleteのオーバーロード](#SS_5_4_3)
 
 
 
-### グローバルnew/deleteのオーバーロード <a id="SS_5_3_1"></a>
+### グローバルnew/deleteのオーバーロード <a id="SS_5_4_1"></a>
 [固定長メモリプール](#SS_5_2_1)を使用した`operator new`のオーバーロードの実装例を以下に示す。
 
 ```cpp
     //  example/dynamic_memory_allocation/global_new_delete.cpp 31
 
     namespace {
+
     MPool* mpool_table[32];
 
     // mainの前に呼ばれるため、mpool_tableを初期化するには下記のような方法が必要
@@ -14142,10 +14277,34 @@ setupで行っているような方法以外では、
 
 mpool_tableはMPoolポインタを保持するが、そのポインタが指すオブジェクトの実態は、
 gen_mpool<>が生成したMPoolFixed<>オブジェクトである。
-gen_mpool<>については、「[プレースメントnew](#SS_6_6_9)を使用したメモリプールの生成」で説明する。
+gen_mpool<>については、その内部に静的に確保したメモリを使用して、
+[プレースメントnew](#SS_6_6_9)によりMPoolオブジェクトを生成する下記の関数テンプレートである。
 
-size2indexは、要求されたサイズから、
-それに対応するMPoolポインタを保持するmpool_tableのインデックスを導出する関数である。
+```cpp
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 8
+
+    namespace {
+
+    constexpr size_t min_unit{MPoolFixed_MinSize};
+
+    template <uint32_t N_UNITS, uint32_t MEM_COUNT>
+    [[nodiscard]] MPool* gen_mpool() noexcept
+    {
+        using mp_t = MPoolFixed<min_unit * N_UNITS, MEM_COUNT>;
+
+        static union {
+            std::max_align_t max_align;
+            uint8_t          mem[sizeof(mp_t)];
+        } mem;
+
+        static_assert(static_cast<void*>(&mem.max_align) == static_cast<void*>(mem.mem));
+        static_assert(sizeof(mem) >= sizeof(mp_t));
+
+        return new (mem.mem) mp_t;  // プレースメントnew
+    }
+    }  // namespace
+```
+
 
 この実装では対応するMPoolが空であった場合、
 それよりも大きいメモリブロックを持つMPoolからメモリを返す仕様としたが、
@@ -14156,8 +14315,11 @@ MEM_COUNTの値を見直した方が、
 
 `operator delete`については、下記の2種類が必要となる。
 
+size2indexは要求されたサイズから、
+それに対応するMPoolポインタを保持するmpool_tableのインデックスを導出する関数である。
+
 ```cpp
-    //  example/dynamic_memory_allocation/global_new_delete.cpp 106
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 111
 
     void operator delete(void* mem) noexcept
     {
@@ -14190,9 +14352,78 @@ MEM_COUNTの値を見直した方が、
 を導入することでこの実行コストはほとんど排除できる。
 そのトレードオフとしてメモリコストが増えるため、ここでは例示した仕様にした。
 
+### デバッグ用イテレータ <a id="SS_5_4_2"></a>
+[グローバルnew/deleteのオーバーロード](#SS_5_4_1)で示したグローバルnew/deleteの実装は、適切なメモリの量を調整する必要がある。
+そのためには、これを使用するアプリケーションをある程度動作させた後、
+グローバルnew/deleteのメモリの消費量を計測しなければならない。
 
-### クラスnew/deleteのオーバーロード <a id="SS_5_3_2"></a>
-「[グローバルnew/deleteのオーバーロード](#SS_5_3_1)」で示したコードのロックを、
+下記のコードは、そのためのインターフェースを提供する。
+
+```cpp
+    //  example/dynamic_memory_allocation/global_new_delete.h 4
+
+    class GlobalNewDeleteMonitor {
+    public:
+        MPool const* const* cbegin() const noexcept;
+        MPool const* const* cend() const noexcept;
+        MPool const* const* begin() const noexcept;
+        MPool const* const* end() const noexcept;
+    };
+```
+```cpp
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 35
+
+    MPool* mpool_table[32];
+```
+```cpp
+    //  example/dynamic_memory_allocation/global_new_delete.cpp 137
+
+    MPool const* const* GlobalNewDeleteMonitor::begin() const noexcept { return &mpool_table[0]; }
+    MPool const* const* GlobalNewDeleteMonitor::end() const noexcept { return &mpool_table[ArrayLength(mpool_table)]; }
+
+    MPool const* const* GlobalNewDeleteMonitor::cbegin() const noexcept { return begin(); }
+    MPool const* const* GlobalNewDeleteMonitor::cend() const noexcept { return end(); }
+```
+
+このインターフェースを下記のように使用することで、
+
+```cpp
+    //  example/dynamic_memory_allocation/global_new_delete_ut.cpp 119
+
+    auto gm = GlobalNewDeleteMonitor{};
+
+    std::cout << "  size current   min" << std::endl;
+    std::cout << "  ------------------" << std::endl;
+
+    for (MPool const* mp : gm) {
+        std::cout << std::setw(6) << mp->GetSize() << std::setw(8) << mp->GetCount() << std::setw(6)
+                  << mp->GetCountMin() << std::endl;
+    }
+```
+
+下記のようにメモリの現在の状態や使用履歴を見ることができる。
+
+```
+          size current   min
+          ------------------
+            32      90     0
+            64      78    74
+            96     127   125
+
+           ...
+
+           992     128   128
+          1024     128     0
+```
+
+実際の組み込みソフトの開発では、
+デバッグ用入出力機能からこのようなコードを実行できるようにすることで、
+グローバルnew/deleteが使用するそれぞれのMPoolFixedインスタンスのメモリの調整ができるだろう。
+
+
+
+### クラスnew/deleteのオーバーロード <a id="SS_5_4_3"></a>
+「[グローバルnew/deleteのオーバーロード](#SS_5_4_1)」で示したコードのロックを、
 「割り込みディセーブル/イネーブル」に置き換えることで、リアルタイム性を保障することができるが、
 この機構はある程度多くのメモリを必要とするため、
 極めてメモリ制限の厳しいシステムでは使用が困難である場合もあるだろう。
@@ -14345,7 +14576,7 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
 別のクラスからはOpNewの別インスタンスを使用できるようにするためである。
 
 この方法は、コードが若干複雑にることを除けば、
-「[グローバルnew/deleteのオーバーロード](#SS_5_3_1)」に比べ、優れているように見えてしまうかもしれないが、
+「[グローバルnew/deleteのオーバーロード](#SS_5_4_1)」に比べ、優れているように見えてしまうかもしれないが、
 下記のように、さらに派生クラスを定義してしまうとnewが失敗してしまうことがあるので注意が必要である。
 
 ```cpp
@@ -14391,57 +14622,167 @@ OpNewをクラステンプレートとし、内部で利用しないテンプレ
 OpNewを使うプロジェクトには導入するべきだろう。
 
 
+### new/deleteのオーバーロードのまとめ <a id="SS_5_4_4"></a>
+ここまで、malloc/freeの問題の様々な回避方法を示したのでその組み合わせをまとめる。
+
+1. リアルタイムパスでのオブジェクトの生成/解放を行う必要があるクラスのnew/deleteのオーバーロードを
+  [固定長メモリプール](#SS_5_2_1)により実装する。
+2. グローバルnew/deleteのオーバーロードを[可変長メモリプール](#SS_5_2_2)により実装する。
+
+上記1によりリアルタイム性の問題は発生しない。
+2により、フラグメントの状態を調査できるようになる。
+ここではデバッグイテレータの実装を行っていないが、
+[デバッグ用イテレータ](#SS_5_5_1)の実装例が参考になるだろう。
 
 
-
-### SpinLock <a id="SS_5_3_3"></a>
-
-
-### tako <a id="SS_5_3_4"></a>
-
-class MPoolBadAlloc : public std::bad_alloc {  // Nstd::Exceptionの基底クラス
-mpoolの"nstd_exception.h"への依存をなくす。
-
-上記テストで使用したMPoolBadAllocは下記のように定義されたクラスであり、
+## STLコンテナ用アロケータ <a id="SS_5_5"></a>
+アロケータの定義例を以下に示す。
 
 ```cpp
-    //  example/h/nstd_exception.h 11
+    //  example/dynamic_memory_allocation/mpool_allocator.h 7
 
-    /// @class Exception
-    /// @brief StaticString<>を使ったエクセプションクラス
-    ///        下記のMAKE_EXCEPTIONを使い生成
-    /// @tparam E   std::exceptionから派生したエクセプションクラス
-    /// @tparam N   StaticString<N>
-    template <typename E, size_t N>
-    #if __cplusplus >= 202002L  // c++20
-    requires std::derived_from<E, std::exception>
-    #endif
-    class Exception : public E {
+    template <typename T>
+    class MPoolBasedAllocator {
     public:
-        static_assert(std::is_base_of_v<std::exception, E>);
+        using pointer                                = T*;
+        using const_pointer                          = T const*;
+        using value_type                             = T;
+        using propagate_on_container_move_assignment = std::true_type;
+        using is_always_equal                        = std::true_type;
+        using size_type                              = size_t;
+        using difference_type                        = size_t;
 
-        Exception(StaticString<N> const& what_str) noexcept : what_str_{what_str} {}
-        char const* what() const noexcept override { return what_str_.String(); }
+        template <class U>
+        struct rebind {
+            using other = MPoolBasedAllocator<U>;
+        };
+
+        T*   allocate(size_type count) { return static_cast<pointer>(mpool_.Alloc(count * sizeof(T))); }
+        void deallocate(T* mem, size_type) noexcept { mpool_.Free(mem); }
 
     private:
-        StaticString<N> const what_str_;
+        static MPool& mpool_;
     };
 
-    #define MAKE_EXCEPTION(E__, msg__) Nstd::MakeException<E__, __LINE__>(__FILE__, msg__)
+    template <class T>  // T型のMPoolBasedAllocatorはシステムに唯一
+    bool operator==(MPoolBasedAllocator<T> const&, MPoolBasedAllocator<T> const&) noexcept
+    {
+        return true;
+    }
+
+    template <class T, class U>
+    bool operator==(MPoolBasedAllocator<T> const&, MPoolBasedAllocator<U> const&) noexcept
+    {
+        return false;
+    }
+
+    template <class T, class U>
+    bool operator!=(MPoolBasedAllocator<T> const& lhs, MPoolBasedAllocator<U> const& rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
 ```
+
+アロケータのパブリックなメンバやoperator ==、operator !=は、STLに従い定義している
+([STL allocator](https://cpprefjp.github.io/reference/memory/allocator.html)参照)。
+
+上記コードからわかるようにメモリの実際のアロケーションには、
+これまでと同様にMPoolから派生したクラスを使用するが、
+リアルタイム性は不要であるためメモリ効率が悪いMPoolFixedは使わない。
+代わりに、可変長メモリを扱うためメモリ効率がよいMPoolVariabl
+(「[可変長メモリプール](#SS_5_2_2)」参照)を使う。
+
+### デバッグ用イテレータ <a id="SS_5_5_1"></a>
+[可変長メモリプール](#SS_5_2_2)を使用すると、
+メモリのフラグメントによりアロケーションが失敗することがあり得る。
+このような事態が発生している可能性がある場合、
+アロケータが保持しているメモリの状態を表示させることがデバッグの第一歩となる。
+
+下記のコードは、そのためのインターフェースを提供する。
+
+
 ```cpp
-    //  example/dynamic_memory_allocation/mpool.h 7
+    //  example/dynamic_memory_allocation/mpool_variable.h 59
 
-    class MPoolBadAlloc : public std::bad_alloc {  // Nstd::Exceptionの基底クラス
+    template <uint32_t MEM_SIZE>
+    class MPoolVariable final : public MPool {
+    public:
+
+        // 中略
+        ...
+
+        class const_iterator {
+        public:
+            explicit const_iterator(Inner_::header_t const* header) noexcept : header_{header} {}
+            const_iterator(const_iterator const&) = default;
+            const_iterator(const_iterator&&)      = default;
+
+            const_iterator& operator++() noexcept  // 前置++のみ実装
+            {
+                assert(header_ != nullptr);
+                header_ = header_->next;
+
+                return *this;
+            }
+
+            Inner_::header_t const* operator*() noexcept { return header_; }
+
+
+        #if __cplusplus <= 201703L  // c++17
+            bool operator==(const_iterator const& rhs) noexcept { return header_ == rhs.header_; }
+            bool operator!=(const_iterator const& rhs) noexcept { return !(*this == rhs); }
+        #else  // c++20
+
+            auto operator<=>(const const_iterator&) const = default;
+        #endif
+
+        private:
+            Inner_::header_t const* header_;
+        };
+
+        const_iterator begin() const noexcept { return const_iterator{header_}; }
+        const_iterator end() const noexcept { return const_iterator{nullptr}; }
+        const_iterator cbegin() const noexcept { return const_iterator{header_}; }
+        const_iterator cend() const noexcept { return const_iterator{nullptr}; }
+
+        // 中略
+        ...
     };
 ```
 
-MPoolから派生したクラスが、
+このインターフェースを下記のように使用することで、
 
-* メモリブロックを保持していない状態でのMPool::alloc(size, true)の呼び出し
-* MEM_SIZEを超えたsizeでのMPool::alloc(size, true)の呼び出し
+```cpp
+    //  example/dynamic_memory_allocation/mpool_variable_ut.cpp 322
 
-のような処理の継続ができない場合に用いるエクセプション用クラスである。
+    MPoolVariable<1024 * 64> mpv;  // 可変長メモリプール
+
+    constexpr size_t alloc_cout = 100U;
+    void*            mem[alloc_cout]{};
+
+    for (size_t i = 0; i < alloc_cout; ++i) {
+        mem[i] = mpv.Alloc(i + 100);
+    }
+```
+
+下記のようにmpv_allocator.header\_が保持するメモリの現在の状態を見ることができる
+(これによるとmpv_allocatorが保持するメモリの先頭付近では多少フラグメントを起こしているが、
+最後に大きなメモリブロックがあるため、全体としては問題ないレベルである)。
+
+```
+        0x7f073afe59d0:3
+        0x7f073afe5a60:3
+        0x7f073afe5ac0:3
+        0x7f073afe5b70:3
+        0x7f073afe5c50:11
+        0x7f073afe5cb0:3
+        0x7f073afe5e50:13
+                     0:4018
+```
+
+「[グローバルnew/deleteのオーバーロード](#SS_5_4_1)」でも述べたように、
+デバッグ用入出力機能からこのような出力を得られるようにしておくべきである。
+
 
 
 
@@ -16446,7 +16787,7 @@ consteval関数の呼び出しは、その結果が定数式でなければコ�
 constinitはC++20から導入されたキーワードであり、
 静的記憶域期間（static、namespaceスコープ）またはthread_local変数が、
 コンパイル時に初期化されることを保証するために使用される。
-これにより、[Static Initialization Order Fiasco(静的初期化順序問題)](#SS_8_8_6)を回避できる。
+これにより、[Static Initialization Order Fiasco(静的初期化順序問題)](#SS_8_8_8)を回避できる。
 
 このキーワードを付与すると、初期化が動的である場合にはコンパイルエラーとなる。
 ただし、constexprと異なり、変数自体がconstになるわけではないため、再代入は可能である。
@@ -18148,7 +18489,7 @@ C++11からはエラーとならず、TRRはT&となる。
 [rvalue修飾](#SS_6_8_7_1)と[lvalue修飾](#SS_6_8_7_2)とを併せて、リファレンス修飾と呼ぶ。
 
 #### rvalue修飾 <a id="SS_6_8_7_1"></a>
-下記GetString0()のような関数が返すオブジェクトの内部メンバに対する[ハンドル](#SS_8_8_1)は、
+下記GetString0()のような関数が返すオブジェクトの内部メンバに対する[ハンドル](#SS_8_8_3)は、
 オブジェクトのライフタイム終了後にもアクセスすることができるため、
 そのハンドルを通じて、
 ライフタイム終了後のオブジェクトのメンバオブジェクトにもアクセスできてしまう。
@@ -22722,9 +23063,9 @@ std::unique_lockやstd::lock_guardによりmutexを使用する。
     ASSERT_EQ(push_count_max, pop_count);
 ```
 
-一般に条件変数には、[Spurious Wakeup](#SS_8_8_5)という問題があり、std::condition_variableも同様である。
+一般に条件変数には、[Spurious Wakeup](#SS_8_8_7)という問題があり、std::condition_variableも同様である。
 
-上記の抜粋である下記のコード例では[Spurious Wakeup](#SS_8_8_5)の対策が行われていないため、
+上記の抜粋である下記のコード例では[Spurious Wakeup](#SS_8_8_7)の対策が行われていないため、
 意図通り動作しない可能性がある。
 
 ```cpp
@@ -23798,17 +24139,19 @@ __この章の構成__
 &emsp;&emsp;&emsp; [Most Vexing Parse](#SS_8_7_4)  
 
 &emsp;&emsp; [ソフトウェア一般](#SS_8_8)  
-&emsp;&emsp;&emsp; [ハンドル](#SS_8_8_1)  
-&emsp;&emsp;&emsp; [フリースタンディング環境](#SS_8_8_2)  
-&emsp;&emsp;&emsp; [サイクロマティック複雑度](#SS_8_8_3)  
-&emsp;&emsp;&emsp; [凝集度](#SS_8_8_4)  
-&emsp;&emsp;&emsp;&emsp; [凝集度の欠如](#SS_8_8_4_1)  
-&emsp;&emsp;&emsp;&emsp; [LCOMの評価基準](#SS_8_8_4_2)  
+&emsp;&emsp;&emsp; [ヒープ](#SS_8_8_1)  
+&emsp;&emsp;&emsp; [スピンロック](#SS_8_8_2)  
+&emsp;&emsp;&emsp; [ハンドル](#SS_8_8_3)  
+&emsp;&emsp;&emsp; [フリースタンディング環境](#SS_8_8_4)  
+&emsp;&emsp;&emsp; [サイクロマティック複雑度](#SS_8_8_5)  
+&emsp;&emsp;&emsp; [凝集度](#SS_8_8_6)  
+&emsp;&emsp;&emsp;&emsp; [凝集度の欠如](#SS_8_8_6_1)  
+&emsp;&emsp;&emsp;&emsp; [LCOMの評価基準](#SS_8_8_6_2)  
 
-&emsp;&emsp;&emsp; [Spurious Wakeup](#SS_8_8_5)  
-&emsp;&emsp;&emsp; [Static Initialization Order Fiasco(静的初期化順序問題)](#SS_8_8_6)  
-&emsp;&emsp;&emsp; [副作用](#SS_8_8_7)  
-&emsp;&emsp;&emsp; [Itanium C++ ABI](#SS_8_8_8)  
+&emsp;&emsp;&emsp; [Spurious Wakeup](#SS_8_8_7)  
+&emsp;&emsp;&emsp; [Static Initialization Order Fiasco(静的初期化順序問題)](#SS_8_8_8)  
+&emsp;&emsp;&emsp; [副作用](#SS_8_8_9)  
+&emsp;&emsp;&emsp; [Itanium C++ ABI](#SS_8_8_10)  
 
 &emsp;&emsp; [C++コンパイラ](#SS_8_9)  
 &emsp;&emsp;&emsp; [g++](#SS_8_9_1)  
@@ -24862,7 +25205,7 @@ X、Yオブジェクトの参照カウントは0にならず、従ってこれ�
 
 <!-- pu:essential/plant_uml/shared_cyclic_3.pu--><p><img src="data:image/png;base64,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" /></p>
 
-X、Yオブジェクトへの[ハンドル](#SS_8_8_1)を完全に失った状態であり、X、Yオブジェクトを解放する手段はない。
+X、Yオブジェクトへの[ハンドル](#SS_8_8_3)を完全に失った状態であり、X、Yオブジェクトを解放する手段はない。
 
 ## copy/moveと等価性のセマンティクス <a id="SS_8_3"></a>
 ### 等価性のセマンティクス <a id="SS_8_3_1"></a>
@@ -26193,14 +26536,94 @@ Scott Meyersが彼の著書"Effective STL"の中でこの現象に名前をつ�
 このような問題を回避できる。
 
 ## ソフトウェア一般 <a id="SS_8_8"></a>
-### ハンドル <a id="SS_8_8_1"></a>
+### ヒープ <a id="SS_8_8_1"></a>
+ヒープとは、プログラム実行時に動的メモリ割り当てを行うためのメモリ領域である。
+malloc、calloc、reallocといった関数を使用して必要なサイズのメモリを確保し、freeで解放する。
+スタックとは異なり、プログラマが明示的にメモリ管理を行う必要があり、解放漏れはメモリリークを引き起こす。
+ヒープ領域はスタックよりも大きく、動的なサイズのデータ構造や長寿命のオブジェクトに適しているが、
+アクセス速度はスタックより遅い。また、断片化（フラグメンテーション）が発生しやすく、
+連続的な割り当てと解放により利用可能なメモリが分散する課題がある。適切なヒープ管理は、
+C/C++プログラミングにおける重要なスキルの一つである。
+
+### スピンロック <a id="SS_8_8_2"></a>
+スピンロックとは、
+スレッドがロックを取得できるまでCPUを占有したままビジーループで待機する排他制御方式である。
+スリープを伴わずカーネルを呼び出さないため、短時間の競合では高速に動作するが、
+長時間の待機ではCPUを浪費しやすい。リアルタイム処理や割り込み制御に適する。
+
+C++11では、スピンロックは[std::atomic](#SS_7_3_3)を使用して以下のように定義できる。
+
+```cpp
+    //  h/spin_lock.h 3
+
+    #include <atomic>
+
+    class SpinLock {
+    public:
+        void lock() noexcept
+        {
+            while (state_.exchange(state::locked, std::memory_order_acquire) == state::locked) {
+                ;  // busy wait
+            }
+        }
+
+        void unlock() noexcept { state_.store(state::unlocked, std::memory_order_release); }
+
+    private:
+        enum class state { locked, unlocked };
+        std::atomic<state> state_{state::unlocked};
+    };
+```
+
+以下の単体テスト(「[std::mutex](#SS_7_3_2)」の単体テストを参照)
+に示したように[std::scoped_lock](#SS_7_4_3)のテンプレートパラメータとして使用できる。
+
+```cpp
+    //  example/cpp_idioms/spin_lock_ut.cpp 11
+
+    struct Conflict {
+        void     increment()
+        { 
+            std::lock_guard<SpinLock> lock{spin_lock_}; // スピンロックのロックガードオブジェクト生成
+            ++count_;
+        }
+
+        SpinLock spin_lock_{};
+        uint32_t count_ = 0;
+    };
+```
+```cpp
+    //  example/cpp_idioms/spin_lock_ut.cpp 27
+
+    Conflict c{};
+
+    constexpr uint32_t inc_per_thread = 5'000'000;
+    constexpr uint32_t expected       = 2 * inc_per_thread;
+    auto thread_body = [&c] {  
+        for (uint32_t i = 0; i < inc_per_thread; ++i) {
+            c.increment();
+        }
+    };
+
+    std::thread t1{thread_body};
+    std::thread t2{thread_body};
+
+    t1.join();  // スレッドの終了待ち
+    t2.join();  // スレッドの終了待ち
+                // 注意: join()もdetach()も呼ばずにスレッドオブジェクトが
+                // デストラクトされると、std::terminateが呼ばれる
+
+    ASSERT_EQ(c.count_, expected);
+```
+
+### ハンドル <a id="SS_8_8_3"></a>
 CやC++の文脈でのハンドルとは、ポインタかリファレンスを指す。
 
-### フリースタンディング環境 <a id="SS_8_8_2"></a>
+### フリースタンディング環境 <a id="SS_8_8_4"></a>
 [フリースタンディング環境](https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%AA%E3%83%BC%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E7%92%B0%E5%A2%83)
 とは、組み込みソフトウェアやOSのように、その実行にOSの補助を受けられないソフトウエアを指す。
 
-### サイクロマティック複雑度 <a id="SS_8_8_3"></a>
+### サイクロマティック複雑度 <a id="SS_8_8_5"></a>
 [サイクロマティック複雑度](https://ja.wikipedia.org/wiki/%E5%BE%AA%E7%92%B0%E7%9A%84%E8%A4%87%E9%9B%91%E5%BA%A6)
 とは関数の複雑さを表すメトリクスである。
 このメトリクスの解釈は諸説あるものの、概ね以下のテーブルのようなものである。
@@ -26212,12 +26635,12 @@ CやC++の文脈でのハンドルとは、ポインタかリファレンスを�
 |      31 < CC <  50         |構造的なリスクあり                        |
 |      51 < CC               |テスト不可能、デグレードリスクが非常に高い|
 
-### 凝集度 <a id="SS_8_8_4"></a>
+### 凝集度 <a id="SS_8_8_6"></a>
 [凝集度](https://ja.wikipedia.org/wiki/%E5%87%9D%E9%9B%86%E5%BA%A6)
 とはクラス設計の妥当性を表す尺度の一種であり、
-「[凝集度の欠如](#SS_8_8_4_1)(LCOM)」というメトリクスで計測される。
+「[凝集度の欠如](#SS_8_8_6_1)(LCOM)」というメトリクスで計測される。
 
-* [凝集度の欠如](#SS_8_8_4_1)メトリクスの値が1に近ければ凝集度は低く、この値が0に近ければ凝集度は高い。
+* [凝集度の欠如](#SS_8_8_6_1)メトリクスの値が1に近ければ凝集度は低く、この値が0に近ければ凝集度は高い。
 * メンバ変数やメンバ関数が多くなれば、凝集度は低くなりやすい。
 * 凝集度は、クラスのメンバがどれだけ一貫した責任を持つかを示す。
 * 「[単一責任の原則(SRP)](#SS_2_1)」を守ると凝集度は高くなりやすい。
@@ -26294,17 +26717,17 @@ CやC++の文脈でのハンドルとは、ポインタかリファレンスを�
     }
 ```
 
-#### 凝集度の欠如 <a id="SS_8_8_4_1"></a>
-[凝集度](#SS_8_8_4)の欠如(Lack of Cohesion in Methods/LCOM)とは、
+#### 凝集度の欠如 <a id="SS_8_8_6_1"></a>
+[凝集度](#SS_8_8_6)の欠如(Lack of Cohesion in Methods/LCOM)とは、
 クラス設計の妥当性を表す尺度の一種であり、`0 ～ 1`の値で表すメトリクスである。
 
 LCOMの値が大きい(1か1に近い値)場合、「クラス内のメソッドが互いに関連性を持たず、
 それぞれが独立した責務やデータに依存するため、クラス全体の統一性が欠けている」ことを表す。
 
 クラスデザイン見直しの基準値としてLCOMを活用する場合、
-[LCOMの評価基準](#SS_8_8_4_2)に具体的な推奨値を示す。
+[LCOMの評価基準](#SS_8_8_6_2)に具体的な推奨値を示す。
 
-#### LCOMの評価基準 <a id="SS_8_8_4_2"></a>
+#### LCOMの評価基準 <a id="SS_8_8_6_2"></a>
 クラスデザイン良し悪しの基準値としてLCOMを活用する場合の推奨値を以下に示す。
 
 | 凝集度の欠如(LCOM)  | クラスの状態 |
@@ -26329,7 +26752,7 @@ LCOMの値が大きい(1か1に近い値)場合、「クラス内のメソッド
   一刻も早くデザインの見直しを行うべきだろう。
 
 
-### Spurious Wakeup <a id="SS_8_8_5"></a>
+### Spurious Wakeup <a id="SS_8_8_7"></a>
 [Spurious Wakeup](https://en.wikipedia.org/wiki/Spurious_wakeup)とは、
 条件変数に対する通知待ちの状態であるスレッドが、その通知がされていないにもかかわらず、
 起き上がってしまう現象のことを指す。
@@ -26395,7 +26818,7 @@ std::condition_variable::wait()の第2引数を下記のようにすることで
     }
 ```
 
-### Static Initialization Order Fiasco(静的初期化順序問題) <a id="SS_8_8_6"></a>
+### Static Initialization Order Fiasco(静的初期化順序問題) <a id="SS_8_8_8"></a>
 静的初期化順序問題とは、
 グローバルや名前空間スコープの静的オブジェクトの初期化順序が翻訳単位間で未定義であることに起因する不具合である。
 あるオブジェクトAが初期化時に別のオブジェクトBに依存していても、Bがまだ初期化されていない場合、
@@ -26407,7 +26830,7 @@ Aの初期化は未定義の状態となり、不正アクセスやクラッシ�
 
 C++20からこの問題の対策として、[constinit](#SS_6_5_8)が導入された。
 
-### 副作用 <a id="SS_8_8_7"></a>
+### 副作用 <a id="SS_8_8_9"></a>
 プログラミングにおいて、式の評価による作用には、
 主たる作用とそれ以外の
 [副作用](https://ja.wikipedia.org/wiki/%E5%89%AF%E4%BD%9C%E7%94%A8_(%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0))
@@ -26418,7 +26841,7 @@ C++20からこの問題の対策として、[constinit](#SS_6_5_8)が導入さ�
 ファイルの読み書き等のI/O実行、等がある。
 
 
-### Itanium C++ ABI <a id="SS_8_8_8"></a>
+### Itanium C++ ABI <a id="SS_8_8_10"></a>
 ItaniumC++ABIとは、C++コンパイラ間でバイナリ互換性を確保するための規約である。
 関数呼び出し規約、クラスレイアウト、仮想関数テーブル、例外処理、
 名前修飾(マングリング)などC++のオブジェクト表現と呼び出し方法に関する標準ルールを定めている。
