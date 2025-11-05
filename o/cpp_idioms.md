@@ -2490,9 +2490,9 @@ C++11では、スピンロックは[std::atomic](stdlib_and_concepts.md#SS_7_3_3
     //  example/cpp_idioms/spin_lock_ut.cpp 11
 
     struct Conflict {
-        void     increment()
-        { 
-            std::lock_guard<SpinLock> lock{spin_lock_}; // スピンロックのロックガードオブジェクト生成
+        void increment()
+        {
+            std::lock_guard<SpinLock> lock{spin_lock_};  // スピンロックのロックガードオブジェクト生成
             ++count_;
         }
 
@@ -2507,7 +2507,7 @@ C++11では、スピンロックは[std::atomic](stdlib_and_concepts.md#SS_7_3_3
 
     constexpr uint32_t inc_per_thread = 5'000'000;
     constexpr uint32_t expected       = 2 * inc_per_thread;
-    auto thread_body = [&c] {  
+    auto               thread_body    = [&c] {
         for (uint32_t i = 0; i < inc_per_thread; ++i) {
             c.increment();
         }

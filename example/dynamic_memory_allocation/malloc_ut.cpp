@@ -22,29 +22,29 @@ namespace {
 
 struct header_t {
     header_t* next;
-    size_t    n_nuits;  // header_tが何個あるか
+    size_t    n_units;  // header_tが何個あるか
 };
 
 header_t*        header{nullptr};
 SpinLock         spin_lock{};
 constexpr size_t unit_size{sizeof(header_t)};
 
-inline bool sprit(header_t* header, size_t n_nuits, header_t*& next) noexcept
+inline bool sprit(header_t* header, size_t n_units, header_t*& next) noexcept
 {
     // @@@ ignore begin
-    assert(n_nuits > 1);  // ヘッダとバッファなので最低でも2
+    assert(n_units > 1);  // ヘッダとバッファなので最低でも2
 
     next = nullptr;
 
-    if (header->n_nuits == n_nuits || header->n_nuits == n_nuits + 1) {
+    if (header->n_units == n_units || header->n_units == n_units + 1) {
         next = header->next;
         return true;
     }
-    else if (header->n_nuits > n_nuits) {
-        next            = header + n_nuits;
-        next->n_nuits   = header->n_nuits - n_nuits;
+    else if (header->n_units > n_units) {
+        next            = header + n_units;
+        next->n_units   = header->n_units - n_units;
         next->next      = header->next;
-        header->n_nuits = n_nuits;
+        header->n_units = n_units;
         return true;
     }
 
@@ -55,8 +55,8 @@ inline bool sprit(header_t* header, size_t n_nuits, header_t*& next) noexcept
 inline void concat(header_t* front, header_t* rear) noexcept
 {
     // @@@ ignore begin
-    if (front + front->n_nuits == rear) {  // 1枚のメモリになる
-        front->n_nuits += rear->n_nuits;
+    if (front + front->n_units == rear) {  // 1枚のメモリになる
+        front->n_units += rear->n_units;
         front->next = rear->next;
     }
     else {
@@ -73,14 +73,14 @@ void* malloc_inner(size_t size) noexcept
 {
     // @@@ ignore begin
     // size分のメモリとヘッダ
-    auto n_nuits = (Roundup(unit_size, size) / unit_size) + 1;
+    auto n_units = (Roundup(unit_size, size) / unit_size) + 1;
     auto lock    = std::lock_guard{spin_lock};
 
     auto curr = header;
     for (header_t* prev = nullptr; curr != nullptr; prev = curr, curr = curr->next) {
         header_t* next;
 
-        if (!sprit(curr, n_nuits, next)) {
+        if (!sprit(curr, n_units, next)) {
             continue;
         }
 
@@ -151,7 +151,7 @@ void* malloc(size_t size) noexcept
         auto const add_size = Roundup(unit_size, 1024 * 1024 + size);  // 1MB追加
 
         header_t* add = static_cast<header_t*>(sbrk(add_size));
-        add->n_nuits  = add_size / unit_size;
+        add->n_units  = add_size / unit_size;
         free(++add);
         mem = malloc_inner(size);
     }
@@ -173,13 +173,13 @@ TEST(NewDelete_Opt, malloc)
 
         void* ints[8]{};
 
-        constexpr auto n_nuits = Roundup(unit_size, unit_size + sizeof(int)) / unit_size;
+        constexpr auto n_units = Roundup(unit_size, unit_size + sizeof(int)) / unit_size;
 
         for (auto& i : ints) {
             i = malloc(sizeof(int));
 
             header_t* h = set_back(i);
-            ASSERT_EQ(h->n_nuits, n_nuits);
+            ASSERT_EQ(h->n_units, n_units);
         }
 
         for (auto& i : ints) {

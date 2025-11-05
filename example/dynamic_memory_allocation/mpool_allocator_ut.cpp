@@ -184,7 +184,7 @@ TEST(NewDelete_Opt, allocator_itor)
 
     std::cout << "mpv_allocator:" << __LINE__ << std::endl;
     for (auto itor = mpv_allocator.cbegin(); itor != mpv_allocator.cend(); ++itor) {
-        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_units << std::endl;
     }
 
     {
@@ -195,7 +195,7 @@ TEST(NewDelete_Opt, allocator_itor)
 
             std::cout << "mpv_allocator:" << __LINE__ << std::endl;
             for (auto itor = mpv_allocator.cbegin(); itor != mpv_allocator.cend(); ++itor) {
-                std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+                std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_units << std::endl;
             }
 
             for (auto i = 0U; i < vec_len; ++i) {
@@ -205,19 +205,19 @@ TEST(NewDelete_Opt, allocator_itor)
 
             std::cout << "mpv_allocator:" << __LINE__ << std::endl;
             for (auto itor = mpv_allocator.cbegin(); itor != mpv_allocator.cend(); ++itor) {
-                std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+                std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_units << std::endl;
             }
         }
 
         std::cout << "mpv_allocator:" << __LINE__ << std::endl;
         for (auto mem : mpv_allocator) {
-            std::cout << std::setw(16) << mem->next << ":" << mem->n_nuits << std::endl;
+            std::cout << std::setw(16) << mem->next << ":" << mem->n_units << std::endl;
         }
     }
 
     std::cout << "mpv_allocator:" << __LINE__ << std::endl;
     for (auto itor = mpv_allocator.cbegin(); itor != mpv_allocator.cend(); ++itor) {
-        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_units << std::endl;
     }
 }
 

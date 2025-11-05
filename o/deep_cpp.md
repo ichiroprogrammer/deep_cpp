@@ -13445,14 +13445,14 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 
     struct header_t {
         header_t* next;
-        size_t    n_nuits;  // header_tが何個あるか
+        size_t    n_units;  // header_tが何個あるか
     };
 
     header_t*        header{nullptr};
     SpinLock         spin_lock{};
     constexpr size_t unit_size{sizeof(header_t)};
 
-    inline bool sprit(header_t* header, size_t n_nuits, header_t*& next) noexcept
+    inline bool sprit(header_t* header, size_t n_units, header_t*& next) noexcept
     {
         // ...
     }
@@ -13514,7 +13514,7 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
             auto const add_size = Roundup(unit_size, 1024 * 1024 + size);  // 1MB追加
 
             header_t* add = static_cast<header_t*>(sbrk(add_size));
-            add->n_nuits  = add_size / unit_size;
+            add->n_units  = add_size / unit_size;
             free(++add);
             mem = malloc_inner(size);
         }
@@ -13542,7 +13542,7 @@ headerがnullptrであるため必ずnullptrを返すことになる。
         auto const add_size = Roundup(unit_size, 1024 * 1024 + size);  // 1MB追加
 
         header_t* add = static_cast<header_t*>(sbrk(add_size));
-        add->n_nuits  = add_size / unit_size;
+        add->n_units  = add_size / unit_size;
         free(++add);
         mem = malloc_inner(size);
     }
@@ -13749,8 +13749,9 @@ malloc/freeにリアルタイム性がない原因は、
             auto mem = mem_head_;
 
             if (mem != nullptr) {
-                mem_head_      = mem_head_->next;
-                mem_count_min_ = std::min(--mem_count_, mem_count_min_);
+                mem_head_ = mem_head_->next;
+                --mem_count_;
+                mem_count_min_ = std::min(mem_count_, mem_count_min_);
             }
 
             return mem;
@@ -13876,7 +13877,7 @@ MPoolFixedの単体テストは、下記のようになる。
         MPoolVariable() noexcept : MPool{MEM_SIZE}
         {
             header_->next    = nullptr;
-            header_->n_nuits = sizeof(buff_) / Inner_::unit_size;
+            header_->n_units = sizeof(buff_) / Inner_::unit_size;
         }
 
         class const_iterator {
@@ -14004,7 +14005,7 @@ MPoolFixedの単体テストは、下記のようになる。
 
     std::cout << "mpv:" << __LINE__ << std::endl;
     for (auto itor = mpv.cbegin(); itor != mpv.cend(); ++itor) {
-        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_units << std::endl;
     }
 ```
 
@@ -14029,7 +14030,7 @@ mpv:238
 
     std::cout << "mpv:" << __LINE__ << std::endl;
     for (auto itor = mpv.cbegin(); itor != mpv.cend(); ++itor) {
-        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_units << std::endl;
     }
 ```
 
@@ -14251,9 +14252,9 @@ C++11では、以下のような方法により、このような問題を回避
 
         throw std::bad_alloc{};
 
-        static char fake[0];
+        static char fake;
 
-        return fake;
+        return &fake;
     }
 ```
 
@@ -23446,7 +23447,7 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
         memory_resource_variable() noexcept
         {
             header_->next    = nullptr;
-            header_->n_nuits = sizeof(buff_) / Inner_::unit_size;
+            header_->n_units = sizeof(buff_) / Inner_::unit_size;
         }
 
         size_t get_count() const noexcept { return unit_count_ * Inner_::unit_size; }
@@ -23468,14 +23469,14 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
 
         void* do_allocate(size_t size, size_t) override
         {
-            auto n_nuits = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
+            auto n_units = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
 
             auto lock = std::lock_guard{spin_lock_};
 
             auto curr = header_;
 
             for (header_t* prev{nullptr}; curr != nullptr; prev = curr, curr = curr->next) {
-                auto opt_next = std::optional<header_t*>{sprit(curr, n_nuits)};
+                auto opt_next = std::optional<header_t*>{sprit(curr, n_units)};
 
                 if (!opt_next) {
                     continue;
@@ -23492,7 +23493,7 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
             }
 
             if (curr != nullptr) {
-                unit_count_ -= curr->n_nuits;
+                unit_count_ -= curr->n_units;
                 unit_count_min_ = std::min(unit_count_, unit_count_min_);
                 ++curr;
             }
@@ -23512,7 +23513,7 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
 
             auto lock = std::lock_guard{spin_lock_};
 
-            unit_count_ += to_free->n_nuits;
+            unit_count_ += to_free->n_units;
             unit_count_min_ = std::min(unit_count_, unit_count_min_);
 
             if (header_ == nullptr) {
@@ -26582,9 +26583,9 @@ C++11では、スピンロックは[std::atomic](#SS_7_3_3)を使用して以下
     //  example/cpp_idioms/spin_lock_ut.cpp 11
 
     struct Conflict {
-        void     increment()
-        { 
-            std::lock_guard<SpinLock> lock{spin_lock_}; // スピンロックのロックガードオブジェクト生成
+        void increment()
+        {
+            std::lock_guard<SpinLock> lock{spin_lock_};  // スピンロックのロックガードオブジェクト生成
             ++count_;
         }
 
@@ -26599,7 +26600,7 @@ C++11では、スピンロックは[std::atomic](#SS_7_3_3)を使用して以下
 
     constexpr uint32_t inc_per_thread = 5'000'000;
     constexpr uint32_t expected       = 2 * inc_per_thread;
-    auto thread_body = [&c] {  
+    auto               thread_body    = [&c] {
         for (uint32_t i = 0; i < inc_per_thread; ++i) {
             c.increment();
         }
@@ -26947,29 +26948,29 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
          22 
          23 struct header_t {
          24     header_t* next;
-         25     size_t    n_nuits;  // header_tが何個あるか
+         25     size_t    n_units;  // header_tが何個あるか
          26 };
          27 
          28 header_t*        header{nullptr};
          29 SpinLock         spin_lock{};
          30 constexpr size_t unit_size{sizeof(header_t)};
          31 
-         32 inline bool sprit(header_t* header, size_t n_nuits, header_t*& next) noexcept
+         32 inline bool sprit(header_t* header, size_t n_units, header_t*& next) noexcept
          33 {
          34     // @@@ ignore begin
-         35     assert(n_nuits > 1);  // ヘッダとバッファなので最低でも2
+         35     assert(n_units > 1);  // ヘッダとバッファなので最低でも2
          36 
          37     next = nullptr;
          38 
-         39     if (header->n_nuits == n_nuits || header->n_nuits == n_nuits + 1) {
+         39     if (header->n_units == n_units || header->n_units == n_units + 1) {
          40         next = header->next;
          41         return true;
          42     }
-         43     else if (header->n_nuits > n_nuits) {
-         44         next            = header + n_nuits;
-         45         next->n_nuits   = header->n_nuits - n_nuits;
+         43     else if (header->n_units > n_units) {
+         44         next            = header + n_units;
+         45         next->n_units   = header->n_units - n_units;
          46         next->next      = header->next;
-         47         header->n_nuits = n_nuits;
+         47         header->n_units = n_units;
          48         return true;
          49     }
          50 
@@ -26980,8 +26981,8 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
          55 inline void concat(header_t* front, header_t* rear) noexcept
          56 {
          57     // @@@ ignore begin
-         58     if (front + front->n_nuits == rear) {  // 1枚のメモリになる
-         59         front->n_nuits += rear->n_nuits;
+         58     if (front + front->n_units == rear) {  // 1枚のメモリになる
+         59         front->n_units += rear->n_units;
          60         front->next = rear->next;
          61     }
          62     else {
@@ -26998,14 +26999,14 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
          73 {
          74     // @@@ ignore begin
          75     // size分のメモリとヘッダ
-         76     auto n_nuits = (Roundup(unit_size, size) / unit_size) + 1;
+         76     auto n_units = (Roundup(unit_size, size) / unit_size) + 1;
          77     auto lock    = std::lock_guard{spin_lock};
          78 
          79     auto curr = header;
          80     for (header_t* prev = nullptr; curr != nullptr; prev = curr, curr = curr->next) {
          81         header_t* next;
          82 
-         83         if (!sprit(curr, n_nuits, next)) {
+         83         if (!sprit(curr, n_units, next)) {
          84             continue;
          85         }
          86 
@@ -27076,7 +27077,7 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
         151         auto const add_size = Roundup(unit_size, 1024 * 1024 + size);  // 1MB追加
         152 
         153         header_t* add = static_cast<header_t*>(sbrk(add_size));
-        154         add->n_nuits  = add_size / unit_size;
+        154         add->n_units  = add_size / unit_size;
         155         free(++add);
         156         mem = malloc_inner(size);
         157     }
@@ -27098,13 +27099,13 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
         173 
         174         void* ints[8]{};
         175 
-        176         constexpr auto n_nuits = Roundup(unit_size, unit_size + sizeof(int)) / unit_size;
+        176         constexpr auto n_units = Roundup(unit_size, unit_size + sizeof(int)) / unit_size;
         177 
         178         for (auto& i : ints) {
         179             i = malloc(sizeof(int));
         180 
         181             header_t* h = set_back(i);
-        182             ASSERT_EQ(h->n_nuits, n_nuits);
+        182             ASSERT_EQ(h->n_units, n_units);
         183         }
         184 
         185         for (auto& i : ints) {
@@ -27153,23 +27154,23 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
          12 
          13 struct header_t {
          14     header_t* next;
-         15     size_t    n_nuits;  // header_tが何個あるか
+         15     size_t    n_units;  // header_tが何個あるか
          16 };
          17 
          18 constexpr auto unit_size = sizeof(header_t);
          19 
-         20 inline std::optional<header_t*> sprit(header_t* header, size_t n_nuits) noexcept
+         20 inline std::optional<header_t*> sprit(header_t* header, size_t n_units) noexcept
          21 {
-         22     assert(n_nuits > 1);  // ヘッダとバッファなので最低でも2
+         22     assert(n_units > 1);  // ヘッダとバッファなので最低でも2
          23 
-         24     if (header->n_nuits == n_nuits || header->n_nuits == n_nuits + 1) {
+         24     if (header->n_units == n_units || header->n_units == n_units + 1) {
          25         return header->next;
          26     }
-         27     else if (header->n_nuits > n_nuits) {
-         28         auto next       = header + n_nuits;
-         29         next->n_nuits   = header->n_nuits - n_nuits;
+         27     else if (header->n_units > n_units) {
+         28         auto next       = header + n_units;
+         29         next->n_units   = header->n_units - n_units;
          30         next->next      = header->next;
-         31         header->n_nuits = n_nuits;
+         31         header->n_units = n_units;
          32         return next;
          33     }
          34 
@@ -27178,8 +27179,8 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
          37 
          38 inline void concat(header_t* front, header_t* rear) noexcept
          39 {
-         40     if (front + front->n_nuits == rear) {  // 1枚のメモリになる
-         41         front->n_nuits += rear->n_nuits;
+         40     if (front + front->n_units == rear) {  // 1枚のメモリになる
+         41         front->n_units += rear->n_units;
          42         front->next = rear->next;
          43     }
          44     else {
@@ -27207,7 +27208,7 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
          66     MPoolVariable() noexcept : MPool{MEM_SIZE}
          67     {
          68         header_->next    = nullptr;
-         69         header_->n_nuits = sizeof(buff_) / Inner_::unit_size;
+         69         header_->n_units = sizeof(buff_) / Inner_::unit_size;
          70     }
          71     // @@@ sample end
          72     // @@@ sample begin 0:2
@@ -27263,14 +27264,14 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
         122     {
         123         // @@@ ignore begin
         124         // size分のメモリとヘッダ
-        125         auto n_nuits = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
+        125         auto n_units = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
         126 
         127         auto lock = std::lock_guard{spin_lock_};
         128 
         129         auto curr = header_;
         130 
         131         for (header_t* prev{nullptr}; curr != nullptr; prev = curr, curr = curr->next) {
-        132             auto opt_next = std::optional<header_t*>{sprit(curr, n_nuits)};
+        132             auto opt_next = std::optional<header_t*>{sprit(curr, n_units)};
         133 
         134             if (!opt_next) {
         135                 continue;
@@ -27287,7 +27288,7 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
         146         }
         147 
         148         if (curr != nullptr) {
-        149             unit_count_ -= curr->n_nuits;
+        149             unit_count_ -= curr->n_units;
         150             unit_count_min_ = std::min(unit_count_, unit_count_min_);
         151             ++curr;
         152         }
@@ -27305,7 +27306,7 @@ constがeast-const形式(T const)で表示されるのもこのABIの規約に�
         164 
         165         auto lock = std::lock_guard{spin_lock_};
         166 
-        167         unit_count_ += to_free->n_nuits;
+        167         unit_count_ += to_free->n_units;
         168         unit_count_min_ = std::min(unit_count_, unit_count_min_);
         169 
         170         if (header_ == nullptr) {

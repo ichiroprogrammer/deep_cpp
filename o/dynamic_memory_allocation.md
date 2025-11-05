@@ -57,14 +57,14 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 
     struct header_t {
         header_t* next;
-        size_t    n_nuits;  // header_tが何個あるか
+        size_t    n_units;  // header_tが何個あるか
     };
 
     header_t*        header{nullptr};
     SpinLock         spin_lock{};
     constexpr size_t unit_size{sizeof(header_t)};
 
-    inline bool sprit(header_t* header, size_t n_nuits, header_t*& next) noexcept
+    inline bool sprit(header_t* header, size_t n_units, header_t*& next) noexcept
     {
         // ...
     }
@@ -126,7 +126,7 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
             auto const add_size = Roundup(unit_size, 1024 * 1024 + size);  // 1MB追加
 
             header_t* add = static_cast<header_t*>(sbrk(add_size));
-            add->n_nuits  = add_size / unit_size;
+            add->n_units  = add_size / unit_size;
             free(++add);
             mem = malloc_inner(size);
         }
@@ -154,7 +154,7 @@ headerがnullptrであるため必ずnullptrを返すことになる。
         auto const add_size = Roundup(unit_size, 1024 * 1024 + size);  // 1MB追加
 
         header_t* add = static_cast<header_t*>(sbrk(add_size));
-        add->n_nuits  = add_size / unit_size;
+        add->n_units  = add_size / unit_size;
         free(++add);
         mem = malloc_inner(size);
     }
@@ -361,8 +361,9 @@ malloc/freeにリアルタイム性がない原因は、
             auto mem = mem_head_;
 
             if (mem != nullptr) {
-                mem_head_      = mem_head_->next;
-                mem_count_min_ = std::min(--mem_count_, mem_count_min_);
+                mem_head_ = mem_head_->next;
+                --mem_count_;
+                mem_count_min_ = std::min(mem_count_, mem_count_min_);
             }
 
             return mem;
@@ -488,7 +489,7 @@ MPoolFixedの単体テストは、下記のようになる。
         MPoolVariable() noexcept : MPool{MEM_SIZE}
         {
             header_->next    = nullptr;
-            header_->n_nuits = sizeof(buff_) / Inner_::unit_size;
+            header_->n_units = sizeof(buff_) / Inner_::unit_size;
         }
 
         class const_iterator {
@@ -616,7 +617,7 @@ MPoolFixedの単体テストは、下記のようになる。
 
     std::cout << "mpv:" << __LINE__ << std::endl;
     for (auto itor = mpv.cbegin(); itor != mpv.cend(); ++itor) {
-        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_units << std::endl;
     }
 ```
 
@@ -641,7 +642,7 @@ mpv:238
 
     std::cout << "mpv:" << __LINE__ << std::endl;
     for (auto itor = mpv.cbegin(); itor != mpv.cend(); ++itor) {
-        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_nuits << std::endl;
+        std::cout << std::setw(16) << (*itor)->next << ":" << (*itor)->n_units << std::endl;
     }
 ```
 
@@ -863,9 +864,9 @@ C++11では、以下のような方法により、このような問題を回避
 
         throw std::bad_alloc{};
 
-        static char fake[0];
+        static char fake;
 
-        return fake;
+        return &fake;
     }
 ```
 

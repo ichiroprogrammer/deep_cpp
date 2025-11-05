@@ -12,23 +12,23 @@ namespace Inner_ {
 
 struct header_t {
     header_t* next;
-    size_t    n_nuits;  // header_tが何個あるか
+    size_t    n_units;  // header_tが何個あるか
 };
 
 constexpr auto unit_size = sizeof(header_t);
 
-inline std::optional<header_t*> sprit(header_t* header, size_t n_nuits) noexcept
+inline std::optional<header_t*> sprit(header_t* header, size_t n_units) noexcept
 {
-    assert(n_nuits > 1);  // ヘッダとバッファなので最低でも2
+    assert(n_units > 1);  // ヘッダとバッファなので最低でも2
 
-    if (header->n_nuits == n_nuits || header->n_nuits == n_nuits + 1) {
+    if (header->n_units == n_units || header->n_units == n_units + 1) {
         return header->next;
     }
-    else if (header->n_nuits > n_nuits) {
-        auto next       = header + n_nuits;
-        next->n_nuits   = header->n_nuits - n_nuits;
+    else if (header->n_units > n_units) {
+        auto next       = header + n_units;
+        next->n_units   = header->n_units - n_units;
         next->next      = header->next;
-        header->n_nuits = n_nuits;
+        header->n_units = n_units;
         return next;
     }
 
@@ -37,8 +37,8 @@ inline std::optional<header_t*> sprit(header_t* header, size_t n_nuits) noexcept
 
 inline void concat(header_t* front, header_t* rear) noexcept
 {
-    if (front + front->n_nuits == rear) {  // 1枚のメモリになる
-        front->n_nuits += rear->n_nuits;
+    if (front + front->n_units == rear) {  // 1枚のメモリになる
+        front->n_units += rear->n_units;
         front->next = rear->next;
     }
     else {
@@ -66,7 +66,7 @@ public:
     MPoolVariable() noexcept : MPool{MEM_SIZE}
     {
         header_->next    = nullptr;
-        header_->n_nuits = sizeof(buff_) / Inner_::unit_size;
+        header_->n_units = sizeof(buff_) / Inner_::unit_size;
     }
     // @@@ sample end
     // @@@ sample begin 0:2
@@ -122,14 +122,14 @@ private:
     {
         // @@@ ignore begin
         // size分のメモリとヘッダ
-        auto n_nuits = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
+        auto n_units = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
 
         auto lock = std::lock_guard{spin_lock_};
 
         auto curr = header_;
 
         for (header_t* prev{nullptr}; curr != nullptr; prev = curr, curr = curr->next) {
-            auto opt_next = std::optional<header_t*>{sprit(curr, n_nuits)};
+            auto opt_next = std::optional<header_t*>{sprit(curr, n_units)};
 
             if (!opt_next) {
                 continue;
@@ -146,7 +146,7 @@ private:
         }
 
         if (curr != nullptr) {
-            unit_count_ -= curr->n_nuits;
+            unit_count_ -= curr->n_units;
             unit_count_min_ = std::min(unit_count_, unit_count_min_);
             ++curr;
         }
@@ -164,7 +164,7 @@ private:
 
         auto lock = std::lock_guard{spin_lock_};
 
-        unit_count_ += to_free->n_nuits;
+        unit_count_ += to_free->n_units;
         unit_count_min_ = std::min(unit_count_, unit_count_min_);
 
         if (header_ == nullptr) {

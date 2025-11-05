@@ -1153,7 +1153,7 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
         memory_resource_variable() noexcept
         {
             header_->next    = nullptr;
-            header_->n_nuits = sizeof(buff_) / Inner_::unit_size;
+            header_->n_units = sizeof(buff_) / Inner_::unit_size;
         }
 
         size_t get_count() const noexcept { return unit_count_ * Inner_::unit_size; }
@@ -1175,14 +1175,14 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
 
         void* do_allocate(size_t size, size_t) override
         {
-            auto n_nuits = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
+            auto n_units = (Roundup(Inner_::unit_size, size) / Inner_::unit_size) + 1;
 
             auto lock = std::lock_guard{spin_lock_};
 
             auto curr = header_;
 
             for (header_t* prev{nullptr}; curr != nullptr; prev = curr, curr = curr->next) {
-                auto opt_next = std::optional<header_t*>{sprit(curr, n_nuits)};
+                auto opt_next = std::optional<header_t*>{sprit(curr, n_units)};
 
                 if (!opt_next) {
                     continue;
@@ -1199,7 +1199,7 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
             }
 
             if (curr != nullptr) {
-                unit_count_ -= curr->n_nuits;
+                unit_count_ -= curr->n_units;
                 unit_count_min_ = std::min(unit_count_, unit_count_min_);
                 ++curr;
             }
@@ -1219,7 +1219,7 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
 
             auto lock = std::lock_guard{spin_lock_};
 
-            unit_count_ += to_free->n_nuits;
+            unit_count_ += to_free->n_units;
             unit_count_min_ = std::min(unit_count_, unit_count_min_);
 
             if (header_ == nullptr) {

@@ -103,9 +103,9 @@ size_t size2index(size_t v) noexcept { return (((v + (min_unit - 1)) & ~(min_uni
 
     throw std::bad_alloc{};
 
-    static char fake[0];
+    static char fake;
 
-    return fake;
+    return &fake;
 }
 // @@@ sample end
 // @@@ sample begin 3:0

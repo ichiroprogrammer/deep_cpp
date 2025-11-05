@@ -59,8 +59,9 @@ private:
         auto mem = mem_head_;
 
         if (mem != nullptr) {
-            mem_head_      = mem_head_->next;
-            mem_count_min_ = std::min(--mem_count_, mem_count_min_);
+            mem_head_ = mem_head_->next;
+            --mem_count_;
+            mem_count_min_ = std::min(mem_count_, mem_count_min_);
         }
 
         return mem;
