@@ -17,4 +17,4 @@ MDS:=deep_intro.md solid.md design_pattern.md template_meta_programming.md dynam
 
 INDEX_OPT:=--exclude $(addsuffix :1,$(MDS) sample_code.md)
 
-include make/md.mk
+include essential/make/md.mk
