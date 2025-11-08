@@ -36,7 +36,7 @@ __この章の構成__
 &emsp;&emsp;&emsp; [クラスnew/deleteのオーバーロード](dynamic_memory_allocation.md#SS_5_4_3)  
 &emsp;&emsp;&emsp; [new/deleteのオーバーロードのまとめ](dynamic_memory_allocation.md#SS_5_4_4)  
 
-&emsp;&emsp; [STLコンテナ用アロケータ](dynamic_memory_allocation.md#SS_5_5)  
+&emsp;&emsp; [標準ライブラリのコンテナ用アロケータ](dynamic_memory_allocation.md#SS_5_5)  
 &emsp;&emsp;&emsp; [デバッグ用イテレータ](dynamic_memory_allocation.md#SS_5_5_1)  
   
   
@@ -806,7 +806,7 @@ MPoolから派生したクラスが、
 すでに述べたが、残念なことに、この方法はC++の標準外であるため、
 これを適用できるコンパイラは限られている。
 しかし、多くのコンパイラはこれと同様の拡張方法を備えているため、
-安易にエクセプションやSTLコンテナを使用禁止することなく、安全に使用する方法を探るべきだろう。
+安易にエクセプションや標準ライブラリのコンテナを使用禁止することなく、安全に使用する方法を探るべきだろう。
 
 
 ## new/deleteのオーバーロード <a id="SS_5_4"></a>
@@ -1248,7 +1248,7 @@ OpNewを使うプロジェクトには導入するべきだろう。
 [デバッグ用イテレータ](dynamic_memory_allocation.md#SS_5_5_1)の実装例が参考になるだろう。
 
 
-## STLコンテナ用アロケータ <a id="SS_5_5"></a>
+## 標準ライブラリのコンテナ用アロケータ <a id="SS_5_5"></a>
 アロケータの定義例を以下に示す。
 
 ```cpp
@@ -1296,8 +1296,8 @@ OpNewを使うプロジェクトには導入するべきだろう。
     }
 ```
 
-アロケータのパブリックなメンバやoperator ==、operator !=は、STLに従い定義している
-([STL allocator](https://cpprefjp.github.io/reference/memory/allocator.html)参照)。
+アロケータのパブリックなメンバやoperator ==、operator !=は、標準ライブラリに従い定義している
+([標準ライブラリのallocator](https://cpprefjp.github.io/reference/memory/allocator.html)参照)。
 
 上記コードからわかるようにメモリの実際のアロケーションには、
 これまでと同様にMPoolから派生したクラスを使用するが、
