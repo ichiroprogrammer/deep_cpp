@@ -1024,7 +1024,7 @@ immutableとして扱うことができる。
 
 
 ## Clone(仮想コンストラクタ) <a id="SS_3_8"></a>
-オブジェクトコピーによる[スライシング](cpp_idioms.md#SS_8_6_3)を回避するためのイデオムである。
+オブジェクトコピーによる[スライシング](cpp_idioms.md#SS_8_7_3)を回避するためのイデオムである。
 
 下記は、オブジェクトコピーによるスライシングを起こしてしまう例である。
 
@@ -1307,7 +1307,7 @@ RAIIに従わないとメモリリークを防ぐことは困難である。
     // とするため、生成と解放が同じだけ行われれば外部の変数の値は0となる
     class A {
     public:
-        A(uint32_t& couner) noexcept : counter_{++couner} {}
+        A(uint32_t& counter) noexcept : counter_{++counter} {}
         ~A() { --counter_; }
 
     private:

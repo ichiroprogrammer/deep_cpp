@@ -25,6 +25,7 @@ __この章の構成__
 &emsp;&emsp;&emsp; [std::thread](stdlib_and_concepts.md#SS_7_3_1)  
 &emsp;&emsp;&emsp; [std::mutex](stdlib_and_concepts.md#SS_7_3_2)  
 &emsp;&emsp;&emsp; [std::atomic](stdlib_and_concepts.md#SS_7_3_3)  
+&emsp;&emsp;&emsp; [std::condition_variable](stdlib_and_concepts.md#SS_7_3_4)  
 
 &emsp;&emsp; [ロック所有ラッパー](stdlib_and_concepts.md#SS_7_4)  
 &emsp;&emsp;&emsp; [std::lock_guard](stdlib_and_concepts.md#SS_7_4_1)  
@@ -165,7 +166,7 @@ std::integral_constantは「テンプレートパラメータとして与えら�
 
 
 ### std::true_type <a id="SS_7_2_2"></a>
-`std::true_type`(と`std::false_type`)は真/偽を返すSTL[メタ関数](core_lang_spec.md#SS_6_11_2)群の戻り型となる型エイリアスであるため、
+`std::true_type`(と`std::false_type`)は真/偽を返す標準ライブラリの[メタ関数](core_lang_spec.md#SS_6_11_2)群の戻り型となる型エイリアスであるため、
 最も使われるテンプレートの一つである。
 
 これらは、下記で確かめられる通り、後述する[std::integral_constant](stdlib_and_concepts.md#SS_7_2_1)を使い定義されている。
@@ -426,30 +427,23 @@ Tが[MoveAssignable要件](cpp_idioms.md#SS_8_3_4)を満たすためには`std::
         void     increment() { ++count_; }  // 非アトミック（データレースの原因）
         uint32_t count_ = 0;
     };
-
-    void worker(Conflict& c, int n)
-    {
-        for (int i = 0; i < n; ++i) {
-            c.increment();
-        }
-    }
 ```
 ```cpp
-    //  example/stdlib_and__concepts/thread_ut.cpp 26
+    //  example/stdlib_and__concepts/thread_ut.cpp 19
 
     Conflict c;
 
     constexpr uint32_t inc_per_thread = 5'000'000;
     constexpr uint32_t expected       = 2 * inc_per_thread;
 
-    std::thread t1(worker, std::ref(c), inc_per_thread);  // worker関数を使用したスレッドの起動
-                                                          // workerにcのリファレンス渡すため、std::refを使用
-
-    std::thread t2([&c] {  // ラムダを使用したによるスレッドの起動
+    auto worker = [&c] {  // スレッドのボディとなるラムダの定義
         for (uint32_t i = 0; i < inc_per_thread; ++i) {
             c.increment();
         }
-    });
+    };
+
+    std::thread t1{worker};  // ラムダworker関数を使用したスレッドの起動
+    std::thread t2{worker};
 
     t1.join();  // スレッドの終了待ち
     t2.join();  // スレッドの終了待ち
@@ -464,49 +458,47 @@ Tが[MoveAssignable要件](cpp_idioms.md#SS_8_3_4)を満たすためには`std::
 ### std::mutex <a id="SS_7_3_2"></a>
 mutex は、スレッド間で使用する共有リソースを排他制御するためのクラスである。 
 
-<pre>
-- lock()    :メンバ関数によってリソースのロックを取得
-- unlock()  :メンバ関数でリソースのロックを解放
-</pre>
+| メンバ関数 | 動作説明                                                                                    |
+|:-----------|---------------------------------------------------------------------------------------------|
+| lock()     | lock()が即時リターンするスレッドはただ一つ。そうでない場合、unlock()が呼ばれるまでブロック  |
+| unlock()   | lock()でブロックされていたスレッドの中から一つが動き出す                                    |
+
+
+以下のコード例では、メンバ変数のインクリメントがスレッド間の競合を引き起こす(こういったコード領域を
+[クリティカルセクション](cpp_idioms.md#SS_8_9_4)と呼ぶ)が、std::mutexによりこの問題を回避している。
 
 ```cpp
-    //  example/stdlib_and__concepts/thread_ut.cpp 55
+    //  example/stdlib_and__concepts/thread_ut.cpp 48
 
     struct Conflict {
         void increment()
         {
-            std::lock_guard<std::mutex> lock{mtx_};  // lockオブジェクトのコンストラクタでmtx_.lock()が呼ばれる
-                                                     // ++count_の排他
+            mtx_.lock();  // クリティカルセクションの保護開始
+
             ++count_;
 
-        }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
+            mtx_.unlock();  // クリティカルセクションの保護終了
+        }
         uint32_t   count_ = 0;
         std::mutex mtx_{};
     };
-
-    void worker(Conflict& c, int n)
-    {
-        for (int i = 0; i < n; ++i) {
-            c.increment();
-        }
-    }
 ```
 ```cpp
-    //  example/stdlib_and__concepts/thread_ut.cpp 83
+    //  example/stdlib_and__concepts/thread_ut.cpp 66
 
     Conflict c;
 
     constexpr uint32_t inc_per_thread = 5'000'000;
     constexpr uint32_t expected       = 2 * inc_per_thread;
 
-    std::thread t1(worker, std::ref(c), inc_per_thread);  // worker関数を使用したスレッドの起動
-                                                          // workerにcのリファレンス渡すため、std::refを使用
-
-    std::thread t2([&c] {  // ラムダを使用したによるスレッドの起動
+    auto worker = [&c] {  // スレッドのボディとなるラムダの定義
         for (uint32_t i = 0; i < inc_per_thread; ++i) {
             c.increment();
         }
-    });
+    };
+
+    std::thread t1{worker};  // ラムダworker関数を使用したスレッドの起動
+    std::thread t2{worker};
 
     t1.join();  // スレッドの終了待ち
     t2.join();  // スレッドの終了待ち
@@ -517,19 +509,8 @@ mutex は、スレッド間で使用する共有リソースを排他制御す�
 ```
 
 lock()を呼び出した状態で、unlock()を呼び出さなかった場合、デッドロックを引き起こしてしまうため、
-永久に処理が完了しないバグの元となり得るため、このような問題を避けるために、
+永久に処理が完了しないバグの元となり得る。このような問題を避けるために、
 mutexは通常、[std::lock_guard](stdlib_and_concepts.md#SS_7_4_1)と組み合わせて使われる。
-
-```cpp
-
-    //  example/stdlib_and__concepts/thread_ut.cpp 60
-    {
-        std::lock_guard<std::mutex> lock{mtx_};  // lockオブジェクトのコンストラクタでmtx_.lock()が呼ばれる
-                                                 // ++count_の排他
-        ++count_;
-
-    }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
-```
 
 ### std::atomic <a id="SS_7_3_3"></a>
 atomicクラステンプレートは、型Tをアトミック操作するためのものである。
@@ -537,7 +518,7 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
 [std::mutex](stdlib_and_concepts.md#SS_7_3_2)で示したような単純なコードではstd::atomicを使用して下記のように書く方が一般的である。
 
 ```cpp
-    //  example/stdlib_and__concepts/thread_ut.cpp 109
+    //  example/stdlib_and__concepts/thread_ut.cpp 92
 
     struct Conflict {
         void increment()
@@ -548,30 +529,23 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
         }  // lockオブジェクトのデストラクタでmtx_.unlock()が呼ばれる
         std::atomic<uint32_t> count_ = 0;
     };
-
-    void worker(Conflict& c, int n)
-    {
-        for (int i = 0; i < n; ++i) {
-            c.increment();
-        }
-    }
 ```
 ```cpp
-    //  example/stdlib_and__concepts/thread_ut.cpp 131
+    //  example/stdlib_and__concepts/thread_ut.cpp 107
 
     Conflict c;
 
     constexpr uint32_t inc_per_thread = 5'000'000;
     constexpr uint32_t expected       = 2 * inc_per_thread;
 
-    std::thread t1(worker, std::ref(c), inc_per_thread);  // worker関数を使用したスレッドの起動
-                                                          // workerにcのリファレンス渡すため、std::refを使用
-
-    std::thread t2([&c] {  // ラムダを使用したスレッドの起動
+    auto worker = [&c] {  // スレッドのボディとなるラムダの定義
         for (uint32_t i = 0; i < inc_per_thread; ++i) {
             c.increment();
         }
-    });
+    };
+
+    std::thread t1{worker};  // ラムダworker関数を使用したスレッドの起動
+    std::thread t2{worker};
 
     t1.join();  // スレッドの終了待ち
     t2.join();  // スレッドの終了待ち
@@ -579,6 +553,45 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
                 // デストラクトされると、std::terminateが呼ばれる
 
     ASSERT_EQ(c.count_, expected);
+```
+
+### std::condition_variable <a id="SS_7_3_4"></a>
+condition_variable は、特定のイベントが発生するまでスレッドの待ち合わせを行うためのクラスである。
+最も単純な使用例を以下に示す(「[Spurious Wakeup](cpp_idioms.md#SS_8_9_10)」参照)。
+```cpp
+    //  example/stdlib_and__concepts/thread_ut.cpp 135
+
+    std::mutex              mutex;
+    std::condition_variable cond_var;
+    bool                    event_occured = false;
+
+    void notify()  // 通知を行うスレッドが呼び出す関数
+    {
+        auto lock = std::lock_guard{mutex};
+
+        event_occured = true;
+
+        cond_var.notify_all();  // wait()で待ち状態のすべてのスレッドを起こす
+    }
+
+    void wait()
+    {
+        auto lock = std::unique_lock{mutex};
+
+        // notifyされるのを待つ。
+        cond_var.wait(lock, []() noexcept { return event_occured; });  // Spurious Wakeup対策
+    }
+```
+```cpp
+    //  example/stdlib_and__concepts/thread_ut.cpp 162
+
+    std::thread t1{[]() { wait(); /* 通知待ち */ }};
+    std::thread t2{[]() { wait(); /* 通知待ち */ }};
+
+    notify();  // 通知待ちのスレッドに通知
+
+    t1.join();
+    t2.join();
 ```
 
 ## ロック所有ラッパー <a id="SS_7_4"></a>
@@ -590,7 +603,6 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
 
 
 ### std::lock_guard <a id="SS_7_4_1"></a>
-
 std::lock_guardを使わない問題のあるコードを以下に示す。
 
 ```cpp
@@ -609,16 +621,6 @@ std::lock_guardを使わない問題のあるコードを以下に示す。
         uint32_t   count_ = 0;
         std::mutex mtx_{};
     };
-```
-```cpp
-    //  example/stdlib_and__concepts/lock_ownership_wrapper_ut.cpp 19
-    {
-        mtx_.lock();  // ++count_の排他のためのロック
-
-        ++count_;
-
-        mtx_.unlock();  // 上記のアンロック
-    }
 ```
 
 上記で示したConflict::increment()には以下のようなリスクが存在する。
@@ -649,8 +651,6 @@ std::lock_guardを使用して、このような問題に対処したコード�
         std::mutex mtx_{};
     };
 ```
-
-単体テストに変更は無いため、省略する。
 
 オリジナルの単純な以下のincrement()と改善版を比較すると、大差ないように見えるが、
 
@@ -770,9 +770,9 @@ std::unique_lockやstd::lock_guardによりmutexを使用する。
     ASSERT_EQ(push_count_max, pop_count);
 ```
 
-一般に条件変数には、[Spurious Wakeup](cpp_idioms.md#SS_8_8_7)という問題があり、std::condition_variableも同様である。
+一般に条件変数には、[Spurious Wakeup](cpp_idioms.md#SS_8_9_10)という問題があり、std::condition_variableも同様である。
 
-上記の抜粋である下記のコード例では[Spurious Wakeup](cpp_idioms.md#SS_8_8_7)の対策が行われていないため、
+上記の抜粋である下記のコード例では[Spurious Wakeup](cpp_idioms.md#SS_8_9_10)の対策が行われていないため、
 意図通り動作しない可能性がある。
 
 ```cpp
@@ -1119,11 +1119,34 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 Polymorphic Memory Resource(pmr)は、
 動的メモリ管理の柔軟性と効率性を向上させるための、C++17から導入された仕組みである。
 
+[std::pmr::polymorphic_allocator](stdlib_and_concepts.md#SS_7_6_2)はC++17で導入された標準ライブラリのクラスで、
+C++のメモリリソース管理を抽象化するための機能を提供する。
+
+例えば、std::vectorは以下のように宣言されていた。
+
+```cpp
+namespace std {
+  template <class T, class Allocator = allocator<T>>
+  class vector;
+}
+```
+
+C++17では以下のエイリアスが追加された。
+
+```cpp
+namespace std::pmr {
+  template <class T>
+  using vector = std::vector<T, polymorphic_allocator<T>>;
+}
+```
+
+他のコンテナに関してもほぼ同様のエイリアスが追加された。
+
 C++17で導入されたstd::pmr名前空間は、カスタマイズ可能なメモリ管理を提供し、
-特にSTLコンテナと連携して効率化を図るための統一フレームワークを提供する。
+特に標準ライブラリのコンテナと連携して効率化を図るための統一フレームワークを提供する。
 std::pmrは、
 カスタマイズ可能なメモリ管理を標準ライブラリのデータ構造に統合するための統一的なフレームワークであり、
-特にSTLコンテナと連携して、動的メモリ管理を効率化することができる。
+特に標準ライブラリのコンテナと連携して、動的メモリ管理を効率化することができる。
 
 std::pmrは以下のようなメモリ管理のカスタマイズを可能にする。
 
