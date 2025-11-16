@@ -204,7 +204,7 @@ Transaction Methodを使用しているTransactorNotOCPのすべてのメンバ�
 
 下記は、TransactorIFを導入することによって、上例をOCPに沿うように改善したクラス図と実装である。
 TransactorOCPは、TransactorIFの効果によりTransaction Methodの追加に対して全く影響を受けなくなった
-(実際には、TransactorIFから派生する具象クラスの生成用Factory関数(「[Factory](design_pattern.md#SS_3_17)」参照)
+(実際には、TransactorIFから派生する具象クラスの生成用Factory関数(「[Factory](design_pattern.md#SS_3_1_4)」参照)
 が必要になるため全く影響がないわけではないが、
 そのような箇所はソースコード全体でただ一つにすることができるため、
 Transaction Methodの追加に対して強固な構造になったと言える)。
@@ -253,7 +253,7 @@ Transaction Methodの追加に対して強固な構造になったと言える)�
 ```
 
 ここでは、この原則に沿う実装方法としてポリモーフィズムを使うパターンを紹介したが、
-[Pimpl](design_pattern.md#SS_3_3)のようにラッピングを使用するパターンも有用である。
+[Pimpl](cpp_idioms.md#SS_8_2_1)のようにラッピングを使用するパターンも有用である。
 
 
 ## リスコフの置換原則(LSP) <a id="SS_2_3"></a>
@@ -396,7 +396,7 @@ Rectangleの全派生クラスに依存した、変更に弱い関数となる�
 ```
 
 このSetX()は、Rectangleからの派生クラスに依存していないため、良い解法に見える。
-ところが実際にはオブジェクトの[スライシング](cpp_idioms.md#SS_8_7_3)という別の問題を引き起こす。  
+ところが実際にはオブジェクトの[スライシング](cpp_idioms.md#SS_8_9_3)という別の問題を引き起こす。  
 
 例示した問題は結局のところデザインの誤りが原因であり、それを修正しない限り、
 問題の回避は容易ではない。
