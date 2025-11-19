@@ -9,15 +9,15 @@ package "SubjectNG" as SubjectNG_Pkg {
 
 package ObserverNG {
     class ObserverNG_2 {
-        Update(const SubjectNG&)
+        Update(SubjectNG const&)
     }
 
     class ObserverNG_1 {
-        Update(const SubjectNG&)
+        Update(SubjectNG const&)
     }
 
     class ObserverNG_0 {
-        Update(const SubjectNG&)
+        Update(SubjectNG const&)
     }
 }
 
