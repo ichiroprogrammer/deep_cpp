@@ -4,7 +4,7 @@
 
 namespace Nstd {
 template <size_t N>
-constexpr size_t filename_len(const char (&path)[N], size_t index = N - 1) noexcept
+constexpr size_t filename_len(char const (&path)[N], size_t index = N - 1) noexcept
 {
     if (index == 0 || path[index - 1] == '/') {
         return N - index;
@@ -13,7 +13,7 @@ constexpr size_t filename_len(const char (&path)[N], size_t index = N - 1) noexc
 }
 
 template <size_t N>
-constexpr size_t filename_offset(const char (&path)[N]) noexcept
+constexpr size_t filename_offset(char const (&path)[N]) noexcept
 {
     return N - filename_len(path);
 }

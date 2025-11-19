@@ -195,7 +195,7 @@ namespace {
 template <class T, std::size_t Extent>
 void print(std::span<T, Extent> s, std::ostream& os)
 {
-    const char* delimiter = "";
+    char const* delimiter = "";
 
     os << '{';
     for (const T& x : s) {

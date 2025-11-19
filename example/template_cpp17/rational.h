@@ -27,23 +27,23 @@ public:
     T getNumerator() const noexcept { return value_.num; }
     T getDenominator() const noexcept { return value_.deno; }
     /// @brief 2項演算子(四則演算)の定義
-    Rational operator+(const Rational& rhs) const noexcept
+    Rational operator+(Rational const& rhs) const noexcept
     {
         T num  = value_.num * rhs.value_.deno + rhs.value_.num * value_.deno;
         T deno = value_.deno * rhs.value_.deno;
         return Rational{num, deno};
     }
-    Rational operator-(const Rational& rhs) const noexcept
+    Rational operator-(Rational const& rhs) const noexcept
     {
         T num  = value_.num * rhs.value_.deno - rhs.value_.num * value_.deno;
         T deno = value_.deno * rhs.value_.deno;
         return Rational{num, deno};
     }
-    Rational operator*(const Rational& rhs) const noexcept
+    Rational operator*(Rational const& rhs) const noexcept
     {
         return Rational{value_.num * rhs.value_.num, value_.deno * rhs.value_.deno};
     }
-    Rational operator/(const Rational& rhs) const noexcept
+    Rational operator/(Rational const& rhs) const noexcept
     {
         return Rational(value_.num * rhs.value_.deno, value_.deno * rhs.value_.num);
     }
@@ -94,7 +94,7 @@ public:
     friend bool operator>=(Rational const& lhs, Rational const& rhs) noexcept { return !(lhs < rhs); }
 #endif
     /// @brief put-to演算子の定義
-    friend std::ostream& operator<<(std::ostream& os, const Rational& rhs)
+    friend std::ostream& operator<<(std::ostream& os, Rational const& rhs)
     {
         return (rhs.value_.deno == 1) ? os << rhs.value_.num : os << rhs.value_.num << "/" << rhs.value_.deno;
     }

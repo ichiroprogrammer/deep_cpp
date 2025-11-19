@@ -7,7 +7,7 @@
 namespace Nstd {
 namespace {
 template <size_t N>
-constexpr auto Path2Filename(const char (&path)[N]) noexcept
+constexpr auto Path2Filename(char const (&path)[N]) noexcept
 {
     return BottomStr<filename_offset(path)>(StaticString{path});
 }

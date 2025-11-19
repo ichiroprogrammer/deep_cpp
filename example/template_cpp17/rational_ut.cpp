@@ -12,7 +12,7 @@ TEST(RationalTest, int_op)
     // @@@ sample begin 0:0
 
     auto       r1    = Rational{1, 2};
-    const auto r1_sv = r1;
+    auto const r1_sv = r1;
     auto       r2    = Rational{1, 3};
 
     ASSERT_GE(r1, r2);
@@ -65,7 +65,7 @@ TEST(RationalTest, literal)
 TEST(RationalTest, long_op)
 {
     auto       r1    = Rational{1L, 2L};
-    const auto r1_sv = r1;
+    auto const r1_sv = r1;
     auto       r2    = Rational{1L, 3L};
 
     ASSERT_GE(r1, r2);

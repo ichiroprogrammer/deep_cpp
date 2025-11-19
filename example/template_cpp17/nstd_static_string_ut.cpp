@@ -11,7 +11,7 @@ TEST(Template, static_string_construct)
     {
         // @@@ sample begin 0:0
 
-        const auto fs = StaticString{"abc"};  // C++17からのNの指定は不要
+        auto const fs = StaticString{"abc"};  // C++17からのNの指定は不要
 
         static_assert(sizeof(4) == fs.Size());
         ASSERT_STREQ("abc", fs.String());
@@ -23,7 +23,7 @@ TEST(Template, static_string_construct)
     {
         // @@@ sample begin 0:1
 
-        const auto fs = StaticString<4>{'a', 'b', 'c'};  // C++17でもNの指定は必要
+        auto const fs = StaticString<4>{'a', 'b', 'c'};  // C++17でもNの指定は必要
 
         static_assert(sizeof(4) == fs.Size());
         ASSERT_STREQ("abc", fs.String());
@@ -37,7 +37,7 @@ TEST(Template, static_string_construct)
 TEST(Template, TopStr_BottomStr)
 {
     {
-        constexpr const char str[]{"0123456789"};
+        constexpr char const str[]{"0123456789"};
         constexpr auto       ss0 = StaticString{str};
         auto                 ss3 = BottomStr<3>(ss0);
 
