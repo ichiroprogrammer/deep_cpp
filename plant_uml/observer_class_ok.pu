@@ -8,19 +8,19 @@ package "SubjectOK" as SubjectOK_Pkg {
     }
 
     class Observer {
-        Update(const SubjectOK&)
+        Update(SubjectOK const&)
     }
 }
 
 package ObserverOK {
     class ObserverOK_0 {
-        Update(const SubjectOK&)
+        Update(SubjectOK const&)
     }
     class ObserverOK_1 {
-        Update(const SubjectOK&)
+        Update(SubjectOK const&)
     }
     class ObserverOK_2 {
-        Update(const SubjectOK&)
+        Update(SubjectOK const&)
     }
 }
 

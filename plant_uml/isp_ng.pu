@@ -3,7 +3,7 @@
 rectangle stream_read_writer.h {
     class StreamReadWriter {
         Read(string&);
-        Write(const string&);
+        Write(string const&);
     }
 }
 

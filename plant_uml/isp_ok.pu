@@ -8,7 +8,7 @@ rectangle stream_reader.h {
 
 rectangle stream_writer.h {
     class StreamWriter {
-        Write(const string&);
+        Write(string const&);
     }
 }
 
