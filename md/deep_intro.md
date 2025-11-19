@@ -9,6 +9,12 @@
 
 
 ## 改訂履歴
+* V20.12
+    * CRTPの説明強化
+    * 「標準ライブラリとプログラミングの概念」に「std::enable_shared_from_this」の説明追加
+    * このドキュメントのSOLIDとデザインパターンの章をdeep_cppへ移動
+    * C++慣用語句に「Modern CMake project layout」を追加
+
 * V20.11
     * 用語説明の分割と再構成
         * C++コア言語仕様
