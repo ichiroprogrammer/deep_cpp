@@ -82,7 +82,54 @@
 * V18.07
     * 静的な文字列オブジェクトの強化
 
-## インデックス <a id="SS_1_2"></a>
+## ドキュメントの諸注意 <a id="SS_1_2"></a>
+__技術用語の用法__
+
+* 参照
+    * 「～を参照する」というような文脈で使われる**「参照」**はそのまま使用する。
+    * C++での参照型を表す**参照**は使わず、代わりに**「リファレンス」**を使用する。
+* 例外
+    * 「～の場合は例外である」というような文脈で使われる**「例外」**はそのまま使用する。
+    * C++でthrowすると発生する事象を表す**例外**は使わず、代わりに**「エクセプション」**を使用する。
+* classとクラス
+    * **class**はC++のキーワードとして使用する。
+    * **クラス**は上記以外で使用する。
+* プログラミングとコーディング、ソースコードとコード、インスタンスとオブジェクト、に関しては同義語として使用する。
+
+__コード例について__
+
+次章以降では、ソースコードを使って説明を行う場合がある。このような場合の注意点を述べる。
+
+* 「`// ...`」のような行は、ソースコードの省略を表す。
+* 特定の規則、法則、慣習等を説明するためのソースコードは、シンプルさを優先するため、
+  その他の規則、法則、慣習に従っていない場合があるが、
+  [Trailing Underscore(末尾アンダースコア)](#SS_8_9_4)には従っている。
+  また、一般に標準ライブラリのコンテナクラスをnewする必要はないが、
+  コードの動作を示すためにあえてそのようにする場合がある。
+* ソースコード内に動作説明のような本来不要なコメントがあるのは、
+  読者にその意味を知らせるためであるため、製品コードのコメントをこのようにするべきではない。
+* 例示したコードの動作の確認、明示のために
+  [google test(gtest)](http://opencv.jp/googletestdocs/primer.html)のアサーション(下表)を使用する。
+
+
+__google test_のアサーションの簡単な説明__
+
+|アサーションマクロ  | 意味                                     |
+|:-------------------|:-----------------------------------------|
+| ASSERT_TRUE(x)     | xがtrue                                  |
+| ASSERT_FALSE(x)    | xがfalse                                 |
+| ASSERT_EQ(x, y)    | (x == y)がtrue                           |
+| ASSERT_NE(x, y)    | (x != y)がtrue                           |
+| ASSERT_GE(x, y)    | (x >= y)がtrue                           |
+| ASSERT_GT(x, y)    | (x >  y)がtrue                           |
+| ASSERT_LE(x, y)    | (x <= y)がtrue                           |
+| ASSERT_LT(x, y)    | (x <  y)がtrue                           |
+| ASSERT_STREQ(x, y) | (std::string(x) == std::string(y))がtrue |
+| ASSERT_DEATH(x, y) | xを実行するとアボートすればtrue          |
+| ASSERT_THROW(x, y) | xを実行するとy例外が発生すればtrue       |
+
+
+## インデックス <a id="SS_1_3"></a>
 ___
 
 * [SOLID](#SS_2)
@@ -105,7 +152,7 @@ SOLIDとは、オブジェクト指向(OOD/OOP)プログラミングにおいて
 * [インターフェース分離の原則(ISP)](#SS_2_4)
 * [依存関係逆転の原則(DIP)](#SS_2_5)
 
-[インデックス](#SS_1_2)に戻る。  
+[インデックス](#SS_1_3)に戻る。  
 
 ___
 
@@ -896,7 +943,7 @@ __この章の構成__
 - [MVC](#SS_3_3_2)
 
 
-[インデックス](#SS_1_2)に戻る。  
+[インデックス](#SS_1_3)に戻る。  
 
 ___
 
@@ -4104,7 +4151,7 @@ __この章の構成__
   
   
 
-[インデックス](#SS_1_2)に戻る。  
+[インデックス](#SS_1_3)に戻る。  
 ___
 
 ## ログ取得ライブラリの開発 <a id="SS_4_1"></a>
@@ -11663,7 +11710,7 @@ __この章の構成__
   
   
 
-[インデックス](#SS_1_2)に戻る。  
+[インデックス](#SS_1_3)に戻る。  
 
 ___
 
@@ -13258,7 +13305,7 @@ __この章の構成__
   
   
 
-[インデックス](#SS_1_2)に戻る。  
+[インデックス](#SS_1_3)に戻る。  
 
 ___
 
@@ -15755,8 +15802,8 @@ CONDには、型特性や定数式などの任意のconstexprな条件式を指�
         int get() const noexcept { return x_; }
 
         // メンバ関数の比較演算子
-        bool operator==(const Integer& other) const noexcept { return x_ == other.x_; }
-        bool operator<(const Integer& other) const noexcept { return x_ < other.x_; }
+        bool operator==(Integer const& other) const noexcept { return x_ == other.x_; }
+        bool operator<(Integer const& other) const noexcept { return x_ < other.x_; }
 
     private:
         int x_;
@@ -15773,7 +15820,7 @@ C++20以降より、`=default`により==演算子を自動生成させること
     public:
         Integer(int x) noexcept : x_{x} {}
 
-        bool operator==(const Integer& other) const noexcept = default;  // 自動生成
+        bool operator==(Integer const& other) const noexcept = default;  // 自動生成
 
     private:
         int x_;
@@ -15797,9 +15844,9 @@ C++20以降より、`=default`により==演算子を自動生成させること
         int get() const noexcept { return x_; }
 
         // メンバ関数の比較演算子に見えるが、非メンバ関数
-        friend bool operator==(const Integer& lhs, const Integer& rhs) noexcept { return lhs.x_ == rhs.x_; }
+        friend bool operator==(Integer const& lhs, Integer const& rhs) noexcept { return lhs.x_ == rhs.x_; }
 
-        friend bool operator<(const Integer& lhs, const Integer& rhs) noexcept { return lhs.x_ < rhs.x_; }
+        friend bool operator<(Integer const& lhs, Integer const& rhs) noexcept { return lhs.x_ < rhs.x_; }
 
     private:
         int x_;
@@ -15851,7 +15898,7 @@ C++20から導入された[<=>演算子](#SS_6_6_4_1)の定義により、すべ
         int x;
         int y;
 
-        auto operator<=>(const Point& other) const noexcept = default;  // 三方比較演算子 (C++20)
+        auto operator<=>(Point const& other) const noexcept = default;  // 三方比較演算子 (C++20)
         // 通常autoとするが、実際の戻り型はstd::strong_ordering
     };
 ```
@@ -15894,12 +15941,12 @@ C++20から導入された[<=>演算子](#SS_6_6_4_1)の定義により、すべ
         int x;
         int y;
 
-        std::strong_ordering operator<=>(const Point& other) const noexcept
+        std::strong_ordering operator<=>(Point const& other) const noexcept
         {
             return std::tie(x, y) <=> std::tie(other.x, other.y);
         }
 
-        bool operator==(const Point& other) const noexcept { return std::tie(x, y) == std::tie(other.x, other.y); }
+        bool operator==(Point const& other) const noexcept { return std::tie(x, y) == std::tie(other.x, other.y); }
     };
 ```
 
@@ -17670,7 +17717,7 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
     /// @brief 偶数のみをフィルタリングする
     /// @param input フィルタ対象の Generator
     /// @return フィルタ後の Generator
-    Generator<int> filter_even(const Generator<int>& input)
+    Generator<int> filter_even(Generator<int> const& input)
     {
         std::vector<int> filtered;
         auto             gen = input;
@@ -17686,7 +17733,7 @@ co_yieldを使用したコルーチンと同じ機能を持つクラスのco_yie
     /// @brief 値を2倍に変換する
     /// @param input 変換対象の Generator
     /// @return 変換後の Generator
-    Generator<int> double_values(const Generator<int>& input)
+    Generator<int> double_values(Generator<int> const& input)
     {
         std::vector<int> doubled;
         auto             gen = input;
@@ -19445,7 +19492,7 @@ hidden-friend関数(隠れたフレンド関数)の目的は、
         Person(std::string name, uint32_t age) : name_{std::move(name)}, age_{age} {}
 
         // hidden-friend関数
-        friend std::ostream& operator<<(std::ostream& os, const Person& person)
+        friend std::ostream& operator<<(std::ostream& os, Person const& person)
         {
             os << "Name:" << person.name_ << ", Age:" << person.age_;
             return os;
@@ -20653,7 +20700,7 @@ __この章の構成__
   
   
 
-[インデックス](#SS_1_2)に戻る。  
+[インデックス](#SS_1_3)に戻る。  
 
 ___
 
@@ -21943,7 +21990,7 @@ std::pmr::memory_resourceから派生した具象クラスの実装を以下に�
             concat(curr, to_free);
         }
 
-        bool do_is_equal(const memory_resource& other) const noexcept override { return this == &other; }
+        bool do_is_equal(memory_resource const& other) const noexcept override { return this == &other; }
     };
 ```
 
@@ -22371,8 +22418,8 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
         int get() const noexcept { return x_; }
 
         // メンバ関数の比較演算子
-        bool operator==(const Integer& other) const noexcept { return x_ == other.x_; }
-        bool operator<(const Integer& other) const noexcept { return x_ < other.x_; }
+        bool operator==(Integer const& other) const noexcept { return x_ == other.x_; }
+        bool operator<(Integer const& other) const noexcept { return x_ < other.x_; }
 
     private:
         int x_;
@@ -22415,9 +22462,9 @@ std::rel_opsでは`operator==`と`operator<=` を基に他の比較演算子を�
         int x;
         int y;
 
-        bool operator==(const Point& other) const noexcept { return std::tie(x, y) == std::tie(other.x, other.y); }
+        bool operator==(Point const& other) const noexcept { return std::tie(x, y) == std::tie(other.x, other.y); }
 
-        bool operator<(const Point& other) const noexcept { return std::tie(x, y) < std::tie(other.x, other.y); }
+        bool operator<(Point const& other) const noexcept { return std::tie(x, y) < std::tie(other.x, other.y); }
     };
 ```
 ```cpp
@@ -22556,6 +22603,7 @@ __この章の構成__
 &emsp;&emsp;&emsp; [AAAスタイル](#SS_8_9_1)  
 &emsp;&emsp;&emsp; [east-const](#SS_8_9_2)  
 &emsp;&emsp;&emsp; [west-const](#SS_8_9_3)  
+&emsp;&emsp;&emsp; [Trailing Underscore(末尾アンダースコア)](#SS_8_9_4)  
 
 &emsp;&emsp; [オブジェクトのコピー](#SS_8_10)  
 &emsp;&emsp;&emsp; [シャローコピー](#SS_8_10_1)  
@@ -22598,7 +22646,7 @@ __この章の構成__
   
   
 
-[インデックス](#SS_1_2)に戻る。  
+[インデックス](#SS_1_3)に戻る。  
 
 ___
 
@@ -23091,7 +23139,7 @@ CRTPとは、
     class Counter {  // 派生クラスのインスタンスを計測するミックスイン
     public:
         Counter() { ++DerivedClass_Count; }
-        Counter(const Counter&) { ++DerivedClass_Count; }
+        Counter(Counter const&) { ++DerivedClass_Count; }
         ~Counter() { --DerivedClass_Count; }
     };
 
@@ -24734,11 +24782,11 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
     public:
         // コンストラクタ
         MyString() = default;
-        MyString(const std::string& str) : str_(str) {}
-        MyString(const char* cstr) : str_(cstr) {}
+        MyString(std::string const& str) : str_(str) {}
+        MyString(char const* cstr) : str_(cstr) {}
 
         // 文字列へのアクセス
-        const char* c_str() const { return str_.c_str(); }
+        char const* c_str() const { return str_.c_str(); }
 
         using reference = std::string::reference;
         using size_type = std::string::size_type;
@@ -24751,7 +24799,7 @@ private継承によるis-implemented-in-terms-ofの実装例を以下に示す�
 
         void clear() { str_.clear(); }
 
-        MyString& operator+=(const MyString& rhs)
+        MyString& operator+=(MyString const& rhs)
         {
             str_ += rhs.str_;
             return *this;
@@ -26582,12 +26630,12 @@ east-constとは、`const`修飾子を修飾する型要素の右側(east＝右)
 テンプレート展開や型推論の際に一貫性があり、C++コミュニティではしばしば論理的・直感的と評価されている。
 
 ```cpp
-    //  example/cpp_idioms/east_west_const.cpp 11
+    //  example/cpp_idioms/east_west_const.cpp 12
 
     char              str[] = "hehe";  // 配列strに書き込み可能
-    char const*       str0  = str;  // str0が指すオブジェクトはconstなので、*str0への書き込み不可
-    char* const       str1  = str;  // str1がconstなので、str1への代入不可
-    char const* const str2  = str;  // *str2への書き込み不可、str2への代入不可
+    char const*       str0  = str;     // str0が指すオブジェクトはconstなので、*str0への書き込み不可
+    char* const       str1  = str;     // str1がconstなので、str1への代入不可
+    char const* const str2  = str;     // *str2への書き込み不可、str2への代入不可
 
     auto lamda = [](char const(&str_ref)[5]) {  // str_refは配列へのconstリファレンス
         int ret = 0;
@@ -26602,6 +26650,8 @@ east-constとは、`const`修飾子を修飾する型要素の右側(east＝右)
 このスタイルは 「east constスタイル」 または 「右側const」と呼ばれ、
 typeid のデマングル結果や Itanium C++ ABI でもこの形式が採用されている。
 
+なお、このドキュメントでは、このスタイルを採用している。
+
 ### west-const <a id="SS_8_9_3"></a>
 west-constとは、`const`修飾子を型の左側(west＝左)に置くコーディングスタイルのこと。
 C言語からの伝統的な表記法であり、多くの標準ライブラリや教科書でも依然としてこの書き方が用いられている。
@@ -26609,14 +26659,14 @@ C言語からの伝統的な表記法であり、多くの標準ライブラリ�
 可読性は慣れに依存するが、`const`の位置が一貫しないケース(`T* const`など)では理解しづらくなることもある。
 
 ```cpp
-    //  example/cpp_idioms/east_west_const.cpp 34
+    //  example/cpp_idioms/east_west_const.cpp 37
 
     char              str[] = "hehe";  // 配列strに書き込み可能
-    const char*       str0  = str;  // str0が指すオブジェクトはconstなので、*str0への書き込み不可
-    char* const       str1  = str;  // str1がconstなので、str1への代入不可
-    const char* const str2  = str;  // *str2への書き込み不可、str2への代入不可
+    char const*       str0  = str;     // str0が指すオブジェクトはconstなので、*str0への書き込み不可
+    char* const       str1  = str;     // str1がconstなので、str1への代入不可
+    char const* const str2  = str;     // *str2への書き込み不可、str2への代入不可
 
-    auto lamda = [](const char(&str_ref)[5]) {  // str_refは配列へのconstリファレンス
+    auto lamda = [](char const(&str_ref)[5]) {  // str_refは配列へのconstリファレンス
         int ret = 0;
 
         for (const char& a : str_ref) {  // aはchar constリファレンス
@@ -26628,6 +26678,27 @@ C言語からの伝統的な表記法であり、多くの標準ライブラリ�
 
 このスタイルは「west constスタイル」または「左側const」と呼ばれ、
 C言語文化圏での可読性・慣習を重視する場合に採用されることが多い。
+
+### Trailing Underscore(末尾アンダースコア) <a id="SS_8_9_4"></a>
+Trailing underscoreとは、C++においてメンバー変数名の末尾にアンダースコア
+(\_)を付ける命名規約である。例えば、data_、count_、name_ のように記述する。
+
+__採用の背景__  
+この規約が広まった主な理由は以下の通りである：  
+
+* 予約識別子との衝突回避 - 先頭のアンダースコアは標準で予約されている(\_+大文字、\_\_など)ため使用できない
+* 可読性の向上 - プレフィックス方式(m_dataなど)と比べて、自然な語順を保てる
+* コンストラクタでの利便性 - 初期化リストで `data_{data}` のようにパラメータ名と区別しやすい
+
+__主要な採用例__
+
+* Google C++ Style Guide
+* Scott Meyers著「Effective C++」シリーズ
+* 多くのオープンソースプロジェクト
+* このドキュメント
+
+この規約により、メンバー変数とローカル変数を明確に区別でき、コードの保守性が期待できる。
+
 
 ## オブジェクトのコピー <a id="SS_8_10"></a>
 ### シャローコピー <a id="SS_8_10_1"></a>
