@@ -60,6 +60,7 @@ TEST(Template, safe_vector)
 }  // namespace
 
 // @@@ sample begin 1:0
+
 namespace Nstd {
 
 struct SafeString : std::string {
@@ -211,6 +212,7 @@ TEST(Template, safe_array)
     }
 #if 0
     // @@@ sample begin 3:4
+
     {
         auto sa_init = Nstd::SafeArray<int, 3>{1.0, 2, 3};
 

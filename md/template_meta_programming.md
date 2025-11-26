@@ -639,8 +639,8 @@ C++11での改善により、実践的なアイデアとして使用できるよ
 
 #### operator\<\<を使わない
 色々なアイデアを試してみたが、これまでの議論ではこれといった解決方法を発見できなかった。
-「[バーニーの祈り](https://ja.wikipedia.org/wiki/%E3%83%8B%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E7%A5%88%E3%82%8A)」
-が言っている通り、時にはどうにもならないことを受け入れることも重要である。
+「[二ーバーの祈り](https://ja.wikipedia.org/wiki/%E3%83%8B%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E7%A5%88%E3%82%8A)」
+に従い、時にはどうにもならないことを受け入れることも重要である。
 LOGGERの中でname lookupできる、エイリアスApp::Ints_tのoperator<<の開発をあきらめ、
 ここでは一旦、下記のような受け入れがたいコードを受け入れることにする。
 
@@ -724,7 +724,7 @@ std::vector、std::basic_string、std::array等の配列型コンテナは、
 下記のコードのようになる。
 
 ```cpp
-    // @@@ example/template/safe_vector_ut.cpp #0:0 begin -1
+    // @@@ example/template/safe_vector_ut.cpp #0:0 begin
 ```
 
 このコードで行ったことは、
