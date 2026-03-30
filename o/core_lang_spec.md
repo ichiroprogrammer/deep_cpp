@@ -66,7 +66,7 @@ __この章の構成__
 
 &emsp;&emsp; [定数式とコンパイル時評価](core_lang_spec.md#SS_6_5)  
 &emsp;&emsp;&emsp; [constexpr](core_lang_spec.md#SS_6_5_1)  
-&emsp;&emsp;&emsp; [constexpr定数](core_lang_spec.md#SS_6_5_2)  
+&emsp;&emsp;&emsp; [constexpr変数](core_lang_spec.md#SS_6_5_2)  
 &emsp;&emsp;&emsp; [constexpr関数](core_lang_spec.md#SS_6_5_3)  
 &emsp;&emsp;&emsp; [コア定数式](core_lang_spec.md#SS_6_5_4)  
 &emsp;&emsp;&emsp; [リテラル型](core_lang_spec.md#SS_6_5_5)  
@@ -1806,7 +1806,7 @@ constexprはC++11で導入されたキーワードで、
 これにより、定数計算がコンパイル時に行われ、
 実行時のパフォーマンスが向上し、コンパイル時にエラーを検出できることがある。
 
-### constexpr定数 <a id="SS_6_5_2"></a>
+### constexpr変数 <a id="SS_6_5_2"></a>
 C++11以前で定数を定義する方法は、
 
 * マクロ定数
@@ -1819,7 +1819,7 @@ C++11以前で定数を定義する方法は、
 * enumには整数の定義に限られる。
 * static constに関しては、コンパイラの実装依存に依存する。
 
-こういった問題を解決できるのがconstexpr定数である。constexpr定数とは下記のような定数を指す。
+こういった問題を解決できるのがconstexpr変数である。constexpr変数とは下記のような定数を指す。
 
 ```cpp
     //  example/core_lang_spec/constexpr_ut.cpp 11
@@ -1832,7 +1832,7 @@ C++11以前で定数を定義する方法は、
 ```cpp
     //  example/core_lang_spec/constexpr_ut.cpp 20
 
-    constexpr int a = 5;  // aは定数であるためかきのような使い方ができる
+    constexpr int a = 5;  // aは定数であるため下記のような使い方ができる
     static_assert(a == 5);
 
     constexpr int b = 5;  // bは定数でないため、下記のような使い方ができない
@@ -1845,14 +1845,17 @@ C++11以前で定数を定義する方法は、
     static_assert(templ.value == 5);
 ```
 
-constexpr定数がif文のオカレンスになる場合、[constexpr if文](core_lang_spec.md#SS_6_11_12)することで、
+上記コード例で`constexpr T xxx = V` のように宣言または定義されたxxxは、
+値を変更できない定数であるが、C++言語仕様上は変数(コンパイル時に値が変わり得るという意味で)である。  
+
+constexpr変数がif文のオカレンスになる場合、[constexpr if文](core_lang_spec.md#SS_6_11_12)することで、
 [ill-formed](core_lang_spec.md#SS_6_14_1)を使用した場合分けが可能になる。
 
 
 ### constexpr関数 <a id="SS_6_5_3"></a>
 関数に`constexpr`をつけて宣言することで定数を定義することができる。
 constexpr関数の呼び出し式の値がコンパイル時に確定する場合、
-その値はconstexpr定数となるため、関数呼び出しが発生しないため、実行効率が向上する。
+その値はconstexpr変数となるため、関数呼び出しが発生しないため、実行効率が向上する。
 一方で、constexpr関数の呼び出し式の値が、コンパイル時に確定しない場合、
 通常の関数呼び出しと同じになる。
 
@@ -1932,7 +1935,7 @@ for/if文や条件分岐のような処理を含むことができなかった�
    - 使用されるすべての変数は定数式で初期化されている
    - 呼び出されるすべての関数はconstexpr関数である
 
-このドキュメントでは慣用的に[constexpr定数](core_lang_spec.md#SS_6_5_2)と呼んでいる概念が、コア定数式である。
+このドキュメントでは慣用的に[constexpr変数](core_lang_spec.md#SS_6_5_2)と呼んでいる概念が、コア定数式である。
 
 ### リテラル型 <a id="SS_6_5_5"></a>
 constexpr導入後のC++11の標準では、下記の条件を満たすクラスは、
@@ -1941,7 +1944,7 @@ constexpr導入後のC++11の標準では、下記の条件を満たすクラス
 * すべてのメンバ変数がリテラル型である
 * 仮想関数や仮想基底クラスを持たない
 
-constexpr定数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
+constexpr変数もしくはconstexprインスタンスをコンストラクタに渡すことにより、
 [constexprインスタンス](core_lang_spec.md#SS_6_5_6)を生成できる。
 
 このようなクラスは慣習的にリテラル型(literal type)と呼ばれる。
@@ -1979,7 +1982,7 @@ constexpr定数もしくはconstexprインスタンスをコンストラクタ�
 ```
 
 ### constexprインスタンス <a id="SS_6_5_6"></a>
-[constexpr定数](core_lang_spec.md#SS_6_5_2)を引数にして、[リテラル型](core_lang_spec.md#SS_6_5_5)のconstexprコンストラクタを呼び出せば、
+[constexpr変数](core_lang_spec.md#SS_6_5_2)を引数にして、[リテラル型](core_lang_spec.md#SS_6_5_5)のconstexprコンストラクタを呼び出せば、
 constexprインスタンスを生成できる。このリテラル型を使用して下記のように[ユーザー定義リテラル](core_lang_spec.md#SS_6_2_6)
 を定義することで、constexprインスタンスをより簡易に使用することができるようになる。
 
@@ -2045,7 +2048,7 @@ consteval関数の呼び出しは、その結果が定数式でなければコ�
 constinitはC++20から導入されたキーワードであり、
 静的記憶域期間（static、namespaceスコープ）またはthread_local変数が、
 コンパイル時に初期化されることを保証するために使用される。
-これにより、[Static Initialization Order Fiasco(静的初期化順序問題)](cpp_idioms.md#SS_8_12_14)を回避できる。
+これにより、[Static Initialization Order Fiasco(静的初期化順序問題)](cpp_idioms.md#SS_8_11_5)を回避できる。
 
 このキーワードを付与すると、初期化が動的である場合にはコンパイルエラーとなる。
 ただし、constexprと異なり、変数自体がconstになるわけではないため、再代入は可能である。
@@ -3753,7 +3756,7 @@ C++11からはエラーとならず、TRRはT&となる。
 [rvalue修飾](core_lang_spec.md#SS_6_8_7_1)と[lvalue修飾](core_lang_spec.md#SS_6_8_7_2)とを併せて、リファレンス修飾と呼ぶ。
 
 #### rvalue修飾 <a id="SS_6_8_7_1"></a>
-下記GetString0()のような関数が返すオブジェクトの内部メンバに対する[ハンドル](cpp_idioms.md#SS_8_12_7)は、
+下記GetString0()のような関数が返すオブジェクトの内部メンバに対する[ハンドル](cpp_idioms.md#SS_8_12_8)は、
 オブジェクトのライフタイム終了後にもアクセスすることができるため、
 そのハンドルを通じて、
 ライフタイム終了後のオブジェクトのメンバオブジェクトにもアクセスできてしまう。
@@ -5388,6 +5391,21 @@ C++17から、
 CTAD（Class Template Argument Deduction、クラステンプレート実引数推論）は、C++17で導入された機能である。
 この機能により、クラステンプレートのインスタンス化時にテンプレート引数を明示的に指定せず、
 コンストラクタの引数から自動的に型を推論できるようになる。
+
+```cpp
+    //  example/core_lang_spec/template_ut.cpp 104
+
+    // C++17以前
+    std::vector<int> v1{1, 2, 3};
+
+    // C++17以降（CTADにより型引数を省略可能）
+    std::vector v2{1, 2, 3};                                       // std::vector<int> と推論される
+    static_assert(std::is_same_v<decltype(v2)::value_type, int>);  // v2のvalue_typeはintであることの確認
+
+    std::vector v3{1.0, 2.0};                                         // std::vector<double> と推論される
+    static_assert(std::is_same_v<decltype(v3)::value_type, double>);  // v3のvalue_typeはintであることの確認
+```
+
 クラステンプレートの型推論が不十分な場合、[テンプレートの型推論ガイド](core_lang_spec.md#SS_6_11_9)を追加することにより、
 型推論を強化することができる。
 
@@ -5730,7 +5748,7 @@ auto、decltype、decltype(auto)では、以下に示す通りリファレンス
 ```
 
 ### 戻り値型を後置する関数宣言 <a id="SS_6_11_17"></a>
-関数の戻り値型後置構文は戻り値型をプレースホルダ(auto)にして、
+関数の戻り値型後置構文(trailing-return-type構文)は戻り値型をプレースホルダ(auto)にして、
 実際の型を->で示して型推論させるシンタックスを指す。実際には関数テンプレートで使用されることが多い。
 コード例を以下に示す。
 
