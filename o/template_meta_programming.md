@@ -69,50 +69,50 @@ ___
 
 __この章の構成__
 
-&emsp;&emsp; [ログ取得ライブラリの開発](template_meta_programming.md#SS_4_1)  
-&emsp;&emsp;&emsp; [要件](template_meta_programming.md#SS_4_1_1)  
-&emsp;&emsp;&emsp; [ログ取得ライブラリのインターフェース](template_meta_programming.md#SS_4_1_2)  
-&emsp;&emsp;&emsp; [パラメータパックを使用したテクニック](template_meta_programming.md#SS_4_1_3)  
-&emsp;&emsp;&emsp; [Loggerの実装](template_meta_programming.md#SS_4_1_4)  
-&emsp;&emsp;&emsp; [ユーザ定義型とそのoperator\<\<のname lookup](template_meta_programming.md#SS_4_1_5)  
-&emsp;&emsp;&emsp; [Ints_tのログ登録](template_meta_programming.md#SS_4_1_6)  
+[ログ取得ライブラリの開発](template_meta_programming.md#SS_4_1)  
+&emsp;[要件](template_meta_programming.md#SS_4_1_1)  
+&emsp;[ログ取得ライブラリのインターフェース](template_meta_programming.md#SS_4_1_2)  
+&emsp;[パラメータパックを使用したテクニック](template_meta_programming.md#SS_4_1_3)  
+&emsp;[Loggerの実装](template_meta_programming.md#SS_4_1_4)  
+&emsp;[ユーザ定義型とそのoperator\<\<のname lookup](template_meta_programming.md#SS_4_1_5)  
+&emsp;[Ints_tのログ登録](template_meta_programming.md#SS_4_1_6)  
 
-&emsp;&emsp; [Nstdライブラリの開発](template_meta_programming.md#SS_4_2)  
-&emsp;&emsp;&emsp; [Nstdライブラリを使用したリファクタリング](template_meta_programming.md#SS_4_2_1)  
-&emsp;&emsp;&emsp; [安全なvector](template_meta_programming.md#SS_4_2_2)  
-&emsp;&emsp;&emsp; [安全な配列型コンテナ](template_meta_programming.md#SS_4_2_3)  
-&emsp;&emsp;&emsp; [初期化子リストの副作用](template_meta_programming.md#SS_4_2_4)  
+[Nstdライブラリの開発](template_meta_programming.md#SS_4_2)  
+&emsp;[Nstdライブラリを使用したリファクタリング](template_meta_programming.md#SS_4_2_1)  
+&emsp;[安全なvector](template_meta_programming.md#SS_4_2_2)  
+&emsp;[安全な配列型コンテナ](template_meta_programming.md#SS_4_2_3)  
+&emsp;[初期化子リストの副作用](template_meta_programming.md#SS_4_2_4)  
 
-&emsp;&emsp; [メタ関数のテクニック](template_meta_programming.md#SS_4_3)  
-&emsp;&emsp;&emsp; [is_void_xxxの実装](template_meta_programming.md#SS_4_3_1)  
-&emsp;&emsp;&emsp; [is_same_xxxの実装](template_meta_programming.md#SS_4_3_2)  
-&emsp;&emsp;&emsp; [AreConvertibleXxxの実装](template_meta_programming.md#SS_4_3_3)  
-&emsp;&emsp;&emsp; [関数の存在の診断](template_meta_programming.md#SS_4_3_4)  
+[メタ関数のテクニック](template_meta_programming.md#SS_4_3)  
+&emsp;[is_void_xxxの実装](template_meta_programming.md#SS_4_3_1)  
+&emsp;[is_same_xxxの実装](template_meta_programming.md#SS_4_3_2)  
+&emsp;[AreConvertibleXxxの実装](template_meta_programming.md#SS_4_3_3)  
+&emsp;[関数の存在の診断](template_meta_programming.md#SS_4_3_4)  
 
-&emsp;&emsp; [Nstdライブラリの開発2](template_meta_programming.md#SS_4_4)  
-&emsp;&emsp;&emsp; [SafeArray2の開発](template_meta_programming.md#SS_4_4_1)  
-&emsp;&emsp;&emsp; [Nstd::SafeIndexの開発](template_meta_programming.md#SS_4_4_2)  
-&emsp;&emsp;&emsp; [Nstd::SafeIndexのoperator\<\<の開発](template_meta_programming.md#SS_4_4_3)  
-&emsp;&emsp;&emsp; [コンテナ用Nstd::operator\<\<の開発](template_meta_programming.md#SS_4_4_4)  
+[Nstdライブラリの開発2](template_meta_programming.md#SS_4_4)  
+&emsp;[SafeArray2の開発](template_meta_programming.md#SS_4_4_1)  
+&emsp;[Nstd::SafeIndexの開発](template_meta_programming.md#SS_4_4_2)  
+&emsp;[Nstd::SafeIndexのoperator\<\<の開発](template_meta_programming.md#SS_4_4_3)  
+&emsp;[コンテナ用Nstd::operator\<\<の開発](template_meta_programming.md#SS_4_4_4)  
 
-&emsp;&emsp; [Nstdライブラリの開発3(浮動小数点関連)](template_meta_programming.md#SS_4_5)  
-&emsp;&emsp;&emsp; [浮動小数点の比較](template_meta_programming.md#SS_4_5_1)  
-&emsp;&emsp;&emsp; [固定小数点クラス](template_meta_programming.md#SS_4_5_2)  
-&emsp;&emsp;&emsp; [固定小数点リテラル](template_meta_programming.md#SS_4_5_3)  
-&emsp;&emsp;&emsp; [有理数クラス](template_meta_programming.md#SS_4_5_4)  
-&emsp;&emsp;&emsp; [有理数リテラル](template_meta_programming.md#SS_4_5_5)  
+[Nstdライブラリの開発3(浮動小数点関連)](template_meta_programming.md#SS_4_5)  
+&emsp;[浮動小数点の比較](template_meta_programming.md#SS_4_5_1)  
+&emsp;[固定小数点クラス](template_meta_programming.md#SS_4_5_2)  
+&emsp;[固定小数点リテラル](template_meta_programming.md#SS_4_5_3)  
+&emsp;[有理数クラス](template_meta_programming.md#SS_4_5_4)  
+&emsp;[有理数リテラル](template_meta_programming.md#SS_4_5_5)  
 
-&emsp;&emsp; [ログ取得ライブラリの開発2](template_meta_programming.md#SS_4_6)  
-&emsp;&emsp; [その他のテンプレートテクニック](template_meta_programming.md#SS_4_7)  
-&emsp;&emsp;&emsp; [forwardingリファレンスとstd::forward](template_meta_programming.md#SS_4_7_1)  
-&emsp;&emsp;&emsp; [ジェネリックラムダによる関数内での関数テンプレートの定義](template_meta_programming.md#SS_4_7_2)  
-&emsp;&emsp;&emsp; [クラステンプレートと継承の再帰構造](template_meta_programming.md#SS_4_7_3)  
-&emsp;&emsp;&emsp; [意図しないname lookupの防止](template_meta_programming.md#SS_4_7_4)  
-&emsp;&emsp;&emsp; [Nstd::Type2Strの開発](template_meta_programming.md#SS_4_7_5)  
-&emsp;&emsp;&emsp; [静的な文字列オブジェクト](template_meta_programming.md#SS_4_7_6)  
-&emsp;&emsp;&emsp; [関数型をテンプレートパラメータで使う](template_meta_programming.md#SS_4_7_7)  
+[ログ取得ライブラリの開発2](template_meta_programming.md#SS_4_6)  
+[その他のテンプレートテクニック](template_meta_programming.md#SS_4_7)  
+&emsp;[forwardingリファレンスとstd::forward](template_meta_programming.md#SS_4_7_1)  
+&emsp;[ジェネリックラムダによる関数内での関数テンプレートの定義](template_meta_programming.md#SS_4_7_2)  
+&emsp;[クラステンプレートと継承の再帰構造](template_meta_programming.md#SS_4_7_3)  
+&emsp;[意図しないname lookupの防止](template_meta_programming.md#SS_4_7_4)  
+&emsp;[Nstd::Type2Strの開発](template_meta_programming.md#SS_4_7_5)  
+&emsp;[静的な文字列オブジェクト](template_meta_programming.md#SS_4_7_6)  
+&emsp;[関数型をテンプレートパラメータで使う](template_meta_programming.md#SS_4_7_7)  
 
-&emsp;&emsp; [注意点まとめ](template_meta_programming.md#SS_4_8)  
+[注意点まとめ](template_meta_programming.md#SS_4_8)  
   
   
 
@@ -940,8 +940,8 @@ Loggerを宣言しているLoggingの3つである。
     }
 ```
 
-このドキュメントで使用している[g++](cpp_idioms.md#SS_8_13_1)ではこのコードはコンパイルでき、
-動作も問題ないように思われるが、[clang++](cpp_idioms.md#SS_8_13_2)では以下のようなエラーが発生し、コンパイルできない。
+このドキュメントで使用している[g++](cpp_idioms.md#SS_8_15_1)ではこのコードはコンパイルでき、
+動作も問題ないように思われるが、[clang++](cpp_idioms.md#SS_8_15_2)では以下のようなエラーが発生し、コンパイルできない。
 
 ```
     ./logger_0.h:37:21: error: call to function 'operator<<' that is neither 
@@ -973,7 +973,7 @@ clang++は「LOGGERの前にoperator<<を宣言せよ」と言っている。
   という名前空間Appローカルな宣言をグローバル名前空間で行うことによって、
   グローバル名前空間を汚染してしまう
   (このコードは名前空間を正しく使うことに対しての割れ窓
-  (「[割れ窓理論](cpp_idioms.md#SS_8_14_2)」参照)になってしまうかもしれない)。
+  (「[割れ窓理論](cpp_idioms.md#SS_8_16_2)」参照)になってしまうかもしれない)。
 * 例示したコードでのoperator<<(std::ostream& os, App::Ints_t const& ints)の定義は、
   単体テストファイル内にあったが、実際には何らかのヘッダファイル内で定義されることになる。
   その場合、ロガーのヘッダファイルよりも、
@@ -1152,7 +1152,7 @@ App::ToString()によりstd::stringへ変換する必要があり、残念なイ
 
 「[operator\<\<を使わない](template_meta_programming.md#SS_4_1_6_6)」で導入したコードは、短いながらも汎用性が高い。
 このようなコードをローカルなファイルに閉じ込めてしまうと、
-コードクローンや、[車輪の再発明](cpp_idioms.md#SS_8_14_3)による開発効率の低下につながることがある。
+コードクローンや、[車輪の再発明](cpp_idioms.md#SS_8_16_3)による開発効率の低下につながることがある。
 
 通常、プロジェクトの全ファイルから参照可能で且つ、
 プロジェクトの他のパッケージに非依存なパッケージを用意することで、このような問題を回避できる。
@@ -4491,7 +4491,7 @@ Nstd::SafeIndexのテンプレートテンプレートパラメータとして�
 ```
 
 ただし、このようなコードはコンパイラのバグによりコンパイルできないことがある。
-実際、現在使用中の[g++](cpp_idioms.md#SS_8_13_1)ではこのコードはコンパイルできず、
+実際、現在使用中の[g++](cpp_idioms.md#SS_8_15_1)ではこのコードはコンパイルできず、
 上記コードでコメントにも書いた通り、Inner_の中でPrintableを再定義することで、
 そのワークアラウンドを行っている。
 
@@ -6073,7 +6073,7 @@ std::variant、上に示した関数テンプレート、ジェネリックラ�
 ### クラステンプレートと継承の再帰構造 <a id="SS_4_7_3"></a>
 クラステンプレートと継承の再帰構造はCRTPと呼ばれる。
 このコードパターンについては、
-「[CRTP(curiously recurring template pattern)](cpp_idioms.md#SS_8_1_4)」で説明している。
+「[CRTP(curiously recurring template pattern)](cpp_idioms.md#SS_8_1_5)」で説明している。
 
 
 ### 意図しないname lookupの防止 <a id="SS_4_7_4"></a>
@@ -6545,7 +6545,7 @@ typeid::name()が返す文字列リテラルは引数の型の文字列表現を
 マングリングされているためヒューマンリーダブルではない。
 それをデマングルするのがabi::\_\_cxa\_demangleであるが、
 残念なことにこの関数は非標準であるため、
-それを使っているNstd::Inner\_::demangleは[g++](cpp_idioms.md#SS_8_13_1)/[clang++](cpp_idioms.md#SS_8_13_2)
+それを使っているNstd::Inner\_::demangleは[g++](cpp_idioms.md#SS_8_15_1)/[clang++](cpp_idioms.md#SS_8_15_2)
 でなければコンパイルできないだろう。
 
 それを除けば、
@@ -7330,7 +7330,7 @@ std::unique_ptrの第2パラメータに関数型オブジェクトの型(std::f
 第1パラメータのポインタを引数に取る関数型であれば指定できる。
 
 このようなテンプレートパラメータを持つクラステンプレートの実装例を示すため、
-「[RAII(scoped guard)](cpp_idioms.md#SS_8_1_2)でも示したScopedGuardの実装を下記する。
+「[RAII(scoped guard)](cpp_idioms.md#SS_8_1_3)でも示したScopedGuardの実装を下記する。
 
 やや意外だが、このようなテンプレートパラメータに特別な記法はなく、以下のようにすれば良い。
 

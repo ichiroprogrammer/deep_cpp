@@ -1,7 +1,9 @@
 <!-- ./md/sample_code.md -->
 # Sample Code <a id="SS_9"></a>
 ## C++ <a id="SS_9_1"></a>
+
 ### example/dynamic_memory_allocation/malloc_ut.cpp <a id="SS_9_1_1"></a>
+
 ```cpp
           1 #include <sys/unistd.h>
           2 
@@ -218,6 +220,7 @@
 ```
 
 ### example/dynamic_memory_allocation/mpool_variable.h <a id="SS_9_1_2"></a>
+
 ```cpp
           1 #pragma once
           2 #include <cassert>
