@@ -27,6 +27,758 @@ __この章の構成__
 
 ___
 
+## イディオム
+
+### ガード節(Early Return)
+ガード節とは、
+「可能な場合、処理を早期に打ち切るために関数やループの先頭に配置される短い条件文(通常はif文)」
+であり、以下のような利点がある。
+
+* 処理の打ち切り条件が明確になる。
+* 関数やループのネストが少なくなる。
+
+まずは、ガード節を使っていない例を上げる。
+
+```cpp
+    // @@@ example/design_pattern/guard_ut.cpp #0:0 begin
+```
+
+上記の例を読んで一目で何が行われているか、理解できる人は稀である。
+一方で、上記と同じロジックである下記関数を一目で理解できない人も稀である。
+
+```cpp
+    // @@@ example/design_pattern/guard_ut.cpp #1:0 begin
+```
+
+ここまで効果的な例はあまりない。
+
+もう一例、(ガード節導入の効果が前例ほど明確でない)ガード節を使っていないコードを示す。
+
+```cpp
+    // @@@ example/design_pattern/guard_ut.cpp #0:1 begin
+```
+
+上記にガード節を適用した例を下記する。
+
+```cpp
+    // @@@ example/design_pattern/guard_ut.cpp #1:1 begin
+```
+
+ガード節を使っていない例に比べて、
+
+* ネストが減って読みやすくなった
+* max_numが1, 2, 65535, 65536である場合がロジックの境界値であることが一目でわかるようになった
+
+といった改善はされたものの、最初の例ほどのレベル差はない。
+しかし、ソースコードの改善やリファクタリングのほとんどは、このようなものであり、
+この少しのレベルアップが数か月後、数年後に大きな差を生み出すことを忘れてはならない。
+
+[演習-ガード節](~~~)  
+
+---
+
+### 前方宣言ヘッダ(`_fwd.h`)
+class, struct, enum, enum class等の前方宣言により、特定ヘッダの依存関係を解消することは、
+ビルド時間の短縮やリファクタリングを容易にするなど、多くの利点をもたらす。
+しかし、前方宣言を必要とする各ヘッダファイルに個別にそれを記述する方式には、看過できない問題が存在する。
+実体（クラスや列挙型の定義）側の名前空間、クラス名、あるいはテンプレート引数などが変更された場合、
+これを利用する側に散在する前方宣言がその変更に追随せず、両者の間に不整合が生じ得るという点である。
+この種の不整合(例えば[ODR](---)違反)は、たとえ発生してもコンパイラが直ちに検出できるとは限らず、
+実行時の[未定義動作](---)や、原因の特定に長時間を要する難解なコンパイルエラーという形で顕在化することも少なくない。
+
+本節で述べる手法は、この問題に対し、前方宣言を単一のヘッダファイル（以下 `*_fwd.h`）
+に集約するとともに、実体を定義するヘッダファイル自身にも同じファイルをincludeさせるという構成を取る。
+これにより、前方宣言と実体定義との整合性はコンパイラによって機械的に保証されることとなり、
+前方宣言の記述を利用側の各ヘッダに分散させる従来の方式が内包していた保守上のリスクを、
+設計レベルで排除することが可能となる。
+
+以下に、`a.h`、`a_fwd.h`、`b.h`の3ファイルによる具体的な実装例を示す。
+
+```cpp
+// in a.h     class Aの宣言
+
+#include "a_fwd.h"  // NS1::Aの前方宣言のためのヘッダファイル
+                    // このincludeによりコンパイル時にa.hとa_fwd.hに矛盾がないことが保証される
+
+namespace NS1 {
+class A {
+public:
+    // 何らかの宣言、定義
+    //  ...
+};
+}
+```
+```cpp
+// in a_fwd.h     class Aの前方宣言
+
+namespace NS1 {
+class A;
+}
+```
+```cpp
+// in b.h     class Bの宣言
+
+#include "a_fwd.h"  // NS1::Aの前方宣言のためのヘッダファイル
+
+namespace NS2 {
+class B {
+public:
+    // 何らかの宣言、定義
+    //  ...
+
+    // ※ ~B()はb.cppで定義する(NS1::Aが不完全型のため、unique_ptrのデフォルトデリータをここで実体化できない)
+
+private:
+    std::unique_ptr<NS1::A> a_;
+};
+}
+```
+---
+
+### RAII(scoped guard)
+RAIIとは、「Resource Acquisition Is Initialization」の略語であり、
+リソースの確保と解放をオブジェクトの初期化と破棄処理に結びつけるパターンもしくはイデオムである。
+特にダイナミックにオブジェクトを生成する場合、
+RAIIに従わないとメモリリークを防ぐことは困難である。
+
+下記は、関数終了付近でdeleteする素朴なコードである。
+
+```cpp
+    // @@@ example/design_pattern/raii_ut.cpp #0:0 begin
+```
+
+このコードは下記の単体テストが示す通り、第1パラメータが5以上の場合、
+エクセプションが発生しメモリリークしてしまう。
+
+```cpp
+    // @@@ example/design_pattern/raii_ut.cpp #0:1 begin -1
+```
+
+以下は、std::unique_ptrによってRAIIを導入し、この問題に対処した例である。
+
+```cpp
+    // @@@ example/design_pattern/raii_ut.cpp #1:0 begin
+```
+
+下記単体テストで確認できるように、
+エクセプション発生時にもstd::unique_ptrによる自動解放によりメモリリークは発生しない。
+
+```cpp
+    // @@@ example/design_pattern/raii_ut.cpp #1:1 begin -1
+```
+
+RAIIのテクニックはメモリ管理のみでなく、ファイルディスクリプタ(open-close、socket-close)
+等のリソース管理においても有効であるという例を示す。
+
+下記は、生成したソケットを関数終了付近でcloseする素朴なコードである。
+
+```cpp
+    // @@@ example/design_pattern/raii_ut.cpp #2:0 begin
+```
+
+エクセプションを扱うために関数の2か所でソケットをcloseしている。
+この程度であれば大きな問題にはならないだろうが、実際には様々な条件が重なるため、
+リソースの解放コードは醜悪にならざるを得ない。
+
+このような場合には、下記するようなリソース解放用クラス
+
+```cpp
+    // @@@ essential/h/scoped_guard.h #0:0 begin
+    // @@@ essential/h/scoped_guard.h #0:1 begin
+    // @@@ essential/h/scoped_guard.h #0:2 begin
+```
+
+を使用し、下記のようにすることで安全なコードをすっきりと書くことができる。
+
+```cpp
+    // @@@ example/design_pattern/raii_ut.cpp #2:1 begin
+```
+
+クリティカルセクションの保護をlock/unlockで行うstd::mutex等を使う場合にも、
+std::lock_guard<>によってunlockを行うことで、同様の効果が得られる。
+
+[演習-RAIIの効果](~~~)  
+[演習-RAII](~~~)  
+
+---
+
+### Copy-And-Swap
+メンバ変数にポインタやスマートポインタを持つクラスに
+
+* copyコンストラクタ
+* copy代入演算子
+* moveコンストラクタ
+* move代入演算子
+
+が必要になった場合、コンパイラが生成するデフォルトの
+[オブジェクト生成と初期化|特殊メンバ関数](---)では機能が不十分であることが多い。
+
+下記に示すコードは、そのような場合の上記4関数の実装例である。
+
+```cpp
+    // @@@ example/design_pattern/no_copy_and_swap_ut.cpp #0:0 begin
+```
+
+コード内のコメントで示したように、このコードには以下のような問題がある。
+
+* copy代入演算子には、[エクセプション安全性の保証](---)がない。
+* 上記4関数は似ているにも関わらず、微妙な違いがあるためコードクローンとなっている。
+
+ここで紹介するCopy-And-Swapはこのような問題を解決するためのイデオムである。
+
+実装例を以下に示す。
+
+```cpp
+    // @@@ example/design_pattern/copy_and_swap_ut.cpp #0:0 begin
+```
+
+上記CopyAndSwapのcopyコンストラクタ、moveコンストラクタに変更はない。
+また、CopyAndSwap::Swapに関してもstd::vector等が持つswapと同様のものである。
+このイデオムの特徴は、copy代入演算子、
+move代入演算子が各コンストラクタとSwap関数により実装されている所にある。
+これにより[エクセプション安全性の保証](---)を持つ4関数をコードクローンすることなく実装できる。
+
+[演習-Copy-And-Swap](~~~)  
+
+---
+
+### CRTP(curiously recurring template pattern)
+CRTPとは、
+
+```cpp
+    // @@@ example/design_pattern/crtp_ut.cpp #0:0 begin
+```
+
+のようなテンプレートによる再帰構造を用いて、静的ポリモーフィズムを実現するためのパターンである。
+以下にこのパターンを使用した[ミックスイン](---)の例を示す。
+
+```cpp
+    // @@@ example/design_pattern/crtp_ut.cpp #1:0 begin
+```
+```cpp
+    // @@@ example/design_pattern/crtp_ut.cpp #1:1 begin -1
+```
+
+なお、このパターンは、[std::enable_shared_from_this](---)の使用において前提知識となっている。
+
+---
+
+### Accessor
+publicメンバ変数とそれにアクセスするソースコードは典型的なアンチパターンであるため、
+このようなコードを禁じるのが一般的なプラクティスである。
+
+```cpp
+    // @@@ example/design_pattern/accessor_ut.cpp #0:0 begin
+```
+
+とはいえ、ソフトウェアのプラクティスには必ずといってほど例外があり、
+製品開発の現場において、オブジェクトのメンバ変数にアクセスせざるを得ないような場面は、
+稀にではあるが発生する。
+このような場合に適用するがのこのイデオムである。
+
+```cpp
+    // @@@ example/design_pattern/accessor_ut.cpp #1:0 begin
+```
+
+メンバ変数への直接のアクセスに比べ、以下のようなメリットがある。
+
+* アクセスのログを入れることができる。
+* メンバ変数へのアクセスをデバッガで捕捉しやすくなる。
+* setterに都合の悪い値が渡された場合、何らかの手段を取ることができる(assertや、エラー処理)。
+* リファクタリングや機能修正により対象のメンバ変数がなくなった場合においても、
+  クラスのインターフェースの変更を回避できる(修正箇所を局所化できる)。
+
+一方で、クラスに対するこのような細かい制御は、カプセル化に対して問題を起こしやすい。
+下記はその典型的なアンチパターンである。
+
+```cpp
+    // @@@ example/design_pattern/accessor_ut.cpp #2:0 begin
+```
+
+上記ソースコードは、オブジェクトaのA::a\_が変更された場合、
+その後、それをもとに何らかの動作を行うこと(a.DoSomething)を表しているが、
+本来オブジェクトaの状態が変わったかどうかはオブジェクトa自体が判断すべきであり、
+a.DoSomething()の実行においても、それが必要かどうかはオブジェクトaが判断すべきである。
+この考えに基づいた修正ソースコードを下記に示す。
+
+```cpp
+    // @@@ example/design_pattern/accessor_ut.cpp #3:0 begin
+```
+
+setterを使用する場合、上記のように処理の隠蔽化には特に気を付ける必要がある。
+
+[演習-Accessorの副作用](~~~)  
+[演習-Accessor](~~~)  
+
+---
+
+### Immutable
+クラスに対するimmutable、immutabilityの定義を以下のように定める。
+
+* immutable(不変な)なクラスとは、初期化後、状態の変更ができないクラスを指す。
+* immutability(不変性)が高いクラスとは、
+  状態を変更するメンバ関数(非constなメンバ関数)が少ないクラスを指す。
+
+immutabilityが高いほど、そのクラスの使用方法は制限される。
+これにより、そのクラスやそのクラスを使用しているソースコードの可読性やデバッグ容易性が向上する。
+また、クラスがimmutableでなくても、そのクラスのオブジェクトをconstハンドル経由でアクセスすることで、
+immutableとして扱うことができる。
+
+一方で、「[Accessor](---)」で紹介したsetterは、クラスのimmutabilityを下げる。
+いつでも状態が変更できるため、ソースコードの可読性やデバッグ容易性が低下する。
+また、マルチスレッド環境においてはこのことが競合問題や、
+それを回避するためのロックがパフォーマンス問題やデッドロックを引き起こしてしまう。
+
+従って、クラスを宣言、定義する場合、immutabilityを出来るだけ高くするべきであり、
+そのクラスのオブジェクトを使う側は、
+可能な限りimmutableオブジェクト(constオブジェクト)として扱うべきである。
+
+[演習-Immutable](~~~)  
+
+---
+
+### NVI(non virtual interface)
+NVIとは、「virtualなメンバ関数をpublicにしない」という実装上の制約である。
+
+下記のようにクラスBaseが定義されているとする。
+
+```cpp
+    // @@@ example/design_pattern/nvi_ut.cpp #0:0 begin
+```
+
+これを使うクラスはBase::DoSomething()に依存する。
+また、このクラスから派生した下記のクラスDerivedもBase::DoSomething()に依存する。
+
+```cpp
+    // @@@ example/design_pattern/nvi_ut.cpp #0:1 begin
+```
+
+この条件下ではBase::DoSomething()へ依存が集中し、この関数の修正や機能追加の作業コストが高くなる。
+このイデオムは、この問題を軽減する。
+
+これを用いた上記2クラスのリファクタリング例を以下に示す。
+
+```cpp
+    // @@@ example/design_pattern/nvi_ut.cpp #1:0 begin
+```
+
+オーバーライド元の関数とそのオーバーライドのデフォルト引数の値は一致させる必要がある。
+
+それに従わない下記のようなクラスとその派生クラス
+
+```cpp
+    // @@@ example/design_pattern/nvi_ut.cpp #2:0 begin
+```
+
+には下記の単体テストで示したような、
+メンバ関数の振る舞いがその表層型に依存してしまう問題を持つことになる。
+
+```cpp
+    // @@@ example/design_pattern/nvi_ut.cpp #2:1 begin -1
+```
+
+この例のように継承階層が浅く、デフォルト引数の数も少ない場合、
+この値を一致させることは難しくないが、
+これよりも遥かに複雑な実際のコードではこの一致の維持は困難になる。
+
+下記のようにNVIに従わせることでこのような問題に対処できる。
+
+```cpp
+    // @@@ example/design_pattern/nvi_ut.cpp #3:0 begin
+```
+
+下記の単体テストにより、この問題の解消が確認できる。
+
+```cpp
+    // @@@ example/design_pattern/nvi_ut.cpp #3:1 begin -1
+```
+
+なお、メンバ関数のデフォルト引数は、
+そのクラス外部からのメンバ関数呼び出しを簡潔に記述するための記法であるため、
+privateなメンバ関数はデフォルト引数を持つべきではない。
+
+[演習-NVI](~~~)  
+
+---
+
+## 実装パターン
+### Pimpl
+このパターンは、「クラスA(a.cpp、a.hで宣言、定義)を使用するクラスにAの実装の詳細を伝搬させたくない」
+ような場合に使用する。
+そのため[オープン・クローズドの原則(OCP)](---)の実装方法としても有用である。
+
+一般的に、STLライブラリのパースは多くのCPUタイムを消費する。
+クラスAがSTLクラスをメンバに使用し、a.hにそのSTLヘッダファイルがインクルードされた場合、
+a.hをインクルードするファイルをコンパイルする度にそのSTLヘッダファイルはパースされる。
+これはさらに多くのCPUタイムの消費につながり、ソースコード全体のビルドは遅くなる。
+こういった問題をあらかじめ避けるためにも有効な手段ではあるが、
+そのトレードオフとして実行速度は若干遅くなる。
+
+下記は、Pimplイデオム未使用の、std::stringに依存したクラスStringHolderOldの例である。
+
+```cpp
+    // @@@ example/design_pattern/string_holder_old.h #0:0 begin
+```
+
+```cpp
+    // @@@ example/design_pattern/string_holder_old.cpp #0:0 begin
+```
+
+
+下記は、上記クラスStringHolderOldにPimplイデオムを適用したクラスStringHolderNewの例である。
+
+```cpp
+    // @@@ example/design_pattern/string_holder_new.h #0:0 begin
+```
+
+```cpp
+    // @@@ example/design_pattern/string_holder_new.cpp #0:0 begin
+```
+
+下記図は、上記ファイルやそれらを使用するファイルの依存関係である。
+string_holder_old.hは、std::stringに依存しているが、string_holder_new.hは、
+std::stringに依存していないこと、
+それによってStringHolderNewを使用するファイルから、std::stringへの依存を排除できていることがわかる。
+
+![ファイルの依存関係](plant_uml/pimpl_pattern.png)
+
+このパターンを使用して問題のある依存関係をリファクタリングする例を示す。
+
+まずは、リファクタリング前のコードを下記する。
+
+```cpp
+    // in lib/h/widget.h
+
+    // @@@ example/design_pattern/widget_ng.h #0:0 begin 0 -1
+    // @@@ example/design_pattern/widget_ng.h #0:1 begin 0 -1
+    // @@@ example/design_pattern/widget_ng.h #0:2 begin 0 -1
+```
+```cpp
+    // in lib/src/widget.cpp
+
+    #include "widget.h"
+    // @@@ example/design_pattern/widget_ng.cpp #0:0 begin 0 -1
+```
+```cpp
+    // in lib/ut/widget_ut.cpp
+
+    #include "widget.h"
+    // @@@ example/design_pattern/widget_ng_ut.cpp #0:0 begin 0 -1
+```
+
+何らかの事情により、単体テストでprivateなメンバにアクセスする必要があったため、
+単体テストクラスをテスト対象クラスのfriendすることで、それを実現している。
+
+単体テストクラスをテスト対象クラスのfriendにするためには、
+上記コードの抜粋である下記を記述する必要がある。
+
+```cpp
+    // @@@ example/design_pattern/widget_ng.h #0:1 begin 0 -1
+```
+
+このマクロは、gtest.h内で定義されているため、widget.hからgtest.hをインクルードしている。
+
+このため、ファイルの依存関係は下記のようになる。
+
+![ファイルの依存関係](plant_uml/widget_ng.png)
+
+この依存関係は、Widgetのクライアントに不要な依存関係を強要してしまう問題のある構造を作り出す。
+
+この問題をPimplによるリファクタリングで解決したコードを以下に示す
+(コンパイラのインクルードパスにはlib/hのみが入っていることを前提とする)。
+
+```cpp
+    // in lib/h/widget.h
+
+    // @@@ example/design_pattern/widget_ok.h #0:0 begin 0 -1
+```
+```cpp
+    // in lib/src/widget.cpp
+
+    #include "widget_internal.h"
+    // @@@ example/design_pattern/widget_ok.cpp #0:0 begin 0 -1
+```
+```cpp
+    // in lib/src/widget_internal.h
+
+    #include "widget.h"
+    // @@@ example/design_pattern/widget_ok_internal.h #0:0 begin 0 -1
+```
+```cpp
+    // in lib/ut/widget_ut.cpp
+
+    #include "../src/widget_internal.h"  // 単体テストのみに、このようなインクルードを認める
+    // @@@ example/design_pattern/widget_ok_ut.cpp #0:0 begin 0 -1
+```
+
+このリファクタリングにより、ファイルの依存は下記のようになり、
+問題のある構造は解消された。
+
+![ファイルの依存関係](plant_uml/widget_ok.png)
+[演習-Pimpl](~~~)  
+
+---
+
+### lightweight Pimpl
+[Pimpl](---)の解説で示したように依存関係をシンプルに保つには極めて有効なパターンではあるが、
+このパターンで実装されたクラスのインスタンス化のたびに一回以上のヒープからのアロケーションが必要になるため、
+このオーバーヘッドが気になるような場合に備えて、アロケーションを少なくするテクニックを以下に示す
+(なお、lightweight Pimplとは筆者の造語であり、ここで紹介するパターンはPimplの一種である)。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl.h #0:0 begin
+```
+
+このクラスの実装を以下に示す。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:0 begin
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:1 begin
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:2 begin
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:3 begin
+```
+
+ヒープ以外のメモリからnewするための[プレースメントnew](---)を使用しているため、
+上記の抜粋である以下のコードはやや見慣れないかもしれない。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:1 begin
+```
+
+プレースメントnewで構築したオブジェクトの解放にはdeleteは使えない。
+オブジェクトがその上で構築されているメモリはヒープのものではないため、deleteすると未定義動作につながる。
+
+deleteを使わずにプレースメントnewで構築したオブジェクトの各メンバのデストラクタを呼び出さなければ、
+リソースリークにつながる。この問題を解決するためのコードは、上記の抜粋である以下のようなものになる。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #0:2 begin
+```
+
+上記のクラスの動作を以下の単体テストにより示す。
+
+```cpp
+    // @@@ example/design_pattern/light_pimpl_ut.cpp #1:0 begin -1
+```
+
+**[ 通常のPimplとの比較 ]**
+
+| 特徴                 | 通常のPimpl                   | Lightweight Pimpl           |
+|----------------------|-------------------------------|-----------------------------|
+| メモリ確保           | ヒープ                        | スタック(オブジェクト内)    |
+| アロケーション回数   | インスタンス毎に1回以上       | 0回                         |
+| パフォーマンス       | new/deleteのオーバーヘッド    | 通常のPimplより良い         |
+| 実装の複雑さ         | シンプル                      | やや複雑(プレースメントnew) |
+| メモリサイズの柔軟性 | 高い                          | 低い(コンパイル時に固定)    |
+
+---
+
+### BitmaskType
+下記のようなビットマスク表現は誤用しやすいインターフェースである。
+修正や拡張等に関しても脆弱であるため、避けるべきである。
+
+```cpp
+    // @@@ example/design_pattern/enum_operator.h #0:0 begin
+```
+
+```cpp
+    // @@@ example/design_pattern/enum_operator_ut.cpp #0:0 begin -1
+```
+
+上記のような誤用を防ぐために、
+enumによるビットマスク表現を使用して型チェックを強化した例を以下に示す。
+このテクニックは、STLのインターフェースとしても使用されている強力なイデオムである。
+
+```cpp
+    // @@@ example/design_pattern/enum_operator.h #1:0 begin
+```
+
+```cpp
+    // @@@ example/design_pattern/enum_operator_ut.cpp #1:0 begin -1
+```
+
+この改善により、Animalのコンストラクタに域値外の値を渡すことは困難になった
+(少なくとも不注意で間違うことはないだろう)。
+この修正の延長で、Animal::GetPhisicalAbility()の戻り値もenumになり、これも誤用が難しくなった。
+
+[演習-BitmaskType](~~~)  
+
+---
+
+### Future
+[Future](https://ja.wikipedia.org/wiki/Future_%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3)とは、
+並行処理のためのデザインパターンであり、別スレッドに何らかの処理をさせる際、
+その結果の取得を、必要になるまで後回しにする手法である。
+
+C++11では、std::future, std::promise, std::asyncによって実現できる。
+
+まずは、C++03以前のスタイルから示す。
+
+```cpp
+    // @@@ example/design_pattern/future_ut.cpp #0:0 begin
+```
+
+上記は、
+
+1. 時間がかかる処理を並行して行うために、スレッドを二つ作る。
+2. それぞれの完了をthread::join()で待ち合わせる。
+3. その結果を参照キャプチャによって受け取る。
+4. その2つの結果を別の関数に渡す。
+
+という処理を行っている。
+
+この程度の単純なコードでは特に問題にはならないが、目的外の処理が多いことがわかるだろう。
+
+次にFutureパターンによって上記をリファクタリングした例を示す。
+
+```cpp
+    // @@@ example/design_pattern/future_ut.cpp #0:1 begin
+```
+
+リファクタリングした例では、時間のかかる処理をstd::future型のオブジェクトにし、
+その結果を必要とする関数に渡すことができるため、目的をよりダイレクトに表すことができる。
+
+なお、
+
+```cpp
+    std::async(関数オブジェクト)
+```
+
+という形式を使った場合、関数オブジェクトは、
+
+```cpp
+    std::launch::async | std::launch::deferred
+```
+
+が指定されたとして実行される。この場合、
+
+```cpp
+    std::launch::deferred
+```
+
+の効果により、関数オブジェクトは、並行に実行されるとは限らない
+(この仕様はランタイム系に依存しており、std::future::get()のコンテキストで実行されることもあり得る)。
+従って、並行実行が必要な場合、上記例のように
+
+```cpp
+    std::launch::async
+```
+
+のみを明示的に指定するべきである。
+
+[演習-Future](~~~)  
+
+---
+
+### Null Object
+オブジェクトへのポインタを受け取った関数が
+「そのポインタがnullptrでない場合、そのポインタが指すオブジェクトに何かをさせる」
+というような典型的な条件文を削減するためのパターンである。
+
+```cpp
+    // @@@ example/design_pattern/null_object_ut.cpp #0:0 begin
+```
+
+上記例にNull Objectパターンを適用した例を下記する。
+
+```cpp
+    // @@@ example/design_pattern/null_object_ut.cpp #0:1 begin
+```
+
+この単純な例では、逆にソースコードが複雑化したように見えるが、
+
+```cpp
+    if(a != nullptr)
+```
+
+を頻繁に使うような関数、
+クラスではソースコードの単純化やnullptrチェック漏れの防止に非常に有効である。
+
+[演習-Null Object](~~~)  
+
+---
+
+### Cでのクラス表現
+このドキュメントは、C++でのソフトウェア開発を前提としているため、
+ここで示したコードもC++で書いているが、
+
+* 何らかの事情でCを使わざるを得ないプログラマがデザインパターンを使用できるようにする
+* クラスの理解が曖昧なC++プログラマの理解を助ける(「[ポリモーフィックなクラス](---)」参照)
+
+ような目的のためにCでのクラスの実現方法を例示する。
+
+下記のような基底クラスPointとその派生クラスPoint3Dがあった場合、
+
+![ステートマシン図](plant_uml/class_c.png)
+
+C++では、Pointのコードは下記のように表すことが一般的である。
+
+```cpp
+    // @@@ example/design_pattern/class_ut.cpp #0:0 begin
+```
+
+この単体テストは、下記のようになる。
+
+```cpp
+    // @@@ example/design_pattern/class_ut.cpp #0:1 begin -1
+```
+
+これをCで表した場合、下記のようになる。
+
+```cpp
+    // @@@ example/design_pattern/class_ut.cpp #2:0 begin
+```
+
+C++のメンバ関数はプログラマから見えない引数thisを持つ。
+これを表したものが各関数の第1引数selfである。
+また、ポリモーフィックな関数は関数ポインタで、
+非ポリモーフィックな関数は通常の関数で表される。
+
+この単体テストは、下記のようになる。
+
+```cpp
+    // @@@ example/design_pattern/class_ut.cpp #2:1 begin -1
+```
+
+Pointから派生したクラスPoint3DのC++での実装を以下に示す。
+
+```cpp
+    // @@@ example/design_pattern/class_ut.cpp #1:0 begin
+```
+
+この単体テストは、下記のようになる。
+
+```cpp
+    // @@@ example/design_pattern/class_ut.cpp #1:1 begin -1
+```
+
+これをCで実装したものが下記である。
+
+```cpp
+    // @@@ example/design_pattern/class_ut.cpp #3:0 begin
+```
+
+この単体テストは、下記のようになる。
+
+```cpp
+    // @@@ example/design_pattern/class_ut.cpp #3:1 begin -1
+```
+
+以上からわかる通り、Cでのクラス実装はC++のものに比べ、
+
+* 記述が多い
+* キャストを使わざるを得ない
+* リファレンスが使えないため、NULLにならないハンドル変数をポインタにせざるを得ない
+
+等といった問題があるため、「何らかの事情でC++が使えない」チームは、
+なるべく早い時期にその障害を乗り越えることをお勧めする。
+
+どうしてもその障害を超えられない場合は、
+[モダンC言語プログラミング](https://www.amazon.co.jp/%E3%83%A2%E3%83%80%E3%83%B3C%E8%A8%80%E8%AA%9E%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0-%E3%82%A2%E3%82%B9%E3%82%AD%E3%83%BC%E6%9B%B8%E7%B1%8D-%E8%8A%B1%E4%BA%95-%E5%BF%97%E7%94%9F-ebook/dp/B00HWLJEKW)
+が役に立つだろう。
+
+---
+
 ## オブジェクト生成系デザインパターン
 ### Singleton
 このパターンにより、特定のクラスのインスタンスをシステム全体で唯一にすることができる。

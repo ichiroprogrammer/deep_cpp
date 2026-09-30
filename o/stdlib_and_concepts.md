@@ -119,7 +119,7 @@ std::moveは引数を[rvalueリファレンス](core_lang_spec.md#SS_6_8_2)に�
 std::moveは以下の２つの概念ときわめて密接に関連しており、
 
 * [rvalueリファレンス](core_lang_spec.md#SS_6_8_2)
-* [moveセマンティクス](cpp_idioms.md#SS_8_5_3)
+* [moveセマンティクス](cpp_idioms.md#SS_8_3_3)
 
 これら3つが組み合わさることで、不要なコピーを避けた高効率なリソース管理が実現される。
 
@@ -413,13 +413,13 @@ std::is_voidはテンプレートパラメータの型が
 
 ### std::is_copy_assignable <a id="SS_7_2_8"></a>
 std::is_copy_assignableはテンプレートパラメータの型(T)がcopy代入可能かを調べる。
-Tが[CopyAssignable要件](cpp_idioms.md#SS_8_5_5)を満たすためには`std::is_copy_assignable<T>`がtrueでなければならないが、
+Tが[CopyAssignable要件](cpp_idioms.md#SS_8_3_5)を満たすためには`std::is_copy_assignable<T>`がtrueでなければならないが、
 その逆が成立するとは限らない。
 
 
 ### std::is_move_assignable <a id="SS_7_2_9"></a>
 std::is_move_assignableはテンプレートパラメータの型(T)がmove代入可能かを調べる。
-Tが[MoveAssignable要件](cpp_idioms.md#SS_8_5_4)を満たすためには`std::is_move_assignable<T>`がtrueでなければならないが、
+Tが[MoveAssignable要件](cpp_idioms.md#SS_8_3_4)を満たすためには`std::is_move_assignable<T>`がtrueでなければならないが、
 その逆が成立するとは限らない。
 
 
@@ -502,7 +502,7 @@ mutex は、スレッド間で使用する共有リソースを排他制御す�
 
 
 以下のコード例では、メンバ変数のインクリメントがスレッド間の競合を引き起こす(こういったコード領域を
-[クリティカルセクション](cpp_idioms.md#SS_8_14_5)と呼ぶ)が、std::mutexによりこの問題を回避している。
+[クリティカルセクション](cpp_idioms.md#SS_8_12_5)と呼ぶ)が、std::mutexによりこの問題を回避している。
 
 ```cpp
     //  example/stdlib_and_concepts/thread_ut.cpp 48
@@ -594,7 +594,7 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
 
 ### std::condition_variable <a id="SS_7_4_4"></a>
 condition_variable は、特定のイベントが発生するまでスレッドの待ち合わせを行うためのクラスである。
-最も単純な使用例を以下に示す(「[Spurious Wakeup](cpp_idioms.md#SS_8_14_15)」参照)。
+最も単純な使用例を以下に示す(「[Spurious Wakeup](cpp_idioms.md#SS_8_12_15)」参照)。
 
 ```cpp
     //  example/stdlib_and_concepts/thread_ut.cpp 135
@@ -808,9 +808,9 @@ std::unique_lockやstd::lock_guardによりmutexを使用する。
     ASSERT_EQ(push_count_max, pop_count);
 ```
 
-一般に条件変数には、[Spurious Wakeup](cpp_idioms.md#SS_8_14_15)という問題があり、std::condition_variableも同様である。
+一般に条件変数には、[Spurious Wakeup](cpp_idioms.md#SS_8_12_15)という問題があり、std::condition_variableも同様である。
 
-上記の抜粋である下記のコード例では[Spurious Wakeup](cpp_idioms.md#SS_8_14_15)の対策が行われていないため、
+上記の抜粋である下記のコード例では[Spurious Wakeup](cpp_idioms.md#SS_8_12_15)の対策が行われていないため、
 意図通り動作しない可能性がある。
 
 ```cpp
@@ -977,7 +977,7 @@ C++標準ライブラリでは、主に以下の3種類のスマートポイン�
 
 ### std::unique_ptr <a id="SS_7_6_1"></a>
 std::unique_ptrは、C++11で導入されたスマートポインタの一種であり、std::shared_ptrとは異なり、
-[オブジェクトの排他所有](cpp_idioms.md#SS_8_4_1)を表すために用いられる。所有権は一つのunique_ptrインスタンスに限定され、
+[オブジェクトの排他所有](cpp_idioms.md#SS_8_2_1)を表すために用いられる。所有権は一つのunique_ptrインスタンスに限定され、
 他のポインタと共有することはできない。ムーブ操作によってのみ所有権を移譲でき、
 スコープを抜けると自動的にリソースが解放されるため、メモリ管理の安全性と効率性が向上する。
 
@@ -985,10 +985,10 @@ std::unique_ptrは、C++11で導入されたスマートポインタの一種で
 [std::make_unique\<T\>(Args...)](https://cpprefjp.github.io/reference/memory/make_unique.html)は、
 クラスTをダイナミックに生成し、そのポインタを保持するshared_ptrオブジェクトを生成する。
 
-使用例については、「[オブジェクトの排他所有](cpp_idioms.md#SS_8_4_1)」を参照せよ。
+使用例については、「[オブジェクトの排他所有](cpp_idioms.md#SS_8_2_1)」を参照せよ。
 
 ### std::shared_ptr <a id="SS_7_6_2"></a>
-std::shared_ptrは、同じくC++11で導入されたスマートポインタであり、[オブジェクトの共有所有](cpp_idioms.md#SS_8_4_2)を表すために用いられる。
+std::shared_ptrは、同じくC++11で導入されたスマートポインタであり、[オブジェクトの共有所有](cpp_idioms.md#SS_8_2_2)を表すために用いられる。
 複数のshared_ptrインスタンスが同じリソースを参照でき、
 内部の参照カウントによって最後の所有者が破棄された時点でリソースが解放される。
 [std::weak_ptr](stdlib_and_concepts.md#SS_7_6_3)は、shared_ptrと連携して使用されるスマートポインタであり、オブジェクトの非所有参照を表す。
@@ -998,7 +998,7 @@ std::shared_ptrは、同じくC++11で導入されたスマートポインタで
 [std::make_shared\<T\>(Args...)](https://cpprefjp.github.io/reference/memory/make_shared.html)は、
 クラスTをダイナミックに生成し、そのポインタを保持するshared_ptrオブジェクトを生成する。
 
-使用例については、「[オブジェクトの共有所有](cpp_idioms.md#SS_8_4_2)」を参照せよ。
+使用例については、「[オブジェクトの共有所有](cpp_idioms.md#SS_8_2_2)」を参照せよ。
 
 #### std::enable_shared_from_this <a id="SS_7_6_2_2"></a>
 `std::enable_shared_from_this`は、`shared_ptr`で管理されているオブジェクトが、
@@ -1075,15 +1075,15 @@ shared_ptrのコンストラクタがenable_shared_from_thisの存在を検出�
    std::enable_shared_from_thisを継承したクラスのインスタンスは、必ずstd::make_sharedまたはshared_ptrのコンストラクタで生成する必要がある。
 
 C++17以降では、`weak_from_this()`メソッドも提供されている。これはshared_from_this()と同様の仕組みだが、
-weak_ptrを返すため[オブジェクトの循環所有](cpp_idioms.md#SS_8_4_3)を避けたい場合に有用である。
+weak_ptrを返すため[オブジェクトの循環所有](cpp_idioms.md#SS_8_2_3)を避けたい場合に有用である。
 
 ### std::weak_ptr <a id="SS_7_6_3"></a>
 std::weak_ptrは、スマートポインタの一種である。
 
 std::weak_ptrは参照カウントに影響を与えず、[std::shared_ptr](stdlib_and_concepts.md#SS_7_6_2)とオブジェクトを共有所有するのではなく、
-その`shared_ptr`インスタンスとの関連のみを保持するのため、[オブジェクトの循環所有](cpp_idioms.md#SS_8_4_3)の問題を解決できる。
+その`shared_ptr`インスタンスとの関連のみを保持するのため、[オブジェクトの循環所有](cpp_idioms.md#SS_8_2_3)の問題を解決できる。
 
-[オブジェクトの循環所有](cpp_idioms.md#SS_8_4_3)で示した問題のあるクラスの修正版を以下に示す
+[オブジェクトの循環所有](cpp_idioms.md#SS_8_2_3)で示した問題のあるクラスの修正版を以下に示す
 (以下の例では、Xは前のままで、Yのみ修正した)。
 
 ```cpp
@@ -1241,7 +1241,7 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 - オブジェクトが既に解放されている場合は`lock()`が空の`shared_ptr`を返すため、安全に処理できる
 
 ### std::auto_ptr <a id="SS_7_6_4"></a>
-`std::auto_ptr`はC++11以前に導入された初期のスマートポインタであるが、異常な[copyセマンティクス](cpp_idioms.md#SS_8_5_2)を持つため、
+`std::auto_ptr`はC++11以前に導入された初期のスマートポインタであるが、異常な[copyセマンティクス](cpp_idioms.md#SS_8_3_2)を持つため、
 多くの誤用を生み出し、C++11から非推奨とされ、C++17から規格から排除された。
 
 
@@ -1784,7 +1784,7 @@ std::variant自身では、オブジェクトのダイナミックな生成が�
     ASSERT_FLOAT_EQ(std::get<2>(var), 1.0);  // 2番目の型の値を取得
 ```
 
-std::variantとstd::visit([Visitor](design_pattern.md#SS_3_2_5)パターンの実装の一種)を組み合わせた場合の使用例を以下に示す。
+std::variantとstd::visit([Visitor](design_pattern.md#SS_3_4_5)パターンの実装の一種)を組み合わせた場合の使用例を以下に示す。
 
 ```cpp
     //  example/stdlib_and_concepts/variant_ut.cpp 37
