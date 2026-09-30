@@ -1,5 +1,5 @@
 SRCS:=\
-    clone_ut.cpp \
+    active_object_ut.cpp clone_ut.cpp \
     di_ut.cpp singleton_ut.cpp state_machine_ut.cpp state_machine_new.cpp state_machine_old.cpp \
     template_method_factory_ut.cpp template_method_ut.cpp template_method.cpp \
     proxy_ut.cpp bare_server.cpp bare_server_wrapper.cpp wrapped_server.cpp \

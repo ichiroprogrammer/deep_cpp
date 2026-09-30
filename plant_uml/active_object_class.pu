@@ -1,0 +1,28 @@
+@startuml
+hide empty members
+skinparam classAttributeIconSize 0
+
+class Client
+
+class ActiveObject {
+    {field} - requests_ : std::list<std::packaged_task<void()>>
+    - worker_ : std::thread
+    + Add(a : int, b : int) : std::future<int>
+    - enqueue(func) : std::future<R>
+    - dispatch()
+}
+
+class Servant {
+    + Add(a : int, b : int) : int
+}
+
+class "std::packaged_task<R()>" as Task
+class "std::future<R>" as Future
+
+Client ..> ActiveObject : 呼び出し
+Client ..> Future : get()
+ActiveObject *-- Servant
+ActiveObject *-- "0..*" Task : requests_
+Task ..> Servant : 実行
+Task ..> Future : 結果を格納
+@enduml

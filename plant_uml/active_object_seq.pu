@@ -1,0 +1,33 @@
+@startuml
+hide footbox
+
+box "クライアントスレッド" #EEF5FF
+    participant Client
+end box
+
+participant "ActiveObject" as AO
+
+box "ワーカスレッド" #EEFFEE
+    participant "dispatch()" as Worker
+    participant Servant
+end box
+
+Client -> AO : Add(1, 2)
+activate AO
+AO -> AO : requests_に積む\nnotify_one()
+AO --> Client : future
+deactivate AO
+
+Client -> Client : 他の処理
+
+Worker -> AO : requests_から取り出す
+AO --> Worker : 要求
+activate Worker
+Worker -> Servant : Add(1, 2)
+Servant --> Worker : 3
+Worker -> Worker : futureに3を格納
+deactivate Worker
+
+Client -> Client : future.get() → 3
+@enduml
+

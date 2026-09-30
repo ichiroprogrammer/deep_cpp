@@ -20,45 +20,7 @@ ___
 
 __この章の構成__
 
-[イディオム](---)  
-
-- [ガード節(Early Return)](---)
-- [前方宣言ヘッダ(`_fwd.h`)](---)
-- [RAII(scoped guard)](---)
-- [Copy-And-Swap](---)
-- [CRTP(curiously recurring template pattern)](---)
-- [Accessor](---)
-- [Immutable](---)
-- [NVI(non virtual interface)](---)
-
-[実装パターン](---)
-
-- [Pimpl](---)
-- [lightweight Pimpl](---)
-- [BitmaskType](---)
-- [Future](---)
-- [Null Object](---)
-- [Cでのクラス表現](---)
-
-[オブジェクト生成系デザインパターン](---)
-
-- [Singleton](---)
-- [Named Constructor](---)
-- [Clone(仮想コンストラクタ)](---)
-- [Factory](---)
-
-[オブジェクトの動作/協調に関するデザインパターン](---)
-
-- [Templateメソッド](---)
-- [Strategy](---)
-- [State](---)
-- [Observer](---)
-- [Visitor](---)
-
-[アーキテクチャパターン(システムレベルの構造)](---)
-
-- [DI(dependency injection)](---)
-- [MVC](---)
+<!-- index 1-3 -->
 
 
 [インデックス](---)に戻る。  
@@ -98,6 +60,8 @@ C++11から上記例のようなSingletonオブジェクトのコンストラク
 
 [演習-Singleton](~~~)  
 
+___
+
 ### Named Constructor
 Named Connstructorは、[Singleton](---)のようなオブジェクトを複数、生成するためのパターンである。
 
@@ -133,6 +97,8 @@ Named Connstructorは、[Singleton](---)のようなオブジェクトを複数�
 
 [演習-Named Constructor](~~~)  
 
+___
+
 ### Clone(仮想コンストラクタ)
 オブジェクトコピーによる[オブジェクトのコピー|スライシング](---)を回避するためのイデオムである。
 
@@ -152,6 +118,8 @@ B1::Clone()やそのオーバーライドであるD1::Clone()を使うことで�
 スライシングを起こすことなくオブジェクトのコピーを行うことができるようになった。
 
 [演習-Clone](~~~)  
+
+___
 
 ### Factory
 Factoryは、専用関数(Factory関数)にオブジェクト生成をさせるためのパターンである。
@@ -250,7 +218,11 @@ DI(「[DI(dependency injection)](---)」参照)と組み合わせて使われる
 
 [演習-Factory](~~~)  
 
+___
+
 ## オブジェクトの動作/協調に関するデザインパターン
+
+___
 
 ### Templateメソッド
 Templateメソッドは、雛形の形式(書式等)を定めるメンバ関数(templateメソッド)と、
@@ -314,6 +286,8 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 ```
 
 [演習-Templateメソッド](~~~)  
+
+___
 
 ### Strategy
 関数f(args)の振る舞いが、
@@ -420,6 +394,8 @@ Strategyオブジェクトにいろいろなバリエーションがある場合
 
 [演習-Strategy](~~~)  
 
+___
+
 ### State
 Stateは、オブジェクトの状態と、それに伴う振る舞いを分離して記述するためのパターンである。
 これにより状態の追加、削減、変更に伴う修正範囲が限定される
@@ -499,6 +475,8 @@ ThreadOldStyleStateStr()、ThreadOldStyleRun()、ThreadOldStyleAbort()、ThreadO
 ```
 
 [演習-State](~~~)  
+
+___
 
 ### Observer
 Observerは、クラスSubjectと複数のクラスObserverN(N = 0, 1, 2 ...)があり、
@@ -580,6 +558,8 @@ Observerパターンを使用しない例と比べると、
 ![ファイルの依存関係](plant_uml/observer_file_ok.png)
 
 [演習-Observer](~~~)  
+
+___
 
 ### Visitor
 このパターンは、クラス構造とそれに関連するアルゴリズムを分離するためのものである。
@@ -684,6 +664,8 @@ FileEntityVisitorから派生するクラスを下記クラス図が示すよう
 
 [演習-Visitor](~~~)  
 
+___
+
 ### Proxy
 Proxyとは代理人という意味で、
 本物のクラスに代わり代理クラス(Proxy)が処理を受け取る
@@ -774,9 +756,39 @@ WrappedServerのクライアントは、そのままWrappedServerProxyのクラ�
 
 [演習-Proxy](~~~)  
 
+___
+
+### Active Object
+
+Active Objectは、メソッドの呼び出しと実行を別のスレッドに分離するデザインパターンである。
+
+通常のメソッド呼び出しでは、呼び出したスレッドがそのままメソッドを実行し、完了するまで戻らない。
+Active Objectでは、呼び出しは要求としてキューに積まれ、直ちに戻る。
+キューに積まれた要求は、オブジェクトが内包するワーカスレッドが1つずつ取り出して実行する。
+実行結果は、呼び出し時に返されたfutureを通して受け取る。
+
+![シーケンス図](plant_uml/active_object_seq.png)
+
+![クラス図](plant_uml/active_object_class.png)
+
+この構造により、以下の性質が得られる。
+
+呼び出し側のスレッドは、処理の完了を待たずに次の処理を進められる。
+実際の処理を行うServantはワーカスレッドからのみ呼び出されるため、Servant自身はロックを持つ必要がない。
+複数のスレッドからの要求はキューによって直列化され、受け付け順に実行される。
+
+これらを実現するコードを以下に示す。
+
+```cpp
+    // @@@ example/design_pattern/active_object_ut.cpp #0:0 begin
+```
+```cpp
+    // @@@ example/design_pattern/active_object_ut.cpp #1:0 begin -1
+```
+
+___
 
 ## アーキテクチャパターン(システムレベルの構造)
-
 ### DI(dependency injection)
 メンバ関数内でクラスDependedのオブジェクトを直接、生成する
 (もしくは[Singleton](---)オブジェクトや静的オブジェクト(std::coutやstd::cin等)に直接アクセスする)
@@ -872,6 +884,8 @@ UNIT_TESTを定義しない実際のコードの評価にはならない。
 [演習-DI](~~~)  
 
 
+___
+
 ### MVC
 
 MVCはデザインパターンと言うよりもアーキテクチャパターンである。
@@ -914,7 +928,5 @@ ViewはModelの[Observer](---)であるため、ModelはViewへ依存しない�
 [演習-デザインパターン選択1](~~~)  
 [演習-デザインパターン選択2](~~~)  
 [演習-デザインパターン選択3](~~~)  
-
-
 
 
