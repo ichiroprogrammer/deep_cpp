@@ -6,7 +6,7 @@ SRCS:=\
     proxy_ut.cpp raii_ut.cpp singleton_ut.cpp state_machine_new.cpp state_machine_old.cpp state_machine_ut.cpp \
     strategy_shipping_ut.cpp string_holder_new.cpp string_holder_old.cpp string_holder_ut.cpp subject_ng.cpp \
     subject_ok.cpp template_method.cpp template_method_factory_ut.cpp template_method_ut.cpp visitor.cpp \
-    visitor_crtp_ut.cpp visitor_ut.cpp widget_ng.cpp widget_ng_ut.cpp widget_ok.cpp widget_ok_ut.cpp \
+	stringize_ut.cpp visitor_crtp_ut.cpp visitor_ut.cpp widget_ng.cpp widget_ng_ut.cpp widget_ok.cpp widget_ok_ut.cpp \
     wrapped_server.cpp wrapped_server_proxy.cpp \
 
 CPP_VER:= c++17

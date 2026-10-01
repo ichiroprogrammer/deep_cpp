@@ -30,6 +30,7 @@ __この章の構成__
 &emsp;[Accessor](design_pattern.md#SS_3_1_6)  
 &emsp;[Immutable](design_pattern.md#SS_3_1_7)  
 &emsp;[NVI(non virtual interface)](design_pattern.md#SS_3_1_8)  
+&emsp;[二段階文字列化(STRINGIZE) ](design_pattern.md#SS_3_1_9)  
 
 [実装パターン](design_pattern.md#SS_3_2)  
 &emsp;[Pimpl](design_pattern.md#SS_3_2_1)  
@@ -1020,6 +1021,67 @@ NVIとは、「virtualなメンバ関数をpublicにしない」という実装�
 そのクラス外部からのメンバ関数呼び出しを簡潔に記述するための記法であるため、
 privateなメンバ関数はデフォルト引数を持つべきではない。
 
+
+---
+
+### 二段階文字列化(STRINGIZE)  <a id="SS_3_1_9"></a>
+本節では、プリプロセッサの文字列化演算子 `#` を二段階のマクロで包むイディオムと、
+その代表的な応用2つを解説する。
+
+典型的な二段階文字列化(STRINGIZE)イデオムは以下のようなコードを指す。
+
+```cpp
+    //  example/design_pattern/stringize_ut.cpp 5
+
+    // 二段階文字列化イデオムマクロ
+    #define STRINGIZE_INTERNAL(x) #x
+    #define STRINGIZE(x) STRINGIZE_INTERNAL(x)
+```
+
+通常、関数形式マクロの実引数は、置換リストに代入される前に完全にマクロ展開される。ただし、
+その仮引数が `#` または `##` の被演算子である場合は例外であり、実引数は書かれたままの形で使われる。
+
+```c
+    #define LINE_A STRINGIZE_INTERNAL(__LINE__)   // -> "__LINE__"
+    #define LINE_B STRINGIZE(__LINE__)            // -> "42" など
+```
+
+STRINGIZEを使ったコードの場所の文字列化('__LINE__'の文字列への取り込み)は以下のように実装できる。
+
+
+```cpp
+    //  example/design_pattern/stringize_ut.cpp 11
+
+    #define WHERE __FILE__ ":" STRINGIZE(__LINE__)
+```
+```cpp
+    //  example/design_pattern/stringize_ut.cpp 18
+
+    std::stringstream oss;
+    auto              line_no = __LINE__ + 2;  // テスト対象の行は2行下
+
+    char const whare[]{WHERE};
+    oss << __FILE__ ":" << line_no;
+
+    ASSERT_EQ(oss.str(), whare);
+```
+
+gccの警告の抑止を行うための以下のようなマクロは、
+
+```cpp
+    #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
+    #define SUPPRESS_WARN_GCC_BOOL_OP _Pragma("GCC diagnostic ignored \"-Wbool-operation\"")
+    #define SUPPRESS_WARN_GCC_ADDRESS _Pragma("GCC diagnostic ignored \"-Waddress\"")
+```
+
+このSTRINGIZEを使って、以下のようにすっきりと実装できる。
+
+```cpp
+    #define IGNORE_GCC_DIAGNOSTIC(s) _Pragma(STRINGIZE(GCC diagnostic ignored s))
+
+    #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS IGNORE_GCC_DIAGNOSTIC("-Warray-bounds")
+    #define SUPPRESS_WARN_GCC_BOOL_OP IGNORE_GCC_DIAGNOSTIC("-Wbool-operation\"")
+```
 
 ---
 
@@ -4871,7 +4933,7 @@ Active Objectでは、呼び出しは要求としてキューに積まれ、直�
     {
         {
             std::lock_guard<std::mutex> lock{mtx_};
-            stop_ = true;   // dispatchのwaitのブロックから起こす
+            stop_ = true;  // dispatchのwaitのブロックから起こす
         }
         cv_.notify_one();
         worker_.join();  // 受け付け済みの要求をすべて実行し終えるまで待つ。この後にservant_等が破棄される

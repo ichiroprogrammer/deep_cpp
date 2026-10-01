@@ -98,7 +98,7 @@ inline ActiveObject::~ActiveObject()
 {
     {
         std::lock_guard<std::mutex> lock{mtx_};
-        stop_ = true;   // dispatchのwaitのブロックから起こす
+        stop_ = true;  // dispatchのwaitのブロックから起こす
     }
     cv_.notify_one();
     worker_.join();  // 受け付け済みの要求をすべて実行し終えるまで待つ。この後にservant_等が破棄される

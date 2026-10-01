@@ -401,6 +401,53 @@ privateなメンバ関数はデフォルト引数を持つべきではない。
 
 ---
 
+### 二段階文字列化(STRINGIZE) 
+本節では、プリプロセッサの文字列化演算子 `#` を二段階のマクロで包むイディオムと、
+その代表的な応用2つを解説する。
+
+典型的な二段階文字列化(STRINGIZE)イデオムは以下のようなコードを指す。
+
+```cpp
+    // @@@ example/design_pattern/stringize_ut.cpp #0:0 begin
+```
+
+通常、関数形式マクロの実引数は、置換リストに代入される前に完全にマクロ展開される。ただし、
+その仮引数が `#` または `##` の被演算子である場合は例外であり、実引数は書かれたままの形で使われる。
+
+```c
+    #define LINE_A STRINGIZE_INTERNAL(__LINE__)   // -> "__LINE__"
+    #define LINE_B STRINGIZE(__LINE__)            // -> "42" など
+```
+
+STRINGIZEを使ったコードの場所の文字列化('__LINE__'の文字列への取り込み)は以下のように実装できる。
+
+
+```cpp
+    // @@@ example/design_pattern/stringize_ut.cpp #0:1 begin
+```
+```cpp
+    // @@@ example/design_pattern/stringize_ut.cpp #0:2 begin -1
+```
+
+gccの警告の抑止を行うための以下のようなマクロは、
+
+```cpp
+    #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
+    #define SUPPRESS_WARN_GCC_BOOL_OP _Pragma("GCC diagnostic ignored \"-Wbool-operation\"")
+    #define SUPPRESS_WARN_GCC_ADDRESS _Pragma("GCC diagnostic ignored \"-Waddress\"")
+```
+
+このSTRINGIZEを使って、以下のようにすっきりと実装できる。
+
+```cpp
+    #define IGNORE_GCC_DIAGNOSTIC(s) _Pragma(STRINGIZE(GCC diagnostic ignored s))
+
+    #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS IGNORE_GCC_DIAGNOSTIC("-Warray-bounds")
+    #define SUPPRESS_WARN_GCC_BOOL_OP IGNORE_GCC_DIAGNOSTIC("-Wbool-operation\"")
+```
+
+---
+
 ## 実装パターン
 ### Pimpl
 このパターンは、「クラスA(a.cpp、a.hで宣言、定義)を使用するクラスにAの実装の詳細を伝搬させたくない」

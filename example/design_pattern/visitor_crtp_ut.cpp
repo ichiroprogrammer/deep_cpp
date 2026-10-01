@@ -13,7 +13,7 @@
 namespace {
 std::string find_files(std::string const& dir)
 {
-    namespace fs = std::filesystem;  // OK $BD9$$L>A0$rC;$/(B
+    namespace fs = std::filesystem;  // OK 長い名前を短く
 
     auto files = std::vector<std::string>{};
     auto top   = fs::path{dir};
@@ -96,7 +96,7 @@ TEST(CRTP, testable_visitor)
 {
     auto ostring = std::ostringstream{};
 
-    // $B=PNO$r%-%c%W%A%c$9$k$?$a!"(Bstd::cout$B$KBe$($F(Bostring$B$r;H$&(B
+    // 出力をキャプチャするため、std::coutに代えてostringを使う
     auto visitor1 = TestablePathnamePrinter1{ostring};
     auto visitor2 = TestablePathnamePrinter2{ostring};
 
