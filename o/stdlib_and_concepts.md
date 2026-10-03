@@ -19,7 +19,10 @@ __この章の構成__
 &emsp;[std::conditional](stdlib_and_concepts.md#SS_7_2_6)  
 &emsp;[std::is_void](stdlib_and_concepts.md#SS_7_2_7)  
 &emsp;[std::is_copy_assignable](stdlib_and_concepts.md#SS_7_2_8)  
+&emsp;&emsp;[CopyAssignable要件](stdlib_and_concepts.md#SS_7_2_8_1)  
+
 &emsp;[std::is_move_assignable](stdlib_and_concepts.md#SS_7_2_9)  
+&emsp;&emsp;[MoveAssignable要件](stdlib_and_concepts.md#SS_7_2_9_1)  
 
 [標準エクセプションクラス](stdlib_and_concepts.md#SS_7_3)  
 &emsp;[std::exception](stdlib_and_concepts.md#SS_7_3_1)  
@@ -119,7 +122,7 @@ std::moveは引数を[rvalueリファレンス](core_lang_spec.md#SS_6_8_2)に�
 std::moveは以下の２つの概念ときわめて密接に関連しており、
 
 * [rvalueリファレンス](core_lang_spec.md#SS_6_8_2)
-* [moveセマンティクス](cpp_idioms.md#SS_8_3_3)
+* [moveセマンティクス](class_design.md#SS_2_3_3)
 
 これら3つが組み合わさることで、不要なコピーを避けた高効率なリソース管理が実現される。
 
@@ -413,15 +416,58 @@ std::is_voidはテンプレートパラメータの型が
 
 ### std::is_copy_assignable <a id="SS_7_2_8"></a>
 std::is_copy_assignableはテンプレートパラメータの型(T)がcopy代入可能かを調べる。
-Tが[CopyAssignable要件](cpp_idioms.md#SS_8_3_5)を満たすためには`std::is_copy_assignable<T>`がtrueでなければならないが、
+Tが[CopyAssignable要件](stdlib_and_concepts.md#SS_7_2_8_1)を満たすためには`std::is_copy_assignable<T>`がtrueでなければならないが、
 その逆が成立するとは限らない。
+
+#### CopyAssignable要件 <a id="SS_7_2_8_1"></a>
+CopyAssignable要件は、C++において型がcopy代入をサポートするために満たすべき条件を指す。
+
+1. 動作が定義されていること  
+   代入操作は未定義動作を引き起こしてはならない。自己代入（同じオブジェクトを代入する場合）においても正しく動作し、
+   リソースリークを引き起こさないことが求められる。
+
+2. 値の保持  
+   代入後、代入先のオブジェクトの値は代入元のオブジェクトの値と一致していなければならない。
+
+3. 正しいセマンティクス  
+   copy代入によって代入元のオブジェクトが変更されてはならない(「[copyセマンティクス](class_design.md#SS_2_3_2)」参照)。
+   代入先のオブジェクトが保持していたリソース(例: メモリ)は適切に解放される必要がある。
+
+4. デフォルト実装  
+   copy代入演算子が明示的に定義されていない場合でも、
+   クラスが一定の条件(例: copy不可能なメンバが存在しないこと)を満たしていれば、
+   コンパイラがデフォルトの実装(「[特殊メンバ関数](core_lang_spec.md#SS_6_6_1)」参照)を生成する。
 
 
 ### std::is_move_assignable <a id="SS_7_2_9"></a>
 std::is_move_assignableはテンプレートパラメータの型(T)がmove代入可能かを調べる。
-Tが[MoveAssignable要件](cpp_idioms.md#SS_8_3_4)を満たすためには`std::is_move_assignable<T>`がtrueでなければならないが、
+Tが[MoveAssignable要件](stdlib_and_concepts.md#SS_7_2_9_1)を満たすためには`std::is_move_assignable<T>`がtrueでなければならないが、
 その逆が成立するとは限らない。
 
+#### MoveAssignable要件 <a id="SS_7_2_9_1"></a>
+MoveAssignable要件は、C++において型がmove代入をサポートするために満たすべき条件を指す。
+move代入はリソースを効率的に転送する操作であり、以下の条件を満たす必要がある。
+
+1. リソースの移動  
+   move代入では、リソース(動的メモリ等)が代入元から代入先へ効率的に転送される。
+
+2. 有効だが未定義の状態  
+   move代入後、代入元のオブジェクトは有効ではあるが未定義の状態となる。
+   未定義の状態とは、破棄や再代入が可能である状態を指し、それ以外の操作は保証されない。
+
+3. 自己代入の安全性  
+   同一のオブジェクトをmove代入する場合でも、未定義動作やリソースリークを引き起こしてはならない。
+
+4. 効率性  
+   move代入は通常、copy代入よりも効率的であることが求められる。
+   これは、リソースの複製を避けることで達成される(「[moveセマンティクス](class_design.md#SS_2_3_3)」参照)。
+
+5. デフォルト実装  
+   move代入演算子が明示的に定義されていない場合でも、
+   クラスが一定の条件(例: move不可能なメンバが存在しないこと)を満たしていれば、
+   コンパイラがデフォルトの実装(「[特殊メンバ関数](core_lang_spec.md#SS_6_6_1)」参照)を生成する。
+
+---
 
 ## 標準エクセプションクラス <a id="SS_7_3"></a>
 C++標準ライブラリは、`<exception>`と`<stdexcept>`定義される標準エクセプションクラスを提供する。
@@ -502,7 +548,7 @@ mutex は、スレッド間で使用する共有リソースを排他制御す�
 
 
 以下のコード例では、メンバ変数のインクリメントがスレッド間の競合を引き起こす(こういったコード領域を
-[クリティカルセクション](cpp_idioms.md#SS_8_12_5)と呼ぶ)が、std::mutexによりこの問題を回避している。
+[クリティカルセクション](cpp_idioms.md#SS_8_8_5)と呼ぶ)が、std::mutexによりこの問題を回避している。
 
 ```cpp
     //  example/stdlib_and_concepts/thread_ut.cpp 48
@@ -594,7 +640,7 @@ atomicクラステンプレートは、型Tをアトミック操作するため�
 
 ### std::condition_variable <a id="SS_7_4_4"></a>
 condition_variable は、特定のイベントが発生するまでスレッドの待ち合わせを行うためのクラスである。
-最も単純な使用例を以下に示す(「[Spurious Wakeup](cpp_idioms.md#SS_8_12_15)」参照)。
+最も単純な使用例を以下に示す(「[Spurious Wakeup](cpp_idioms.md#SS_8_8_15)」参照)。
 
 ```cpp
     //  example/stdlib_and_concepts/thread_ut.cpp 135
@@ -808,9 +854,9 @@ std::unique_lockやstd::lock_guardによりmutexを使用する。
     ASSERT_EQ(push_count_max, pop_count);
 ```
 
-一般に条件変数には、[Spurious Wakeup](cpp_idioms.md#SS_8_12_15)という問題があり、std::condition_variableも同様である。
+一般に条件変数には、[Spurious Wakeup](cpp_idioms.md#SS_8_8_15)という問題があり、std::condition_variableも同様である。
 
-上記の抜粋である下記のコード例では[Spurious Wakeup](cpp_idioms.md#SS_8_12_15)の対策が行われていないため、
+上記の抜粋である下記のコード例では[Spurious Wakeup](cpp_idioms.md#SS_8_8_15)の対策が行われていないため、
 意図通り動作しない可能性がある。
 
 ```cpp
@@ -1241,7 +1287,7 @@ Xと修正版Yの単体テストによりメモリーリークが修正された
 - オブジェクトが既に解放されている場合は`lock()`が空の`shared_ptr`を返すため、安全に処理できる
 
 ### std::auto_ptr <a id="SS_7_6_4"></a>
-`std::auto_ptr`はC++11以前に導入された初期のスマートポインタであるが、異常な[copyセマンティクス](cpp_idioms.md#SS_8_3_2)を持つため、
+`std::auto_ptr`はC++11以前に導入された初期のスマートポインタであるが、異常な[copyセマンティクス](class_design.md#SS_2_3_2)を持つため、
 多くの誤用を生み出し、C++11から非推奨とされ、C++17から規格から排除された。
 
 

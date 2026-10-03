@@ -11,7 +11,7 @@ MD_GEN:=./md_gen/export/py
 # VPATH=./md:dir1:dir2
 VPATH=./md:essential/md
 
-MDS:=deep_intro.md solid.md design_pattern.md template_meta_programming.md dynamic_memory_allocation.md \
+MDS:=deep_intro.md class_design.md design_pattern.md template_meta_programming.md dynamic_memory_allocation.md \
 	 core_lang_spec.md stdlib_and_concepts.md cpp_idioms.md
 
 
