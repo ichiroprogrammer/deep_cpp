@@ -608,7 +608,7 @@ CRTPとは、
 ```
 
 のようなテンプレートによる再帰構造を用いて、静的ポリモーフィズムを実現するためのパターンである。
-以下にこのパターンを使用した[ミックスイン](cpp_idioms.md#SS_8_8_7)の例を示す。
+以下にこのパターンを使用した[ミックスイン](cpp_idioms.md#SS_8_7_7)の例を示す。
 
 ```cpp
     //  example/design_pattern/crtp_ut.cpp 25
@@ -648,7 +648,7 @@ CRTPとは、
     ASSERT_EQ(2, DerivedClass_Count);  // a1のスコープアウトによりインスタンスが減少
 ```
 
-なお、このパターンは、[std::enable_shared_from_this](stdlib_and_concepts.md#SS_7_6_2_2)の使用において前提知識となっている。
+なお、このパターンは、[std::enable_shared_from_this](stdlib_and_concepts.md#SS_7_6_1_3_2)の使用において前提知識となっている。
 
 ---
 
