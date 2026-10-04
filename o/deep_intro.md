@@ -143,7 +143,6 @@ ___
 * [ダイナミックメモリアロケーション](dynamic_memory_allocation.md#SS_5)
 * [C++コア言語仕様](core_lang_spec.md#SS_6)
 * [標準ライブラリとプログラミングの概念](stdlib_and_concepts.md#SS_7)
-* [C++慣用語句](cpp_idioms.md#SS_8)
-* [Sample Code](sample_code.md#SS_9)
+* [用語集](glossary.md#SS_8)
 
 

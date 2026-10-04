@@ -1,6 +1,6 @@
 <!-- ./md/dynamic_memory_allocation.md -->
 # ダイナミックメモリアロケーション <a id="SS_5"></a>
-本章で扱うダイナミックメモリアロケーション([ヒープ](cpp_idioms.md#SS_8_7_1)の使用)とは、new/delete、malloc/free
+本章で扱うダイナミックメモリアロケーション([ヒープ](glossary.md#SS_8_5_1)の使用)とは、new/delete、malloc/free
 によるメモリ確保/解放のことである。
 
 malloc/freeは、
@@ -56,7 +56,7 @@ ___
 ## malloc/freeの問題点 <a id="SS_5_1"></a>
 UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 (この実装は長いため、
-全体は巻末の「[example/dynamic_memory_allocation/malloc_ut.cpp](sample_code.md#SS_9_1_1)」に掲載する)。
+全体は巻末の「[example/dynamic_memory_allocation/malloc_ut.cpp](sample_code.md#SS_10_1_1)」に掲載する)。
 
 ```cpp
     //  example/dynamic_memory_allocation/malloc_ut.cpp 19
@@ -144,7 +144,7 @@ UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 ```
 
 上記で示したようにmalloc/freeで使用されるメモリはHeader_t型のheaderで管理され、
-このアクセスの競合は[スピンロック](cpp_idioms.md#SS_8_7_6)(SpinLock)によって回避される。
+このアクセスの競合は[スピンロック](glossary.md#SS_8_5_6)(SpinLock)によって回避される。
 headerが管理するメモリ用域からのメモリの切り出しはmalloc_innerによって行われるが、
 下のフラグメントの説明でも示す通り、
 headerで管理されたメモリは長さの上限が単純には決まらないリスト構造になるため、
@@ -182,7 +182,7 @@ sbrkは
 によるメモリ確保のトリガーとなる。
 これはOSのファイルシステムの動作を含む処理であるため、やはりリアルタイム性の保証は困難である。
 
-[フリースタンディング環境](cpp_idioms.md#SS_8_7_9)では、sbrkのようなシステムコールは存在しないため、
+[フリースタンディング環境](glossary.md#SS_8_5_9)では、sbrkのようなシステムコールは存在しないため、
 アプリケーションの未使用領域や静的に確保した領域を上記コードで示したようなリスト構造で管理し、
 mallocで使用することになる。
 このような環境では、sbrkによるリアルタイム性の阻害は発生しないものの、
@@ -427,7 +427,7 @@ MPoolFixedに限らずメモリアロケータが返すメモリは、
 MPoolFixed::alloc/MPoolFixed::freeを見ればわかる通り、malloc/freeの実装に比べ格段にシンプルであり、
 これによりリアルタイム性の保障は容易である。
 
-なお、この実装ではmalloc/freeと同様に使用制限の少ない[スピンロック](cpp_idioms.md#SS_8_7_6)(SpinLock)を使用したが、
+なお、この実装ではmalloc/freeと同様に使用制限の少ない[スピンロック](glossary.md#SS_8_5_6)(SpinLock)を使用したが、
 このロックは、ラウンドロビンでスケジューリングされるスレッドの競合を防ぐためのものであり、
 固定プライオリティでのスケジューリングが前提となるような組み込みソフトで使用した場合、
 デッドロックを引き起こす可能性がある。
@@ -486,7 +486,7 @@ MPoolFixedの単体テストは、下記のようになる。
 
 ### 可変長メモリプール <a id="SS_5_2_2"></a>
 可変長メモリプールを生成するMPoolVariableの実装は下記のようになる
-(全体は巻末の「[example/dynamic_memory_allocation/mpool_variable.h](sample_code.md#SS_9_1_2)」に掲載する)。
+(全体は巻末の「[example/dynamic_memory_allocation/mpool_variable.h](sample_code.md#SS_10_1_2)」に掲載する)。
 
 ```cpp
     //  example/dynamic_memory_allocation/mpool_variable.h 59
@@ -735,7 +735,7 @@ MPoolから派生したクラスが、
 リアルタイム性が不要な処理であるため使用しているstdコンテナにすら、
 既存のエクセプション処理機構を使わせたく無くなるものである。
 
-コンパイラに[g++](cpp_idioms.md#SS_8_8_1)や[clang++](cpp_idioms.md#SS_8_8_2)を使っている場合、
+コンパイラに[g++](glossary.md#SS_8_6_1)や[clang++](glossary.md#SS_8_6_2)を使っている場合、
 下記関数を置き換えることでそういった要望を叶えることができる。
 
 |関数                                           |機能                            |
