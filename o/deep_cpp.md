@@ -14721,7 +14721,7 @@ ___
 ## malloc/freeの問題点 <a id="SS_5_1"></a>
 UNIX系のOSでの典型的なmalloc/freeの実装例の一部を以下に示す
 (この実装は長いため、
-全体は巻末の「[example/dynamic_memory_allocation/malloc_ut.cpp](#SS_10_1_1)」に掲載する)。
+全体は巻末の「[example/dynamic_memory_allocation/malloc_ut.cpp](#SS_9_1_1)」に掲載する)。
 
 ```cpp
     //  example/dynamic_memory_allocation/malloc_ut.cpp 19
@@ -15151,7 +15151,7 @@ MPoolFixedの単体テストは、下記のようになる。
 
 ### 可変長メモリプール <a id="SS_5_2_2"></a>
 可変長メモリプールを生成するMPoolVariableの実装は下記のようになる
-(全体は巻末の「[example/dynamic_memory_allocation/mpool_variable.h](#SS_10_1_2)」に掲載する)。
+(全体は巻末の「[example/dynamic_memory_allocation/mpool_variable.h](#SS_9_1_2)」に掲載する)。
 
 ```cpp
     //  example/dynamic_memory_allocation/mpool_variable.h 59
@@ -17378,7 +17378,7 @@ PODとは、 Plain Old Dataの略語であり、
 C言語の構造体のレイアウトと互換性を持つことが一般的である。
 
 ポリモーフィックなクラスは、
-仮想関数呼び出しを行う(「[オーバーライドとオーバーロードの違い](#SS_9_1)」参照)
+仮想関数呼び出しを行う(「オーバーライドとオーバーロードの違い」に注意)
 ためのメモリレイアウトが必要になる。
 それを示すために、まずは下記のようにクラスX、Y、Zを定義する。
 
@@ -18125,7 +18125,7 @@ consteval関数の呼び出しは、その結果が定数式でなければコ�
 constinitはC++20から導入されたキーワードであり、
 静的記憶域期間（static、namespaceスコープ）またはthread_local変数が、
 コンパイル時に初期化されることを保証するために使用される。
-これにより、[Static Initialization Order Fiasco(静的初期化順序問題)](#SS_9_2)を回避できる。
+これにより、「Static Initialization Order Fiasco(静的初期化順序問題)」を回避できる。
 
 このキーワードを付与すると、初期化が動的である場合にはコンパイルエラーとなる。
 ただし、constexprと異なり、変数自体がconstになるわけではないため、再代入は可能である。
@@ -19133,8 +19133,8 @@ rvalueをバインドするリファレンスが存在しない状態で、
 そのrvalueがメンバ変数へのリファレンスを返す関数を呼び出し、
 そのリファレンスをバインドするリファレンス変数を初期化した場合、
 リファレンスが指すオブジェクトはすでにライフタイムを終了している。
-このような状態のリファレンスを[danglingリファレンス](#SS_9_3)と呼ぶ。
-同様に、このような状態のポインタを[danglingポインタ](#SS_9_4)と呼ぶ。
+このような状態のリファレンスをdanglingリファレンスと呼ぶ。
+同様に、このような状態のポインタをdanglingポインタと呼ぶ。
 
 ### プレースメントnew <a id="SS_6_6_9"></a>
 プレースメントnewは、既に確保済みの生ストレージ上で、
@@ -24219,7 +24219,7 @@ CopyAssignable要件は、C++において型がcopy代入をサポートする�
    代入後、代入先のオブジェクトの値は代入元のオブジェクトの値と一致していなければならない。
 
 3. 正しいセマンティクス  
-   copy代入によって代入元のオブジェクトが変更されてはならない(「[copyセマンティクス](#SS_2_3_2)」参照)。
+   copy代入によって代入元のオブジェクトが変更されてはならない(「[copyセマンティクス](#SS_2_3_2)」に注意)。
    代入先のオブジェクトが保持していたリソース(例: メモリ)は適切に解放される必要がある。
 
 4. デフォルト実装  
@@ -27776,26 +27776,10 @@ DAGとは、Directed Acyclic Graph([有向非循環グラフ](https://ja.wikiped
 ---
 
 
-<!-- ./md/deep_appendix.md -->
-# Apendix <a id="SS_9"></a>
-
-## オーバーライドとオーバーロードの違い <a id="SS_9_1"></a>
-説明省略
-
-## Static Initialization Order Fiasco(静的初期化順序問題) <a id="SS_9_2"></a>
-説明省略
-
-## danglingリファレンス <a id="SS_9_3"></a>
-説明省略
-
-## danglingポインタ <a id="SS_9_4"></a>
-説明省略
-
-
 <!-- ./md/sample_code.md -->
-# Sample Code <a id="SS_10"></a>
-## C++ <a id="SS_10_1"></a>
-### example/dynamic_memory_allocation/malloc_ut.cpp <a id="SS_10_1_1"></a>
+# Sample Code <a id="SS_9"></a>
+## C++ <a id="SS_9_1"></a>
+### example/dynamic_memory_allocation/malloc_ut.cpp <a id="SS_9_1_1"></a>
 
 
 ```cpp
@@ -28013,7 +27997,7 @@ DAGとは、Directed Acyclic Graph([有向非循環グラフ](https://ja.wikiped
         212 }  // namespace MallocFree
 ```
 
-### example/dynamic_memory_allocation/mpool_variable.h <a id="SS_10_1_2"></a>
+### example/dynamic_memory_allocation/mpool_variable.h <a id="SS_9_1_2"></a>
 
 
 ```cpp

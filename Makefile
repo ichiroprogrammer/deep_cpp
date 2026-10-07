@@ -12,7 +12,7 @@ MD_GEN:=./md_gen/export/py
 VPATH=./md:essential/md
 
 MDS:=deep_intro.md class_design.md design_pattern.md template_meta_programming.md dynamic_memory_allocation.md \
-	 core_lang_spec.md stdlib_and_concepts.md glossary.md deep_appendix.md
+	 core_lang_spec.md stdlib_and_concepts.md glossary.md 
 
 
 INDEX_OPT:=--exclude $(addsuffix :1,$(MDS) sample_code.md)
