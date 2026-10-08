@@ -12,10 +12,10 @@ enum class ThreadOldStyleState {
     Suspending,
 };
 
-ThreadOldStyleState thread_old_style_state;
+ThreadOldStyleState thread_old_style_state;  // 状態の保存
 // @@@ ignore begin
 
-uint32_t thread_old_style_suspend_count;
+uint32_t thread_old_style_suspend_count;  // suspend状態はネスティングを数える
 
 // @@@ ignore end
 }  // namespace
@@ -35,6 +35,7 @@ std::string_view ThreadOldStyleStateStr() noexcept
     }
 }
 
+// スレッドをrunning状態に移行させる
 void ThreadOldStyleRun()
 {
     switch (thread_old_style_state) {
@@ -42,14 +43,14 @@ void ThreadOldStyleRun()
     case ThreadOldStyleState::Running:
         thread_old_style_state = ThreadOldStyleState::Running;
         break;
-    case ThreadOldStyleState::Suspending:
-        --thread_old_style_suspend_count;
+    case ThreadOldStyleState::Suspending:  // suspend状態
+        --thread_old_style_suspend_count;  // suspend状態はネスティングする
         if (thread_old_style_suspend_count == 0) {
-            thread_old_style_state = ThreadOldStyleState::Running;
+            thread_old_style_state = ThreadOldStyleState::Running;  // suspend状態 ->  running状態
         }
         break;
     default:
-        assert(false);
+        assert(false);  // バグ以外でここに来ることはない
     }
 }
 
