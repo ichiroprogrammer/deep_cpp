@@ -145,6 +145,10 @@ ___
 * [標準ライブラリとプログラミングの概念](#SS_7)
 * [用語集](#SS_8)
 
+---
+
+---
+
 
 <!-- ./md/class_design.md -->
 # クラス設計 <a id="SS_2"></a>
@@ -1753,6 +1757,10 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 
 に従わなけならない。
 
+---
+
+---
+
 
 <!-- ./md/design_pattern.md -->
 # デザインパターン <a id="SS_3"></a>
@@ -1786,7 +1794,7 @@ __この章の構成__
 &emsp;[Accessor](#SS_3_1_6)  
 &emsp;[Immutable](#SS_3_1_7)  
 &emsp;[NVI(non virtual interface)](#SS_3_1_8)  
-&emsp;[二段階文字列化(STRINGIZE) ](#SS_3_1_9)  
+&emsp;[二段階文字列化(STRINGIZE)](#SS_3_1_9)  
 
 [実装パターン](#SS_3_2)  
 &emsp;[Pimpl](#SS_3_2_1)  
@@ -2780,7 +2788,7 @@ privateなメンバ関数はデフォルト引数を持つべきではない。
 
 ---
 
-### 二段階文字列化(STRINGIZE)  <a id="SS_3_1_9"></a>
+### 二段階文字列化(STRINGIZE) <a id="SS_3_1_9"></a>
 本節では、プリプロセッサの文字列化演算子 `#` を二段階のマクロで包むイディオムと、
 その代表的な応用2つを解説する。
 
@@ -7034,6 +7042,10 @@ ViewはModelの[Observer](#SS_3_4_4)であるため、ModelはViewへ依存し�
   Viewのそれよりもかなり少ない。
   しかし、ModelがViewに依存してしまうと、Viewに影響されModelのソースコード変更も多くなる。
 
+
+---
+
+---
 
 
 <!-- ./md/template_meta_programming.md -->
@@ -14664,6 +14676,11 @@ C++17からサポートされた「クラステンプレートのテンプレー
   参照)。
 
 
+---
+
+---
+
+
 <!-- ./md/dynamic_memory_allocation.md -->
 # ダイナミックメモリアロケーション <a id="SS_5"></a>
 本章で扱うダイナミックメモリアロケーション([ヒープ](#SS_8_5_1)の使用)とは、new/delete、malloc/free
@@ -16074,6 +16091,9 @@ C++17以降では、[std::pmr::polymorphic_allocator](#SS_7_7_2)を使用する�
 デバッグ用入出力機能からこのような出力を得られるようにしておくべきである。
 
 
+---
+
+---
 
 
 <!-- essential/md/core_lang_spec.md -->
