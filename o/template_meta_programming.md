@@ -7628,6 +7628,8 @@ C++17からサポートされた「クラステンプレートのテンプレー
 
 ---
 
+[インデックス](deep_intro.md#SS_1_3)/[章の先頭](template_meta_programming.md#SS_4)
+
 ---
 
 
