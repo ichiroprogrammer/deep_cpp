@@ -408,7 +408,7 @@ privateなメンバ関数はデフォルト引数を持つべきではない。
 典型的な二段階文字列化(STRINGIZE)イデオムは以下のようなコードを指す。
 
 ```cpp
-    // @@@ example/design_pattern/stringize_ut.cpp #0:0 begin
+    // @@@ example/design_pattern/stringize.h #0:0 begin
 ```
 
 通常、関数形式マクロの実引数は、置換リストに代入される前に完全にマクロ展開される。ただし、
@@ -419,21 +419,21 @@ privateなメンバ関数はデフォルト引数を持つべきではない。
     #define LINE_B STRINGIZE(__LINE__)            // -> "42" など
 ```
 
-STRINGIZEを使ったコードの場所の文字列化('__LINE__'の文字列への取り込み)は以下のように実装できる。
+STRINGIZEを使ったコードの場所の文字列化(`__LINE__`の文字列への取り込み)は以下のように実装できる。
 
 
 ```cpp
-    // @@@ example/design_pattern/stringize_ut.cpp #0:1 begin
+    // @@@ example/design_pattern/stringize.h #0:1 begin
 ```
 ```cpp
-    // @@@ example/design_pattern/stringize_ut.cpp #0:2 begin -1
+    // @@@ example/design_pattern/stringize_ut.cpp #1:0 begin -1
 ```
 
 gccの警告の抑止を行うための以下のようなマクロは、
 
 ```cpp
     #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
-    #define SUPPRESS_WARN_GCC_BOOL_OP _Pragma("GCC diagnostic ignored \"-Wbool-operation\"")
+    #define SUPPRESS_WARN_GCC_BOOL_OP _Pragma("GCC diagnostic ignored \"-Wbool-operation")
     #define SUPPRESS_WARN_GCC_ADDRESS _Pragma("GCC diagnostic ignored \"-Waddress\"")
 ```
 
@@ -443,7 +443,8 @@ gccの警告の抑止を行うための以下のようなマクロは、
     #define IGNORE_GCC_DIAGNOSTIC(s) _Pragma(STRINGIZE(GCC diagnostic ignored s))
 
     #define SUPPRESS_WARN_GCC_ARRAY_BOUNDS IGNORE_GCC_DIAGNOSTIC("-Warray-bounds")
-    #define SUPPRESS_WARN_GCC_BOOL_OP IGNORE_GCC_DIAGNOSTIC("-Wbool-operation\"")
+    #define SUPPRESS_WARN_GCC_BOOL_OP IGNORE_GCC_DIAGNOSTIC("-Wbool-operation")
+    #define SUPPRESS_WARN_GCC_ADDRESS IGNORE_GCC_DIAGNOSTIC("-Waddress")
 ```
 
 ---
@@ -1081,7 +1082,7 @@ XxxDataFormatterIFのリファレンスやポインタとして表現できる�
 上記の単体テストは下記のようになる。
 
 ```cpp
-    // @@@ example/design_pattern/template_method_ut.cpp #1:1 begin
+    // @@@ example/design_pattern/template_method_ut.cpp #1:1 begin -1
 ```
 
 [演習-Templateメソッド](~~~)  

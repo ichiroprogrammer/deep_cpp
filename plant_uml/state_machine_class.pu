@@ -1,15 +1,20 @@
 @startuml
 
 class ThreadNewStyle {
-    Abort()
-    Run()
-    Suspend()
+    .. ライフサイクル管理 ..
+    Abort() :   ideleに遷移(スレッドの強制終了)
+    Run() :     running状態に遷移
+    Suspend() : suspend状態に遷移
+
+    .. 状態確認 ..
+    StateStr() : 現在の状態の文字列
 }
 
 class ThreadNewStyleState {
     Abort()
     Run()
     Suspend()
+    StateStr()
 }
 
 ThreadNewStyleState <-up- ThreadNewStyle

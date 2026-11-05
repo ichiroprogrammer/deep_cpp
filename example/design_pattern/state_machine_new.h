@@ -67,7 +67,7 @@ private:
 
     void change_state(std::unique_ptr<ThreadNewStyleState>&& new_state) noexcept
     {
-        if (new_state) {
+        if (new_state) {  // 次の状態を表すオブジェクトが非ヌルであれば、状態の遷移させる
             state_ = std::move(new_state);
         }
     }

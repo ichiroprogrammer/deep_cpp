@@ -1,16 +1,16 @@
 #include <iostream>
 
 #include "state_machine_new.h"
+#include "stringize.h"
 
-#define LOG()                                                         \
-    do {                                                              \
-        std::cout << __LINE__ << ":" << __func__ << ":" << std::endl; \
+#define LOG()                            \
+    do {                                 \
+        std::cout << WHERE << std::endl; \
     } while (0)
 
 // @@@ sample begin 0:0
 
 class ThreadNewStyleState_Idle final : public ThreadNewStyleState {
-    // @@@ ignore begin
 public:
     ThreadNewStyleState_Idle() { LOG(); }
 
@@ -19,7 +19,6 @@ public:
 private:
     virtual std::unique_ptr<ThreadNewStyleState> run_thread() override;
     virtual std::string_view                     get_state_str() const noexcept override { return "Idle"; }
-    // @@@ ignore end
 };
 
 class ThreadNewStyleState_Running final : public ThreadNewStyleState {
@@ -46,7 +45,7 @@ public:
 private:
     virtual std::unique_ptr<ThreadNewStyleState> abort_thread() override
     {
-        // do something to abort
+        // アボートの処理
         // @@@ ignore begin
         // @@@ ignore end
 
@@ -58,12 +57,13 @@ private:
         --suspend_count_;
 
         if (suspend_count_ == 0) {
-            // do something to resume
+            // レジュームのための処理
             // @@@ ignore begin
             // @@@ ignore end
-            return std::make_unique<ThreadNewStyleState_Running>();
+            return std::make_unique<ThreadNewStyleState_Running>();  // running状態を管理するためのオブジェクトを返す
         }
         else {
+            // suspend_count_ が０でないため、レジューム状態を維持
             return {};
         }
     }

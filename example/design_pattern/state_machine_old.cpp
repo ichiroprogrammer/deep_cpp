@@ -56,6 +56,7 @@ void ThreadOldStyleRun()
 
 void ThreadOldStyleAbort()
 {
+    // 現在の状態をアボートするための処理
     // @@@ ignore begin
     switch (thread_old_style_state) {
     case ThreadOldStyleState::Idle:
@@ -75,6 +76,7 @@ void ThreadOldStyleAbort()
 
 void ThreadOldStyleSuspend()
 {
+    // 現在の状態をサスペンドするための処理
     // @@@ ignore begin
     switch (thread_old_style_state) {
     case ThreadOldStyleState::Idle:
