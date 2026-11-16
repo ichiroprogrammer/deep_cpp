@@ -238,7 +238,10 @@ __この章の構成__
   
   
 
-[インデックス](deep_intro.md#SS_1_3)に戻る。  
+___
+
+
+[インデックス](deep_intro.md#SS_1_3)/[章の最後](core_lang_spec.md#SS_6_999)/[次の章](stdlib_and_concepts.md#SS_7)
 
 ___
 
@@ -7708,8 +7711,10 @@ RVOとはこのような最適化を指す。
 ```
 ---
 
-[インデックス](deep_intro.md#SS_1_3)/[章の先頭](core_lang_spec.md#SS_6)
+[インデックス](deep_intro.md#SS_1_3)/[章の先頭](core_lang_spec.md#SS_6)/[次の章](stdlib_and_concepts.md#SS_7)
 
 ---
 
+
+<a id="SS_6_999"></a>
 

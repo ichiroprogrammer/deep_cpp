@@ -84,7 +84,10 @@ __この章の構成__
   
   
 
-[インデックス](deep_intro.md#SS_1_3)に戻る。  
+___
+
+
+[インデックス](deep_intro.md#SS_1_3)/[章の最後](stdlib_and_concepts.md#SS_7_999)/[次の章](glossary.md#SS_8)
 
 ___
 
@@ -2752,8 +2755,10 @@ new/deleteの呼び出しをまとめたり省略したりすることができ�
 
 ---
 
-[インデックス](deep_intro.md#SS_1_3)/[章の先頭](stdlib_and_concepts.md#SS_7)
+[インデックス](deep_intro.md#SS_1_3)/[章の先頭](stdlib_and_concepts.md#SS_7)/[次の章](glossary.md#SS_8)
 
 ---
 
+
+<a id="SS_7_999"></a>
 

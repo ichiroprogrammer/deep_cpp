@@ -116,8 +116,13 @@ __この章の構成__
   
   
 
-[インデックス](deep_intro.md#SS_1_3)に戻る。  
 ___
+
+
+[インデックス](deep_intro.md#SS_1_3)/[章の最後](template_meta_programming.md#SS_4_999)/[次の章](dynamic_memory_allocation.md#SS_5)
+
+___
+
 
 ## ログ取得ライブラリの開発 <a id="SS_4_1"></a>
 ここではログ取得ライブラリの開発を行う。
@@ -7628,8 +7633,10 @@ C++17からサポートされた「クラステンプレートのテンプレー
 
 ---
 
-[インデックス](deep_intro.md#SS_1_3)/[章の先頭](template_meta_programming.md#SS_4)
+[インデックス](deep_intro.md#SS_1_3)/[章の先頭](template_meta_programming.md#SS_4)/[次の章](dynamic_memory_allocation.md#SS_5)
 
 ---
 
+
+<a id="SS_4_999"></a>
 

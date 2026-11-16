@@ -30,7 +30,10 @@ __この章の構成__
   
   
 
-[インデックス](deep_intro.md#SS_1_3)に戻る。  
+___
+
+
+[インデックス](deep_intro.md#SS_1_3)/[章の最後](class_design.md#SS_2_999)/[次の章](design_pattern.md#SS_3)
 
 ___
 
@@ -1607,8 +1610,10 @@ d2_refが指しているオブジェクト(d2)へコピーされた」からで�
 
 ---
 
-[インデックス](deep_intro.md#SS_1_3)/[章の先頭](class_design.md#SS_2)
+[インデックス](deep_intro.md#SS_1_3)/[章の先頭](class_design.md#SS_2)/[次の章](design_pattern.md#SS_3)
 
 ---
 
+
+<a id="SS_2_999"></a>
 
